@@ -13,6 +13,12 @@ var expectedConfirmations, actualConfirmations;
 // configure express
 var jsonParser = bodyParser.json();
 
+app.get('/', function(request, response){
+	response.writeHead(200);
+	response.write('Cohort rocks!');
+	response.send();
+});
+
 app.post('/broadcast', jsonParser, function(request, response){
 	wsServer.broadcast(JSON.stringify(request.body));
 	response.writeHead(200);
