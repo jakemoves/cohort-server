@@ -4,17 +4,20 @@ const bodyParser = require('body-parser')
 const WebSocket = require('ws');
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: false }));
-
-const wsServer = new WebSocket.Server({ port: 8080, clientTracking: true });
+const wsServer = new WebSocket.Server({ port: 8080, clientTracking: true }, () => {
+	console.log("websocket server started on port 8080");
+});
 
 var expectedConfirmations, actualConfirmations;
 
-app.post('/broadcast', function(request, response){
-	wsServer.broadcast('ping!');
+// configure express
+var jsonParser = bodyParser.json();
+
+app.post('/broadcast', jsonParser, function(request, response){
+	wsServer.broadcast(JSON.stringify(request.body));
 	response.writeHead(200);
-	response.write('received broadcast request');
-	response.send();
+	response.write('sending broadcast...');
+	setTimeout(function(){ checkConfirmations(response); }, 1000);
 });
 
 wsServer.broadcast = function broadcast(data) {
@@ -25,8 +28,6 @@ wsServer.broadcast = function broadcast(data) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(data);
 		}
-
-		setTimeout(checkConfirmations, 1000);
 	});
 };
 
@@ -53,18 +54,19 @@ wsServer.on('connection', function connection(ws) {
 		console.log("client closed, current clients: " + wsServer.clients.size);
 	});
 
-	ws.send('connection open');
-
 	ws.on('pong', keepalive);
 });
 
 
-function checkConfirmations(){
-	console.log("expected confirmations: " + expectedConfirmations);
-	console.log("actual confirmations: " + actualConfirmations);
+function checkConfirmations(response){
+	// console.log("expected confirmations: " + expectedConfirmations);
+	// console.log("actual confirmations: " + actualConfirmations);
 	if(expectedConfirmations != actualConfirmations){
 		console.log("WARNING: one or more clients may not have received broadcast");
 	}
+
+	response.write("\n    ..." + actualConfirmations + "/" + expectedConfirmations + " clients confirmed receipt");
+	response.send();
 }
 
 
