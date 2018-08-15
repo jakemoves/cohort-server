@@ -20,7 +20,7 @@ app.get('/', function(request, response){
 });
 
 app.post('/broadcast', jsonParser, function(request, response){
-	const waitForConfirmations = request.waitForConfirmations * 1000;
+	const waitForConfirmations = request.body.waitForConfirmations * 1000;
 	wsServer.broadcast(JSON.stringify(request.body.payload));
 	response.writeHead(200);
 	response.write('sending broadcast...');
