@@ -33,7 +33,7 @@ wsServer.broadcast = function broadcast(message) {
 
 	// per https://github.com/websockets/ws/issues/617#issuecomment-393396339
 	let data = Buffer.from(message); // only text messages are supported, no binary
-	let frames = WS.Sender.frame(data, {
+	let frames = WebSocket.Sender.frame(data, {
 		fin: true,
 		rsv1: false,
 		opcode: 1,
