@@ -20,22 +20,50 @@ app.get('/', function(request, response){
 });
 
 app.post('/broadcast', jsonParser, function(request, response){
-	const waitForConfirmations = request.body.waitForConfirmations * 1000;
+	const waitForConfirmations = request.body.waitForConfirmations * 1000; // TODO This can be null / undefined, fix it!!!
 	wsServer.broadcast(JSON.stringify(request.body.payload));
 	response.writeHead(200);
 	response.write('sending broadcast...');
 	setTimeout(function(){ checkConfirmations(response); }, waitForConfirmations);
 });
 
-wsServer.broadcast = function broadcast(data) {
+wsServer.broadcast = function broadcast(message) {
 	expectedConfirmations = wsServer.clients.size;
 	actualConfirmations = 0;
 
-	wsServer.clients.forEach(function each(client) {
-		if (client.readyState === WebSocket.OPEN) {
-			client.send(data);
-		}
+	// per https://github.com/websockets/ws/issues/617#issuecomment-393396339
+	let data = Buffer.from(message); // only text messages are supported, no binary
+	let frames = WS.Sender.frame(data, {
+		fin: true,
+		rsv1: false,
+		opcode: 1,
+		mask: false,
+		readOnly: false
 	});
+
+	return wsServer.clients.map( (socket) => {
+		// skip this socket if it isn't open
+		if(socket.readyState !== WS.OPEN) {
+			return promise.resolve();
+		}
+
+		return new Promise( (fulfill, reject) => {
+			socket._sender.sendFrame(frames, (error) => {
+				if(error){ 
+					// catch async socket write errors
+					console.log(error);
+					return reject(error);
+				}
+				fulfill();
+			});
+		});
+	});
+	
+	// wsServer.clients.forEach(function each(client) {
+	// 	if (client.readyState === WebSocket.OPEN) {
+	// 		client.send(data);
+	// 	}
+	// });
 };
 
 app.listen(3000, function(err){
