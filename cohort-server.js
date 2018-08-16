@@ -64,7 +64,7 @@ wsServer.broadcast = function broadcast(message) {
 
 	wsServer.clients.forEach(function each(client) {
 		if (client.readyState === WebSocket.OPEN) {
-			client.send(data);
+			client.send(message);
 		}
 	});
 
