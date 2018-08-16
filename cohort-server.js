@@ -43,7 +43,7 @@ wsServer.broadcast = function broadcast(message) {
 
 	return wsServer.clients.map( (socket) => {
 		// skip this socket if it isn't open
-		if(socket.readyState !== WS.OPEN) {
+		if(socket.readyState !== WebSocket.OPEN) {
 			return promise.resolve();
 		}
 
@@ -58,7 +58,7 @@ wsServer.broadcast = function broadcast(message) {
 			});
 		});
 	});
-	
+
 	// wsServer.clients.forEach(function each(client) {
 	// 	if (client.readyState === WebSocket.OPEN) {
 	// 		client.send(data);
