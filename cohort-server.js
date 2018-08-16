@@ -41,7 +41,7 @@ wsServer.broadcast = function broadcast(message) {
 		readOnly: false
 	});
 
-	return wsServer.clients.map( (socket) => {
+	return [...wsServer.clients].map( (socket) => {
 		// skip this socket if it isn't open
 		if(socket.readyState !== WebSocket.OPEN) {
 			return promise.resolve();
