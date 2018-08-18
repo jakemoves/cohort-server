@@ -81,9 +81,9 @@ app.listen(3000, function(err){
 });
 
 
-wsServer.on('connection', function connection(ws) {
+wsServer.on('connection', function connection(socket) {
 	console.log("new client: " + wsServer.clients.size);
-	ws.on('message', function incoming(message) {
+	socket.on('message', function incoming(message) {
 		if(message == "confirm-receipt"){
 			actualConfirmations++;
 		} else {
@@ -91,11 +91,11 @@ wsServer.on('connection', function connection(ws) {
 		}
 	});
 
-	ws.on('close', function close(){
+	socket.on('close', function close(){
 		console.log("client closed, current clients: " + wsServer.clients.size);
 	});
 
-	ws.on('pong', keepalive);
+	socket.on('pong', keepalive);
 });
 
 
@@ -115,7 +115,7 @@ function checkConfirmations(response){
 const interval = setInterval(function ping(){
 	wsServer.clients.forEach(function each(client){
 		if(client.isAlive === false) {
-			return ws.terminate();
+			return client.terminate();
 		}
 
 		client.isAlive = false;
