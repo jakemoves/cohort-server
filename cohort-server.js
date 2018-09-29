@@ -150,34 +150,53 @@ var options = {
 		key: "AuthKey_6TA7832PAJ.p8",
 		keyId: "6TA7832PAJ",
 		teamId: "J93D25NHHG"
-	},
-	production: true
+	}
 }
 
 var apnProvider = new apn.Provider(options);
 
 app.post('/register-for-notifications', jsonParser, function(request, response){
 	token = request.body.token
-	console.log(token)
 	if(token){
 		registeredDeviceTokens.push(token)
-
-		let note = new apn.Notification()
-		note.expiry = Math.floor(Date.now() / 1000) + 3600 // 1 hr
-		note.badge = 3
-		note.sound = "ping.aiff"
-		alert = "registered for notifications"
-		payload = { 'messageFrom': 'Cohort Server' }
-		topic = "rocks.cohort.ios-demo"
-
-		apnProvider.send(note, token).then( (result) => {
-			console.log(result)
-		})
-
 		response.sendStatus(200)
+		console.log("registered device for notifications: " + token)
 	} else {
 		response.writeHead(400)
-		response.write("Error: Request did not include a 'token' object")
+		response.write("Error: Request must include a 'token' object")
 		response.send()
+		console.log("failed to register device for notifications, no token object in request")
 	}
-});
+})
+
+app.post('/broadcast-push-notification', jsonParser, function(request, response){
+	if(request.body.text){
+		let note = new apn.Notification()
+		note.expiry = Math.floor(Date.now() / 1000) + 3600 // 1 hr
+		note.badge = 0
+		note.sound = "ping.aiff"
+		note.alert = request.body.text
+		note.payload = { 'messageFrom': 'Cohort Server' }
+		note.topic = "rocks.cohort.ios-demo"
+
+		registeredDeviceTokens.forEach((device) => {
+			apnProvider.send(note, device).then( (result) => {
+				if(result.failed.length == 0 && result.sent.length == registeredDeviceTokens.length) {
+					response.writeHead(200)
+					response.write("Sent notification to " + registeredDeviceTokens.length + " devices")
+					response.send()
+				} else {
+					response.writeHead(502)
+					response.write("failed to send notification to device " + device)
+					response.write(result.failed)
+					response.send()
+				}
+			})
+		})
+	} else {
+		response.writeHead(400)
+		response.write("Error: request must include a 'text' object")
+		response.send()
+		console.log("failed to send notification, no text object in request")
+	}
+})
