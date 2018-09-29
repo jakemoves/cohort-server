@@ -113,11 +113,11 @@ function checkConfirmations(response){
 
 // keepalive
 const interval = setInterval(function ping(){
+	console.log("sending keepalive to " + wsServer.clients.size + " clients");
 	wsServer.clients.forEach(function each(client){
 		if(client.isAlive === false) {
 			return client.terminate();
 		}
-
 		client.isAlive = false;
 		client.ping(noop);
 	});
@@ -126,5 +126,6 @@ const interval = setInterval(function ping(){
 function noop(){}
 
 function keepalive(){
+	console.log("received pong");
 	this.isAlive = true;
 }
