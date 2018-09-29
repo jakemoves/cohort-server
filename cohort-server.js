@@ -1,24 +1,42 @@
 
 const express = require('express');
 const bodyParser = require('body-parser')
-const WebSocket = require('ws');
-
-const app = express();
-const wsServer = new WebSocket.Server({ port: 8080, clientTracking: true }, () => {
-	console.log("websocket server started on port 8080");
-});
-
-var expectedConfirmations, actualConfirmations;
-var elapsedTimeForBroadcast;
 
 // configure express
+
+const app = express();
 var jsonParser = bodyParser.json();
+
+/*
+ * HTTP connections
+ */
+
+app.listen(3000, function(err){
+	if(err) {
+		throw err;
+	}
+
+	console.log('http server started on port 3000');
+});
 
 app.get('/', function(request, response){
 	response.writeHead(200);
 	response.write('Cohort rocks!');
 	response.send();
 });
+
+/*
+ * WebSocket connections
+ */
+
+const WebSocket = require('ws');
+
+const wsServer = new WebSocket.Server({ port: 8080, clientTracking: true }, () => {
+	console.log("websocket server started on port 8080");
+});
+
+var expectedConfirmations, actualConfirmations;
+var elapsedTimeForBroadcast;
 
 app.post('/broadcast', jsonParser, function(request, response){
 	elapsedTimeForBroadcast = Date.now();
@@ -72,15 +90,6 @@ wsServer.broadcast = function broadcast(message) {
 	elapsedTimeForBroadcast = elapsedTime;
 };
 
-app.listen(3000, function(err){
-	if(err) {
-		throw err;
-	}
-
-	console.log('http server started on port 3000');
-});
-
-
 wsServer.on('connection', function connection(socket) {
 	console.log("new client: " + wsServer.clients.size);
 	socket.on('message', function incoming(message) {
@@ -98,7 +107,6 @@ wsServer.on('connection', function connection(socket) {
 	socket.on('pong', keepalive);
 });
 
-
 function checkConfirmations(response){
 	// console.log("expected confirmations: " + expectedConfirmations);
 	// console.log("actual confirmations: " + actualConfirmations);
@@ -109,7 +117,6 @@ function checkConfirmations(response){
 	response.write("\n    ..." + actualConfirmations + "/" + expectedConfirmations + " clients confirmed receipt");
 	response.send();
 }
-
 
 // keepalive
 const interval = setInterval(function ping(){
@@ -129,3 +136,48 @@ function keepalive(){
 	console.log("received pong");
 	this.isAlive = true;
 }
+
+/* 
+ * Apple Push Notifications 
+ */
+
+const apn = require('apn')
+
+var registeredDeviceTokens = []
+
+var options = {
+	token: {
+		key: "AuthKey_6TA7832PAJ.p8",
+		keyId: "6TA7832PAJ",
+		teamId: "J93D25NHHG"
+	},
+	production: true
+}
+
+var apnProvider = new apn.Provider(options);
+
+app.post('/register-for-notifications', jsonParser, function(request, response){
+	token = request.body.token
+	console.log(token)
+	if(token){
+		registeredDeviceTokens.push(token)
+
+		let note = new apn.Notification()
+		note.expiry = Math.floor(Date.now() / 1000) + 3600 // 1 hr
+		note.badge = 3
+		note.sound = "ping.aiff"
+		alert = "registered for notifications"
+		payload = { 'messageFrom': 'Cohort Server' }
+		topic = "rocks.cohort.ios-demo"
+
+		apnProvider.send(note, token).then( (result) => {
+			console.log(result)
+		})
+
+		response.sendStatus(200)
+	} else {
+		response.writeHead(400)
+		response.write("Error: Request did not include a 'token' object")
+		response.send()
+	}
+});
