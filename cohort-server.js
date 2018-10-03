@@ -170,14 +170,24 @@ app.post('/register-for-notifications', jsonParser, function(request, response){
 })
 
 app.post('/broadcast-push-notification', jsonParser, function(request, response){
-	if(request.body.text){
+	if(request.body != null &&
+		request.body.text != null && request.body.text != "" 
+		&& request.body.bundleId != null && request.body.bundleId != ""){
+
 		let note = new apn.Notification()
 		note.expiry = Math.floor(Date.now() / 1000) + 3600 // 1 hr
 		note.badge = 0
 		note.sound = "ping.aiff"
 		note.alert = request.body.text
 		note.payload = { 'messageFrom': 'Cohort Server' }
-		note.topic = "rocks.cohort.ios-demo"
+		note.topic = request.body.bundleId
+		
+		if(registeredDeviceTokens.length == 0) {
+			response.writeHead(200)
+			response.write("Request OK but no devices are registered to receive notifications")
+			response.send()
+			return
+		} 
 
 		registeredDeviceTokens.forEach((device) => {
 			apnProvider.send(note, device).then( (result) => {
@@ -188,15 +198,19 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 				} else {
 					response.writeHead(502)
 					response.write("failed to send notification to device " + device)
-					response.write(result.failed)
+					response.write(JSON.stringify(result.failed))
 					response.send()
 				}
 			})
 		})
 	} else {
 		response.writeHead(400)
-		response.write("Error: request must include a 'text' object")
+		if(request.body.text == null || request.body.text == ""){
+			response.write("Error: request must include a 'text' object")
+		} else if(request.body.bundleId == null || request.body.bundleId == ""){
+			response.write("Error: request must include a 'bundleId' object, corresponding to the target app's bundle identifier")
+		}
 		response.send()
-		console.log("failed to send notification, no text object in request")
+		console.log("failed to send notification")
 	}
 })
