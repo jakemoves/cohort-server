@@ -184,21 +184,22 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 		note.topic = request.body.bundleId
 		
 		if(registeredDeviceTokens.length == 0) {
-			response.writeHead(200)
+			response.statusCode = 200
 			response.write("Request OK but no devices are registered to receive notifications")
 			response.send()
+			console.log("broadcast attempted but no devices registered")
 			return
 		} 
 
 		registeredDeviceTokens.forEach((device) => {
 			apnProvider.send(note, device).then( (result) => {
 				if(result.sent[0].device === device && result.failed.length == 0) { 
-					response.writeHead(200)
+					response.statusCode = 200
 					response.write("Sent notification to " + registeredDeviceTokens.length + " devices")
 					response.send()
 					return
 				} else {
-					response.writeHead(502)
+					response.statusCode = 502
 					response.write("failed to send notification to device " + device)
 					response.write(JSON.stringify(result.failed))
 					response.send()
@@ -206,7 +207,7 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 			})
 		})
 	} else {
-		response.writeHead(400)
+		response.statusCode = 400
 		if(request.body.text == null || request.body.text == ""){
 			response.write("Error: request must include a 'text' object")
 		} else if(request.body.bundleId == null || request.body.bundleId == ""){
