@@ -118,7 +118,8 @@ function checkConfirmations(response){
 	response.send();
 }
 
-// keepalive
+// keepalive 
+// TODO Verify this actually works!!
 const interval = setInterval(function ping(){
 	console.log("sending keepalive to " + wsServer.clients.size + " clients");
 	wsServer.clients.forEach(function each(client){
@@ -191,10 +192,11 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 
 		registeredDeviceTokens.forEach((device) => {
 			apnProvider.send(note, device).then( (result) => {
-				if(result.failed.length == 0 && result.sent.length == registeredDeviceTokens.length) {
+				if(result.sent[0].device === device && result.failed.length == 0) { 
 					response.writeHead(200)
 					response.write("Sent notification to " + registeredDeviceTokens.length + " devices")
 					response.send()
+					return
 				} else {
 					response.writeHead(502)
 					response.write("failed to send notification to device " + device)
