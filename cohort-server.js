@@ -1,5 +1,5 @@
-
 const express = require('express');
+
 const bodyParser = require('body-parser')
 
 // configure express
@@ -7,16 +7,22 @@ const bodyParser = require('body-parser')
 const app = express();
 var jsonParser = bodyParser.json();
 
+// configure cohort
+var devices
+
 /*
  * HTTP connections
  */
 
 app.listen(3000, function(err){
 	if(err) {
-		throw err;
+		throw err
 	}
 
-	console.log('http server started on port 3000');
+	console.log('http server started on port 3000')
+
+	devices = []
+
 });
 
 app.get('/', function(request, response){
@@ -24,6 +30,22 @@ app.get('/', function(request, response){
 	response.write('Cohort rocks!');
 	response.send();
 });
+
+app.post('/devices/create', function(request, response){
+	let deviceCount = devices.length
+	let device = new CHDevice()
+	devices.push(device)
+	if(devices.length == deviceCount + 1){
+		response.status = 200
+		response.write(JSON.stringify({ guid: device.guid }))
+		response.send()
+		console.log("created device: " + device.guid)
+	} else {
+		response.status = 500
+		response.write("failed to add device to devices array")
+		response.send()
+	}
+})
 
 /*
  * WebSocket connections
@@ -91,21 +113,21 @@ wsServer.broadcast = function broadcast(message) {
 };
 
 wsServer.on('connection', function connection(socket) {
-	console.log("new client: " + wsServer.clients.size);
+	console.log("new client: " + wsServer.clients.size)
 	socket.on('message', function incoming(message) {
 		if(message == "confirm-receipt"){
-			actualConfirmations++;
+			actualConfirmations++
 		} else {
-			console.log('received: %s', message);
+			console.log('received: %s', message)
 		}
-	});
+	})
 
 	socket.on('close', function close(){
 		console.log("client closed, current clients: " + wsServer.clients.size);
-	});
+	})
 
-	socket.on('pong', keepalive);
-});
+	socket.on('pong', keepalive)
+})
 
 function checkConfirmations(response){
 	// console.log("expected confirmations: " + expectedConfirmations);
@@ -156,17 +178,42 @@ var options = {
 
 var apnProvider = new apn.Provider(options);
 
-app.post('/register-for-notifications', jsonParser, function(request, response){
+app.post('/device/register-for-notifications', jsonParser, function(request, response){
+	guid = request.body.guid
 	token = request.body.token
-	if(token){
-		registeredDeviceTokens.push(token)
-		response.sendStatus(200)
-		console.log("registered device for notifications: " + token)
+	if(token && guid){
+		// request is well-formed
+		var device = devices.filter((device) => {
+			return device.guid == guid
+		})
+		if(device.length < 1 || device == null){
+			response.statusCode = 400
+			response.write("Error: no device found with matching GUID: " + guid)
+			response.send()
+			console.log("Error: no device found with matching GUID: " + guid)
+		} else if(device.length > 1){
+			response.statusCode = 400
+			response.write("Error: non-unique GUID")
+			response.send()
+			console.log("Error: non-unique GUID")
+		} else {
+			// we found a single device with a matching GUID
+			device = device[0]
+			if(device.notifications.deviceToken == null){
+				device.notifications.deviceToken = token
+				response.sendStatus(200)
+				console.log("registered device for notifications: " + device.guid)
+			} else {
+				response.statusCode = 200
+				response.write("Warning: Device is already registered for notifications")
+				response.send()
+			}
+		}
 	} else {
-		response.writeHead(400)
-		response.write("Error: Request must include a 'token' object")
+		response.statusCode = 400
+		response.write("Error: Request must include 'token' and 'guid' objects")
 		response.send()
-		console.log("failed to register device for notifications, no token object in request")
+		console.log("Error: failed to register device for notifications, request missing token or guid")
 	}
 })
 
@@ -183,28 +230,63 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 		note.payload = { 'messageFrom': 'Cohort Server' }
 		note.topic = request.body.bundleId
 		
-		if(registeredDeviceTokens.length == 0) {
+		devices = devices.filter((device) => {
+			return device.notifications.deviceToken != null
+		})
+
+		if(devices.length == 0) {
 			response.statusCode = 200
-			response.write("Request OK but no devices are registered to receive notifications")
+			response.write("Warning: No devices are registered to receive notifications")
 			response.send()
-			console.log("broadcast attempted but no devices registered")
+			console.log("Error: broadcast attempted but no devices registered")
 			return
 		} 
 
-		registeredDeviceTokens.forEach((device) => {
-			apnProvider.send(note, device).then( (result) => {
-				if(result.sent[0].device === device && result.failed.length == 0) { 
-					response.statusCode = 200
-					response.write("Sent notification to " + registeredDeviceTokens.length + " devices")
-					response.send()
-					return
-				} else {
-					response.statusCode = 502
-					response.write("failed to send notification to device " + device)
-					response.write(JSON.stringify(result.failed))
-					response.send()
+		var results = Promise.all(
+			devices.map((device) => {
+				token = device.notifications.deviceToken
+				//return apnProvider.send(note, token)
+				return { 
+					sent: [ "yes" ], 
+					failed: []
 				}
 			})
+		).then((results) => {
+			console.log(results)
+			let failures = results.filter((result) => { 
+				return result.failed.length > 0			
+			})
+
+			if(failures.length == devices.length){
+				// total failure
+				response.statusCode = 502
+				response.write("")
+				response.write(JSON.stringify( { 
+					error: "Error: failed to send notification to any devices",
+					results: failures
+				}))
+				response.send()
+			} else if(failures.length > 0 && failures.length < devices.length){
+				// partial success 
+				// TODO manually test
+				response.statusCode = 200 // TODO should this really be 200?
+				response.write(JSON.stringify({
+					error: "Error: failed to send notification to " + failures.length + "/" + devices.length + " registered devices",
+					results: failures
+				}))
+				response.send()
+			}  else if(failures.length == 0){
+				// no failures...
+				// TODO manually test
+				let successes = results.filter((result) => { 
+					return result.sent.length > 0 
+				})
+				if (successes.length == devices.length){
+					// ... total success!
+					response.statusCode = 200
+					response.write("Sent notifications to " + successes.length + "/" + devices.length + " registered devices")
+				}
+			}
 		})
 	} else {
 		response.statusCode = 400
@@ -217,3 +299,54 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 		console.log("failed to send notification")
 	}
 })
+
+function CHParticipant() {
+	return {
+
+	}
+}
+function CHDevice() {
+	generatedGuid = Math.random()
+	
+	return {
+		participant: new CHParticipant(),
+		guid: generatedGuid,
+		socket: null,
+		notifications: {
+			deviceToken: null,
+			send: (notification, callback) => {
+				if(deviceToken != null){
+					// send notification
+				} else {
+					// throw error
+				}
+
+			}
+		},
+		posture: {
+			isAwake: false,
+		},
+		media: {
+			isPlaying:() => {
+				if(this.audio.isPlaying){
+					return { media: ["audio"], cue: self.audio.currentCueNumber, status: self.audio.isPlaying} 
+				} else {
+					return false
+				}
+			},
+			audio: {
+				isPlaying: false,
+				currentCueNumber: null,
+				play: (cueNumber) => {
+
+				}, 
+				stop: () => {
+
+				},
+				restart: () => {
+
+				}
+			}
+		}
+	}				
+}
