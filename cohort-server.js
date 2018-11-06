@@ -213,7 +213,7 @@ app.post('/device/register-for-notifications', jsonParser, function(request, res
 		response.statusCode = 400
 		response.write("Error: Request must include 'token' and 'guid' objects")
 		response.send()
-		console.log("Error: failed to register device for notifications, request missing token or guid")
+		console.log("Error: failed to register device for notifications, request missing token and/or guid")
 	}
 })
 
