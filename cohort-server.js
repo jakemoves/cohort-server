@@ -1,8 +1,11 @@
+// import dependencies
 const express = require('express');
 
 const bodyParser = require('body-parser')
 
 require('dotenv').config({path: __dirname + '/.env'})
+
+const uuid = require('uuid/v4')
 
 // configure express
 
@@ -309,7 +312,7 @@ function CHParticipant() {
 	}
 }
 function CHDevice() {
-	generatedGuid = "A" + Math.random()
+	generatedGuid = uuid()
 	
 	return {
 		participant: new CHParticipant(),
