@@ -309,7 +309,7 @@ function CHParticipant() {
 	}
 }
 function CHDevice() {
-	generatedGuid = Math.random()
+	generatedGuid = "A" + Math.random()
 	
 	return {
 		participant: new CHParticipant(),
