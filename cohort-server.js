@@ -2,6 +2,8 @@ const express = require('express');
 
 const bodyParser = require('body-parser')
 
+require('dotenv').config()
+
 // configure express
 
 const app = express();
@@ -170,7 +172,7 @@ var registeredDeviceTokens = []
 
 var options = {
 	token: {
-		key: "AuthKey_6TA7832PAJ.p8",
+		key: process.env.PATH_TO_APNS_KEY + "AuthKey_6TA7832PAJ.p8",
 		keyId: "6TA7832PAJ",
 		teamId: "J93D25NHHG"
 	}
