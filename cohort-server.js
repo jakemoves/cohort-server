@@ -22,6 +22,7 @@ app.listen(3000, function(err){
 	}
 
 	console.log('http server started on port 3000')
+	console.log('environment: ' + process.env.NODE_ENV)
 
 	devices = []
 
@@ -166,141 +167,141 @@ function keepalive(){
  * Apple Push Notifications 
  */
 
-const apn = require('apn')
+// const apn = require('apn')
 
-var registeredDeviceTokens = []
+// var registeredDeviceTokens = []
 
-var options = {
-	token: {
-		key: process.env.PATH_TO_APNS_KEY + "AuthKey_6TA7832PAJ.p8",
-		keyId: "6TA7832PAJ",
-		teamId: "J93D25NHHG"
-	}
-}
+// var options = {
+// 	token: {
+// 		key: process.env.PATH_TO_APNS_KEY + "AuthKey_6TA7832PAJ.p8",
+// 		keyId: "6TA7832PAJ",
+// 		teamId: "J93D25NHHG"
+// 	}
+// }
 
-var apnProvider = new apn.Provider(options);
+// var apnProvider = new apn.Provider(options);
 
-app.post('/device/register-for-notifications', jsonParser, function(request, response){
-	guid = request.body.guid
-	token = request.body.token
-	if(token && guid){
-		// request is well-formed
-		var device = devices.filter((device) => {
-			return device.guid == guid
-		})
-		if(device.length < 1 || device == null){
-			response.statusCode = 400
-			response.write("Error: no device found with matching GUID: " + guid)
-			response.send()
-			console.log("Error: no device found with matching GUID: " + guid)
-		} else if(device.length > 1){
-			response.statusCode = 400
-			response.write("Error: non-unique GUID")
-			response.send()
-			console.log("Error: non-unique GUID")
-		} else {
-			// we found a single device with a matching GUID
-			device = device[0]
-			if(device.notifications.deviceToken == null){
-				device.notifications.deviceToken = token
-				response.sendStatus(200)
-				console.log("registered device for notifications: " + device.guid)
-			} else {
-				response.statusCode = 200
-				response.write("Warning: Device is already registered for notifications")
-				response.send()
-			}
-		}
-	} else {
-		response.statusCode = 400
-		response.write("Error: Request must include 'token' and 'guid' objects")
-		response.send()
-		console.log("Error: failed to register device for notifications, request missing token and/or guid")
-	}
-})
+// app.post('/device/register-for-notifications', jsonParser, function(request, response){
+// 	guid = request.body.guid
+// 	token = request.body.token
+// 	if(token && guid){
+// 		// request is well-formed
+// 		var device = devices.filter((device) => {
+// 			return device.guid == guid
+// 		})
+// 		if(device.length < 1 || device == null){
+// 			response.statusCode = 400
+// 			response.write("Error: no device found with matching GUID: " + guid)
+// 			response.send()
+// 			console.log("Error: no device found with matching GUID: " + guid)
+// 		} else if(device.length > 1){
+// 			response.statusCode = 400
+// 			response.write("Error: non-unique GUID")
+// 			response.send()
+// 			console.log("Error: non-unique GUID")
+// 		} else {
+// 			// we found a single device with a matching GUID
+// 			device = device[0]
+// 			if(device.notifications.deviceToken == null){
+// 				device.notifications.deviceToken = token
+// 				response.sendStatus(200)
+// 				console.log("registered device for notifications: " + device.guid)
+// 			} else {
+// 				response.statusCode = 200
+// 				response.write("Warning: Device is already registered for notifications")
+// 				response.send()
+// 			}
+// 		}
+// 	} else {
+// 		response.statusCode = 400
+// 		response.write("Error: Request must include 'token' and 'guid' objects")
+// 		response.send()
+// 		console.log("Error: failed to register device for notifications, request missing token and/or guid")
+// 	}
+// })
 
-app.post('/broadcast-push-notification', jsonParser, function(request, response){
-	if(request.body != null &&
-		request.body.text != null && request.body.text != "" 
-		&& request.body.bundleId != null && request.body.bundleId != ""){
+// app.post('/broadcast-push-notification', jsonParser, function(request, response){
+// 	if(request.body != null &&
+// 		request.body.text != null && request.body.text != "" 
+// 		&& request.body.bundleId != null && request.body.bundleId != ""){
 
-		let note = new apn.Notification()
-		note.expiry = Math.floor(Date.now() / 1000) + 3600 // 1 hr
-		note.badge = 0
-		note.sound = "ping.aiff"
-		note.alert = request.body.text
-		note.payload = { 'messageFrom': 'Cohort Server' }
-		note.topic = request.body.bundleId
+// 		let note = new apn.Notification()
+// 		note.expiry = Math.floor(Date.now() / 1000) + 3600 // 1 hr
+// 		note.badge = 0
+// 		note.sound = "ping.aiff"
+// 		note.alert = request.body.text
+// 		note.payload = { 'messageFrom': 'Cohort Server' }
+// 		note.topic = request.body.bundleId
 		
-		devices = devices.filter((device) => {
-			return device.notifications.deviceToken != null
-		})
+// 		devices = devices.filter((device) => {
+// 			return device.notifications.deviceToken != null
+// 		})
 
-		if(devices.length == 0) {
-			response.statusCode = 200
-			response.write("Warning: No devices are registered to receive notifications")
-			response.send()
-			console.log("Error: broadcast attempted but no devices registered")
-			return
-		} 
+// 		if(devices.length == 0) {
+// 			response.statusCode = 200
+// 			response.write("Warning: No devices are registered to receive notifications")
+// 			response.send()
+// 			console.log("Error: broadcast attempted but no devices registered")
+// 			return
+// 		} 
 
-		var results = Promise.all(
-			devices.map((device) => {
-				token = device.notifications.deviceToken
-				//return apnProvider.send(note, token)
-				return { 
-					sent: [ "yes" ], 
-					failed: []
-				}
-			})
-		).then((results) => {
-			console.log(results)
-			let failures = results.filter((result) => { 
-				return result.failed.length > 0			
-			})
+// 		var results = Promise.all(
+// 			devices.map((device) => {
+// 				token = device.notifications.deviceToken
+// 				//return apnProvider.send(note, token)
+// 				return { 
+// 					sent: [ "yes" ], 
+// 					failed: []
+// 				}
+// 			})
+// 		).then((results) => {
+// 			console.log(results)
+// 			let failures = results.filter((result) => { 
+// 				return result.failed.length > 0			
+// 			})
 
-			if(failures.length == devices.length){
-				// total failure
-				response.statusCode = 502
-				response.write("")
-				response.write(JSON.stringify( { 
-					error: "Error: failed to send notification to any devices",
-					results: failures
-				}))
-				response.send()
-			} else if(failures.length > 0 && failures.length < devices.length){
-				// partial success 
-				// TODO manually test
-				response.statusCode = 200 // TODO should this really be 200?
-				response.write(JSON.stringify({
-					error: "Error: failed to send notification to " + failures.length + "/" + devices.length + " registered devices",
-					results: failures
-				}))
-				response.send()
-			}  else if(failures.length == 0){
-				// no failures...
-				// TODO manually test
-				let successes = results.filter((result) => { 
-					return result.sent.length > 0 
-				})
-				if (successes.length == devices.length){
-					// ... total success!
-					response.statusCode = 200
-					response.write("Sent notifications to " + successes.length + "/" + devices.length + " registered devices")
-				}
-			}
-		})
-	} else {
-		response.statusCode = 400
-		if(request.body.text == null || request.body.text == ""){
-			response.write("Error: request must include a 'text' object")
-		} else if(request.body.bundleId == null || request.body.bundleId == ""){
-			response.write("Error: request must include a 'bundleId' object, corresponding to the target app's bundle identifier")
-		}
-		response.send()
-		console.log("failed to send notification")
-	}
-})
+// 			if(failures.length == devices.length){
+// 				// total failure
+// 				response.statusCode = 502
+// 				response.write("")
+// 				response.write(JSON.stringify( { 
+// 					error: "Error: failed to send notification to any devices",
+// 					results: failures
+// 				}))
+// 				response.send()
+// 			} else if(failures.length > 0 && failures.length < devices.length){
+// 				// partial success 
+// 				// TODO manually test
+// 				response.statusCode = 200 // TODO should this really be 200?
+// 				response.write(JSON.stringify({
+// 					error: "Error: failed to send notification to " + failures.length + "/" + devices.length + " registered devices",
+// 					results: failures
+// 				}))
+// 				response.send()
+// 			}  else if(failures.length == 0){
+// 				// no failures...
+// 				// TODO manually test
+// 				let successes = results.filter((result) => { 
+// 					return result.sent.length > 0 
+// 				})
+// 				if (successes.length == devices.length){
+// 					// ... total success!
+// 					response.statusCode = 200
+// 					response.write("Sent notifications to " + successes.length + "/" + devices.length + " registered devices")
+// 				}
+// 			}
+// 		})
+// 	} else {
+// 		response.statusCode = 400
+// 		if(request.body.text == null || request.body.text == ""){
+// 			response.write("Error: request must include a 'text' object")
+// 		} else if(request.body.bundleId == null || request.body.bundleId == ""){
+// 			response.write("Error: request must include a 'bundleId' object, corresponding to the target app's bundle identifier")
+// 		}
+// 		response.send()
+// 		console.log("failed to send notification")
+// 	}
+// })
 
 function CHParticipant() {
 	return {
