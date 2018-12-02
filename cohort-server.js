@@ -251,11 +251,11 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 		var results = Promise.all(
 			devices.map((device) => {
 				token = device.notifications.deviceToken
-				//return apnProvider.send(note, token)
-				return { 
-					sent: [ "yes" ], 
-					failed: []
-				}
+				return apnProvider.send(note, token)
+				//return { 
+				//	sent: [ "yes" ], 
+				//	failed: []
+				//}
 			})
 		).then((results) => {
 			console.log(results)
