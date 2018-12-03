@@ -231,7 +231,11 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 		let note = new apn.Notification()
 		note.expiry = Math.floor(Date.now() / 1000) + 3600 // 1 hr
 		note.badge = 0
-		note.sound = "ping.aiff"
+		if(request.body.sound == null || request.body.sound == ""){
+			note.sound = "ping.aiff"
+		} else {
+			note.sound = request.body.sound
+		}
 		note.alert = request.body.text
 		note.payload = { 'messageFrom': 'Cohort Server' }
 		note.topic = request.body.bundleId
