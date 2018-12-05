@@ -234,10 +234,8 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 		if(request.body.sound == null || 
 			typeof(request.body.sound) == undefined ||
 			request.body.sound == ""){
-				console.log("default sound")
 			note.sound = "ping.aiff"
 		} else {
-			console.log("sound: " + request.body.sound)
 			note.sound = request.body.sound
 		}
 		note.alert = request.body.text
