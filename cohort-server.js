@@ -231,9 +231,13 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 		let note = new apn.Notification()
 		note.expiry = Math.floor(Date.now() / 1000) + 3600 // 1 hr
 		note.badge = 0
-		if(request.body.sound == null || request.body.sound == ""){
+		if(request.body.sound == null || 
+			typeof(request.body.sound) == undefined ||
+			request.body.sound == ""){
+				console.log("default sound")
 			note.sound = "ping.aiff"
 		} else {
+			console.log("sound: " + request.body.sound)
 			note.sound = request.body.sound
 		}
 		note.alert = request.body.text
