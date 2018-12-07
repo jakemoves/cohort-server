@@ -246,11 +246,13 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 			note.payload.mediaURL = request.body.mediaURL
 		}
 
+		if(request.body.cohortMessage) {
+			note.payload.cohortMessage = request.body.cohortMessage
+		}
+
 		note.body = request.body.text
 		note.payload.messageFrom = 'Cohort Server'
 		note.topic = request.body.bundleId
-
-		console.log(note)
 		
 		devices = devices.filter((device) => {
 			return device.notifications.deviceToken != null
