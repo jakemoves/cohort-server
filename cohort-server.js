@@ -227,10 +227,12 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 	if(request.body != null &&
 		request.body.text != null && request.body.text != "" 
 		&& request.body.bundleId != null && request.body.bundleId != ""){
-
+		
 		let note = new apn.Notification()
+		
 		note.expiry = Math.floor(Date.now() / 1000) + 3600 // 1 hr
 		note.badge = 0
+		
 		if(request.body.sound == null || 
 			typeof(request.body.sound) == undefined ||
 			request.body.sound == ""){
@@ -238,9 +240,17 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 		} else {
 			note.sound = request.body.sound
 		}
-		note.alert = request.body.text
-		note.payload = { 'messageFrom': 'Cohort Server' }
+
+		if(request.body.mediaURL) {
+			note.mutableContent = 1
+			note.payload.mediaURL = 'https://media.giphy.com/media/wHc92cHADhpLi/giphy.gif'
+		}
+
+		note.body = request.body.text
+		note.payload.messageFrom = 'Cohort Server'
 		note.topic = request.body.bundleId
+
+		console.log(note)
 		
 		devices = devices.filter((device) => {
 			return device.notifications.deviceToken != null
