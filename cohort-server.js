@@ -243,7 +243,7 @@ app.post('/broadcast-push-notification', jsonParser, function(request, response)
 
 		if(request.body.mediaURL) {
 			note.mutableContent = 1
-			note.payload.mediaURL = 'https://media.giphy.com/media/wHc92cHADhpLi/giphy.gif'
+			note.payload.mediaURL = request.body.mediaURL
 		}
 
 		note.body = request.body.text
