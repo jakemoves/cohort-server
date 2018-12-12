@@ -31,6 +31,8 @@ app.listen(3000, function(err){
 	})
 })
 
+module.exports = app
+
 /*
  * WebSocket connections
  */

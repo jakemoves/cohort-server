@@ -2,11 +2,16 @@
   "name": "cohort",
   "version": "2.0.0",
   "dependencies": {
+    "@babel/core": "^7.2.0",
+    "@babel/plugin-transform-async-to-generator": "^7.2.0",
     "apn": "^2.2.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
     "body-parser": "^1.18.3",
     "dotenv": "^6.1.0",
     "express": "^4.16.3",
     "jest": "^23.6.0",
+    "supertest": "^3.3.0",
     "uuid": "^3.3.2",
     "ws": "^6.0.0"
   }
