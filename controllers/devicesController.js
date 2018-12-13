@@ -8,13 +8,14 @@ exports.devices_create = (req, res) => {
   devices.push(device)
 
   res.status = 200
-  res.write(JSON.stringify({guid: device.guid}))
+  res.json({guid: device.guid})
   res.send()
 
   console.log("created device: " + device.guid)
 }
 
 exports.device_registerForNotifications = (req, res) => {
+  
   let devices = req.app.get('cohort').devices
 
   let guid = req.body.guid
@@ -31,10 +32,7 @@ exports.device_registerForNotifications = (req, res) => {
 			res.send()
 			console.log("Error: no device found with matching GUID: " + guid)
 		} else if(device.length > 1){
-			res.statusCode = 400
-			res.write("Error: non-unique GUID")
-			res.send()
-			console.log("Error: non-unique GUID")
+      // TODO avoid having duplicate GUIDs created in the first place (see above)
 		} else {
 			// we found a single device with a matching GUID
 			device = device[0]
@@ -43,7 +41,7 @@ exports.device_registerForNotifications = (req, res) => {
 				res.sendStatus(200)
 				console.log("registered device for notifications: " + device.guid)
 			} else {
-				res.statusCode = 200
+				res.statusCode = 400
 				res.write("Warning: Device is already registered for notifications")
 				res.send()
 			}
