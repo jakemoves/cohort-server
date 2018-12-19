@@ -22,17 +22,8 @@ const CHDevice = require('./models/CHDevice')
  * Apple Push Notifications 
  */
 
-const apn = require('apn')
-
-var options = {
-	token: {
-		key: process.env.PATH_TO_APNS_KEY + "AuthKey_6TA7832PAJ.p8",
-		keyId: "6TA7832PAJ",
-		teamId: "J93D25NHHG"
-	}
-}
-
-var apnProvider = new apn.Provider(options);
+const apnProvider = require('./cohort-apple-notifications')
+app.set('apnProvider', apnProvider)
 
 module.exports = app
 

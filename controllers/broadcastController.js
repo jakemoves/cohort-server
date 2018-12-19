@@ -45,17 +45,34 @@ exports.broadcast_pushNotification = (req, res) => {
 			return
 		} 
 
+		const apnProvider = req.app.get('apnProvider')
+
 		var results = Promise.all(
 			devices.map((device) => {
-				token = device.notifications.deviceToken
-				return apnProvider.send(note, token)
-				//return { 
-				//	sent: [ "yes" ], 
-				//	failed: []
-				//}
+				const token = device.notifications.deviceToken
+				if(process.env.NODE_ENV == "test"){
+					if(req.body.simulate != null && typeof req.body.simulate != undefined) {
+						switch(req.body.simulate){
+							case "failure":
+								break;
+							case "success":
+								return Promise.resolve({ sent: [token], failed: [] })
+								break;
+							case "partial success":
+								break;
+							default:
+							// TODO return a fail, need a simulate setting
+								break;
+						}
+					} else {
+						// TODO return a fail, need a simulate setting
+					}
+				} else {
+					return apnProvider.send(note, token)
+				}
 			})
 		).then((results) => {
-			console.log(results)
+
 			let failures = results.filter((result) => { 
 				return result.failed.length > 0			
 			})
@@ -63,20 +80,19 @@ exports.broadcast_pushNotification = (req, res) => {
 			if(failures.length == devices.length){
 				// total failure
 				res.statusCode = 502
-				res.write("")
-				res.write(JSON.stringify( { 
+				res.json({ 
 					error: "Error: failed to send notification to any devices",
 					results: failures
-				}))
+				})
 				res.send()
 			} else if(failures.length > 0 && failures.length < devices.length){
 				// partial success 
 				// TODO manually test
 				res.statusCode = 200 // TODO should this really be 200?
-				res.write(JSON.stringify({
+				res.json({
 					error: "Error: failed to send notification to " + failures.length + "/" + devices.length + " registered devices",
 					results: failures
-				}))
+				})
 				res.send()
 			}  else if(failures.length == 0){
 				// no failures...
@@ -88,6 +104,7 @@ exports.broadcast_pushNotification = (req, res) => {
 					// ... total success!
 					res.statusCode = 200
 					res.write("Sent notifications to " + successes.length + "/" + devices.length + " registered devices")
+					res.send()
 				}
 			}
 		})
