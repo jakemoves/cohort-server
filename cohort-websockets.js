@@ -19,4 +19,26 @@ module.exports = (options) => {
     console.log('created new device: ' + devices.length)
   })
 
+  webSocketServer.on('pong', keepalive)
+
+  function keepalive() {
+    console.log('received pong')
+    this.isAlive = true
+  }
+
+  // TODO Verify this actually works!!
+  const interval = setInterval(function ping(){
+    const devicesWithSockets = options.app.get('cohort').devices.filter((device) => {
+      return device.socket != null && typeof device.socket != undefined
+    })
+    console.log("sending keepalive to " + devicesWithSockets.length + " clients");
+    devicesWithSockets.forEach( (device) => {
+      if(device.socket.isAlive === false){
+        device.socket.terminate().then(device.socket = null)
+      } else {
+        device.socket.isAlive = false
+        device.socket.ping(noop)
+      }
+    })
+  }, 30000)
 }

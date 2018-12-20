@@ -20,7 +20,7 @@ router.post('/device/register-for-notifications', devicesController.device_regis
  *   broadcast
  */
 
-// router.post('/broadcast', broadcastController.broadcast)
+router.post('/broadcast', broadcastController.broadcast)
 
 router.post('/broadcast/push-notification', broadcastController.broadcast_pushNotification)
 

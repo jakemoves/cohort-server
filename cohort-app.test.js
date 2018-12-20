@@ -85,6 +85,31 @@ describe('Device routes', () => {
 })
 
 describe('Broadcast routes', () => {
+  test('broadcast (using websockets) : error: no devices', async () => {
+    const payload = { "cohortMessage": "test" }
+    const res = await request(app)
+      .post('/api/broadcast')
+      .send(payload)
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual("Error: No devices are connected, broadcast was not sent")
+  })
+  
+  test('broadcast (using websockets) : error: no connected devices', async () => {
+    // create a device
+    const res1 = await request(app).get('/api/devices/create')
+    expect(res1.status).toEqual(200)
+    expect(res1.body.guid).toHaveLength(36)
+    const guid = res1.body.guid
+
+    // send a message (but device never opened a socket!)
+    const payload = { "cohortMessage": "test" }
+    const res = await request(app)
+      .post('/api/broadcast')
+      .send(payload)
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual("Error: No devices are connected, broadcast was not sent")
+  })
+  
   test('broadcast/push-notification : happy path (one device)', async () => {
     // create a device
     const res1 = await request(app).get('/api/devices/create')
@@ -117,15 +142,11 @@ describe('Broadcast routes', () => {
 describe('WebSocket connections', () => {
   beforeAll( () => {
     webSocket = require('ws')
+    var server
   })
 
-  test('websocket: new connection', (done) => {
-    // TODO this does NOT test 'new device', only new connection, we need to try and match up with existing device
-    expect.assertions(2)
-
-    expect(app.get('cohort').devices).toHaveLength(0)
-
-    const server = app.listen(3000, function(err){
+  beforeEach( () => {
+    server = app.listen(3000, function(err){
       if(err) {
         throw err
       }
@@ -133,14 +154,23 @@ describe('WebSocket connections', () => {
       console.log('http server started on port 3000')
       console.log('environment: ' + process.env.NODE_ENV)
     })
+  })
 
+  afterEach( () => {
+    server.close()
+  })
 
+  test('websocket: new connection', (done) => {
+    // TODO this does NOT test 'new device', only new connection, we need to try and match up with existing device
+    expect.assertions(2)
+
+    expect(app.get('cohort').devices).toHaveLength(0)
+    
     const webSocketServer = require('./cohort-websockets')({
       app: app, 
       server: server,
       callback: () => {
         const wsClient = new webSocket('ws://localhost:3000')
-        console.log('socket client status: ' + wsClient.readyState)
         
         wsClient.addEventListener('open', (event) => {
           expect(app.get('cohort').devices).toHaveLength(1)
@@ -149,4 +179,57 @@ describe('WebSocket connections', () => {
       }
     })
   })
+
+  test('websocket: multiple connections', (done) => {
+    expect.assertions(3)
+
+    expect(app.get('cohort').devices).toHaveLength(0)
+    
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, 
+      server: server,
+      callback: () => {
+        let clients = []
+        let connectionOpenPromises = []
+        for(i = 0; i < 4; i++){
+          const wsClient = new webSocket('ws://localhost:3000')
+          let promise = new Promise( (resolve) => {
+            wsClient.addEventListener('open', (event) => {
+              resolve()
+            })
+          })
+          clients.push(wsClient)
+          connectionOpenPromises.push(promise)
+        }
+        
+        Promise.all(connectionOpenPromises).then(() => {
+          expect(app.get('cohort').devices).toHaveLength(4)
+          let connectedClients = clients.filter( (client) => {
+            return client.readyState == WebSocket.OPEN
+          })
+          expect(connectedClients).toHaveLength(4)
+          done()
+        })
+      }
+    })
+  })
+
+
+  // test('websocket: keepalive for one minute', (done) => {
+  //   const webSocketServer = require('./cohort-websockets')({
+  //     app: app, 
+  //     server: server,
+  //     callback: () => {
+  //       const wsClient = new webSocket('ws://localhost:3000')
+        
+  //       wsClient.addEventListener('open', (event) => {
+  //         expect(app.get('cohort').devices).toHaveLength(1)
+  //         setTimeout(() => {
+  //           expect(wsClient.readyState).toEqual(WebSocket.OPEN) // still open
+  //           done()
+  //         }, 60000)
+  //       })
+  //     }
+  //   })
+  // }, 70000)
 })

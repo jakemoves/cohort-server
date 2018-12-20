@@ -1,5 +1,64 @@
 const apn = require('apn')
 
+exports.broadcast = (req, res) => {
+	let devices = req.app.get('cohort').devices
+	if(devices.length < 1) {
+		sendNoDevicesError(res)
+		return
+	}
+	
+	let connectedDevices = devices
+		.filter( (device) => {
+			return device.socket != null && typeof device.socket != undefined
+		})
+		.map( device => { device.socket })
+
+	if(connectedDevices.length < 1){
+		sendNoDevicesError(res)
+		return
+	}
+
+	function sendNoDevicesError(res){
+		res.statusCode = 400
+		res.write('Error: No devices are connected, broadcast was not sent')
+		res.send()
+	}
+	
+	// per https://github.com/websockets/ws/issues/617#issuecomment-393396339
+	let data = Buffer.from(req.body.cohortMessage) // no binary
+	let frames = WebSocket.Sender.frame(data, {
+		fin: true,
+		rsv1: false,
+		opcode: 1,
+		mask: false,
+		readOnly: false
+	})
+
+	let sends = connectedClients.map( (socket) => {
+		// skip this client if it's not open
+		if(socket.readyState != WebSocket.OPEN) {
+			return Promise.resolve()
+		}
+
+		return new Promise( (fulfill, reject) => {
+			socket._sender.sendFrame(frames, (error) => {
+				if(error){
+					// catch async socket write errors
+					console.log(error)
+					return reject(error)
+				}
+				fulfill()
+			})
+		})
+	})
+
+	Promise.All(sends).then(() => {
+		res.statusCode = 200
+		res.write('Successfully broadcast to ' + connectedDevices.length + ' clients')
+		res.send()
+	})
+}
+
 exports.broadcast_pushNotification = (req, res) => {
 	let devices = req.app.get('cohort').devices
 
