@@ -8,6 +8,7 @@ beforeEach( () => {
 })
 
 afterEach( () => {
+  // per issue #12, we should actually tear down the app/server here
   app.set('cohort', { 
     devices: [] 
   })
@@ -110,5 +111,42 @@ describe('Broadcast routes', () => {
       .send(payload)
     expect(res.status).toEqual(200)
     expect(res.text).toEqual("Sent notifications to 1/1 registered devices")
+  })
+})
+
+describe('WebSocket connections', () => {
+  beforeAll( () => {
+    webSocket = require('ws')
+  })
+
+  test('websocket: new connection', (done) => {
+    // TODO this does NOT test 'new device', only new connection, we need to try and match up with existing device
+    expect.assertions(2)
+
+    expect(app.get('cohort').devices).toHaveLength(0)
+
+    const server = app.listen(3000, function(err){
+      if(err) {
+        throw err
+      }
+    
+      console.log('http server started on port 3000')
+      console.log('environment: ' + process.env.NODE_ENV)
+    })
+
+
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, 
+      server: server,
+      callback: () => {
+        const wsClient = new webSocket('ws://localhost:3000')
+        console.log('socket client status: ' + wsClient.readyState)
+        
+        wsClient.addEventListener('open', (event) => {
+          expect(app.get('cohort').devices).toHaveLength(1)
+          done()
+        })
+      }
+    })
   })
 })

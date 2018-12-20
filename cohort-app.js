@@ -25,11 +25,4 @@ const CHDevice = require('./models/CHDevice')
 const apnProvider = require('./cohort-apple-notifications')
 app.set('apnProvider', apnProvider)
 
-/*
- *   WebSocket connections
- */
-
- const webSocketServer = require('./cohort-websockets')
- app.set('webSocketServer', webSocketServer)
-
 module.exports = app
