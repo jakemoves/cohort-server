@@ -22,6 +22,10 @@ describe('Core routes', () => {
   })
 })
 
+/*
+ *    DEVICE ROUTES
+ */
+
 describe('Device routes', () => {
   test('devices/create', async () => {
     const res = await request(app).get('/api/devices/create')
@@ -84,14 +88,18 @@ describe('Device routes', () => {
   })
 })
 
+/*
+ *    BROADCAST ROUTES
+ */
+
 describe('Broadcast routes', () => {
   test('broadcast (using websockets) : error: no devices', async () => {
     const payload = { "cohortMessage": "test" }
     const res = await request(app)
       .post('/api/broadcast')
       .send(payload)
-    expect(res.status).toEqual(400)
-    expect(res.text).toEqual("Error: No devices are connected, broadcast was not sent")
+    expect(res.status).toEqual(200)
+    expect(res.text).toEqual("Warning: No devices are connected, broadcast was not sent")
   })
   
   test('broadcast (using websockets) : error: no connected devices', async () => {
@@ -106,8 +114,8 @@ describe('Broadcast routes', () => {
     const res = await request(app)
       .post('/api/broadcast')
       .send(payload)
-    expect(res.status).toEqual(400)
-    expect(res.text).toEqual("Error: No devices are connected, broadcast was not sent")
+    expect(res.status).toEqual(200)
+    expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
   })
   
   test('broadcast/push-notification : happy path (one device)', async () => {
@@ -160,7 +168,7 @@ describe('WebSocket connections', () => {
     server.close()
   })
 
-  test('websocket: new connection', (done) => {
+  test('websocket : new connection', (done) => {
     // TODO this does NOT test 'new device', only new connection, we need to try and match up with existing device
     expect.assertions(2)
 
@@ -180,7 +188,7 @@ describe('WebSocket connections', () => {
     })
   })
 
-  test('websocket: multiple connections', (done) => {
+  test('websocket : multiple connections', (done) => {
     expect.assertions(3)
 
     expect(app.get('cohort').devices).toHaveLength(0)
@@ -208,6 +216,32 @@ describe('WebSocket connections', () => {
             return client.readyState == WebSocket.OPEN
           })
           expect(connectedClients).toHaveLength(4)
+          done()
+        })
+      }
+    })
+  })
+
+  test('websocket : broadcast (happy path)', (done) => {
+    expect.assertions(3)
+    
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, 
+      server: server,
+      callback: () => {
+        const wsClient = new webSocket('ws://localhost:3000')
+        
+        wsClient.addEventListener('open', async (event) => {
+          expect(app.get('cohort').devices).toHaveLength(1)
+          
+          const payload = { "cohortMessage": "test" }
+          
+          const res = await request(app)
+            .post('/api/broadcast')
+            .send(payload)
+
+          expect(res.status).toEqual(200)
+          expect(res.text).toEqual('Successfully broadcast to 1 clients')
           done()
         })
       }

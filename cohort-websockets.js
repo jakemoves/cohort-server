@@ -37,7 +37,7 @@ module.exports = (options) => {
         device.socket.terminate().then(device.socket = null)
       } else {
         device.socket.isAlive = false
-        device.socket.ping(noop)
+        device.socket.ping(() => {}) // noop
       }
     })
   }, 30000)

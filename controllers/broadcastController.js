@@ -1,26 +1,33 @@
 const apn = require('apn')
+const WebSocket = require('ws')
 
 exports.broadcast = (req, res) => {
+
 	let devices = req.app.get('cohort').devices
 	if(devices.length < 1) {
-		sendNoDevicesError(res)
-		return
+		let error = "Warning: No devices are connected, broadcast was not sent"
+		sendNoDevicesError(res, error)
+		return 
 	}
-	
+
+	//  BROKAN HERE 
+	//  ||  ||  ||
+	//  \/  \/  \/
 	let connectedDevices = devices
 		.filter( (device) => {
-			return device.socket != null && typeof device.socket != undefined
+			return(device.socket != null && typeof device.socket != undefined)
 		})
-		.map( device => { device.socket })
+		.map( (device) => { device.socket })
 
 	if(connectedDevices.length < 1){
-		sendNoDevicesError(res)
+		let error = "Warning: No devices are connected via WebSockets, broadcast was not sent"
+		sendNoDevicesError(res, error)
 		return
 	}
 
-	function sendNoDevicesError(res){
-		res.statusCode = 400
-		res.write('Error: No devices are connected, broadcast was not sent')
+	function sendNoDevicesError(res, error){
+		res.statusCode = 200
+		res.write(error)
 		res.send()
 	}
 	
@@ -34,7 +41,8 @@ exports.broadcast = (req, res) => {
 		readOnly: false
 	})
 
-	let sends = connectedClients.map( (socket) => {
+	let sends = connectedDevices.map( (socket) => {
+
 		// skip this client if it's not open
 		if(socket.readyState != WebSocket.OPEN) {
 			return Promise.resolve()
@@ -52,7 +60,7 @@ exports.broadcast = (req, res) => {
 		})
 	})
 
-	Promise.All(sends).then(() => {
+	Promise.all(sends).then(() => {
 		res.statusCode = 200
 		res.write('Successfully broadcast to ' + connectedDevices.length + ' clients')
 		res.send()
