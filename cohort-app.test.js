@@ -223,7 +223,7 @@ describe('WebSocket connections', () => {
   })
 
   test('websocket : broadcast (happy path)', (done) => {
-    expect.assertions(3)
+    expect.assertions(4)
     
     const webSocketServer = require('./cohort-websockets')({
       app: app, 
@@ -231,6 +231,12 @@ describe('WebSocket connections', () => {
       callback: () => {
         const wsClient = new webSocket('ws://localhost:3000')
         
+        wsClient.addEventListener('message', (msg) => {
+          let message = JSON.parse(msg.data)
+          console.log(message)
+          expect(message).toEqual({ cohortMessage: "test" })
+        })
+
         wsClient.addEventListener('open', async (event) => {
           expect(app.get('cohort').devices).toHaveLength(1)
           
@@ -247,7 +253,6 @@ describe('WebSocket connections', () => {
       }
     })
   })
-
 
   // test('websocket: keepalive for one minute', (done) => {
   //   const webSocketServer = require('./cohort-websockets')({

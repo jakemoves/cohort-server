@@ -10,16 +10,15 @@ exports.broadcast = (req, res) => {
 		return 
 	}
 
-	//  BROKAN HERE 
-	//  ||  ||  ||
-	//  \/  \/  \/
-	let connectedDevices = devices
+	let connectedSockets = devices
 		.filter( (device) => {
 			return(device.socket != null && typeof device.socket != undefined)
 		})
-		.map( (device) => { device.socket })
-
-	if(connectedDevices.length < 1){
+		.map( (device) => { 
+			return device.socket 
+		})
+		
+	if(connectedSockets.length < 1){
 		let error = "Warning: No devices are connected via WebSockets, broadcast was not sent"
 		sendNoDevicesError(res, error)
 		return
@@ -32,7 +31,7 @@ exports.broadcast = (req, res) => {
 	}
 	
 	// per https://github.com/websockets/ws/issues/617#issuecomment-393396339
-	let data = Buffer.from(req.body.cohortMessage) // no binary
+	let data = Buffer.from(JSON.stringify(req.body)) // no binary
 	let frames = WebSocket.Sender.frame(data, {
 		fin: true,
 		rsv1: false,
@@ -41,7 +40,7 @@ exports.broadcast = (req, res) => {
 		readOnly: false
 	})
 
-	let sends = connectedDevices.map( (socket) => {
+	let sends = connectedSockets.map( (socket) => {
 
 		// skip this client if it's not open
 		if(socket.readyState != WebSocket.OPEN) {
@@ -62,7 +61,7 @@ exports.broadcast = (req, res) => {
 
 	Promise.all(sends).then(() => {
 		res.statusCode = 200
-		res.write('Successfully broadcast to ' + connectedDevices.length + ' clients')
+		res.write('Successfully broadcast to ' + connectedSockets.length + ' clients')
 		res.send()
 	})
 }

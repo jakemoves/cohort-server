@@ -12,6 +12,7 @@ module.exports = (options) => {
 
   webSocketServer.on('connection', function connection(socket) {
     console.log('websocket server: new connection')
+    socket.isAlive = true
     let device = new CHDevice()
     device.socket = socket
     let devices = options.app.get('cohort').devices
@@ -19,14 +20,15 @@ module.exports = (options) => {
     console.log('created new device: ' + devices.length)
   })
 
-  webSocketServer.on('pong', keepalive)
+  // TODO Verify this actually works!!
 
   function keepalive() {
     console.log('received pong')
     this.isAlive = true
   }
 
-  // TODO Verify this actually works!!
+  function noop() {}
+
   const interval = setInterval(function ping(){
     const devicesWithSockets = options.app.get('cohort').devices.filter((device) => {
       return device.socket != null && typeof device.socket != undefined
@@ -34,11 +36,21 @@ module.exports = (options) => {
     console.log("sending keepalive to " + devicesWithSockets.length + " clients");
     devicesWithSockets.forEach( (device) => {
       if(device.socket.isAlive === false){
-        device.socket.terminate().then(device.socket = null)
+        device.socket.terminate()
+        device.socket = null
       } else {
         device.socket.isAlive = false
-        device.socket.ping(() => {}) // noop
+        device.socket.ping(noop)
       }
     })
-  }, 30000)
+  }, 10000)
+
+  // NEVER HAPPENS
+  // ||  ||  ||
+  // \/  \/  \/
+  webSocketServer.on('pong', (socket) => {
+    console.log('received pong')
+    socket.isAlive = true
+  })
+
 }
