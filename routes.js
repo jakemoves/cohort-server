@@ -12,9 +12,9 @@ router.get('', (req, res) => {
  *   devices
  */ 
 
-router.get('/devices/create', devicesController.devices_create)
+router.post('/devices/create', devicesController.devices_create)
 
-router.post('/device/register-for-notifications', devicesController.device_registerForNotifications)
+router.post('/devices/register-for-notifications', devicesController.devices_registerForNotifications)
 
 /*
  *   broadcast

@@ -13,12 +13,38 @@ module.exports = (options) => {
   webSocketServer.on('connection', function connection(socket) {
     console.log('websocket server: new connection')
 
-    let device = new CHDevice()
+    socket.on('message', (message) => {
+      const msg = JSON.parse(message)
 
-    socket.isAlive = true
-    socket.on('pong', keepalive)
+      // initial message from device with its GUID
+      if(msg.guid != null && typeof msg.guid != undefined){
+        let matchingDevices = options.app.get('cohort').devices
+          .filter((device) => { 
+            return device.guid == msg.guid 
+          })
+
+        if(matchingDevices.length == 1){
+          let device = matchingDevices[0]
+
+          socket.isAlive = true
+          socket.on('pong', keepalive)
+   
+          device.socket = socket
+          console.log('opened socket for device: ' + msg.guid)
+        } else if (matchingDevices.length == 0 ){
+          console.log("Error: could not open WebSocket, device not found")
+          socket.close(4000, "Devices must be registered via HTTP before opening a WebSocket connection")
+        }else if (matchingDevices.length > 1 ){
+          console.log("Error: there are devices with identical GUIDs!")
+          socket.close(4001)
+        }
+      }
+    })
 
     socket.on('close', (code, reason) => {
+      const device = options.app.get('cohort').devices.filter( (device) => {
+        return device.socket === socket
+      })
       let message = 'closed socket for device ' + device.guid + ' with code ' + code
       if(reason != null){ message += ' | reason: ' + reason }
       console.log(message)
@@ -28,11 +54,6 @@ module.exports = (options) => {
     socket.on('error', (error) => {
       console.log('socket error for device ' + device.guid + ': ' + error)
     })
-    
-    device.socket = socket
-    let devices = options.app.get('cohort').devices
-    devices.push(device)
-    console.log('created new device: ' + devices.length)
   })
 
   const interval = setInterval(function ping(){

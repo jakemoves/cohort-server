@@ -3,18 +3,38 @@ const CHDevice = require('../models/CHDevice')
 exports.devices_create = (req, res) => {
   let devices = req.app.get('cohort').devices
 
-  // TODO: avoid creating duplicate device instances
-  let device = new CHDevice()
+	// request must include a device guid
+	if(req.body.guid == null || typeof req.body.guid == undefined){
+		res.status = 400
+		res.write('Error: request must include a device GUID')
+		res.send()
+		return
+	}
+
+	// no duplicate devices allowed
+	
+	let matchingDevices = devices.filter((device) => { 
+		return device.guid == req.body.guid 
+	})
+
+	if(matchingDevices.length > 0){
+		res.status = 400
+		res.write('Error: device ' + req.body.guid + ' already exists')
+		res.send()
+		return
+	}
+
+	// happy path
+	
+  let device = new CHDevice(req.body.guid)
   devices.push(device)
 
-  res.status = 200
-  res.json({guid: device.guid})
-  res.send()
+  res.sendStatus(200)
 
   console.log("created device: " + device.guid)
 }
 
-exports.device_registerForNotifications = (req, res) => {
+exports.devices_registerForNotifications = (req, res) => {
   
   let devices = req.app.get('cohort').devices
 

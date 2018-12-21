@@ -1,10 +1,8 @@
 const uuid = require('uuid/v4')
 
-CHDevice = function () {
-	generatedGuid = uuid()
-	
+CHDevice = function (guid) {
 	return {
-		guid: generatedGuid,
+		guid: guid,
 		socket: null,
 		notifications: {
 			deviceToken: null,

@@ -1,6 +1,7 @@
 const request = require('supertest')
 const express = require('express')
 const CHDevice = require('./models/CHDevice')
+const uuid = require('uuid/v4')
 var app
 
 beforeEach( () => {
@@ -22,57 +23,74 @@ describe('Core routes', () => {
   })
 })
 
+/* 
+ *    UTILITY METHODS
+ */
+
+beforeAll( () => {
+  createDevice = (guid) => {
+    if(guid == null || typeof guid == undefined){
+      const guid = uuid()
+    }
+    const payload = { guid: guid }
+    return request(app)
+      .post('/api/devices/create')
+      .send(payload)
+  }
+})
+
 /*
  *    DEVICE ROUTES
  */
 
 describe('Device routes', () => {
   test('devices/create', async () => {
-    const res = await request(app).get('/api/devices/create')
+    const res = await createDevice()
     expect(res.status).toEqual(200)
-    expect(res.body.guid).toHaveLength(36)
   })
 
   test('devices/registerForNotifications : happy path', async () => {
-    const interimResponse = await request(app).get('/api/devices/create')
-    
-    const payload = { guid: interimResponse.body.guid, token: 'abcde12345' }
+    const guid = uuid()
+    const interimResponse = await createDevice(guid)
+    const payload = { guid: guid, token: 'abcde12345' }
     
     const res = await request(app)
-      .post('/api/device/register-for-notifications')
+      .post('/api/devices/register-for-notifications')
       .send(payload)
     expect(res.status).toEqual(200)
   })
 
   test('devices/registerForNotifications : error: guid not found', async () => {
-    const payload = { guid: '012345678901234567890123456789012345', token: 'abcde12345' }
+    const guid = uuid()
+    const payload = { guid: guid, token: 'abcde12345' }
+
     const res = await request(app)
-      .post('/api/device/register-for-notifications')
+      .post('/api/devices/register-for-notifications')
       .send(payload)
     expect(res.status).toEqual(400)
     expect(res.text).toEqual("Error: no device found with matching GUID: " + payload.guid)
   })
 
   test('devices/registerForNotifications : error: device is already registered', async () => {
-    const interimRes = await request(app).get('/api/devices/create')
+    const guid = uuid()
+    const interimRes = await createDevice(guid)
     expect(interimRes.status).toEqual(200)
-    expect(interimRes.body.guid).toHaveLength(36)
-    const payload = { guid: interimRes.body.guid, token: 'abcde12345' }
+    const payload = { guid: guid, token: 'abcde12345' }
     const interimRes1 = await request(app)
-      .post('/api/device/register-for-notifications')
+      .post('/api/devices/register-for-notifications')
       .send(payload)
     expect(interimRes1.status).toEqual(200)
     const res = await request(app)
-      .post('/api/device/register-for-notifications')
+      .post('/api/devices/register-for-notifications')
       .send(payload)
     expect(res.status).toEqual(400)
-    expect(res.text).toEqual("Warning: Device with GUID " + payload.guid + " is already registered for notifications")
+    expect(res.text).toEqual("Warning: Device with GUID " + guid + " is already registered for notifications")
   })
   
   test('devices/registerForNotifications : error: missing token', async () => {
     const payload = { guid: '012345678901234567890123456789012345'}
     const res = await request(app)
-      .post('/api/device/register-for-notifications')
+      .post('/api/devices/register-for-notifications')
       .send(payload)
     expect(res.status).toEqual(400)
     expect(res.text).toEqual("Error: Request must include 'token' and 'guid' objects")
@@ -81,7 +99,7 @@ describe('Device routes', () => {
   test('devices/registerForNotifications : error: missing guid', async () => {
     const payload = { token: '12345'}
     const res = await request(app)
-      .post('/api/device/register-for-notifications')
+      .post('/api/devices/register-for-notifications')
       .send(payload)
     expect(res.status).toEqual(400)
     expect(res.text).toEqual("Error: Request must include 'token' and 'guid' objects")
@@ -104,9 +122,8 @@ describe('Broadcast routes', () => {
   
   test('broadcast (using websockets) : error: no connected devices', async () => {
     // create a device
-    const res1 = await request(app).get('/api/devices/create')
+    const res1 = await createDevice()
     expect(res1.status).toEqual(200)
-    expect(res1.body.guid).toHaveLength(36)
     const guid = res1.body.guid
 
     // send a message (but device never opened a socket!)
@@ -120,15 +137,14 @@ describe('Broadcast routes', () => {
   
   test('broadcast/push-notification : happy path (one device)', async () => {
     // create a device
-    const res1 = await request(app).get('/api/devices/create')
+    const res1 = await createDevice()
     expect(res1.status).toEqual(200)
-    expect(res1.body.guid).toHaveLength(36)
     const guid = res1.body.guid
 
     // register a device
     const payload2 = { token: '12345', guid: guid }
     const res2 = await request(app)
-      .post('/api/device/register-for-notifications')
+      .post('/api/devices/register-for-notifications')
       .send(payload2)
     expect(res2.status).toEqual(200)
 
