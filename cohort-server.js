@@ -20,8 +20,5 @@ const server = app.listen(3000, function(err){
 
 const webSocketServer = require('./cohort-websockets')({
 	app: app,
-	server: server,
-	callback: () => {}
+	server: server
 })
-
-// app.set('webSocketServer', webSocketServer)

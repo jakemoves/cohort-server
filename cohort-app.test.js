@@ -37,16 +37,22 @@ beforeAll( () => {
       .post('/api/devices/create')
       .send(payload)
   }
+
+  // openSocketForDevice(guid, callback) // callback style gets ugly, this should be better
 })
 
 /*
- *    DEVICE ROUTES
+ *    DEVICE & NOTIFICATION ROUTES
  */
 
 describe('Device routes', () => {
   test('devices/create', async () => {
     const res = await createDevice()
     expect(res.status).toEqual(200)
+  })
+
+  test('device: open websocket', () => {
+
   })
 
   test('devices/registerForNotifications : happy path', async () => {
@@ -122,9 +128,9 @@ describe('Broadcast routes', () => {
   
   test('broadcast (using websockets) : error: no connected devices', async () => {
     // create a device
-    const res1 = await createDevice()
+    const guid = uuid()
+    const res1 = await createDevice({ guid: guid })
     expect(res1.status).toEqual(200)
-    const guid = res1.body.guid
 
     // send a message (but device never opened a socket!)
     const payload = { "cohortMessage": "test" }
@@ -134,12 +140,14 @@ describe('Broadcast routes', () => {
     expect(res.status).toEqual(200)
     expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
   })
+
+  // test('broadcast (using websockets) : hapy path' is located in websocket section
   
   test('broadcast/push-notification : happy path (one device)', async () => {
     // create a device
-    const res1 = await createDevice()
+    const guid = uuid()
+    const res1 = await createDevice(guid)
     expect(res1.status).toEqual(200)
-    const guid = res1.body.guid
 
     // register a device
     const payload2 = { token: '12345', guid: guid }
@@ -184,24 +192,40 @@ describe('WebSocket connections', () => {
     server.close()
   })
 
-  test('websocket : new connection', (done) => {
-    // TODO this does NOT test 'new device', only new connection, we need to try and match up with existing device
-    expect.assertions(2)
+  test('websocket : new connection', async () => {
+    expect.assertions(4)
 
     expect(app.get('cohort').devices).toHaveLength(0)
-    
-    const webSocketServer = require('./cohort-websockets')({
-      app: app, 
-      server: server,
-      callback: () => {
-        const wsClient = new webSocket('ws://localhost:3000')
-        
-        wsClient.addEventListener('open', (event) => {
-          expect(app.get('cohort').devices).toHaveLength(1)
-          done()
-        })
-      }
+
+    const guid = uuid()
+
+    let device = new CHDevice(guid)
+    app.get('cohort').devices.push(device)
+    expect(app.get('cohort').devices).toHaveLength(1)
+
+    console.log("creating server")
+
+    const webSocketServer = await require('./cohort-websockets')({ 
+      app: app, server: server
     })
+
+    expect(webSocketServer).toBeDefined()
+
+    const wsClient = new webSocket('ws://localhost:3000')
+    
+    wsClient.addEventListener('open', (event) => {
+      wsClient.send(JSON.stringify({ guid: guid }))
+    })
+
+    const msg = await new Promise ( resolve => {
+      wsClient.addEventListener('message', (message) => {
+        const msg = JSON.parse(message.data)
+        console.log(msg)
+        resolve(msg)
+      })
+    })
+
+    expect(msg.result).toEqual("success")
   })
 
   test('websocket : multiple connections', (done) => {
