@@ -26,7 +26,12 @@ exports.devices_create = (req, res) => {
 
 	// happy path
 	
-  let device = new CHDevice(req.body.guid)
+	let device = new CHDevice(req.body.guid)
+	
+	if(req.body.isAdmin == true){
+		device.isAdmin = true
+	}
+
   devices.push(device)
 
   res.sendStatus(200)

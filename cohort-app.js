@@ -10,6 +10,7 @@ const jsonParser = bodyParser.json()
 const routes = require('./routes.js')
 app.use(bodyParser.json())
 app.use('/api', routes)
+app.use(express.static('public'))
 
 app.set("cohort", {
 	devices: []

@@ -16,7 +16,7 @@ module.exports = (options) => {
   
       socket.on('message', (message) => {
         const msg = JSON.parse(message)
-  
+        
         // initial message from device with its GUID
         if(msg.guid != null && typeof msg.guid != undefined){
           let matchingDevices = options.app.get('cohort').devices
@@ -58,8 +58,29 @@ module.exports = (options) => {
         console.log('socket error for device ' + device.guid + ': ' + error)
       })
     })
-  
-    const interval = setInterval(function ping(){
+    
+    // this should probably be triggered to happen by updates to cohort.devices, not on a timer
+    const deviceStatus = setInterval( () => {
+      let adminDevices = options.app.get('cohort').devices.filter( device => {
+        return device.isAdmin == true
+      }).map( device => device.socket )
+
+      const status = options.app.get('cohort').devices
+        .filter( device => device.isAdmin == false )
+        .map( device => {
+          return { 
+            guid: device.guid,
+            posture: device.posture
+          }
+        })
+
+      adminDevices.forEach( socket => {
+        socket.send(JSON.stringify({ status: status }))
+      })
+
+    }, 3000)
+
+    const keepaliveInterval = setInterval(function ping(){
   
       const connectedSockets = options.app.get('cohort').devices
         .filter((device) => {

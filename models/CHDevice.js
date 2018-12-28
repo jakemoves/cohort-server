@@ -2,6 +2,7 @@ const uuid = require('uuid/v4')
 
 CHDevice = function (guid) {
 	return {
+		isAdmin: false,
 		guid: guid,
 		socket: null,
 		notifications: {
