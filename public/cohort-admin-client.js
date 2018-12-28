@@ -2,6 +2,7 @@ let guid = 12345
 let req = new XMLHttpRequest()
 req.open('POST', 'http://localhost:3000/api/devices/create')
 req.setRequestHeader('Content-Type', 'application/json')
+
 req.onload = () => {
   console.log(req.responseText)
   switch(req.status){
@@ -22,7 +23,11 @@ req.onload = () => {
 
           let deviceList = ""
           let deviceListItems = msg.status.forEach( device => {
-            deviceList += "<li>#" + device.guid + "</li>"
+            let styleClass = ""
+            if(device.webSocketState != WebSocket.OPEN){
+              styleClass = ' class="not-connected"'
+            }
+            deviceList += "<li" + styleClass + ">#" + device.guid + "</li>"
           })
           document.getElementsByClassName('device-list').item(0).innerHTML = deviceList
         }

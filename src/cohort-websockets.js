@@ -68,10 +68,17 @@ module.exports = (options) => {
       const status = options.app.get('cohort').devices
         .filter( device => device.isAdmin == false )
         .map( device => {
-          return { 
-            guid: device.guid,
-            posture: device.posture
+          let deviceState = { 
+            guid: device.guid
           }
+          
+          if(device.socket != null && device.socket != undefined){
+            deviceState.webSocketState = device.socket.readyState
+          } else {
+            deviceState.webSocketState = null
+          }
+          
+          return deviceState
         })
 
       adminDevices.forEach( socket => {

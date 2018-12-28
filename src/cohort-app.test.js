@@ -228,39 +228,70 @@ describe('WebSocket connections', () => {
     expect(msg.result).toEqual("success")
   })
 
-  test('websocket : multiple connections', (done) => {
+  test('websocket : multiple connections', async () => {
     expect.assertions(3)
 
     expect(app.get('cohort').devices).toHaveLength(0)
     
-    const webSocketServer = require('./cohort-websockets')({
-      app: app, 
-      server: server,
-      callback: () => {
-        let clients = []
-        let connectionOpenPromises = []
-        for(i = 0; i < 4; i++){
-          const wsClient = new webSocket('ws://localhost:3000')
-          let promise = new Promise( (resolve) => {
-            wsClient.addEventListener('open', (event) => {
-              resolve()
-            })
-          })
-          clients.push(wsClient)
-          connectionOpenPromises.push(promise)
-        }
-        
-        Promise.all(connectionOpenPromises).then(() => {
-          expect(app.get('cohort').devices).toHaveLength(4)
-          let connectedClients = clients.filter( (client) => {
-            return client.readyState == WebSocket.OPEN
-          })
-          expect(connectedClients).toHaveLength(4)
-          done()
+    const webSocketServer = await require('./cohort-websockets')({ 
+      app: app, server: server
+    })
+
+    expect(webSocketServer).toBeDefined()
+
+    const guids = [ uuid(), uuid(), uuid(), uuid() ]
+
+    guids.map( guid => new CHDevice(guid) ).forEach( device => {
+      app.get('cohort').devices.push(device)
+    })
+  
+    expect(app.get('cohort').devices).toHaveLength(4)
+
+    let clients = []
+    let connectionStatuses = []
+
+    guids.forEach( guid => {
+      const wsClient = new WebSocket('ws://localhost:3000')
+      let isOpen = new Promise( resolve => {
+        wsClient.addEventListener('open', event => {
+          wsClient.send(JSON.stringify({ guid: guid }))
         })
-      }
+
+        // pick up here
+      })
+      clients.push(wsClient)
+      connectionStatuses.push(promise)
     })
   })
+
+
+    // const webSocketServer = require('./cohort-websockets')({
+    //   app: app, 
+    //   server: server,
+    //   callback: () => {
+    //     let clients = []
+    //     let connectionOpenPromises = []
+    //     for(i = 0; i < 4; i++){
+    //       const wsClient = new webSocket('ws://localhost:3000')
+    //       let promise = new Promise( (resolve) => {
+    //         wsClient.addEventListener('open', (event) => {
+    //           resolve()
+    //         })
+    //       })
+    //       clients.push(wsClient)
+    //       connectionOpenPromises.push(promise)
+    //     }
+        
+    //     Promise.all(connectionOpenPromises).then(() => {
+    //       expect(app.get('cohort').devices).toHaveLength(4)
+    //       let connectedClients = clients.filter( (client) => {
+    //         return client.readyState == WebSocket.OPEN
+    //       })
+    //       expect(connectedClients).toHaveLength(4)
+    //       done()
+    //     })
+    //   }
+    // })
 
   test('websocket : broadcast (happy path)', (done) => {
     expect.assertions(4)

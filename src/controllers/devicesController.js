@@ -61,8 +61,8 @@ exports.devices_registerForNotifications = (req, res) => {
 		} else {
 			// we found a single device with a matching GUID
 			device = device[0]
-			if(device.notifications.deviceToken == null){
-				device.notifications.deviceToken = token
+			if(device.apnsDeviceToken == null){
+				device.apnsDeviceToken = token
 				res.sendStatus(200)
 				console.log("registered device for notifications: " + device.guid)
 			} else {

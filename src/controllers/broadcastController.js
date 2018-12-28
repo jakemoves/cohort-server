@@ -100,7 +100,7 @@ exports.broadcast_pushNotification = (req, res) => {
 		note.topic = req.body.bundleId
 		
 		devices = devices.filter((device) => {
-			return device.notifications.deviceToken != null
+			return device.apnsDeviceToken != null
 		})
 
 		if(devices.length == 0) {
@@ -115,7 +115,7 @@ exports.broadcast_pushNotification = (req, res) => {
 
 		var results = Promise.all(
 			devices.map((device) => {
-				const token = device.notifications.deviceToken
+				const token = device.apnsDeviceToken
 				if(process.env.NODE_ENV == "test"){
 					if(req.body.simulate != null && typeof req.body.simulate != undefined) {
 						switch(req.body.simulate){
