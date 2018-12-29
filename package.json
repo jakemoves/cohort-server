@@ -9,10 +9,13 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
     "body-parser": "^1.18.3",
+    "bookshelf": "^0.14.2",
     "dotenv": "^6.1.0",
     "express": "^4.16.3",
     "jest": "^23.6.0",
+    "knex": "^0.13.0",
     "npx": "^10.2.0",
+    "pg": "^7.7.1",
     "supertest": "^3.3.0",
     "uuid": "^3.3.2",
     "ws": "^6.0.0"

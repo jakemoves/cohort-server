@@ -16,6 +16,12 @@ app.set("cohort", {
 	devices: []
 })
 
+/*
+ * Database 
+ */
+
+const bookshelf = require('./cohort-bookshelf')
+
 // configure cohort
 const CHDevice = require('./models/CHDevice')
 
