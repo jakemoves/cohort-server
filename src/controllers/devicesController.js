@@ -50,7 +50,7 @@ exports.devices_create = (req, res) => {
 		isAdmin: isAdmin })
 	.save()
 	.then( saved => {
-		console.log("created device: " + device.guid)
+		console.log("created device: " + req.body.guid)
 		console.log(saved)
 		res.sendStatus(200)
 	})

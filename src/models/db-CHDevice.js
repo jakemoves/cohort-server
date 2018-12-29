@@ -1,4 +1,4 @@
-const bookshelf = require('./bookshelf')
+const bookshelf = require('../cohort-bookshelf')
 
 const CHDevice_db = bookshelf.Model.extend({
   tableName: 'devices',
@@ -6,4 +6,4 @@ const CHDevice_db = bookshelf.Model.extend({
 
 })
 
-module.exports = bookshelf.Model('CHDevice', CHDevice_db)
+module.exports = bookshelf.model('CHDevice', CHDevice_db)
