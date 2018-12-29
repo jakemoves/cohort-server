@@ -6,4 +6,4 @@ const CHDevice_db = bookshelf.Model.extend({
 
 })
 
-module.exports = CHDevice_db
+module.exports = bookshelf.Model('CHDevice', CHDevice_db)
