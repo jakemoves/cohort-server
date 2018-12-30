@@ -2,7 +2,7 @@
 exports.up = function(knex, Promise) {
   return Promise.all([
     knex.schema.createTable('devices', (table) => {
-      table.increments()
+      table.increments('id').primary()
       table.string('guid').notNullable()
       table.string('apnsDeviceToken')
       table.boolean('isAdmin')
