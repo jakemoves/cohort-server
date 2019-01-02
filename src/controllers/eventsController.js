@@ -1,4 +1,6 @@
+const knex = require('../knex/knex.js')
 const eventsTable = require('../knex/queries/event-queries')
+const devicesTable = require('../knex/queries/device-queries')
 
 exports.events = (req, res) => {
   eventsTable.getAll()
@@ -54,4 +56,25 @@ exports.events_delete = (req, res) => {
   .catch( error => {
     res.status(500).write(error).send()
   })
+}
+
+exports.events_checkIn = (req, res) => {
+	if(req.body.guid != null && req.body.guid != undefined && req.body.guid != ""){
+    devicesTable.getOneByDeviceGUID(req.body.guid)
+    .then( device => {
+      const eventDeviceRelation = { 
+        event_id: req.params.id,
+        device_id: device.id
+      }
+      return knex('events_devices')
+      .insert(eventDeviceRelation)
+      .then( () => {
+        res.status(200).json(eventDeviceRelation)
+      })
+    })
+	} else {
+		res.status = 500
+    res.write('Error: request must include a device guid')
+    res.send()
+	}
 }

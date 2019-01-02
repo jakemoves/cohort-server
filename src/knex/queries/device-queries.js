@@ -14,6 +14,10 @@ getOneByID = (deviceId) => {
   return Devices().where('id', parseInt(deviceId)).first()
 }
 
+getOneByDeviceGUID = (deviceGUID) => {
+  return Devices().where('guid', deviceGUID).first()
+}
+
 addOne = (device) => {
   return Devices()
     .insert(device)
@@ -27,6 +31,7 @@ deleteOne = (device) => {
 module.exports = { 
   getAll: getAll,
   getOneByID: getOneByID,
+  getOneByDeviceGUID: getOneByDeviceGUID,
   addOne: addOne,
   deleteOne: deleteOne
 }

@@ -24,6 +24,10 @@ deleteOne = (eventId) => {
   return Events().where('id', parseInt(eventId)).del()
 }
 
+checkIn = (eventId, deviceId) => {
+
+}
+
 module.exports = { 
   getAll: getAll,
   getOneByID: getOneByID,
