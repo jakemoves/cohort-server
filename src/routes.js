@@ -16,6 +16,7 @@ router.get('', (req, res) => {
 router.get('/events', eventsController.events)
 router.get('/events/:id', eventsController.events_id)
 router.post('/events/create', eventsController.events_create)
+router.delete('/events/:id', eventsController.events_delete)
 
 /*
  *   devices

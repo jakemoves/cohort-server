@@ -20,8 +20,13 @@ addEvent = (event) => {
     .returning('id')
 }
 
+deleteEvent = (eventId) => {
+  return Events().where('id', parseInt(eventId)).del()
+}
+
 module.exports = { 
   getAllEvents: getAllEvents,
   getSingleEventByID: getSingleEventByID,
-  addEvent: addEvent
+  addEvent: addEvent,
+  deleteEvent: deleteEvent
 }

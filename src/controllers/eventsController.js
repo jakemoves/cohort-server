@@ -41,3 +41,19 @@ exports.events_create = (req, res) => {
     res.send()
   }
 }
+
+exports.events_delete = (req, res) => {
+  queries.getSingleEventByID(req.params.id)
+  .then( event => {
+    return queries.deleteEvent(req.params.id)
+    .then( () => {
+      res.status(200).json(event)
+    })
+    .catch( error => {
+      resolve(error)
+    })
+  })
+  .catch( error => {
+    res.status(500).write(error).send()
+  })
+}
