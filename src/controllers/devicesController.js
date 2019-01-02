@@ -1,7 +1,5 @@
 const CHDevice = require('../models/CHDevice')
 
-const CHDevice_db = require('../models/db-CHDevice')
-
 exports.devices_create = (req, res) => {
   let devices = req.app.get('cohort').devices
 
@@ -28,32 +26,18 @@ exports.devices_create = (req, res) => {
 
 	// happy path
 	
-	// let device = new CHDevice(req.body.guid)
+	let device = new CHDevice(req.body.guid)
 	
-	// if(req.body.isAdmin == true){
-	// 	device.isAdmin = true
-	// }
-
-	// devices.push(device)
-
-	// console.log("created device: " + device.guid)
-	
-	// res.sendStatus(200)
-	
-	let isAdmin = false
 	if(req.body.isAdmin == true){
 		device.isAdmin = true
 	}
 
-	new CHDevice_db({
-		guid: req.body.guid,
-		isAdmin: isAdmin })
-	.save()
-	.then( saved => {
-		console.log("created device: " + req.body.guid)
-		console.log(saved)
-		res.sendStatus(200)
-	})
+	devices.push(device)
+
+	console.log("created device: " + device.guid)
+	
+	res.sendStatus(200)
+	
 }
 
 exports.devices_registerForNotifications = (req, res) => {
