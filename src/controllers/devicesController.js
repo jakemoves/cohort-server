@@ -1,8 +1,16 @@
 const CHDevice = require('../models/CHDevice')
+const devicesTable = require('../knex/queries/device-queries')
 
 exports.devices = (req, res) => {
 	// returns from memory, not DB!
-	res.status(200).json(req.app.get('cohort').devices)
+	// res.status(200).json(req.app.get('cohort').devices)
+	devicesTable.getAll()
+	.then( devices => {
+		res.status(200).json(devices)
+	})
+	.catch( error => {
+		res.status(500).write(error).send()
+	})
 }
 
 exports.devices_create = (req, res) => {
@@ -32,17 +40,25 @@ exports.devices_create = (req, res) => {
 	// happy path
 	
 	let device = new CHDevice(req.body.guid)
-	
-	if(req.body.isAdmin == true){
-		device.isAdmin = true
+
+	if(req.body.isAdmin != null && typeof req.body.isAdmin != undefined){
+		device.isAdmin = req.body.isAdmin
 	}
 
 	devices.push(device)
 
 	console.log("created device: " + device.guid)
 	
-	res.sendStatus(200)
-	
+	// add device to DB
+	devicesTable.addOne({ 
+		guid: device.guid, isAdmin: device.isAdmin
+	})
+	.then( deviceIDs => {
+		return devicesTable.getOneByID(deviceIDs[0])
+		.then( device => {
+			res.status(200).json(device)
+		})
+	})
 }
 
 exports.devices_registerForNotifications = (req, res) => {

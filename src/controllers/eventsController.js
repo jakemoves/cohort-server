@@ -1,7 +1,7 @@
-const queries = require('../knex/queries/queries')
+const eventsTable = require('../knex/queries/event-queries')
 
 exports.events = (req, res) => {
-  queries.getAllEvents()
+  eventsTable.getAll()
   .then( events => {
     res.status(200).json(events)
   })
@@ -11,7 +11,7 @@ exports.events = (req, res) => {
 }
 
 exports.events_id = (req, res) => {
-  queries.getSingleEventByID(req.params.id)
+  eventsTable.getOneByID(req.params.id)
   .then( event => {
     res.status(200).json(event)
   })
@@ -23,13 +23,11 @@ exports.events_id = (req, res) => {
 exports.events_create = (req, res) => {
   if(req.body.label != null && typeof req.body.null != undefined && req.body.label != ""){
 
-    queries.addEvent(req.body)
-    .then( eventID => {
-      return queries.getSingleEventByID(eventID[0])
+    eventsTable.addOne(req.body)
+    .then( eventIDs => {
+      return eventsTable.getOneByID(eventIDs[0])
       .then( event => {
-        res
-          .status(200)
-          .json(event)
+        res.status(200).json(event)
       })
     })
     .catch( error => {
@@ -43,9 +41,9 @@ exports.events_create = (req, res) => {
 }
 
 exports.events_delete = (req, res) => {
-  queries.getSingleEventByID(req.params.id)
+  eventsTable.getOneByID(req.params.id)
   .then( event => {
-    return queries.deleteEvent(req.params.id)
+    return eventsTable.deleteOne(req.params.id)
     .then( () => {
       res.status(200).json(event)
     })

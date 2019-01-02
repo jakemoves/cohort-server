@@ -6,27 +6,27 @@ Events = () => {
 
 // queries
 
-getAllEvents = () => {
+getAll = () => {
   return Events().select()
 }
 
-getSingleEventByID = (eventId) => {
+getOneByID = (eventId) => {
   return Events().where('id', parseInt(eventId)).first()
 }
 
-addEvent = (event) => {
+addOne = (event) => {
   return Events()
     .insert(event)
     .returning('id')
 }
 
-deleteEvent = (eventId) => {
+deleteOne = (eventId) => {
   return Events().where('id', parseInt(eventId)).del()
 }
 
 module.exports = { 
-  getAllEvents: getAllEvents,
-  getSingleEventByID: getSingleEventByID,
-  addEvent: addEvent,
-  deleteEvent: deleteEvent
+  getAll: getAll,
+  getOneByID: getOneByID,
+  addOne: addOne,
+  deleteOne: deleteOne
 }
