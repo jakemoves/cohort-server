@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
+const eventsController = require('./controllers/eventsController')
 const devicesController = require('./controllers/devicesController')
 const broadcastController = require('./controllers/broadcastController')
 
@@ -8,13 +9,23 @@ router.get('', (req, res) => {
   res.send('Cohort rocks')
 })
 
+/* 
+ *   events
+ */
+
+router.get('/events', eventsController.events)
+
+
 /*
  *   devices
  */ 
 
+router.get('/devices', devicesController.devices)
+
 router.post('/devices/create', devicesController.devices_create)
 
 router.post('/devices/register-for-notifications', devicesController.devices_registerForNotifications)
+
 
 /*
  *   broadcast

@@ -2,7 +2,9 @@ const request = require('supertest')
 const express = require('express')
 const CHDevice = require('./models/CHDevice')
 const uuid = require('uuid/v4')
+
 var app
+process.env.NODE_ENV = 'test'
 
 beforeEach( () => {
   app = require('./cohort-app')  
@@ -40,6 +42,24 @@ beforeAll( () => {
 
   // openSocketForDevice(guid, callback) // callback style gets ugly, this should be better
 })
+
+/*
+ *    EVENT ROUTES
+ */
+
+ describe('Event routes', () => {
+  test('GET events', async () => {
+    const res = await request(app).get('/api/events')
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(2)
+
+    expect(res.body[0]).toHaveProperty('label')
+    expect(res.body[0].label).toEqual('pimohtēwak')
+
+    expect(res.body[1]).toHaveProperty('label')
+    expect(res.body[1].label).toEqual('lot_x')
+  })
+ })
 
 /*
  *    DEVICE & NOTIFICATION ROUTES

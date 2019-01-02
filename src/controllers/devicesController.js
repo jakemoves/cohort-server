@@ -1,5 +1,10 @@
 const CHDevice = require('../models/CHDevice')
 
+exports.devices = (req, res) => {
+	// returns from memory, not DB!
+	res.status(200).json(req.app.get('cohort').devices)
+}
+
 exports.devices_create = (req, res) => {
   let devices = req.app.get('cohort').devices
 

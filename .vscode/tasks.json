@@ -4,7 +4,7 @@
     {
       "label": "watch",
       "command": "${workspaceFolder}/node_modules/.bin/babel",
-      "args": ["src", "--out-dir", "lib", "-w", "--source-maps"],
+      "args": ["src", "--out-dir", "lib", "-w", "--source-maps", "--ignore", "src/cohort-app.test.js"],
       "type": "shell",
       "group": { "kind": "build", "isDefault": true },
       "isBackground": true
