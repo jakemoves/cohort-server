@@ -2,6 +2,7 @@ const request = require('supertest')
 const express = require('express')
 const CHDevice = require('./models/CHDevice')
 const uuid = require('uuid/v4')
+const knex = require('./knex/knex')
 
 var app
 process.env.NODE_ENV = 'test'
@@ -48,6 +49,16 @@ beforeAll( () => {
  */
 
  describe('Event routes', () => {
+  beforeEach( async () => {
+    await knex.migrate.rollback()
+    await knex.migrate.latest()
+    await knex.seed.run()
+  })
+
+  afterEach( async () => {
+    await knex.migrate.rollback()
+  })
+
   test('GET events', async () => {
     const res = await request(app).get('/api/events')
     expect(res.status).toEqual(200)
@@ -58,6 +69,17 @@ beforeAll( () => {
 
     expect(res.body[1]).toHaveProperty('label')
     expect(res.body[1].label).toEqual('lot_x')
+  })
+
+  test('GET events/:id', async () => {
+    const res = await request(app).get('/api/events/1')
+    expect(res.status).toEqual(200)
+
+    expect(res.body).toHaveProperty('id')
+    expect(res.body.id).toEqual(1)
+    expect(res.body).toHaveProperty('label')
+    expect(res.body.label).toEqual('pimohtēwak')
+
   })
  })
 

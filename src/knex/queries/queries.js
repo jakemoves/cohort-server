@@ -1,24 +1,27 @@
 const knex = require('../knex.js')
 
-Devices = () => {
-  return knex('devices')
-}
-
 Events = () => {
   return knex('events')
 }
 
 // queries
 
-getAllDevices = () => {
-  return Devices().select()
-}
-
 getAllEvents = () => {
   return Events().select()
 }
 
+getSingleEventByID = (eventId) => {
+  return Events().where('id', parseInt(eventId)).first()
+}
+
+addEvent = (event) => {
+  return Events()
+    .insert(event)
+    .returning('id')
+}
+
 module.exports = { 
-  getAllDevices: getAllDevices,
-  getAllEvents: getAllEvents
+  getAllEvents: getAllEvents,
+  getSingleEventByID: getSingleEventByID,
+  addEvent: addEvent
 }
