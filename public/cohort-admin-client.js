@@ -46,4 +46,5 @@ req.onload = () => {
   }
 }
 
+// this should happen over HTTP, derp
 req.send(JSON.stringify( { guid: guid, isAdmin: true }))

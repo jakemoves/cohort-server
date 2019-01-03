@@ -104,3 +104,18 @@ exports.events_open = (req, res) => {
     res.send()
   })
 }
+
+exports.events_close = (req, res) => {
+  req.app.get('cohort').devices.forEach( device => {
+    device.socket.close(4002, "Event is over")
+  })
+  req.app.get('cohort').devices = []
+  res.sendStatus(200)
+}
+
+exports.events_devices = (req, res) => {
+  eventsTable.getDevicesForEvent(req.params.id)
+  .then( result => {
+    res.status(200).json(result)
+  })
+}

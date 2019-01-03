@@ -19,7 +19,9 @@ router.post('/events/create', eventsController.events_create)
 router.delete('/events/:id', eventsController.events_delete)
 
 router.patch('/events/:id/check-in', eventsController.events_checkIn)
+router.get('/events/:id/devices', eventsController.events_devices)
 router.patch('/events/:id/open', eventsController.events_open)
+router.patch('/events/:id/close', eventsController.events_close)
 
 /*
  *   devices
