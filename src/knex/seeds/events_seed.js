@@ -7,7 +7,6 @@ exports.seed = function(knex, Promise) {
       return knex('events').insert([
         {label: 'pimohtēwak'},
         {label: 'lot_x'}
-
       ]);
     });
 };

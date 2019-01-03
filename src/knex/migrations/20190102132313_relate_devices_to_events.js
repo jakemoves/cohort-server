@@ -1,9 +1,15 @@
 
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('events_devices', table => {
-    table.increments('id').primary()
-    table.integer('event_id').references('events.id')
-    table.integer('device_id').references('devices.id')
+    table.increments('id').primary().notNullable()
+    table.integer('event_id')
+      .references('events.id')
+      .notNullable()
+      .onDelete('CASCADE')
+    table.integer('device_id')
+      .references('devices.id')
+      .notNullable()
+      .onDelete('CASCADE')
   })
 }
 
