@@ -39,7 +39,7 @@ module.exports = {
       host : 'process.env.DATABASE_URL',
       user : 'cohort_admin',
       password : 'changethislater',
-      database : 'cohort_test',
+      database : 'cohort',
       charset: 'utf8'
     },
     pool: {

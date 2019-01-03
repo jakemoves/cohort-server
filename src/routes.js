@@ -29,7 +29,7 @@ router.patch('/events/:id/close', eventsController.events_close)
 
 router.get('/devices', devicesController.devices)
 
-router.post('/devices/create', devicesController.devices_create)
+router.post('/devices', devicesController.devices_create)
 
 router.post('/devices/register-for-notifications', devicesController.devices_registerForNotifications)
 

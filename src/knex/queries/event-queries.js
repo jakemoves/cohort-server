@@ -12,7 +12,14 @@ getAll = () => {
 }
 
 getOneByID = (eventId) => {
-  return Events().where('id', parseInt(eventId)).first()
+  return Events().where('id', parseInt(eventId))
+    .then( event => {
+      if(event.length == 1){
+        return event[0]
+      } else {
+        throw new Error()
+      }
+    })
 }
 
 addOne = (event) => {

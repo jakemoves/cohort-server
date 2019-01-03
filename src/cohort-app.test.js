@@ -5,6 +5,7 @@ const uuid = require('uuid/v4')
 const knex = require('./knex/knex')
 
 var app
+process.env.NODE_ENV = 'test'
 
 beforeEach( () => {
   app = require('./cohort-app')  
@@ -36,7 +37,7 @@ beforeAll( () => {
     }
     const payload = { guid: guid }
     return request(app)
-      .post('/api/devices/create')
+      .post('/api/devices')
       .send(payload)
   }
 
@@ -80,6 +81,13 @@ beforeAll( () => {
     expect(res.body.label).toEqual('pimohtēwak')
   })
 
+  test('GET events/:id : error: event not found', async () => {
+    const res = await request(app).get('/api/events/3')
+    expect(res.status).toEqual(404)
+
+    expect(res.text).toEqual("Error: event with id:3 not found")
+  })
+
   // happy path
   test('PATCH events/:id/check-in', async () => {
     const res = await request(app)
@@ -93,13 +101,32 @@ beforeAll( () => {
     })
   })
 
-  test('PATCH events/:id/check-in : error: no GUID sent', async () => {
+  test('PATCH events/:id/check-in : error: device guid not found', async () => {
+    const guid = "bar"
     const res = await request(app)
       .patch('/api/events/1/check-in')
-      .send({})
+      .send({ guid: guid })
+
+    expect(res.status).toEqual(500)
+    expect(res.text).toEqual("Error: device with guid: " + guid + " does not exist")
+  })  
+  
+  test('PATCH events/:id/check-in : error: no guid included in request', async () => {
+    const res = await request(app)
+      .patch('/api/events/1/check-in')
+      .send({ foo: "bar" })
 
     expect(res.status).toEqual(500)
     expect(res.text).toEqual("Error: request must include a device guid")
+  })
+
+  test('PATCH events/:id/check-in : error: invalid event id', async () => {
+    const res = await request(app)
+      .patch('/api/events/3/check-in')
+      .send({ guid: "1234567" })
+
+    expect(res.status).toEqual(404)
+    expect(res.text).toEqual("Error: no event found with id:3")
   })
 
   test('DELETE event/:id', async () => {
@@ -114,6 +141,12 @@ beforeAll( () => {
 
     expect(res2.status).toEqual(200)
     expect(res2.body.id).toEqual(1)
+
+    const res3 = await request(app)
+      .get('/api/events/1')
+
+    expect(res3.status).toEqual(404)
+
   })
 })
 
@@ -122,15 +155,27 @@ beforeAll( () => {
  *    DEVICE & NOTIFICATION ROUTES
  */
 
-// describe('Device routes', () => {
-//   test('devices/create', async () => {
-//     const res = await createDevice()
-//     expect(res.status).toEqual(200)
-//   })
+describe('Device routes', () => {
+  beforeEach( async () => {
+    await knex.migrate.rollback()
+    await knex.migrate.latest()
+    await knex.seed.run()
+  })
 
-//   test('device: open websocket', () => {
+  afterEach( async () => {
+    await knex.migrate.rollback()
+  })
 
-//   })
+  test('devices/create', async () => {
+    const res = await createDevice(12345678)
+
+    expect(res.status).toEqual(200)
+    expect(res.body.guid).toEqual("12345678")
+  })
+
+  // test('device: open websocket', () => {
+
+  // })
 
 //   test('devices/registerForNotifications : happy path', async () => {
 //     const guid = uuid()
@@ -187,7 +232,7 @@ beforeAll( () => {
 //     expect(res.status).toEqual(400)
 //     expect(res.text).toEqual("Error: Request must include 'token' and 'guid' objects")
 //   })
-// })
+})
 
 // /*
 //  *    BROADCAST ROUTES

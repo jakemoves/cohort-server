@@ -8,7 +8,7 @@ exports.events = (req, res) => {
     res.status(200).json(events)
   })
   .catch( error => {
-    res.status = 500
+    res.status(500)
     res.write(error)
     res.send()
   })
@@ -20,8 +20,8 @@ exports.events_id = (req, res) => {
     res.status(200).json(event)
   })
   .catch( error => {
-    res.status = 500
-    res.write(error)
+    res.status(404)
+    res.write("Error: event with id:" + req.params.id + " not found")
     res.send()
   })
 }
@@ -37,12 +37,12 @@ exports.events_create = (req, res) => {
       })
     })
     .catch( error => {
-      res.status = 500
+      res.status(500)
       res.write(error)
       res.send()
     })
   } else {
-    res.status = 500
+    res.status(500)
     res.write("Error: request must include an event label (e.g., title of a show)")
     res.send()
   }
@@ -60,7 +60,7 @@ exports.events_delete = (req, res) => {
     })
   })
   .catch( error => {
-    res.status = 500
+    res.status(500)
     res.write(error)
     res.send()
   })
@@ -80,16 +80,18 @@ exports.events_checkIn = (req, res) => {
         res.status(200).json(eventDeviceRelation)
       })
       .catch( error => {
-        throw new Error(error)
+        res.status(404)
+        res.write("Error: no event found with id:" + req.params.id)
+        res.send()
       })
     })
     .catch( error => {
-      res.status = 500
-      res.write("Error: event with id: " + req.params.id + " does not exist")
+      res.status(500)
+      res.write("Error: device with guid: " + req.body.guid + " does not exist")
       res.send()
     })
 	} else {
-    res.status = 500
+    res.status(500)
     res.write('Error: request must include a device guid')
     res.send()
 	}
@@ -99,7 +101,7 @@ exports.events_open = (req, res) => {
   eventsTable.getDevicesForEvent(req.params.id)
   .then( result => {
     req.app.get('cohort').devices = result
-    res.status = 200
+    res.status(200)
     res.write('Opened event id:' + req.params.id + ' with ' + req.app.get('cohort').devices.length + ' devices checked in')
     res.send()
   })
