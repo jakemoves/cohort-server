@@ -20,27 +20,34 @@
     <title>Cohort Admin</title>
   </head>
   <body>
-    <header class="container">
-      <div class="row">
-          <h1>Cohort Admin</h1>
-      </div>
-    </header>
-
-    <div class="container">
-      <div class="row">
-        <div class="col-sm">
-          <p class="strong">Connected devices: <span class="connected-devices"></span></p>
+    <div id="cohort-admin">
+      <header class="container">
+        <div class="row">
+          <div class="col-sm">
+            <h1>Cohort Admin</h1>
+            <h2>Event: {{ event }}</h2>
+          </div>
         </div>
+      </header>
 
-        <div class="col-sm">
-          <ul class="device-list">
+      <section class="container">
+        <div class="row">
+          <div class="col-sm">
+            <p class="strong">Checked-in devices: {{ devices.length }}</p>
+          </div>
 
-          </ul>
+          <div class="col-sm">
+            <ul id="device-list">
+              <!-- <li v-for="device in devices">
+                {{ device.guid }}
+              </li> -->
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-
-    <script src="cohort-admin-client.js"></script>
+    </div> 
+    <script src="js/vue.js"></script>
+    <script src="js/cohort-admin-client.js"></script>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

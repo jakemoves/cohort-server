@@ -2,6 +2,7 @@
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('events_devices', table => {
     table.increments('id').primary().notNullable()
+    table.unique(['event_id', 'device_id'])
     table.integer('event_id')
       .references('events.id')
       .notNullable()

@@ -80,8 +80,15 @@ exports.events_checkIn = (req, res) => {
         res.status(200).json(eventDeviceRelation)
       })
       .catch( error => {
-        res.status(404)
-        res.write("Error: no event found with id:" + req.params.id)
+        let errorExplanation
+        if(error.code == '23505'){
+          res.status(400)
+          errorExplanation = 'Error: device is already checked in'
+        } else if(error.code == '23503'){
+          res.status(404)
+          errorExplanation = "Error: no event found with id:" + req.params.id
+        }
+        res.write(errorExplanation)
         res.send()
       })
     })
@@ -109,7 +116,9 @@ exports.events_open = (req, res) => {
 
 exports.events_close = (req, res) => {
   req.app.get('cohort').devices.forEach( device => {
-    device.socket.close(4002, "Event is over")
+    if(device.socket != null && typeof device.socket != undefined){
+      device.socket.close(4002, "Event is over")
+    }
   })
   req.app.get('cohort').devices = []
   res.sendStatus(200)
