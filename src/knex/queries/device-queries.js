@@ -11,7 +11,14 @@ getAll = () => {
 }
 
 getOneByID = (deviceId) => {
-  return Devices().where('id', parseInt(deviceId)).first()
+  return Devices().where('id', parseInt(deviceId))
+  .then( device => {
+    if(device.length == 1){
+      return device[0]
+    } else {
+      throw new Error()
+    }
+  })
 }
 
 getOneByDeviceGUID = (deviceGUID) => {

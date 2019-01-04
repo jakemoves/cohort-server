@@ -166,132 +166,172 @@ describe('Device routes', () => {
     await knex.migrate.rollback()
   })
 
-  test('devices/create', async () => {
+  test('GET devices', async () => {
+    const res = await request(app).get('/api/devices')
+
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(2)
+  })
+
+  test('GET devices/:id', async () => {
+    const res = await request(app).get('/api/devices/1')
+
+    expect(res.status).toEqual(200)
+    expect(res.body.guid).toEqual('1234567')
+  })
+
+  test('GET devices/:id : error: device not found', async () => {
+    const res = await request(app).get('/api/devices/3')
+
+    expect(res.status).toEqual(404)
+    expect(res.text).toEqual('Error: no device found with id:3')
+  })
+
+  test('POST devices', async () => {
     const res = await createDevice(12345678)
 
     expect(res.status).toEqual(200)
-    expect(res.body.guid).toEqual("12345678")
+    expect(res.body.guid).toEqual('12345678')
+
+
+    const res1 = await request(app)
+      .get('/api/devices/' + res.body.id)
+
+    expect(res1.status).toEqual(200)
+    expect(res1.body.guid).toEqual('12345678')
+    
   })
 
   // test('device: open websocket', () => {
 
   // })
 
-//   test('devices/registerForNotifications : happy path', async () => {
-//     const guid = uuid()
-//     const interimResponse = await createDevice(guid)
-//     const payload = { guid: guid, token: 'abcde12345' }
+  test('devices/registerForNotifications : happy path', async () => {
+    const guid = uuid()
+    const interimResponse = await createDevice(guid)
+    const payload = { guid: guid, token: 'abcde12345' }
     
-//     const res = await request(app)
-//       .post('/api/devices/register-for-notifications')
-//       .send(payload)
-//     expect(res.status).toEqual(200)
-//   })
+    const res = await request(app)
+      .post('/api/devices/register-for-notifications')
+      .send(payload)
+    expect(res.status).toEqual(200)
+  })
 
-//   test('devices/registerForNotifications : error: guid not found', async () => {
-//     const guid = uuid()
-//     const payload = { guid: guid, token: 'abcde12345' }
+  test('devices/registerForNotifications : error: guid not found', async () => {
+    const guid = uuid()
+    const payload = { guid: guid, token: 'abcde12345' }
 
-//     const res = await request(app)
-//       .post('/api/devices/register-for-notifications')
-//       .send(payload)
-//     expect(res.status).toEqual(400)
-//     expect(res.text).toEqual("Error: no device found with matching GUID: " + payload.guid)
-//   })
+    const res = await request(app)
+      .post('/api/devices/register-for-notifications')
+      .send(payload)
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual("Error: no device found with matching GUID: " + payload.guid)
+  })
 
-//   test('devices/registerForNotifications : error: device is already registered', async () => {
-//     const guid = uuid()
-//     const interimRes = await createDevice(guid)
-//     expect(interimRes.status).toEqual(200)
-//     const payload = { guid: guid, token: 'abcde12345' }
-//     const interimRes1 = await request(app)
-//       .post('/api/devices/register-for-notifications')
-//       .send(payload)
-//     expect(interimRes1.status).toEqual(200)
-//     const res = await request(app)
-//       .post('/api/devices/register-for-notifications')
-//       .send(payload)
-//     expect(res.status).toEqual(400)
-//     expect(res.text).toEqual("Warning: Device with GUID " + guid + " is already registered for notifications")
-//   })
+  test('devices/registerForNotifications : error: device is already registered', async () => {
+    const guid = uuid()
+    const interimRes = await createDevice(guid)
+    expect(interimRes.status).toEqual(200)
+    const payload = { guid: guid, token: 'abcde12345' }
+    const interimRes1 = await request(app)
+      .post('/api/devices/register-for-notifications')
+      .send(payload)
+    expect(interimRes1.status).toEqual(200)
+    const res = await request(app)
+      .post('/api/devices/register-for-notifications')
+      .send(payload)
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual("Warning: Device with GUID " + guid + " is already registered for notifications")
+  })
   
-//   test('devices/registerForNotifications : error: missing token', async () => {
-//     const payload = { guid: '012345678901234567890123456789012345'}
-//     const res = await request(app)
-//       .post('/api/devices/register-for-notifications')
-//       .send(payload)
-//     expect(res.status).toEqual(400)
-//     expect(res.text).toEqual("Error: Request must include 'token' and 'guid' objects")
-//   })
+  test('devices/registerForNotifications : error: missing token', async () => {
+    const payload = { guid: '012345678901234567890123456789012345'}
+    const res = await request(app)
+      .post('/api/devices/register-for-notifications')
+      .send(payload)
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual("Error: Request must include 'token' and 'guid' objects")
+  })
 
-//   test('devices/registerForNotifications : error: missing guid', async () => {
-//     const payload = { token: '12345'}
-//     const res = await request(app)
-//       .post('/api/devices/register-for-notifications')
-//       .send(payload)
-//     expect(res.status).toEqual(400)
-//     expect(res.text).toEqual("Error: Request must include 'token' and 'guid' objects")
-//   })
+  test('devices/registerForNotifications : error: missing guid', async () => {
+    const payload = { token: '12345'}
+    const res = await request(app)
+      .post('/api/devices/register-for-notifications')
+      .send(payload)
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual("Error: Request must include 'token' and 'guid' objects")
+  })
 })
 
 // /*
 //  *    BROADCAST ROUTES
 //  */
 
-// describe('Broadcast routes', () => {
-//   test('broadcast (using websockets) : error: no devices', async () => {
-//     const payload = { "cohortMessage": "test" }
-//     const res = await request(app)
-//       .post('/api/broadcast')
-//       .send(payload)
-//     expect(res.status).toEqual(200)
-//     expect(res.text).toEqual("Warning: No devices are connected, broadcast was not sent")
-//   })
+describe('Broadcast routes', () => {
+
+  beforeEach( async () => {
+    await knex.migrate.rollback()
+    await knex.migrate.latest()
+    await knex.seed.run()
+  })
+
+  afterEach( async () => {
+    await knex.migrate.rollback()
+  })
+
+  test('broadcast (using websockets) : error: no devices', async () => {
+    const payload = { "cohortMessage": "test" }
+    const res = await request(app)
+      .post('/api/broadcast')
+      .send(payload)
+    expect(res.status).toEqual(200)
+    expect(res.text).toEqual("Warning: No devices are connected, broadcast was not sent")
+  })
   
-//   test('broadcast (using websockets) : error: no connected devices', async () => {
-//     // create a device
-//     const guid = uuid()
-//     const res1 = await createDevice({ guid: guid })
-//     expect(res1.status).toEqual(200)
+  test('broadcast (using websockets) : error: no connected devices', async () => {
+    // create a device
+    const guid = uuid()
+    const res1 = await createDevice({ guid: guid })
+    expect(res1.status).toEqual(200)
 
-//     // send a message (but device never opened a socket!)
-//     const payload = { "cohortMessage": "test" }
-//     const res = await request(app)
-//       .post('/api/broadcast')
-//       .send(payload)
-//     expect(res.status).toEqual(200)
-//     expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
-//   })
+    // send a message (but device never opened a socket!)
+    const payload = { "cohortMessage": "test" }
+    const res = await request(app)
+      .post('/api/broadcast')
+      .send(payload)
+    expect(res.status).toEqual(200)
+    expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
+  })
 
-//   // test('broadcast (using websockets) : hapy path' is located in websocket section
+//   // test('broadcast (using websockets) : happy path' is located in websocket section
   
-//   test('broadcast/push-notification : happy path (one device)', async () => {
-//     // create a device
-//     const guid = uuid()
-//     const res1 = await createDevice(guid)
-//     expect(res1.status).toEqual(200)
+  test('broadcast/push-notification : happy path (one device)', async () => {
+    // create a device
+    const guid = uuid()
+    const res1 = await createDevice(guid)
+    expect(res1.status).toEqual(200)
 
-//     // register a device
-//     const payload2 = { token: '12345', guid: guid }
-//     const res2 = await request(app)
-//       .post('/api/devices/register-for-notifications')
-//       .send(payload2)
-//     expect(res2.status).toEqual(200)
+    // register a device
+    const payload2 = { token: '12345', guid: guid }
+    const res2 = await request(app)
+      .post('/api/devices/register-for-notifications')
+      .send(payload2)
+    expect(res2.status).toEqual(200)
 
-//     // test broadcast endpoint
-//     const payload = { 
-//       "text": "hello world",
-//       "bundleId": "rocks.cohort.test",
-//       "simulate": "success"
-//     }
+    // test broadcast endpoint
+    const payload = { 
+      "text": "hello world",
+      "bundleId": "rocks.cohort.test",
+      "simulate": "success"
+    }
 
-//     const res = await request(app)
-//       .post('/api/broadcast/push-notification')
-//       .send(payload)
-//     expect(res.status).toEqual(200)
-//     expect(res.text).toEqual("Sent notifications to 1/1 registered devices")
-//   })
-// })
+    const res = await request(app)
+      .post('/api/broadcast/push-notification')
+      .send(payload)
+    expect(res.status).toEqual(200)
+    expect(res.text).toEqual("Sent notifications to 1/1 registered devices")
+  })
+})
 
 // describe('WebSocket connections', () => {
 //   beforeAll( () => {

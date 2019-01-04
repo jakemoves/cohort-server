@@ -2,14 +2,22 @@ const CHDevice = require('../models/CHDevice')
 const devicesTable = require('../knex/queries/device-queries')
 
 exports.devices = (req, res) => {
-	// returns from memory, not DB!
-	// res.status(200).json(req.app.get('cohort').devices)
 	devicesTable.getAll()
 	.then( devices => {
 		res.status(200).json(devices)
 	})
+}
+
+exports.devices_id = (req, res) => {
+	devicesTable.getOneByID(req.params.id)
+	.then( device => {
+		console.log(device)
+		res.status(200).json(device)
+	})
 	.catch( error => {
-		res.status(500).write(error).send()
+		res.status(404)
+		res.write('Error: no device found with id:' + req.params.id)
+		res.send()
 	})
 }
 

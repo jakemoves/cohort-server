@@ -28,6 +28,7 @@ router.patch('/events/:id/close', eventsController.events_close)
  */ 
 
 router.get('/devices', devicesController.devices)
+router.get('/devices/:id', devicesController.devices_id)
 
 router.post('/devices', devicesController.devices_create)
 
