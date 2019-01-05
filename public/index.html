@@ -39,20 +39,21 @@
                 {{ event.label }}
               </li>
             </ul>
+            <select name="select-event" id="select-event" v-model= "selectedEvent" v-on:input="onSelectEvent()">
+              <option v-for="event in events" v-bind:value="event">{{ event.label }}</option>
+            </select>
+            <span>Current event: {{ selectedEvent.label }}</span>
+            <button v-if="selectedEvent.label != 'none' && !isCheckedInAsAdmin" onclick=onCheckInToEventAsAdmin()>Check in as admin</button>
+            <button v-if="isCheckedInAsAdmin && !selectedEventIsOpen" onclick=onOpenEvent()>Open event</button>
           </div>
         </div>
-        <div class="row">
-          <div class="col-sm">
-            <!-- <p class="strong">Checked-in devices: {{ devices.length }}</p> -->
-          </div>
-
-          <div class="col-sm">
-            <ul id="device-list">
-              <!-- <li v-for="device in devices">
-                {{ device.guid }}
-              </li> -->
-            </ul>
-          </div>
+        <div class="col-sm" v-if="devices.length > 0">
+          <h3>Devices</h3>
+          <ul id="device-list">
+            <li v-bind:class="device.webSocketState == 1 ? 'connected' : 'not-connected'" v-for="device in devices">
+              #{{ device.guid }}
+            </li>
+          </ul>
         </div>
       </div>
     </div> 

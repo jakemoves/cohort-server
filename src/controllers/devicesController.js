@@ -22,8 +22,6 @@ exports.devices_id = (req, res) => {
 }
 
 exports.devices_create = (req, res) => {
-  let devices = req.app.get('cohort').devices
-
 	// request must include a device guid
 	if(req.body.guid == null || typeof req.body.guid == undefined){
 		res.status = 400
@@ -33,38 +31,36 @@ exports.devices_create = (req, res) => {
 	}
 
 	// no duplicate devices allowed
+	devicesTable.getAll().then( devices => {
+		let matchingDevices = devices.filter((device) => { 
+			return device.guid == req.body.guid 
+		})
 	
-	let matchingDevices = devices.filter((device) => { 
-		return device.guid == req.body.guid 
-	})
-
-	if(matchingDevices.length > 0){
-		res.status = 400
-		res.write('Error: device ' + req.body.guid + ' already exists')
-		res.send()
-		return
-	}
-
-	// happy path
+		if(matchingDevices.length > 0){
+			res.status = 400
+			res.write('Error: device ' + req.body.guid + ' already exists')
+			res.send()
+			return
+		}
 	
-	let device = new CHDevice(req.body.guid)
-
-	if(req.body.isAdmin != null && typeof req.body.isAdmin != undefined){
-		device.isAdmin = req.body.isAdmin
-	}
-
-	devices.push(device)
-
-	console.log("created device: " + device.guid)
+		// happy path
+		
+		let device = new CHDevice(req.body.guid)
 	
-	// add device to DB
-	devicesTable.addOne({ 
-		guid: device.guid, isAdmin: device.isAdmin
-	})
-	.then( deviceIDs => {
-		return devicesTable.getOneByID(deviceIDs[0])
-		.then( device => {
-			res.status(200).json(device)
+		if(req.body.isAdmin != null && typeof req.body.isAdmin != undefined){
+			device.isAdmin = req.body.isAdmin
+		}
+		
+		// add device to DB
+		devicesTable.addOne({ 
+			guid: device.guid, isAdmin: device.isAdmin
+		})
+		.then( deviceIDs => {
+			console.log("created device: " + device.guid)
+			return devicesTable.getOneByID(deviceIDs[0])
+			.then( device => {
+				res.status(200).json(device)
+			})
 		})
 	})
 }

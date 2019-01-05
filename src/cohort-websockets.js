@@ -62,7 +62,7 @@ module.exports = (options) => {
     // this should probably be triggered to happen by updates to cohort.devices, not on a timer
     const deviceStatus = setInterval( () => {
       let adminDevices = options.app.get('cohort').devices.filter( device => {
-        return device.isAdmin == true
+        return (device.isAdmin == true && device.socket != null && device.socket != undefined)
       }).map( device => device.socket )
 
       const status = options.app.get('cohort').devices

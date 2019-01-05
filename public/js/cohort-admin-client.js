@@ -1,13 +1,24 @@
 var vm = new Vue({
   el: '#cohort-admin',
   data: {
-    events: []
+    events: [],
+    selectedEvent: {label: "none"},
+    devices: [],
+    isCheckedInAsAdmin: false,
+    selectedEventIsOpen: false
+  },
+  methods: {
+    onSelectEvent() {
+      this.isCheckedInAsAdmin = false
+      this.selectedEventIsOpen = false
+    }
   }
 })
 
 let guid = 12345
+let serverURL = 'http://localhost:3000/api'
 
-fetch('http://localhost:3000/api/events', {
+fetch(serverURL + '/events', {
   method: 'GET'
 }).then( response => {
   if(response.status == 200){
@@ -21,59 +32,74 @@ fetch('http://localhost:3000/api/events', {
   }
 })
 
-// fetch('http://localhost:3000/api/devices', {
-//   method: 'POST',
-//   headers: { 'Content-Type': 'application/json'},
-//   body: JSON.stringify({ guid: guid })
-// }).then( res => {
-//   if(res.status == 200){
-    
-//   } else {
-//     throw new Error(res.status + ": " + res.text)
-//   }
-// })
+onCheckInToEventAsAdmin = ($event) => {
+  // register this app as an admin device
+  fetch(serverURL + '/devices', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json'},
+    body: JSON.stringify({ guid: guid, isAdmin: true })
+  }).then( response => {
+    if(response.status == 200){
+      // check in to the event
+      fetch(serverURL + '/events/' + vm.selectedEvent.id + '/check-in', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({ guid: guid })
+      }).then( response => {
+        if(response.status == 200){
+          vm.isCheckedInAsAdmin = true
+          console.log('checked in as admin')
+        } else {
+          response.text().then( errorText => {
+            console.log(errorText)
+          })
+        }
+      })
+    } else {
+      response.text().then( errorText => {
+        console.log(errorText)
+      })
+    }
+  })
+}
 
-// let req = new XMLHttpRequest()
-// req.open('POST', 'http://localhost:3000/api/devices')
-// req.setRequestHeader('Content-Type', 'application/json')
+onOpenEvent = ($event) => {
+  fetch(serverURL + '/events/' + vm.selectedEvent.id + '/open', {
+    method: 'PATCH'
+  }).then( response => {
+    if(response.status == 200){
+      console.log('opened event ' + vm.selectedEvent.label)
+      vm.selectedEventIsOpen = true
+      openWebSocketConnection()
+    } else {
+      response.text().then( errorText => {
+        console.log(errorText)
+      })
+    }
+  })
+}
 
-// req.onload = () => {
-//   switch(req.status){
-//     case 200: 
-//       let checkInReq = new XMLHttpRequest()
-//       checkInReq.open('PATCH', 'http://localhost:3000/api/events/1/check-in')
-//       checkInReq.setRequestHeader('Content-Type', 'application/json')
-//       checkInReq.onload = () => {
-//         // this admin device is checked in for event 1
-//         // const client = new WebSocket('ws://localhost:3000')
+openWebSocketConnection = () => {
+  const client = new WebSocket('ws://localhost:3000')
 
-//         // client.addEventListener('open', () => {
-//         //   console.log('connection open')
-//         //   client.send(JSON.stringify({ guid: 12345 }))
-//         // })
+  client.addEventListener('open', () => {
+    console.log('connection open')
+    client.send(JSON.stringify({ guid: 12345 }))
+  })
 
-//         // client.addEventListener('message', (message) => {
-//         //   const msg = JSON.parse(message.data)
-//         //   console.log(msg)
-//         //   if(msg.status != null && msg.status != undefined){
-//         //     // vm.devices = msg.status
-//         //   }
-//         // })
+  client.addEventListener('message', (message) => {
+    const msg = JSON.parse(message.data)
+    console.log(msg)
+    if(msg.status != null && msg.status != undefined){
+      vm.devices = msg.status
+    }
+  })
 
-//         // client.addEventListener('close', () => {
-//         //   console.log('connection closed')
-//         // })
+  client.addEventListener('close', () => {
+    console.log('connection closed')
+  })
 
-//         // client.addEventListener('error', (err) => {
-//         //   console.log(err)
-//         // })
-//       }
-//       checkInReq.send(JSON.stringify({ guid: guid }))
-//       break;
-
-//     default:
-//       break;
-//   }
-// }
-
-// req.send(JSON.stringify({ guid: guid, isAdmin: true }))
+  client.addEventListener('error', (err) => {
+    console.log(err)
+  })
+}
