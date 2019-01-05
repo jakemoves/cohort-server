@@ -9,10 +9,10 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <style>
-      .device-list li {
+      li {
         list-style: none;
       }
-      .device-list li.not-connected {
+      li.not-connected {
         color: #bbb
       }
     </style>
@@ -25,15 +25,25 @@
         <div class="row">
           <div class="col-sm">
             <h1>Cohort Admin</h1>
-            <h2>Event: {{ event }}</h2>
+            <!-- <h2>Event: {{ event }}</h2> -->
           </div>
         </div>
       </header>
-
+      
       <section class="container">
         <div class="row">
           <div class="col-sm">
-            <p class="strong">Checked-in devices: {{ devices.length }}</p>
+            <h3>Events</h3>
+            <ul>
+              <li v-for="event in events">
+                {{ event.label }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm">
+            <!-- <p class="strong">Checked-in devices: {{ devices.length }}</p> -->
           </div>
 
           <div class="col-sm">
