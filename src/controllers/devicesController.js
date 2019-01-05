@@ -44,7 +44,6 @@ exports.devices_create = (req, res) => {
 		}
 	
 		// happy path
-		
 		let device = new CHDevice(req.body.guid)
 	
 		if(req.body.isAdmin != null && typeof req.body.isAdmin != undefined){
@@ -66,42 +65,32 @@ exports.devices_create = (req, res) => {
 }
 
 exports.devices_registerForNotifications = (req, res) => {
-  
-  let devices = req.app.get('cohort').devices
-
-  let guid = req.body.guid
   let token = req.body.token
-  
-	if(token && guid){
+	if(token){
 		// request is well-formed
-		var device = devices.filter((device) => {
-			return device.guid == guid
+		let devices = devicesTable.getOneByID(req.params.id)
+		.then( device => {
+			// we found a single device with a matching id
+			return devicesTable.addApnsDeviceToken(device.id, token)
+				.then( deviceId => {
+					return devicesTable.getOneByID(deviceId).then(updatedDevice => {
+						res.status(200)
+						res.json(updatedDevice)
+						res.send()
+						console.log("registered device for notifications: " + device.guid)
+					})
+				})
 		})
-		if(device.length < 1 || device == null){
-			res.statusCode = 400
-			res.write("Error: no device found with matching GUID: " + guid)
+		.catch( error => {
+			res.statusCode = 404
+			res.write("Error: no device found with id: " + req.params.id)
 			res.send()
-			console.log("Error: failed to register device for notifications; no device found with matching GUID: " + guid)
-		} else if(device.length > 1){
-      // TODO avoid having duplicate GUIDs created in the first place (see above)
-		} else {
-			// we found a single device with a matching GUID
-			device = device[0]
-			if(device.apnsDeviceToken == null){
-				device.apnsDeviceToken = token
-				res.sendStatus(200)
-				console.log("registered device for notifications: " + device.guid)
-			} else {
-				res.statusCode = 400
-				res.write("Warning: Device with GUID " + guid + " is already registered for notifications")
-        res.send()
-        console.log("Warning: failed to register device for notifications; device with GUID " + guid + " is already registered for notifications")
-			}
-		}
+			console.log("Error: failed to register device for notifications; no device found with matching id: " + req.params.id)
+		})
 	} else {
 		res.statusCode = 400
-		res.write("Error: Request must include 'token' and 'guid' objects")
+		res.write("Error: Request must include a 'token' object")
 		res.send()
-		console.log("Error: failed to register device for notifications; request missing token and/or guid")
+		console.log("Error: failed to register device for notifications; request missing token")
 	}
 }

@@ -35,10 +35,18 @@ deleteOne = (device) => {
   return Devices().where('id', parseInt(deviceId)).del()
 }
 
+addApnsDeviceToken = (deviceId, apnsDeviceToken) => {
+  return Devices()
+    .where('id', deviceId)
+    .update({ apnsDeviceToken: apnsDeviceToken })
+    .returning('id')
+}
+
 module.exports = { 
   getAll: getAll,
   getOneByID: getOneByID,
   getOneByDeviceGUID: getOneByDeviceGUID,
   addOne: addOne,
-  deleteOne: deleteOne
+  deleteOne: deleteOne,
+  addApnsDeviceToken, addApnsDeviceToken
 }

@@ -206,60 +206,28 @@ describe('Device routes', () => {
 
   // })
 
-  test('devices/registerForNotifications : happy path', async () => {
+  test('devices/:id/registerForNotifications : happy path', async () => {
     const guid = uuid()
     const interimResponse = await createDevice(guid)
-    const payload = { guid: guid, token: 'abcde12345' }
+    const payload = { token: 'abcde12345' }
+    const deviceId = interimResponse.body.id
     
     const res = await request(app)
-      .post('/api/devices/register-for-notifications')
+      .patch('/api/devices/' + deviceId + '/register-for-notifications')
       .send(payload)
     expect(res.status).toEqual(200)
-  })
-
-  test('devices/registerForNotifications : error: guid not found', async () => {
-    const guid = uuid()
-    const payload = { guid: guid, token: 'abcde12345' }
-
-    const res = await request(app)
-      .post('/api/devices/register-for-notifications')
-      .send(payload)
-    expect(res.status).toEqual(400)
-    expect(res.text).toEqual("Error: no device found with matching GUID: " + payload.guid)
-  })
-
-  test('devices/registerForNotifications : error: device is already registered', async () => {
-    const guid = uuid()
-    const interimRes = await createDevice(guid)
-    expect(interimRes.status).toEqual(200)
-    const payload = { guid: guid, token: 'abcde12345' }
-    const interimRes1 = await request(app)
-      .post('/api/devices/register-for-notifications')
-      .send(payload)
-    expect(interimRes1.status).toEqual(200)
-    const res = await request(app)
-      .post('/api/devices/register-for-notifications')
-      .send(payload)
-    expect(res.status).toEqual(400)
-    expect(res.text).toEqual("Warning: Device with GUID " + guid + " is already registered for notifications")
+    expect(res.body.apnsDeviceToken).toEqual('abcde12345')
   })
   
-  test('devices/registerForNotifications : error: missing token', async () => {
-    const payload = { guid: '012345678901234567890123456789012345'}
-    const res = await request(app)
-      .post('/api/devices/register-for-notifications')
-      .send(payload)
-    expect(res.status).toEqual(400)
-    expect(res.text).toEqual("Error: Request must include 'token' and 'guid' objects")
-  })
+  // test for id not found
 
-  test('devices/registerForNotifications : error: missing guid', async () => {
-    const payload = { token: '12345'}
+  test('devices/registerForNotifications : error: missing token', async () => {
+    const payload = { 'blep': '012345678901234567890123456789012345'}
     const res = await request(app)
-      .post('/api/devices/register-for-notifications')
+      .patch('/api/devices/1/register-for-notifications')
       .send(payload)
     expect(res.status).toEqual(400)
-    expect(res.text).toEqual("Error: Request must include 'token' and 'guid' objects")
+    expect(res.text).toEqual("Error: Request must include a 'token' object")
   })
 })
 

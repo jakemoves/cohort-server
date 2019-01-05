@@ -8,7 +8,8 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceRoot}/lib/cohort-server.js"
+      "program": "${workspaceRoot}/src/cohort-server.js",
+      "outFiles": [ "${workspaceRoot}/lib/**.js" ]
     }
   ]
 }
