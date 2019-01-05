@@ -46,14 +46,14 @@
             <button v-if="selectedEvent.label != 'none' && !isCheckedInAsAdmin" onclick=onCheckInToEventAsAdmin()>Check in as admin</button>
             <button v-if="isCheckedInAsAdmin && !selectedEventIsOpen" onclick=onOpenEvent()>Open event</button>
           </div>
-        </div>
-        <div class="col-sm" v-if="devices.length > 0">
-          <h3>Devices</h3>
-          <ul id="device-list">
-            <li v-bind:class="device.webSocketState == 1 ? 'connected' : 'not-connected'" v-for="device in devices">
-              #{{ device.guid }}
-            </li>
-          </ul>
+          <div class="col-sm" v-if="devices.length > 0">
+            <h3>Devices</h3>
+            <ul id="device-list">
+              <li v-bind:class="device.webSocketState == 1 ? 'connected' : 'not-connected'" v-for="device in devices">
+                #{{ device.guid }}
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div> 
