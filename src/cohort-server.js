@@ -26,3 +26,4 @@ const webSocketServer = require('./cohort-websockets')({
 server.on('upgrade', function upgrade(req, socket, head){
 	console.log('upgrading with url ' + req.url)
 })
+
