@@ -27,7 +27,7 @@ const CHDevice = require('./models/CHDevice')
  * 	 Apple Push Notifications 
  */
 
-const apnProvider = require('./cohort-apple-notifications')
-app.set('apnProvider', apnProvider)
+//const apnProvider = require('./cohort-apple-notifications')
+//app.set('apnProvider', apnProvider)
 
 module.exports = app
