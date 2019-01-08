@@ -36,7 +36,7 @@ module.exports = {
   production: {
     client: 'pg',
     connection: {
-      host : 'process.env.DATABASE_URL',
+      host : 'localhost',
       user : 'cohort_admin',
       password : 'changethislater',
       database : 'cohort',
