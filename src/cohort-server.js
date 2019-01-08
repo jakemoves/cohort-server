@@ -20,7 +20,8 @@ const server = app.listen(3000, function(err){
 
 const webSocketServer = require('./cohort-websockets')({
 	app: app,
-	server: server
+	server: server,
+	path: '/sockets'
 })
 
 server.on('upgrade', function upgrade(req, socket, head){

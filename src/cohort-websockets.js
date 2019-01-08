@@ -4,7 +4,7 @@ const CHDevice = require('./models/CHDevice')
 module.exports = (options) => {
 
   return new Promise( resolve => {
-    let webSocketServer = new webSocket.Server({server: options.server})
+    let webSocketServer = new webSocket.Server({server: options.server, path: options.path})
     
     webSocketServer.on('listening', () => {
       console.log('websocket server started')
