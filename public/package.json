@@ -5,7 +5,6 @@
   "author": "Jacob Niedzwiecki",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "^6.2.0",
     "vue": "^2.5.21"
   },
   "devDependencies": {

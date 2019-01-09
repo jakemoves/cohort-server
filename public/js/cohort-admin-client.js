@@ -1,5 +1,4 @@
 import Vue from "vue"
-require('dotenv').config()
 
 var vm = new Vue({
   el: '#cohort-admin',
