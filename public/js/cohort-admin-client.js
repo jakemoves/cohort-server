@@ -25,7 +25,7 @@ let serverURL
 if(process.env.NODE_ENV == 'development'){
   serverURL = 'http://localhost:3000/api'
 } else {
-  serverURL = 'http://cohort.rocks/api'
+  serverURL = 'https://cohort.rocks/api'
 }
 
 fetch(serverURL + '/events', {
