@@ -1,3 +1,5 @@
+const webpack = require('webpack');
+
 module.exports = {
   module: {
     rules: [
@@ -14,5 +16,10 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
     }
-  }
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      'environment': JSON.stringify(process.env.NODE_ENV)
+    })
+  ]
 }

@@ -18,6 +18,7 @@ var vm = new Vue({
 })
 
 let guid = 12345
+console.log(environment)
 let serverURL = 'http://localhost:3000/api'
 
 fetch(serverURL + '/events', {
