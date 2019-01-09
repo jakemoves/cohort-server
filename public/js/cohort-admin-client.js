@@ -27,7 +27,7 @@ if(process.env.NODE_ENV == 'development'){
   socketURL = 'ws://localhost:3000/sockets'
 } else {
   serverURL = 'https://cohort.rocks/api'
-  socketURL = 'https://cohort.rocks/sockets'
+  socketURL = 'wss://cohort.rocks/sockets'
 }
 
 fetch(serverURL + '/events', {
