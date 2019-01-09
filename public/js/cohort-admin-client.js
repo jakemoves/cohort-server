@@ -18,8 +18,15 @@ var vm = new Vue({
 })
 
 let guid = 12345
-console.log(environment)
-let serverURL = 'http://localhost:3000/api'
+
+// process.env.NODE_ENV is patched in by webpack based on the mode (dev/prod) provided in the package.json build scripts
+
+let serverURL
+if(process.env.NODE_ENV == 'development'){
+  serverURL = 'http://localhost:3000/api'
+} else {
+  serverURL = 'http://cohort.rocks/api'
+}
 
 fetch(serverURL + '/events', {
   method: 'GET'
