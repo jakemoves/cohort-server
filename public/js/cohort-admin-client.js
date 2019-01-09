@@ -1,3 +1,5 @@
+import Vue from "vue"
+
 var vm = new Vue({
   el: '#cohort-admin',
   data: {
@@ -24,6 +26,8 @@ fetch(serverURL + '/events', {
   if(response.status == 200){
     response.json().then( events => {
       vm.events = events
+
+
     })
   } else {
     response.text().then( errorText => {
@@ -32,7 +36,7 @@ fetch(serverURL + '/events', {
   }
 })
 
-onCheckInToEventAsAdmin = ($event) => {
+window.checkInToEventAsAdmin = ($event) => {
   // register this app as an admin device
   fetch(serverURL + '/devices', {
     method: 'POST',
@@ -63,7 +67,7 @@ onCheckInToEventAsAdmin = ($event) => {
   })
 }
 
-onOpenEvent = ($event) => {
+window.openEvent = ($event) => {
   fetch(serverURL + '/events/' + vm.selectedEvent.id + '/open', {
     method: 'PATCH'
   }).then( response => {
@@ -79,8 +83,8 @@ onOpenEvent = ($event) => {
   })
 }
 
-openWebSocketConnection = () => {
-  const client = new WebSocket('ws://localhost:3000')
+window.openWebSocketConnection = () => {
+  const client = new WebSocket('ws://localhost:3000/sockets')
 
   client.addEventListener('open', () => {
     console.log('connection open')

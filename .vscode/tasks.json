@@ -4,9 +4,31 @@
     {
       "label": "watch",
       "command": "${workspaceFolder}/node_modules/.bin/babel",
-      "args": ["src", "--out-dir", "lib", "-w", "--source-maps", "--ignore", "src/cohort-app.test.js"],
+      "args": [
+        "src",
+        "--out-dir",
+        "lib",
+        "-w",
+        "--source-maps",
+        "--ignore",
+        "src/cohort-app.test.js"
+      ],
       "type": "shell",
-      "group": { "kind": "build", "isDefault": true },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "isBackground": true
+    },{
+      "label": "build-fe",
+      "type": "npm",
+      "script": "dev",
+      "path": "public/",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
       "isBackground": true
     }
   ]

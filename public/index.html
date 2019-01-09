@@ -43,8 +43,8 @@
               <option v-for="event in events" v-bind:value="event">{{ event.label }}</option>
             </select>
             <span>Current event: {{ selectedEvent.label }}</span>
-            <button v-if="selectedEvent.label != 'none' && !isCheckedInAsAdmin" onclick=onCheckInToEventAsAdmin()>Check in as admin</button>
-            <button v-if="isCheckedInAsAdmin && !selectedEventIsOpen" onclick=onOpenEvent()>Open event</button>
+            <button v-if="selectedEvent.label != 'none' && !isCheckedInAsAdmin" onclick=checkInToEventAsAdmin()>Check in as admin</button>
+            <button v-if="isCheckedInAsAdmin && !selectedEventIsOpen" onclick=openEvent()>Open event</button>
           </div>
           <div class="col-sm" v-if="devices.length > 0">
             <h3>Devices</h3>
@@ -57,8 +57,7 @@
         </div>
       </div>
     </div> 
-    <script src="js/vue.js"></script>
-    <script src="js/cohort-admin-client.js"></script>
+    <script src="main.js"></script>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

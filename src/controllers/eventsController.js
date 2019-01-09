@@ -80,16 +80,14 @@ exports.events_checkIn = (req, res) => {
         res.status(200).json(eventDeviceRelation)
       })
       .catch( error => {
-        let errorExplanation
         if(error.code == '23505'){
-          res.status(400)
-          errorExplanation = 'Error: device is already checked in'
+          res.status(200)
+          res.json(eventDeviceRelation)
         } else if(error.code == '23503'){
           res.status(404)
-          errorExplanation = "Error: no event found with id:" + req.params.id
+          res.write("Error: no event found with id:" + req.params.id)
+          res.send()
         }
-        res.write(errorExplanation)
-        res.send()
       })
     })
     .catch( error => {
