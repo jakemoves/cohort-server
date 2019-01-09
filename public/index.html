@@ -9,12 +9,67 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <style>
+      .col-sm-auto {
+        min-width: 17rem;
+      }
+
+      h1.site-title {
+        font-size: 1.5rem;
+        font-variant: all-small-caps;
+        margin-bottom: 2rem;
+        color: #6c757d;
+      }
+
       li {
         list-style: none;
       }
       li.not-connected {
-        color: #bbb
+        color: #6c757d;
       }
+
+      li.event-item, .selected-event-label {
+        font-variant-caps: all-small-caps;
+      }
+
+      li.event-item h3 { 
+        margin-bottom: 0;
+      }
+
+      ul {
+        padding-left: 0;
+      }
+
+      ul#device-list li {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #device-list li .device-status {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-left: 2rem;
+        min-width: 9rem;
+      }
+
+      #device-list li .device-status small {
+        border: 1px solid #28a745;
+        padding: 0 2px;
+        font-size: 60%;
+        border-radius: 0.25rem;
+      }
+
+      .event-select {
+        margin-top: 2rem;
+      }
+
+      select#select-event {
+        margin-bottom: 0.5rem;
+      }
+      
     </style>
 
     <title>Cohort Admin</title>
@@ -23,8 +78,8 @@
     <div id="cohort-admin">
       <header class="container">
         <div class="row">
-          <div class="col-sm">
-            <h1>Cohort Admin</h1>
+          <div class="col-sm-auto">
+            <h1 class="site-title text-muted">Cohort Admin</h1>
             <!-- <h2>Event: {{ event }}</h2> -->
           </div>
         </div>
@@ -32,25 +87,41 @@
       
       <section class="container">
         <div class="row">
-          <div class="col-sm">
-            <h3>Events</h3>
+          <div class="col-sm-auto">
+            <h3 class="font-weight-light">Events</h3>
             <ul>
-              <li v-for="event in events">
-                {{ event.label }}
+              <li class="event-item" v-for="event in events">
+                <h3>{{ event.label }}</h3>
               </li>
             </ul>
-            <select name="select-event" id="select-event" v-model= "selectedEvent" v-on:input="onSelectEvent()">
-              <option v-for="event in events" v-bind:value="event">{{ event.label }}</option>
-            </select>
-            <span>Current event: {{ selectedEvent.label }}</span>
-            <button v-if="selectedEvent.label != 'none' && !isCheckedInAsAdmin" onclick=checkInToEventAsAdmin()>Check in as admin</button>
-            <button v-if="isCheckedInAsAdmin && !selectedEventIsOpen" onclick=openEvent()>Open event</button>
+            <div class="event-select"> 
+              <h5 class="font-weight-light">Select an event</h5>
+              <div>
+                <select name="select-event" id="select-event" v-model= "selectedEvent" v-on:input="onSelectEvent()">
+                  <option v-for="event in events" v-bind:value="event">{{ event.label }}</option>
+                </select>
+              </div>
+              <p>Current event: {{ selectedEvent.label }}</p>
+            </div>
+            <button class="btn btn-dark" v-if="selectedEvent.label != 'none' && !isCheckedInAsAdmin" onclick=checkInToEventAsAdmin()>Check in as admin</button>
+            <button class="btn btn-dark" v-if="isCheckedInAsAdmin && !selectedEventIsOpen" onclick=openEvent()>Open event</button>
           </div>
-          <div class="col-sm" v-if="devices.length > 0">
-            <h3>Devices</h3>
+          <div class="col-sm-auto" v-if="devices.length > 0">
+            <h3><span class="font-weight-light">Devices </span><span class="selected-event-label">@ {{ selectedEvent.label }}</span></h3>
             <ul id="device-list">
               <li v-bind:class="device.webSocketState == 1 ? 'connected' : 'not-connected'" v-for="device in devices">
-                #{{ device.guid }}
+                <div class="device-number device-item">
+                  #{{ device.guid }}
+                </div>
+                <div class="device-status">
+                  <small class="checkin-status text-success">
+                    checked in
+                  </small>
+                  <small class="connection-status text-success">
+                    connected
+                  </small>
+                </div>
+                
               </li>
             </ul>
           </div>
