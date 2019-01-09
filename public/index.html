@@ -31,6 +31,10 @@
         font-variant-caps: all-small-caps;
       }
 
+      span.small-caps {
+        font-variant-caps: all-small-caps;
+      }
+
       li.event-item h3 { 
         margin-bottom: 0;
       }
@@ -107,7 +111,10 @@
             <button class="btn btn-dark" v-if="isCheckedInAsAdmin && !selectedEventIsOpen" onclick=openEvent()>Open event</button>
           </div>
           <div class="col-sm-auto" v-if="devices.length > 0">
-            <h3><span class="font-weight-light">Devices </span><span class="selected-event-label">@ {{ selectedEvent.label }}</span></h3>
+            <h3><span class="font-weight-light">Devices 
+                <span class="small-caps">@</span> 
+              </span>
+              <span class="selected-event-label">{{ selectedEvent.label }}</span></h3>
             <ul id="device-list">
               <li v-bind:class="device.webSocketState == 1 ? 'connected' : 'not-connected'" v-for="device in devices">
                 <div class="device-number device-item">
