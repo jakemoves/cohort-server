@@ -21,11 +21,13 @@ let guid = 12345
 
 // process.env.NODE_ENV is patched in by webpack based on the mode (dev/prod) provided in the package.json build scripts
 
-let serverURL
+let serverURL, socketURL
 if(process.env.NODE_ENV == 'development'){
   serverURL = 'http://localhost:3000/api'
+  socketURL = 'ws://localhost:3000/sockets'
 } else {
   serverURL = 'https://cohort.rocks/api'
+  socketURL = 'https://cohort.rocks/sockets'
 }
 
 fetch(serverURL + '/events', {
@@ -92,7 +94,7 @@ window.openEvent = ($event) => {
 }
 
 window.openWebSocketConnection = () => {
-  const client = new WebSocket('ws://localhost:3000/sockets')
+  const client = new WebSocket(socketURL)
 
   client.addEventListener('open', () => {
     console.log('connection open')
