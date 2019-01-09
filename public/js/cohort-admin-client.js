@@ -1,4 +1,5 @@
 import Vue from "vue"
+require('dotenv').config();
 
 var vm = new Vue({
   el: '#cohort-admin',
@@ -18,7 +19,13 @@ var vm = new Vue({
 })
 
 let guid = 12345
-let serverURL = 'http://localhost:3000/api'
+let serverURL 
+if(process.env = 'development' || 'test'){
+  serverURL = 'http://localhost:3000/api'
+} else {
+  // production
+  serverURL = 'https://cohort.rocks/api'
+}
 
 fetch(serverURL + '/events', {
   method: 'GET'
