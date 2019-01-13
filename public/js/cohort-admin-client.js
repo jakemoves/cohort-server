@@ -1,4 +1,5 @@
 import Vue from "vue"
+import Guid from "uuid/v4"
 
 var vm = new Vue({
   el: '#cohort-admin',
@@ -17,7 +18,8 @@ var vm = new Vue({
   }
 })
 
-let guid = 12345
+let guid = Guid()
+console.log(guid)
 
 // process.env.NODE_ENV is patched in by webpack based on the mode (dev/prod) provided in the package.json build scripts
 
