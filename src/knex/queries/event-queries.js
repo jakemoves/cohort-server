@@ -57,10 +57,40 @@ getDevicesForEvent = (eventId) => {
     }, [])
 }
 
+open = (eventId) => {
+  return Events()
+    .where('events.id', parseInt(eventId))
+    .update({'isOpen': true})
+    .returning('id')
+    .then( id => {
+      return Events().where('events.id', parseInt(id)).then( events => events[0])
+    })
+}
+
+close = (eventId) => {
+  return Events()
+    .where('events.id', parseInt(eventId))
+    .update({'isOpen': false})
+    .returning('id')
+    .then( id => {
+      return checkOutAllDevices(id).then( returnCode => {
+        return Events().where('events.id', parseInt(id)).then( events => events[0])
+      })
+    })
+}
+
+checkOutAllDevices = (eventId) => {
+  return knex('events_devices')
+  .where('event_id', parseInt(eventId))
+  .del()
+}
+
 module.exports = { 
   getAll: getAll,
   getOneByID: getOneByID,
   addOne: addOne,
   deleteOne: deleteOne,
-  getDevicesForEvent: getDevicesForEvent
+  getDevicesForEvent: getDevicesForEvent,
+  open: open,
+  close: close
 }

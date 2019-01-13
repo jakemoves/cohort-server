@@ -43,14 +43,14 @@
         padding-left: 0;
       }
 
-      ul#device-list li {
+      ul#device-list li, ul.event-list li .event-title-and-status {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
       }
 
-      #device-list li .device-status {
+      #device-list li .device-status, .event-list li .event-status {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -59,11 +59,42 @@
         min-width: 9rem;
       }
 
-      #device-list li .device-status small {
-        border: 1px solid #28a745;
+      .event-list li .event-actions {
+        margin-left: -0.75rem;
+        display: none; /* hide until refactor is done */
+      }
+
+      .event-list li .event-actions button {
+        font-size: 80%;
+      }
+
+
+      #device-list li .device-status small, .event-list li .event-status small {
+        border: 1px solid #000;
         padding: 0 2px;
         font-size: 60%;
         border-radius: 0.25rem;
+      }
+
+      #device-list li .device-status small {
+        border: 1px solid #000;
+      }
+
+      #device-list li .device-status small.text-success {
+        border: 1px solid #28a745;
+      }
+
+      .event-list li .event-status small {
+        margin-top: .25rem; /* because it's in a flex row with a small-caps item */
+        font-variant-caps: normal;
+      }
+
+      .event-list li .event-status small.text-success{
+        border-color: #28a745;
+      }
+
+      .event-list li .event-status small.text-muted {
+        border-color: #6c757d;
       }
 
       .event-select {
@@ -93,9 +124,19 @@
         <div class="row">
           <div class="col-sm-auto">
             <h3 class="font-weight-light">Events</h3>
-            <ul>
+            <ul class="event-list">
               <li class="event-item" v-for="event in events">
-                <h3>{{ event.label }}</h3>
+                <div class="event-title-and-status">
+                  <h3>{{ event.label }}</h3>
+                  <div class="event-status">
+                    <small class="status" v-bind:class="event.isOpen ? 'text-success' : 'text-muted'">{{ event.isOpen ? 'open' : 'closed' }}</small>
+                  </div>
+                </div>
+                <div class="event-actions btn-group" role="group" aria-label="Event actions" >
+                  <button type="button" class="btn btn-link" v-if="!event.isCheckedInAsAdmin">Check in as admin</button>
+                  <button type="button" class="btn btn-link" v-if="!event.isOpen">Open event</button>
+                  <button type="button" class="btn btn-link" v-if="event.isOpen">Close event</button>
+              </div>
               </li>
             </ul>
             <div class="event-select"> 

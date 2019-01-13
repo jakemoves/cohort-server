@@ -5,8 +5,8 @@ exports.seed = function(knex, Promise) {
     .then(function () {
       // Inserts seed entries
       return knex('events').insert([
-        {label: 'pimohtēwak', is_open: false},
-        {label: 'lot_x', is_open: false}
+        {label: 'pimohtēwak', isOpen: false},
+        {label: 'lot_x', isOpen: false}
       ]);
     });
 };

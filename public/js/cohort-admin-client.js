@@ -18,8 +18,8 @@ var vm = new Vue({
   }
 })
 
-let guid = Guid()
-console.log(guid)
+let guid = 12345
+// let guid = Guid() // enable this when you implement #48
 
 // process.env.NODE_ENV is patched in by webpack based on the mode (dev/prod) provided in the package.json build scripts
 
@@ -87,11 +87,20 @@ window.openEvent = ($event) => {
       console.log('opened event ' + vm.selectedEvent.label)
       vm.selectedEventIsOpen = true
       openWebSocketConnection()
-    } else {
-      response.text().then( errorText => {
-        console.log(errorText)
+
+      response.json().then( openedEvent => {
+        let i = 0
+        for(i; i<vm.events.length; i++){
+          if (vm.events[i].id == openedEvent.id) break
+        }
+        vm.events[i] = openedEvent
+        console.log(vm.events[i])
       })
-    }
+    } //else {
+    //   response.text().then( errorText => {
+    //     console.log(errorText)
+    //   })
+    // }
   })
 }
 

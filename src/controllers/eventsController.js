@@ -105,10 +105,26 @@ exports.events_checkIn = (req, res) => {
 exports.events_open = (req, res) => {
   eventsTable.getDevicesForEvent(req.params.id)
   .then( result => {
-    req.app.get('cohort').devices = result
-    res.status(200)
-    res.write('Opened event id:' + req.params.id + ' with ' + req.app.get('cohort').devices.length + ' devices checked in')
-    res.send()
+    console.log(result)
+    // update db
+    eventsTable.open(req.params.id)
+
+    .then( event => {
+      console.log(event)
+      // this should get refactored to CHEvent.open
+      // and devices should live on their event
+      req.app.get('cohort').devices = result
+      req.app.get('cohort').event = event
+
+      console.log(event)
+
+      res.status(200)
+      res.json(event)
+      res.send()
+    })
+    .catch( error => {
+      console.log(error)
+    })
   })
 }
 
@@ -118,8 +134,18 @@ exports.events_close = (req, res) => {
       device.socket.close(4002, "Event is over")
     }
   })
-  req.app.get('cohort').devices = []
-  res.sendStatus(200)
+
+  // update db
+  eventsTable.close(req.params.id)
+  .then( event => {
+    // this should get refactored to CHEvent.close
+    req.app.get('cohort').devices = []
+    req.app.get('cohort').event = null
+
+    res.status(200)
+    res.json(event)
+    res.send()
+  })
 }
 
 exports.events_devices = (req, res) => {

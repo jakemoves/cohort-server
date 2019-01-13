@@ -1,12 +1,12 @@
 
 exports.up = function(knex, Promise) {
   return knex.schema.alterTable('events', table => {
-    table.boolean('is_open').notNullable()
+    table.boolean('isOpen').notNullable()
   })
 };
 
 exports.down = function(knex, Promise) {
   return knex.schema.alterTable('events', table => {
-    table.dropColumn('is_open')
+    table.dropColumn('isOpen')
   })
 };

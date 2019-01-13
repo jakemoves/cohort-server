@@ -21,7 +21,8 @@ app.use('/api', routes)
 app.use(express.static('public'))
 
 app.set("cohort", {
-	devices: []
+  devices: [],
+  event: null
 })
 
 /*
