@@ -5,10 +5,9 @@ var vm = new Vue({
   el: '#cohort-admin',
   data: {
     guid: 12345,  // let guid = Guid() // enable this when you implement #48
-    events: [{ id: 0, label: "none", isOpen: false, 
-      devices: [{ isAdmin: false, guid: 0 }] 
-    }],
-    activeEventIndex: 0
+    events: [{ id: 0, label: "none", isOpen: false}],
+    activeEventIndex: 0,
+    activeEventDevices: [ ]
   },
   created: function() {
     // register this app as an admin device
@@ -85,8 +84,8 @@ var vm = new Vue({
             }).then( response => {
               if(response.status == 200){
                 response.json().then( event => {
+                  // update the active index
                   vm.activeEventIndex = vm.events.findIndex( event => event.id == eventId)
-                  vm.activeEvent.devices = event.devices
                 })
               } else {
                 response.text().then( errorText => {
@@ -172,7 +171,7 @@ window.openWebSocketConnection = () => {
     const msg = JSON.parse(message.data)
     console.log(msg)
     if(msg.status != null && msg.status != undefined){
-      vm.activeEvent.devices = msg.status
+      vm.activeEventDevices = msg.status
     }
   })
 

@@ -59,16 +59,16 @@
             <!-- <h3 class="font-weight-light">Event actions</h3> -->
             <button class="btn btn-secondary" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
             <button class="btn btn-secondary" v-if="activeEventIsOpen" onclick=closeEvent()>Close event</button>
-            <button class="btn btn-outline-danger" onclick=deleteCohortEvent()>Delete {{ activeEvent.label }}</button>
+            <button class="btn btn-outline-danger delete-event" onclick=deleteCohortEvent()>Delete {{ activeEvent.label }}</button>
           </div>
           
-          <div class="col-sm-auto" v-if="activeEvent.devices && activeEvent.isOpen">
+          <div class="col-sm-auto" v-if="activeEventDevices.length > 0">
             <h3><span class="font-weight-light">Devices 
                 <span class="small-caps">@</span> 
               </span>
               <span class="selected-event-label">{{ activeEvent.label }}</span></h3>
             <ul id="device-list">
-              <li v-bind:class="device.webSocketState == 1 ? 'connected' : 'not-connected'" v-for="device in activeEvent.devices">
+              <li v-bind:class="device.webSocketState == 1 ? 'connected' : 'not-connected'" v-for="device in activeEventDevices">
                 <div class="device-number device-item">
                   #{{ device.guid }}
                 </div>
