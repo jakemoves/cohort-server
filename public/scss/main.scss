@@ -1,104 +1,152 @@
 
-  .col-sm-auto {
-    min-width: 17rem;
+.col-sm-auto {
+  min-width: 17rem;
+}
+
+/* 
+ *    Resets
+ */
+
+ul {
+  padding-left: 0;
+}
+
+li {
+  list-style: none;
+}
+
+
+/* 
+ *    Components
+ */
+
+
+h1.site-title {
+  font-size: 1.5rem;
+  font-variant: all-small-caps;
+  margin-bottom: 2rem;
+  color: #6c757d;
+}
+
+.event-list__event-item {
+  display: block;
+  padding: 0.25rem 0.25rem 0.5rem 0;
+  font-variant-caps: all-small-caps;
+
+  &.active {
+    color: #000;
+    background: #ddd;
+    border-color: #ddd;
   }
 
-  h1.site-title {
-    font-size: 1.5rem;
-    font-variant: all-small-caps;
-    margin-bottom: 2rem;
-    color: #6c757d;
-  }
-
-
-  ul {
-    padding-left: 0;
-  }
-
-  li {
-    list-style: none;
-  }
-
-
-  li.not-connected {
-    color: #6c757d;
-  }
-
-  .event-item, .selected-event-label {
-    font-variant-caps: all-small-caps;
-  }
-
-  span.small-caps {
-    font-variant-caps: all-small-caps;
-  }
-
-  .event-item h3 { 
-    margin-bottom: 0;
-  }
-
-  ul#device-list li, .event-list .event-title-and-status {
+  .event-title-and-status {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-  }
 
-  #device-list li .device-status, .event-list .event-status {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-left: 2rem;
-  }
+    h3 { 
+      margin-bottom: 0;
+    }
 
-  #device-list li .device-status {
-    min-width: 9rem;
-  }
+    .event-status {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-left: 2rem;
 
-  #device-list li .device-status small, .event-list .event-status small {
-    border: 1px solid #000;
-    padding: 0 2px;
-    font-size: 60%;
-    border-radius: 0.25rem;
-  }
+      small {
+        border: 1px solid #000;
+        padding: 0 2px;
+        font-size: 60%;
+        border-radius: 0.25rem;
+        margin-top: .25rem; /* because it's in a flex row with a small-caps item */
+        font-variant-caps: normal;
 
-  #device-list li .device-status small {
-    border: 1px solid #000;
+        &.text-success {
+          border-color: #28a745;
+        }
+      
+        &.text-muted {
+          border-color: #6c757d;
+        }
+      }
+    }
   }
+}
 
-  #device-list li .device-status small.text-success {
-    border: 1px solid #28a745;
-  }
+form.create-event-form {
+  margin-top: 1rem;
+}
 
-  .event-list > button.event-item {
-    display: block;
-    padding: 0.25rem 0.25rem 0.5rem 0;
-  }
+li.not-connected {
+  color: #6c757d;
+}
 
-  .event-list > button.event-item.active {
-    background-color: rgba(220, 220, 220, 0.42);
-    color: #000;
-  }
+.selected-event-label {
+  font-variant-caps: all-small-caps;
+}
+
+ul#device-list li {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#device-list li .device-status {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-left: 2rem;
+}
+
+#device-list li .device-status {
+  min-width: 9rem;
+}
+
+#device-list li .device-status small {
+  border: 1px solid #000;
+  padding: 0 2px;
+  font-size: 60%;
+  border-radius: 0.25rem;
+}
+
+#device-list li .device-status small {
+  border: 1px solid #000;
+}
+
+#device-list li .device-status small.text-success {
+  border: 1px solid #28a745;
+}
+
+.event-list > button.event-item {
+  display: block;
+  padding: 0.25rem 0.25rem 0.5rem 0;
+}
+
+.event-list > button.event-item.active {
+  background-color: rgba(220, 220, 220, 0.42);
+  color: #000;
+}
 
 
-  .event-list .event-status small {
-    margin-top: .25rem; /* because it's in a flex row with a small-caps item */
-    font-variant-caps: normal;
-  }
 
-  .event-list .event-status small.text-success{
-    border-color: #28a745;
-  }
+.event-list .event-status small.text-success{
+  border-color: #28a745;
+}
 
-  .event-list .event-status small.text-muted {
-    border-color: #6c757d;
-  }
+.event-list .event-status small.text-muted {
+  border-color: #6c757d;
+}
 
-  .event-select {
-    margin-top: 2rem;
-  }
 
-  select#select-event {
-    margin-bottom: 0.5rem;
-  }
-  
+/*
+ *    Utilities
+ */
+
+span.small-caps {
+  font-variant-caps: all-small-caps;
+}

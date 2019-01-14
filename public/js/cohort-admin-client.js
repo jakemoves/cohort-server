@@ -4,36 +4,61 @@ import Guid from "uuid/v4"
 var vm = new Vue({
   el: '#cohort-admin',
   data: {
-    guid: 12345,
-    events: [ { id: 0, label: "none", isOpen: false, devices: [] }],
+    guid: 12345,  // let guid = Guid() // enable this when you implement #48
+    events: [{ id: 0, label: "none", isOpen: false, 
+      devices: [{ isAdmin: false, guid: 0 }] 
+    }],
     activeEventIndex: 0
   },
+  created: function() {
+    // register this app as an admin device
+    fetch(this.serverURL + '/devices', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({ guid: this.guid, isAdmin: true })
+    }).then( response => {
+      if(response.status == 200){
+        this.updateEvents()
+      } else {
+        console.log('error registering this app as an admin device')
+      }
+    })
+  },
   computed: {
+    // process.env.NODE_ENV is patched in by webpack based on the mode (dev/prod) provided in the package.json build scripts
+    serverURL: function() {
+      if(process.env.NODE_ENV == 'development'){
+        return 'http://localhost:3000/api'
+      } else {
+        return 'https://cohort.rocks/api'
+      }
+    },
+    socketURL: function() {
+      if(process.env.NODE_ENV == 'development'){
+        return 'ws://localhost:3000/sockets'
+      } else {
+        return 'wss://cohort.rocks/sockets'
+      }
+
+    },
     activeEvent: function() {
       return this.events[this.activeEventIndex]
     },
     activeEventIsOpen: function() {
       return this.activeEvent.isOpen
-    },
-    isCheckedInAsAdmin: function() {
-      let isAdminOnEvent = false
-      if(this.activeEvent.devices) {
-        if(this.activeEvent.devices.find( device => device.guid == this.guid)) {
-          isAdminOnEvent = true
-        }
-      }
-      return isAdminOnEvent
     }
   },
   methods: {
-    onSelectEvent(eventId) {
-      fetch(serverURL + '/events/' + eventId + {
+
+    updateEvents() {
+      // get a list of events
+      fetch(vm.serverURL + '/events', {
         method: 'GET'
       }).then( response => {
         if(response.status == 200){
-          response.json().then( event => {
-            vm.activeEventIndex = vm.events.findIndex( event => event.id == eventId)
-            vm.events[vm.activeEventIndex] = event
+          response.json().then( events => {
+            vm.activeEventIndex = 0
+            vm.events = events
           })
         } else {
           response.text().then( errorText => {
@@ -41,71 +66,76 @@ var vm = new Vue({
           })
         }
       })
-    }
-  }
-})
+    },
 
-let guid = 12345
-// let guid = Guid() // enable this when you implement #48
+    onSelectEvent(eventId) {
 
-// process.env.NODE_ENV is patched in by webpack based on the mode (dev/prod) provided in the package.json build scripts
-
-let serverURL, socketURL
-if(process.env.NODE_ENV == 'development'){
-  serverURL = 'http://localhost:3000/api'
-  socketURL = 'ws://localhost:3000/sockets'
-} else {
-  serverURL = 'https://cohort.rocks/api'
-  socketURL = 'wss://cohort.rocks/sockets'
-}
-
-fetch(serverURL + '/events', {
-  method: 'GET'
-}).then( response => {
-  if(response.status == 200){
-    response.json().then( events => {
-      vm.events = events
-      console.log(events)
-    })
-  } else {
-    response.text().then( errorText => {
-      console.log(errorText)
-    })
-  }
-})
-
-window.checkInToEventAsAdmin = ($event) => {
-  // register this app as an admin device
-  fetch(serverURL + '/devices', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json'},
-    body: JSON.stringify({ guid: vm.guid, isAdmin: true })
-  }).then( response => {
-    if(response.status == 200){
-      // check in to the event
-      fetch(serverURL + '/events/' + vm.activeEvent.id + '/check-in', {
+      // check in to the event as admin
+      fetch(vm.serverURL + '/events/' + eventId + '/check-in', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify({ guid: vm.guid })
       }).then( response => {
         if(response.status == 200){
-          console.log('checked in as admin')
+          response.json().then( event => {
+
+            // get the event details
+            fetch(vm.serverURL + '/events/' + eventId + {
+              method: 'GET'
+            }).then( response => {
+              if(response.status == 200){
+                response.json().then( event => {
+                  vm.activeEventIndex = vm.events.findIndex( event => event.id == eventId)
+                  vm.activeEvent.devices = event.devices
+                })
+              } else {
+                response.text().then( errorText => {
+                  console.log(errorText)
+                })
+              }
+            })
+          
+          })
         } else {
           response.text().then( errorText => {
             console.log(errorText)
           })
         }
       })
+    }
+  }
+})
+
+window.createCohortEvent = ($event) => {
+  let eventLabel = document.getElementById('new-event-label').value
+  fetch(vm.serverURL + '/events', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json'},
+    body: JSON.stringify({ label: eventLabel })
+  }).then( response => {
+    if(response.status == 200){
+      vm.updateEvents()
     } else {
-      response.text().then( errorText => {
-        console.log(errorText)
-      })
+      console.log('error creating event')
+    }
+  })
+}
+
+window.deleteCohortEvent = () => {
+  let eventId = vm.activeEvent.id
+  fetch(vm.serverURL + '/events/' + eventId, {
+    method: 'DELETE'
+  }).then( response => {
+    if(response.status == 200){
+      vm.updateEvents()
+    } else {
+      console.log('error deleting event')
     }
   })
 }
 
 window.openEvent = ($event) => {
-  fetch(serverURL + '/events/' + vm.activeEvent.id + '/open', {
+  fetch(vm.serverURL + '/events/' + vm.activeEvent.id + '/open', {
     method: 'PATCH'
   }).then( response => {
     if(response.status == 200){
@@ -117,7 +147,7 @@ window.openEvent = ($event) => {
 }
 
 window.closeEvent = ($event) => {
-  fetch(serverURL + '/events/' + vm.activeEvent.id + '/close', {
+  fetch(vm.serverURL + '/events/' + vm.activeEvent.id + '/close', {
     method: 'PATCH'
   }).then( response => {
     if(response.status == 200){
@@ -131,7 +161,7 @@ window.closeEvent = ($event) => {
 
 
 window.openWebSocketConnection = () => {
-  const client = new WebSocket(socketURL)
+  const client = new WebSocket(vm.socketURL)
 
   client.addEventListener('open', () => {
     console.log('connection open')

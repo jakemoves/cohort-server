@@ -24,10 +24,11 @@
       
       <section class="container">
         <div class="row">
+
           <div class="col-sm-auto">
             <h3 class="font-weight-light">Events</h3>
             <div class="event-list list-group list-group-flush">
-              <button class="event-item list-group-item list-group-item-action"   v-for="cohortEvent in events" 
+              <button class="event-list__event-item list-group-item list-group-item-action"   v-for="cohortEvent in events" 
                 v-bind:class="cohortEvent.id == activeEvent.id ? 'active':''"
                 v-bind:data-event-id="cohortEvent.id"
                 v-on:click="onSelectEvent(cohortEvent.id)">
@@ -39,17 +40,28 @@
                 </div>
               </button>
             </div>
+
+            <form action="#" class="create-event-form" onsubmit=createCohortEvent(event)>
+              <div class="form-row">
+                <div class="col-auto">
+                  <input type="text" class="form-control" id="new-event-label" placeholder="new event">
+                </div>
+                <div class="col-auto">
+                  <button type="submit" class="btn btn-secondary">Create</button>
+                </div>
+              </div>
+            </form>
           </div>
+
           <div class="col-sm-auto" v-if="activeEvent.label != 'none'">
             <h3 class="font-weight-light">Event details</h3>
-            <p>{{ activeEvent.label }}</p>
-            <h3 class="font-weight-light">Event actions</h3>
-            <button class="btn btn-dark" v-if="activeEvent.devices && !isCheckedInAsAdmin" onclick=checkInToEventAsAdmin()>Check in as admin</button>
-            <div v-if="isCheckedInAsAdmin">
-              <button class="btn btn-dark" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
-              <button class="btn btn-dark" v-if="activeEventIsOpen" onclick=closeEvent()>Close event</button>
-            </div>
+            <p>Name: {{ activeEvent.label }}</p>
+            <!-- <h3 class="font-weight-light">Event actions</h3> -->
+            <button class="btn btn-secondary" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
+            <button class="btn btn-secondary" v-if="activeEventIsOpen" onclick=closeEvent()>Close event</button>
+            <button class="btn btn-outline-danger" onclick=deleteCohortEvent()>Delete {{ activeEvent.label }}</button>
           </div>
+          
           <div class="col-sm-auto" v-if="activeEvent.devices && activeEvent.isOpen">
             <h3><span class="font-weight-light">Devices 
                 <span class="small-caps">@</span> 

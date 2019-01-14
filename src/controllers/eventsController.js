@@ -28,17 +28,19 @@ exports.events_id = (req, res) => {
 
 exports.events_create = (req, res) => {
   if(req.body.label != null && typeof req.body.null != undefined && req.body.label != ""){
-
-    eventsTable.addOne(req.body)
+    let newEvent = { label: req.body.label, isOpen: false }
+    eventsTable.addOne(newEvent)
     .then( eventIDs => {
       return eventsTable.getOneByID(eventIDs[0])
       .then( event => {
+        console.log(event)
         res.status(200).json(event)
       })
     })
     .catch( error => {
+      console.log(error)
       res.status(500)
-      res.write(error)
+      res.write(error.message)
       res.send()
     })
   } else {
@@ -77,7 +79,9 @@ exports.events_checkIn = (req, res) => {
       return knex('events_devices')
       .insert(eventDeviceRelation).returning('id')
       .then( (eventDeviceRelationId) => {
-        res.status(200).json(eventDeviceRelation)
+        return eventsTable.getOneByID(req.params.id).then( updatedEvent => {
+          res.status(200).json(updatedEvent)
+        })
       })
       .catch( error => {
         if(error.code == '23505'){

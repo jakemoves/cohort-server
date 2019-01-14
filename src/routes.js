@@ -15,7 +15,7 @@ router.get('', (req, res) => {
 
 router.get('/events', eventsController.events)
 router.get('/events/:id', eventsController.events_id)
-router.post('/events/create', eventsController.events_create)
+router.post('/events', eventsController.events_create)
 router.delete('/events/:id', eventsController.events_delete)
 
 router.patch('/events/:id/check-in', eventsController.events_checkIn)
