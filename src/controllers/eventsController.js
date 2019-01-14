@@ -115,6 +115,7 @@ exports.events_open = (req, res) => {
       // and devices should live on their event
       req.app.get('cohort').devices = result
       req.app.get('cohort').event = event
+      event.devices = result
 
       console.log(event)
 

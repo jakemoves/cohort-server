@@ -13,9 +13,13 @@ getAll = () => {
 
 getOneByID = (eventId) => {
   return Events().where('id', parseInt(eventId))
-    .then( event => {
-      if(event.length == 1){
-        return event[0]
+    .then( events => {
+      if(events.length == 1){
+        event = events[0]
+        return getDevicesForEvent(event.id).then( devices => {
+          event.devices = devices
+          return event
+        })
       } else {
         throw new Error()
       }

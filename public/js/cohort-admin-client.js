@@ -4,16 +4,43 @@ import Guid from "uuid/v4"
 var vm = new Vue({
   el: '#cohort-admin',
   data: {
-    events: [],
-    selectedEvent: {label: "none"},
-    devices: [],
-    isCheckedInAsAdmin: false,
-    selectedEventIsOpen: false
+    guid: 12345,
+    events: [ { id: 0, label: "none", isOpen: false, devices: [] }],
+    activeEventIndex: 0
+  },
+  computed: {
+    activeEvent: function() {
+      return this.events[this.activeEventIndex]
+    },
+    activeEventIsOpen: function() {
+      return this.activeEvent.isOpen
+    },
+    isCheckedInAsAdmin: function() {
+      let isAdminOnEvent = false
+      if(this.activeEvent.devices) {
+        if(this.activeEvent.devices.find( device => device.guid == this.guid)) {
+          isAdminOnEvent = true
+        }
+      }
+      return isAdminOnEvent
+    }
   },
   methods: {
-    onSelectEvent() {
-      this.isCheckedInAsAdmin = false
-      this.selectedEventIsOpen = false
+    onSelectEvent(eventId) {
+      fetch(serverURL + '/events/' + eventId + {
+        method: 'GET'
+      }).then( response => {
+        if(response.status == 200){
+          response.json().then( event => {
+            vm.activeEventIndex = vm.events.findIndex( event => event.id == eventId)
+            vm.events[vm.activeEventIndex] = event
+          })
+        } else {
+          response.text().then( errorText => {
+            console.log(errorText)
+          })
+        }
+      })
     }
   }
 })
@@ -38,8 +65,7 @@ fetch(serverURL + '/events', {
   if(response.status == 200){
     response.json().then( events => {
       vm.events = events
-
-
+      console.log(events)
     })
   } else {
     response.text().then( errorText => {
@@ -53,17 +79,16 @@ window.checkInToEventAsAdmin = ($event) => {
   fetch(serverURL + '/devices', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json'},
-    body: JSON.stringify({ guid: guid, isAdmin: true })
+    body: JSON.stringify({ guid: vm.guid, isAdmin: true })
   }).then( response => {
     if(response.status == 200){
       // check in to the event
-      fetch(serverURL + '/events/' + vm.selectedEvent.id + '/check-in', {
+      fetch(serverURL + '/events/' + vm.activeEvent.id + '/check-in', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({ guid: guid })
+        body: JSON.stringify({ guid: vm.guid })
       }).then( response => {
         if(response.status == 200){
-          vm.isCheckedInAsAdmin = true
           console.log('checked in as admin')
         } else {
           response.text().then( errorText => {
@@ -80,43 +105,44 @@ window.checkInToEventAsAdmin = ($event) => {
 }
 
 window.openEvent = ($event) => {
-  fetch(serverURL + '/events/' + vm.selectedEvent.id + '/open', {
+  fetch(serverURL + '/events/' + vm.activeEvent.id + '/open', {
     method: 'PATCH'
   }).then( response => {
     if(response.status == 200){
-      console.log('opened event ' + vm.selectedEvent.label)
-      vm.selectedEventIsOpen = true
+      console.log('opened event ' + vm.activeEvent.label)
       openWebSocketConnection()
-
-      response.json().then( openedEvent => {
-        let i = 0
-        for(i; i<vm.events.length; i++){
-          if (vm.events[i].id == openedEvent.id) break
-        }
-        vm.events[i] = openedEvent
-        console.log(vm.events[i])
-      })
-    } //else {
-    //   response.text().then( errorText => {
-    //     console.log(errorText)
-    //   })
-    // }
+      vm.activeEvent.isOpen = true;
+    }
   })
 }
+
+window.closeEvent = ($event) => {
+  fetch(serverURL + '/events/' + vm.activeEvent.id + '/close', {
+    method: 'PATCH'
+  }).then( response => {
+    if(response.status == 200){
+      console.log('closed event ' + vm.activeEvent.label)
+
+      vm.activeEvent.isOpen = false;
+      console.log(vm.activeEvent)
+    }
+  })
+}
+
 
 window.openWebSocketConnection = () => {
   const client = new WebSocket(socketURL)
 
   client.addEventListener('open', () => {
     console.log('connection open')
-    client.send(JSON.stringify({ guid: 12345 }))
+    client.send(JSON.stringify({ guid: vm.guid }))
   })
 
   client.addEventListener('message', (message) => {
     const msg = JSON.parse(message.data)
     console.log(msg)
     if(msg.status != null && msg.status != undefined){
-      vm.devices = msg.status
+      vm.activeEvent.devices = msg.status
     }
   })
 
