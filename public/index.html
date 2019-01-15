@@ -28,7 +28,7 @@
           <section class="col-sm-auto">
             <h3 class="font-weight-light">Events</h3>
             <div class="event-list list-group list-group-flush">
-              <button class="event-list__event-item list-group-item list-group-item-action"   v-for="cohortEvent in events" 
+              <button class="event-list__event-item list-group-item list-group-item-action" v-for="cohortEvent in eventsByLabel" 
                 v-bind:class="cohortEvent.id == activeEvent.id ? 'active':''"
                 v-bind:data-event-id="cohortEvent.id"
                 v-on:click="onSelectEvent(cohortEvent.id)">
@@ -56,8 +56,47 @@
           <section class="col-sm-auto" v-if="activeEvent.label != 'none'">
             <h3 class="font-weight-light">Event details</h3>
             <p>Name: {{ activeEvent.label }}</p>
-            <!-- <h3 class="font-weight-light">Event actions</h3> -->
+            <h4 class="font-weight-light">Event actions</h4>
             <button class="btn btn-secondary" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
+
+            <form action="#" class="broadcast-form" onsubmit=broadcast(event) v-if="activeEventIsOpen && activeEventDevices.length > 0">
+              <div class="form-group">
+                <textarea rows=3 class="form-control" id="broadcast-message">{{ broadcastMessagePlaceholder }}</textarea>
+              </div>
+              <div class="form-group">
+                <button type="submit" class="btn btn-secondary btn-block">Send</button>
+                <small class="text-danger" v-if="errorOnBroadcast">Message failed JSON validation</small>
+
+                <!-- disabled if no connected devices \/ \/ \/ -->
+                <!-- <button type="submit" class="btn btn-secondary btn-block" v-bind:disabled="activeEventDevices.length == 0">Send</button> -->
+              </div>
+
+              <!-- could maybe be an input group... -->
+              <!-- <div class="input-group">
+
+                <div class="input-group-prepend">
+                  <div class="btn-group btn-group-toggle btn-group-vertical" id="message-media-domain" data-toggle="buttons">
+                      <label class="btn btn-secondary" v-for="domain in activeEventMediaDomains">
+                        <input type="radio" name="media-domains" v-bind:id="mediaDomainInputID(domain)" checked>
+                        {{ domain }}
+                      </label>
+                    </div>
+                </div>
+
+                <input type="number" placeholder="1" id="message-cue-number" class="form-control">
+
+                <div class="input-group-append">
+                  <label for="message-cue-action">Action</label>
+                  <div class="btn-group btn-group-toggle btn-group-vertical" id="message-cue-action" data-toggle="buttons">
+                    <label class="btn btn-secondary" v-for="action in cueActions">
+                      <input type="radio" name="cue-action" v-bind:id="cueActionInputID(action)" checked>
+                      {{ action }}
+                    </label>
+                  </div>
+                </div>
+              </div> -->
+            </form>
+
             <button class="btn btn-secondary" v-if="activeEventIsOpen" onclick=closeEvent()>Close event</button>
             <button class="btn btn-outline-danger delete-event" onclick=deleteCohortEvent()>Delete {{ activeEvent.label }}</button>
           </section>
@@ -77,6 +116,9 @@
                   <small v-if="device.webSocketState == 1" class="connection-status text-success">
                     connected
                   </small>
+                  <small v-if="device.webSocketState == null" class="connection-status text-warning">
+                      not connected
+                    </small>
                 </div>
               </li>
             </ul>
@@ -84,18 +126,6 @@
             <p v-if="activeEventDevices.length == 0">
               No devices checked in
             </p>
-
-            <form action="#" class="broadcast-form" onsubmit=broadcast(event)>
-              <div class="form-row">
-                <div class="col-auto">
-                  <input type="text" class="form-control" id="broadcast-message" placeholder="sound-1-go">
-                </div>
-                <div class="col-auto">
-                  <button type="submit" class="btn btn-secondary" v-bind:disabled="activeEventDevices.length == 0">Broadcast</button>
-                </div>
-              </div>
-            </form>
-
           </section>
           
         </div>

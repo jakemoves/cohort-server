@@ -19,6 +19,9 @@ li {
  *    Components
  */
 
+section {
+  margin-bottom: 2rem;
+}
 
 h1.site-title {
   font-size: 1.5rem;
@@ -26,6 +29,7 @@ h1.site-title {
   margin-bottom: 2rem;
   color: #6c757d;
 }
+
 
 .event-list__event-item {
   display: block;
@@ -77,6 +81,13 @@ h1.site-title {
 
 form.create-event-form, form.broadcast-form {
   margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+form.broadcast-form {
+  #broadcast-message {
+    font-family: monospace;
+  }
 }
 
 .delete-event {
@@ -122,24 +133,8 @@ ul#device-list li {
   border: 1px solid #28a745;
 }
 
-.event-list > button.event-item {
-  display: block;
-  padding: 0.25rem 0.25rem 0.5rem 0;
-}
-
-.event-list > button.event-item.active {
-  background-color: rgba(220, 220, 220, 0.42);
-  color: #000;
-}
-
-
-
-.event-list .event-status small.text-success{
-  border-color: #28a745;
-}
-
-.event-list .event-status small.text-muted {
-  border-color: #6c757d;
+#device-list li .device-status small.text-warning {
+  border: 1px solid #ffc107;
 }
 
 

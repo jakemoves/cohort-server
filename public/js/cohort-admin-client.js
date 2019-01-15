@@ -7,7 +7,11 @@ var vm = new Vue({
     guid: 12345,  // let guid = Guid() // enable this when you implement #48
     events: [{ id: 0, label: "none", isOpen: false}],
     activeEventIndex: 0,
-    activeEventDevices: [ ]
+    activeEventDevices: [ ],
+    broadcastMessagePlaceholder: '{ "mediaDomain": "sound", \n  "cueNumber": 1, \n  "cueAction": "play" }',
+    errorOnBroadcast: false
+    // activeEventMediaDomains: [ "sound", "video" ],
+    // cueActions: [ "play", "pause", "restart" ]
   },
   created: function() {
     // register this app as an admin device
@@ -45,6 +49,12 @@ var vm = new Vue({
     },
     activeEventIsOpen: function() {
       return this.activeEvent.isOpen
+    },
+    eventsByLabel: function() {
+      let sortedEvents = this.events.sort(function(a, b){
+        return a.label.toLowerCase().localeCompare(b.label.toLowerCase())
+      })
+      return sortedEvents
     }
   },
   methods: {
@@ -101,6 +111,14 @@ var vm = new Vue({
           })
         }
       })
+    },
+
+    mediaDomainInputID: function(mediaDomain) {
+      return "media-domain-" + mediaDomain
+    },
+
+    cueActionInputID: function(cueAction){
+      return "cue-action-" + cueAction
     }
   }
 })
@@ -159,7 +177,24 @@ window.closeEvent = ($event) => {
 }
 
 window.broadcast = ($event) => {
-  console.log(document.getElementById('broadcast-message').value)
+  $event.preventDefault()
+  const messageText = document.getElementById('broadcast-message').value
+  try {
+    const message = JSON.parse(messageText)
+    fetch(vm.serverURL + '/broadcast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify(message)
+    }).then( response => {
+      response.text().then( text => {
+        console.log(text)
+        vm.errorOnBroadcast = false
+      })
+    })
+  } catch (e) {
+    console.log(e.message)
+    vm.errorOnBroadcast = true
+  } 
 }
 
 

@@ -77,9 +77,7 @@ close = (eventId) => {
     .update({'isOpen': false})
     .returning('id')
     .then( id => {
-      return checkOutAllDevices(id).then( returnCode => {
-        return Events().where('events.id', parseInt(id)).then( events => events[0])
-      })
+      return Events().where('events.id', parseInt(id)).then( events => events[0])
     })
 }
 
