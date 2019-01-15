@@ -158,6 +158,10 @@ window.closeEvent = ($event) => {
   })
 }
 
+window.broadcast = ($event) => {
+  console.log(document.getElementById('broadcast-message').value)
+}
+
 
 window.openWebSocketConnection = () => {
   const client = new WebSocket(vm.socketURL)
@@ -171,7 +175,7 @@ window.openWebSocketConnection = () => {
     const msg = JSON.parse(message.data)
     console.log(msg)
     if(msg.status != null && msg.status != undefined){
-      vm.activeEventDevices = msg.status
+      vm.activeEventDevices = msg.status.filter( device => device.guid != vm.guid) 
     }
   })
 

@@ -1,4 +1,3 @@
-
 .col-sm-auto {
   min-width: 17rem;
 }
@@ -76,17 +75,13 @@ h1.site-title {
   }
 }
 
-form.create-event-form {
+form.create-event-form, form.broadcast-form {
   margin-top: 1rem;
 }
 
 .delete-event {
   display: block;
   margin-top: 1rem;
-}
-
-li.not-connected {
-  color: #6c757d;
 }
 
 .selected-event-label {

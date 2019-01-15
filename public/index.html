@@ -22,10 +22,10 @@
         </div>
       </header>
       
-      <section class="container">
+      <div class="container">
         <div class="row">
 
-          <div class="col-sm-auto">
+          <section class="col-sm-auto">
             <h3 class="font-weight-light">Events</h3>
             <div class="event-list list-group list-group-flush">
               <button class="event-list__event-item list-group-item list-group-item-action"   v-for="cohortEvent in events" 
@@ -51,39 +51,53 @@
                 </div>
               </div>
             </form>
-          </div>
+          </section>
 
-          <div class="col-sm-auto" v-if="activeEvent.label != 'none'">
+          <section class="col-sm-auto" v-if="activeEvent.label != 'none'">
             <h3 class="font-weight-light">Event details</h3>
             <p>Name: {{ activeEvent.label }}</p>
             <!-- <h3 class="font-weight-light">Event actions</h3> -->
             <button class="btn btn-secondary" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
             <button class="btn btn-secondary" v-if="activeEventIsOpen" onclick=closeEvent()>Close event</button>
             <button class="btn btn-outline-danger delete-event" onclick=deleteCohortEvent()>Delete {{ activeEvent.label }}</button>
-          </div>
+          </section>
           
-          <div class="col-sm-auto" v-if="activeEventDevices.length > 0">
+          <section class="col-sm-auto" v-if="activeEvent.isOpen">
             <h3><span class="font-weight-light">Devices 
                 <span class="small-caps">@</span> 
               </span>
               <span class="selected-event-label">{{ activeEvent.label }}</span></h3>
-            <ul id="device-list">
-              <li v-bind:class="device.webSocketState == 1 ? 'connected' : 'not-connected'" v-for="device in activeEventDevices">
+            
+              <ul id="device-list" v-if="activeEventDevices.length > 0">
+              <li v-for="device in activeEventDevices">
                 <div class="device-number device-item">
                   #{{ device.guid }}
                 </div>
                 <div class="device-status">
-                  <small class="checkin-status text-success">
-                    checked in
-                  </small>
-                  <small class="connection-status text-success">
+                  <small v-if="device.webSocketState == 1" class="connection-status text-success">
                     connected
                   </small>
                 </div>
-                
               </li>
             </ul>
-          </div>
+
+            <p v-if="activeEventDevices.length == 0">
+              No devices checked in
+            </p>
+
+            <form action="#" class="broadcast-form" onsubmit=broadcast(event)>
+              <div class="form-row">
+                <div class="col-auto">
+                  <input type="text" class="form-control" id="broadcast-message" placeholder="sound-1-go">
+                </div>
+                <div class="col-auto">
+                  <button type="submit" class="btn btn-secondary" v-bind:disabled="activeEventDevices.length == 0">Broadcast</button>
+                </div>
+              </div>
+            </form>
+
+          </section>
+          
         </div>
       </div>
     </div> 

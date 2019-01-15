@@ -66,7 +66,6 @@ module.exports = (options) => {
       }).map( device => device.socket )
 
       const status = options.app.get('cohort').devices
-        .filter( device => device.isAdmin == false )
         .map( device => {
           let deviceState = { 
             guid: device.guid
