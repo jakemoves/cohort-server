@@ -1,6 +1,8 @@
 // import dependencies
 const express = require('express');
 const bodyParser = require('body-parser')
+const CHEvent = require('./models/CHEvent')
+
 
 require('dotenv').config({ path: __dirname + '/../.env' })
 
@@ -20,10 +22,13 @@ app.use( (req, res, next) => {
 app.use('/api', routes)
 app.use(express.static('public'))
 
+let newEvent = CHEvent()
+
 app.set("cohort", {
   devices: [],
-  event: null
+  event: newEvent
 })
+
 
 /*
  * Database 
