@@ -18,8 +18,8 @@ const server = app.listen(3000, function(err){
  *   WebSocket connections
  */
 
-const webSocketServer = require('./cohort-websockets')({
-	app: app,
-	server: server,
-	path: '/sockets'
-})
+// const webSocketServer = require('./cohort-websockets')({
+// 	app: app,
+// 	server: server,
+// 	path: '/sockets'
+// })

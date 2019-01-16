@@ -11,7 +11,6 @@ exports.devices = (req, res) => {
 exports.devices_id = (req, res) => {
 	devicesTable.getOneByID(req.params.id)
 	.then( device => {
-		console.log(device)
 		res.status(200).json(device)
 	})
 	.catch( error => {

@@ -5,7 +5,7 @@ var vm = new Vue({
   el: '#cohort-admin',
   data: {
     guid: 12345,  // let guid = Guid() // enable this when you implement #48
-    events: [{ id: 0, label: "none", isOpen: false}],
+    events: [{ id: 0, label: "none", state: 'closed' }],
     activeEventIndex: 0,
     activeEventDevices: [ ],
     broadcastMessagePlaceholder: '{ "mediaDomain": "sound", \n  "cueNumber": 1, \n  "cueAction": "play" }',
@@ -48,7 +48,7 @@ var vm = new Vue({
       return this.events[this.activeEventIndex]
     },
     activeEventIsOpen: function() {
-      return this.activeEvent.isOpen
+      return this.activeEvent.state != 'closed'
     },
     eventsByLabel: function() {
       let sortedEvents = this.events.sort(function(a, b){
@@ -88,14 +88,24 @@ var vm = new Vue({
         if(response.status == 200){
           response.json().then( event => {
 
-            // get the event details
+            // refresh the event details
             fetch(vm.serverURL + '/events/' + eventId + {
               method: 'GET'
             }).then( response => {
               if(response.status == 200){
                 response.json().then( event => {
-                  // update the active index
-                  vm.activeEventIndex = vm.events.findIndex( event => event.id == eventId)
+                  // get checked-in devices
+                  fetch(vm.serverURL + '/events/' + eventId + '/devices', {
+                    method: 'GET'
+                  }).then( response => {
+                    response.json().then( devices => {
+                      // update the active index
+                      vm.activeEventIndex = vm.events.findIndex( event => {
+                        return event.id == eventId
+                      })
+                      vm.activeEventDevices = devices.filter( device => device.guid != vm.guid) 
+                    })
+                  })
                 })
               } else {
                 response.text().then( errorText => {
@@ -158,7 +168,7 @@ window.openEvent = ($event) => {
     if(response.status == 200){
       console.log('opened event ' + vm.activeEvent.label)
       openWebSocketConnection()
-      vm.activeEvent.isOpen = true;
+      vm.activeEvent.state = 'open';
     }
   })
 }
@@ -170,7 +180,7 @@ window.closeEvent = ($event) => {
     if(response.status == 200){
       console.log('closed event ' + vm.activeEvent.label)
 
-      vm.activeEvent.isOpen = false;
+      vm.activeEvent.state = 'closed';
       console.log(vm.activeEvent)
     }
   })

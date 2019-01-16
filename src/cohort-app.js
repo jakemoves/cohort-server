@@ -1,10 +1,11 @@
 // import dependencies
 const express = require('express');
 const bodyParser = require('body-parser')
-const CHEvent = require('./models/CHEvent')
-
-
 require('dotenv').config({ path: __dirname + '/../.env' })
+
+const CHEvent = require('./models/CHEvent')
+const knex = require('./knex/knex.js')
+const eventsTable = require('./knex/queries/event-queries')
 
 // configure express
 const app = express()
@@ -22,20 +23,32 @@ app.use( (req, res, next) => {
 app.use('/api', routes)
 app.use(express.static('public'))
 
-let newEvent = CHEvent()
-
-app.set("cohort", {
-  devices: [],
-  event: newEvent
-})
-
-
 /*
- * Database 
+ *   Cohort
  */
 
-// configure cohort
-const CHDevice = require('./models/CHDevice')
+app.set("cohort", {
+  events: []
+})
+
+// load events that are not closed into memory
+loadActiveEvents = async () => {
+  let activeEventsInDB = await eventsTable.getAllActiveWithDevices()
+  let activeEvents = activeEventsInDB.map( dbEvent => {
+    let event = new CHEvent(dbEvent.id, dbEvent.label, dbEvent.devices )
+    event.open()
+    return event
+  })
+  app.set("cohort", {
+    events: activeEvents
+  })
+}
+
+loadActiveEvents()
+
+/*
+ *   Database 
+ */
 
 /* 
  * 	 Apple Push Notifications 

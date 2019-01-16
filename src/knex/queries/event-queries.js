@@ -11,8 +11,20 @@ getAll = () => {
   return Events().select()
 }
 
+getAllActiveWithDevices = () => {
+  return Events()
+    .whereNot('state', 'closed')
+    .map( event => {
+      return getDevicesForEvent(event.id).then( devices => {
+        event.devices = devices
+        return event
+      })
+    })
+}
+
 getOneByID = (eventId) => {
   return Events().where('id', parseInt(eventId))
+  // to sideload devices...
   //   .then( events => {
   //     if(events.length == 1){
   //       event = events[0]
@@ -53,9 +65,11 @@ getDevicesForEvent = (eventId) => {
       'isAdmin as device_isAdmin', 
     )
     .reduce((devices, result) => {
-      let device = new CHDevice(result.device_guid)
-      device.apnsDeviceToken = result.device_apnsDeviceToken
-      device.isAdmin = result.device_isAdmin
+      let device = new CHDevice( 
+        result.device_guid, 
+        result.device_isAdmin, 
+        result.device_apnsDeviceToken
+      )
       devices.push(device)
       return devices
     }, [])
@@ -64,7 +78,7 @@ getDevicesForEvent = (eventId) => {
 open = (eventId) => {
   return Events()
     .where('events.id', parseInt(eventId))
-    .update({'isOpen': true})
+    .update({'state': 'open'})
     .returning('id')
     .then( id => {
       return Events().where('events.id', parseInt(id)).then( events => events[0])
@@ -74,7 +88,7 @@ open = (eventId) => {
 close = (eventId) => {
   return Events()
     .where('events.id', parseInt(eventId))
-    .update({'isOpen': false})
+    .update({'state': 'closed'})
     .returning('id')
     .then( id => {
       return Events().where('events.id', parseInt(id)).then( events => events[0])
@@ -89,6 +103,7 @@ checkOutAllDevices = (eventId) => {
 
 module.exports = { 
   getAll: getAll,
+  getAllActiveWithDevices: getAllActiveWithDevices,
   getOneByID: getOneByID,
   addOne: addOne,
   deleteOne: deleteOne,

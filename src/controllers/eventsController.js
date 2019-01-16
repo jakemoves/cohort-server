@@ -1,6 +1,8 @@
 const knex = require('../knex/knex.js')
 const eventsTable = require('../knex/queries/event-queries')
 const devicesTable = require('../knex/queries/device-queries')
+const CHDevice = require('../models/CHDevice')
+const CHEvent = require('../models/CHEvent')
 
 exports.events = (req, res) => {
   eventsTable.getAll()
@@ -28,12 +30,11 @@ exports.events_id = (req, res) => {
 
 exports.events_create = (req, res) => {
   if(req.body.label != null && typeof req.body.null != undefined && req.body.label != ""){
-    let newEvent = { label: req.body.label, isOpen: false }
+    let newEvent = { label: req.body.label, state: 'closed' }
     eventsTable.addOne(newEvent)
     .then( eventIDs => {
       return eventsTable.getOneByID(eventIDs[0])
       .then( event => {
-        console.log(event)
         res.status(200).json(event)
       })
     })
@@ -51,27 +52,45 @@ exports.events_create = (req, res) => {
 }
 
 exports.events_delete = (req, res) => {
-  eventsTable.getOneByID(req.params.id)
-  .then( event => {
-    return eventsTable.deleteOne(req.params.id)
-    .then( () => {
-      res.status(200).json(event)
+  if(req.app.get("cohort").events.find( event => event._id == req.params.id)){
+    res.status(403)
+    res.write("Error: this event must be closed before it can be deleted")
+    res.send()
+  } else {
+    eventsTable.getOneByID(req.params.id)
+    .then( event => {
+      return eventsTable.deleteOne(req.params.id)
+      .then( () => {
+        res.status(200).json(event)
+      })
+      .catch( error => {
+        throw new Error(error)
+      })
     })
     .catch( error => {
-      throw new Error(error)
+      res.status(500)
+      res.write(error)
+      res.send()
     })
-  })
-  .catch( error => {
-    res.status(500)
-    res.write(error)
-    res.send()
-  })
+  }
 }
 
 exports.events_checkIn = (req, res) => {
 	if(req.body.guid != null && req.body.guid != undefined && req.body.guid != ""){
     devicesTable.getOneByDeviceGUID(req.body.guid)
     .then( device => {
+
+      // if the event is open, we also need to add the device there
+      let event = req.app.get("cohort").events.find( event => event._id == req.params.id)
+      if( event !== undefined){
+        let deviceObject = new CHDevice( 
+          device.guid, 
+          device.isAdmin, 
+          device.apnsDeviceToken
+        )
+        event.devices.push(deviceObject)
+      }
+
       const eventDeviceRelation = { 
         event_id: parseInt(req.params.id),
         device_id: device.id
@@ -95,12 +114,12 @@ exports.events_checkIn = (req, res) => {
       })
     })
     .catch( error => {
+      console.log(error)
       res.status(500)
-      res.write("Error: device with guid: " + req.body.guid + " does not exist")
       res.send()
     })
 	} else {
-    res.status(500)
+    res.status(400)
     res.write('Error: request must include a device guid')
     res.send()
 	}
@@ -108,20 +127,14 @@ exports.events_checkIn = (req, res) => {
 
 exports.events_open = (req, res) => {
   eventsTable.getDevicesForEvent(req.params.id)
-  .then( result => {
-    console.log(result)
+  .then( devices => {
     // update db
     eventsTable.open(req.params.id)
 
-    .then( event => {
-      console.log(event)
-      // this should get refactored to CHEvent.open
-      // and devices should live on their event
-      req.app.get('cohort').devices = result
-      req.app.get('cohort').event = event
-      event.devices = result
-
-      console.log(event)
+    .then( dbEvent => {
+      let event = new CHEvent(dbEvent.id, dbEvent.label, devices)
+      event.open()
+      req.app.get("cohort").events.push(event)
 
       res.status(200)
       res.json(event)
@@ -134,19 +147,17 @@ exports.events_open = (req, res) => {
 }
 
 exports.events_close = (req, res) => {
-  req.app.get('cohort').devices.forEach( device => {
-    if(device.socket != null && typeof device.socket != undefined){
-      device.socket.close(4002, "Event is over")
-    }
-  })
-
+  let event = req.app.get('cohort').events.find( event => event._id == req.params.id)
+  if( event !== undefined ){ 
+    event.close()
+    req.app.get("cohort").events.splice(
+      req.app.get("cohort").events.findIndex(
+        event => event._id == req.params.id
+      ), 1)
+  }
   // update db
   eventsTable.close(req.params.id)
   .then( event => {
-    // this should get refactored to CHEvent.close
-    req.app.get('cohort').devices = []
-    req.app.get('cohort').event = null
-
     res.status(200)
     res.json(event)
     res.send()

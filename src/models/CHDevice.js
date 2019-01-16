@@ -1,12 +1,13 @@
 class CHDevice {
-	isAdmin = false
+	isAdmin
 	guid
 	socket = null
-	apnsDeviceToken = null // apple push notification service -- uses unique id generated on the device
-	constructor(guid){
+	apnsDeviceToken // apple push notification service -- uses unique id generated on the device
+	constructor(guid, isAdmin = false, apnsDeviceToken = null){
 		this.guid = guid
+		this.isAdmin = isAdmin
+		this.apnsDeviceToken = apnsDeviceToken
 	}
-	// TODO add posture, media status, media control
 }
 
 module.exports = CHDevice
