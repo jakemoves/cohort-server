@@ -3,7 +3,6 @@ const router = express.Router()
 
 const eventsController = require('./controllers/eventsController')
 const devicesController = require('./controllers/devicesController')
-const broadcastController = require('./controllers/broadcastController')
 
 router.get('', (req, res) => {
   res.send('Cohort rocks')

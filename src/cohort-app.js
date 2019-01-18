@@ -20,7 +20,7 @@ app.use( (req, res, next) => {
   next()
 })
 
-app.use('/api', routes)
+app.use('/api/v1', routes)
 app.use(express.static('public'))
 
 /*
