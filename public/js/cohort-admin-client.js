@@ -86,7 +86,7 @@ var vm = new Vue({
         body: JSON.stringify({ guid: vm.guid })
       }).then( response => {
         if(response.status == 200){
-          response.json().then( event => {
+          response.json().then( event_device => {
 
             // refresh the event details
             fetch(vm.serverURL + '/events/' + eventId + {
@@ -94,6 +94,12 @@ var vm = new Vue({
             }).then( response => {
               if(response.status == 200){
                 response.json().then( event => {
+                  
+                  // if the event is open, connect to it over websockets
+                  if(event.state == 'open'){
+                    openWebSocketConnection(event.id)
+                  }
+
                   // get checked-in devices
                   fetch(vm.serverURL + '/events/' + eventId + '/devices', {
                     method: 'GET'
@@ -103,6 +109,7 @@ var vm = new Vue({
                       vm.activeEventIndex = vm.events.findIndex( event => {
                         return event.id == eventId
                       })
+                      console.log(devices)
                       vm.activeEventDevices = devices.filter( device => device.guid != vm.guid) 
                     })
                   })
@@ -162,12 +169,13 @@ window.deleteCohortEvent = () => {
 }
 
 window.openEvent = ($event) => {
+  // /open should be idempotent, so it doesn't matter if we call it on an event that's already open
   fetch(vm.serverURL + '/events/' + vm.activeEvent.id + '/open', {
     method: 'PATCH'
   }).then( response => {
     if(response.status == 200){
       console.log('opened event ' + vm.activeEvent.label)
-      openWebSocketConnection()
+      openWebSocketConnection(vm.activeEvent.id)
       vm.activeEvent.state = 'open';
     }
   })
@@ -208,12 +216,12 @@ window.broadcast = ($event) => {
 }
 
 
-window.openWebSocketConnection = () => {
+window.openWebSocketConnection = (eventId) => {
   const client = new WebSocket(vm.socketURL)
 
   client.addEventListener('open', () => {
     console.log('connection open')
-    client.send(JSON.stringify({ guid: vm.guid }))
+    client.send(JSON.stringify({ guid: vm.guid, eventId: eventId }))
   })
 
   client.addEventListener('message', (message) => {

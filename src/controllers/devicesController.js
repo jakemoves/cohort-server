@@ -43,18 +43,18 @@ exports.devices_create = (req, res) => {
 		}
 	
 		// happy path
-		let device = new CHDevice(req.body.guid)
+		let device_guid = req.body.guid
 	
 		if(req.body.isAdmin != null && typeof req.body.isAdmin != undefined){
-			device.isAdmin = req.body.isAdmin
-		}
-		
+			device_isAdmin = req.body.isAdmin
+		} else { device_isAdmin = false }
+
 		// add device to DB
 		devicesTable.addOne({ 
-			guid: device.guid, isAdmin: device.isAdmin
+			guid: device_guid, isAdmin: device_isAdmin
 		})
 		.then( deviceIDs => {
-			console.log("created device: " + device.guid)
+			console.log("created device: " + device_guid)
 			return devicesTable.getOneByID(deviceIDs[0])
 			.then( device => {
 				res.status(200).json(device)

@@ -2,10 +2,10 @@ const machina = require('machina')
 
 CHEvent = function(id, label, devices = []){
 
-  return new machina.Fsm({
+  let eventFSM = new machina.Fsm({
     _id: id,
     _label: label,
-    devices: devices,
+    devices: devices, // do not add / remove objects to this array directly
 
     initialize: function(options) {
     },
@@ -53,8 +53,48 @@ CHEvent = function(id, label, devices = []){
 
     close: function() {
       this.handle('closeEvent')
+    },
+
+    checkInDevice: function(device){
+      // make sure the device is not already checked in on this event
+      if(this.devices.find( existingDevice => existingDevice._id === device._id) === undefined){
+        this.devices.push(device)
+        this.emit('deviceCheckedIn', device)
+        this.broadcastDeviceStates() // eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
+      } 
+    },
+
+    broadcastDeviceStates: function(){
+
+      const connectedAdminDevices = this.devices.filter( device => {
+        return (device.isAdmin && device.socket != null && device.socket !== undefined && device.socket.readyState == 1)
+      })
+
+      const deviceStates = this.devices.map( device => {
+        let deviceState = { 
+          guid: device.guid
+        }
+        
+        if(device.socket != null && device.socket !== undefined){
+          deviceState.webSocketState = device.socket.readyState
+        } else {
+          deviceState.webSocketState = null
+        }
+        
+        return deviceState
+      })
+
+      connectedAdminDevices.forEach( device => {
+        device.socket.send(JSON.stringify({ status: deviceStates }))
+      })
     }
   })
+
+  devices.forEach( device => {
+    eventFSM.checkInDevice(device)
+  })
+
+  return eventFSM
 }
 
 module.exports = CHEvent

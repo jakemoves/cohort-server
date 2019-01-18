@@ -80,15 +80,16 @@ exports.events_checkIn = (req, res) => {
     devicesTable.getOneByDeviceGUID(req.body.guid)
     .then( device => {
 
-      // if the event is open, we also need to add the device there
+      // if the event is open, we also need to add the device to it in memory
       let event = req.app.get("cohort").events.find( event => event._id == req.params.id)
       if( event !== undefined){
         let deviceObject = new CHDevice( 
+          device.id,
           device.guid, 
           device.isAdmin, 
           device.apnsDeviceToken
         )
-        event.devices.push(deviceObject)
+        event.checkInDevice(deviceObject)
       }
 
       const eventDeviceRelation = { 
@@ -134,6 +135,7 @@ exports.events_open = (req, res) => {
     .then( dbEvent => {
       let event = new CHEvent(dbEvent.id, dbEvent.label, devices)
       event.open()
+      // need to add listeners here for device add/remove... and then figure out how to DRY that up (repeated in app.js)
       req.app.get("cohort").events.push(event)
 
       res.status(200)

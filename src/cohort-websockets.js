@@ -1,5 +1,7 @@
 const webSocket = require('ws')
 const CHDevice = require('./models/CHDevice')
+const _flatten = require('lodash/flatten')
+const _uniqBy = require('lodash/uniqBy')
 
 module.exports = (options) => {
 
@@ -18,11 +20,18 @@ module.exports = (options) => {
         const msg = JSON.parse(message)
         
         // initial message from device with its GUID
-        if(msg.guid != null && typeof msg.guid != undefined){
-          let matchingDevices = options.app.get('cohort').devices
-            .filter((device) => { 
-              return device.guid == msg.guid 
-            })
+        if((msg.guid != null && msg.guid !== undefined) && 
+          (msg.eventId != null && msg.eventId !== undefined)) {
+          
+          let event = getOpenEventWithId(msg.eventId)
+          
+          if(event == undefined){
+            socket.close(4002, "No open event found with id:" + msg.eventId)
+            return
+          } 
+
+          let matchingDevices =  event.devices
+            .filter( device => device.guid == msg.guid)
   
           if(matchingDevices.length == 1){
             let device = matchingDevices[0]
@@ -33,11 +42,14 @@ module.exports = (options) => {
             device.socket = socket
   
             socket.send(JSON.stringify({ result: "success" }))
+
+            event.broadcastDeviceStates() // eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
+
             console.log('opened socket for device: ' + msg.guid)
           } else if (matchingDevices.length == 0 ){
             console.log("Error: could not open WebSocket, device not found")
             socket.close(4000, "Devices must be registered via HTTP before opening a WebSocket connection")
-          }else if (matchingDevices.length > 1 ){
+          } else if (matchingDevices.length > 1 ){
             console.log("Error: there are devices with identical GUIDs!")
             socket.close(4001)
           }
@@ -45,13 +57,36 @@ module.exports = (options) => {
       })
   
       socket.on('close', (code, reason) => {
-        const device = options.app.get('cohort').devices.filter( (device) => {
+        let matchingDevices = allDevices().filter( device => {
           return device.socket === socket
         })
-        let message = 'closed socket for device ' + device.guid + ' with code ' + code
-        if(reason != null){ message += ' | reason: ' + reason }
-        console.log(message)
-        device.socket = null
+
+        if(matchingDevices === undefined) {
+          console.log("Warning: received request to close socket but could not find a matching device (close code: " + code + ", reason: " + reason)
+          return
+        }
+
+        if(matchingDevices.length !== 1){
+          console.log("Warning: you may have found an edge case around one device at multiple events or multiple devices with the same socket")
+          return
+        }
+
+        if(matchingDevices.length == 1){
+          let device = matchingDevices[0]
+          let message = 'closed socket for device ' + device.guid + ' with code ' + code
+          if(reason != null && reason !== undefined && reason != ""){ message += ' | reason: ' + reason }
+          console.log(message)
+          device.socket = null
+
+          // tell events with this device to broadcast an update
+          let eventsWithThisDevice = options.app.get("cohort").events.filter( event => {
+            if(event.devices.find( deviceInEvent => deviceInEvent._id = device._id)){
+              return event
+            } 
+          })
+
+          eventsWithThisDevice.forEach( event => event.broadcastDeviceStates() )// eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
+        }
       })
   
       socket.on('error', (error) => {
@@ -60,42 +95,39 @@ module.exports = (options) => {
     })
     
     // this should probably be triggered to happen by updates to cohort.devices, not on a timer
-    const deviceStatus = setInterval( () => {
-      let adminDevices = options.app.get('cohort').devices.filter( device => {
-        return (device.isAdmin == true && device.socket != null && device.socket != undefined)
-      }).map( device => device.socket )
+    // const deviceStatus = setInterval( () => {
+    //   let adminDevices = options.app.get('cohort').devices.filter( device => {
+    //     return (device.isAdmin == true && device.socket != null && device.socket != undefined)
+    //   }).map( device => device.socket )
 
-      const status = options.app.get('cohort').devices
-        .map( device => {
-          let deviceState = { 
-            guid: device.guid
-          }
+    //   const status = options.app.get('cohort').devices
+    //     .map( device => {
+    //       let deviceState = { 
+    //         guid: device.guid
+    //       }
           
-          if(device.socket != null && device.socket != undefined){
-            deviceState.webSocketState = device.socket.readyState
-          } else {
-            deviceState.webSocketState = null
-          }
+    //       if(device.socket != null && device.socket != undefined){
+    //         deviceState.webSocketState = device.socket.readyState
+    //       } else {
+    //         deviceState.webSocketState = null
+    //       }
           
-          return deviceState
-        })
+    //       return deviceState
+    //     })
 
-      adminDevices.forEach( socket => {
-        socket.send(JSON.stringify({ status: status }))
-      })
+    //   adminDevices.forEach( socket => {
+    //     socket.send(JSON.stringify({ status: status }))
+    //   })
 
-    }, 3000)
+    // }, 3000)
 
     const keepaliveInterval = setInterval(function ping(){
   
-      const connectedSockets = options.app.get('cohort').devices
-        .filter((device) => {
-          return device.socket != null && typeof device.socket != undefined
-        })
+      const connectedDevices = allDevices().filter( device => device.socket != null && device.socket !== undefined)
   
       // console.log("sending keepalive to " + connectedSockets.length + " clients");
   
-      connectedSockets.forEach( (device) => {
+      connectedDevices.forEach( (device) => {
         let socket = device.socket
         if(socket.isAlive === false){
           socket.terminate()
@@ -113,5 +145,35 @@ module.exports = (options) => {
       // console.log('received pong')
       this.isAlive = true
     }
+
+    /*
+     *   Controller-ish utility functions...
+     */
+
+    function getOpenEventWithId(eventId){
+      let matchingEvents = options.app.get('cohort').events
+      .filter( event => event._id == eventId) // only open events are in memory
+
+      if(matchingEvents.length != 1 || matchingEvents == undefined){
+        console.log('Error: could not find open event with id:' + eventId)
+        return undefined
+      } else {
+        return matchingEvents[0]
+      }
+    }
+
+    // returns a flat array of all devices checked into active events
+    function allDevices(){
+      let nestedDevices = options.app.get("cohort").events
+      .map( event => event.devices)
+      let flatDevices = _flatten(nestedDevices)
+      let uniqueDevices = _uniqBy(flatDevices, '_id')
+      return uniqueDevices
+    }
+
+    // // returns an array of all devices with a non-null 'socket' property (might want to instead return those where socket.readyState ==1?)
+    // function allConnectedDevices(){
+
+    // }
   })
 }

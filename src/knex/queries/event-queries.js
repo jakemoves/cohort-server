@@ -23,7 +23,7 @@ getAllActiveWithDevices = () => {
 }
 
 getOneByID = (eventId) => {
-  return Events().where('id', parseInt(eventId))
+  return Events().where('id', parseInt(eventId)).first()
   // to sideload devices...
   //   .then( events => {
   //     if(events.length == 1){
@@ -60,12 +60,14 @@ getDevicesForEvent = (eventId) => {
     .select(
       'event_id',
       'label', 
+      'device_id as device_id',
       'guid as device_guid', 
       'apnsDeviceToken as device_apnsDeviceToken', 
       'isAdmin as device_isAdmin', 
     )
     .reduce((devices, result) => {
       let device = new CHDevice( 
+        result.device_id,
         result.device_guid, 
         result.device_isAdmin, 
         result.device_apnsDeviceToken
