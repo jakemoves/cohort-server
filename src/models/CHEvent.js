@@ -75,7 +75,7 @@ CHEvent = function(id, label, devices = []){
           guid: device.guid
         }
         
-        if(device.socket != null && device.socket !== undefined && device.socket.isAlive /* used by keepalive function */){
+        if(device.isConnected()){
           deviceState.webSocketState = device.socket.readyState
         } else {
           deviceState.webSocketState = null
