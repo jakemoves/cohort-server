@@ -31,9 +31,9 @@ var vm = new Vue({
     // process.env.NODE_ENV is patched in by webpack based on the mode (dev/prod) provided in the package.json build scripts
     serverURL: function() {
       if(process.env.NODE_ENV == 'development'){
-        return 'http://localhost:3000/api'
+        return 'http://localhost:3000/api/v1'
       } else {
-        return 'https://cohort.rocks/api'
+        return 'https://cohort.rocks/api/v1'
       }
     },
     socketURL: function() {
