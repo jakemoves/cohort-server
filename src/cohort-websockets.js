@@ -76,7 +76,7 @@ module.exports = (options) => {
           let message = 'closed socket for device ' + device.guid + ' with code ' + code
           if(reason != null && reason !== undefined && reason != ""){ message += ' | reason: ' + reason }
           console.log(message)
-          device.socket = null
+          socket.isAlive = false // it will get .terminate()d and nulled by the keepalive function
 
           // tell events with this device to broadcast an update
           let eventsWithThisDevice = options.app.get("cohort").events.filter( event => {
@@ -93,33 +93,6 @@ module.exports = (options) => {
         console.log('socket error for device ' + device.guid + ': ' + error)
       })
     })
-    
-    // this should probably be triggered to happen by updates to cohort.devices, not on a timer
-    // const deviceStatus = setInterval( () => {
-    //   let adminDevices = options.app.get('cohort').devices.filter( device => {
-    //     return (device.isAdmin == true && device.socket != null && device.socket != undefined)
-    //   }).map( device => device.socket )
-
-    //   const status = options.app.get('cohort').devices
-    //     .map( device => {
-    //       let deviceState = { 
-    //         guid: device.guid
-    //       }
-          
-    //       if(device.socket != null && device.socket != undefined){
-    //         deviceState.webSocketState = device.socket.readyState
-    //       } else {
-    //         deviceState.webSocketState = null
-    //       }
-          
-    //       return deviceState
-    //     })
-
-    //   adminDevices.forEach( socket => {
-    //     socket.send(JSON.stringify({ status: status }))
-    //   })
-
-    // }, 3000)
 
     const keepaliveInterval = setInterval(function ping(){
   
@@ -131,7 +104,7 @@ module.exports = (options) => {
         let socket = device.socket
         if(socket.isAlive === false){
           socket.terminate()
-          device.socket = null
+          socket = null
         } else {
           socket.isAlive = false
           socket.ping(noop)
@@ -170,10 +143,5 @@ module.exports = (options) => {
       let uniqueDevices = _uniqBy(flatDevices, '_id')
       return uniqueDevices
     }
-
-    // // returns an array of all devices with a non-null 'socket' property (might want to instead return those where socket.readyState ==1?)
-    // function allConnectedDevices(){
-
-    // }
   })
 }

@@ -1,8 +1,9 @@
 
 exports.seed = function(knex, Promise) {
   // Deletes ALL existing entries
+  // see https://github.com/tgriesser/knex/issues/1506 for why it's done this way instead of something easy like .del() or .truncate()
   return knex.raw('TRUNCATE TABLE devices RESTART IDENTITY CASCADE').then( () => {
-    // Inserts seed entries
+    // Inserts devices entries
     return knex('devices').insert([
       {
         guid: 1234567,
@@ -21,7 +22,7 @@ exports.seed = function(knex, Promise) {
       // Deletes ALL existing entries
       return knex.raw('TRUNCATE TABLE events RESTART IDENTITY CASCADE')
       .then(function () {
-        // Inserts seed entries
+        // Inserts events entries
         return knex('events').insert([
           {label: 'pimohtēwak', state: 'closed'},
           {label: 'lot_x', state: 'closed'},
