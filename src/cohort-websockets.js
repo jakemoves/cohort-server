@@ -67,7 +67,9 @@ module.exports = (options) => {
         }
 
         if(matchingDevices.length !== 1){
-          console.log("Warning: you may have found an edge case around one device at multiple events or multiple devices with the same socket")
+          console.log("Warning: you may have found an edge case in websocket close handler")
+          console.log('closed socket for unknown device')
+          socket.isAlive = false
           return
         }
 
