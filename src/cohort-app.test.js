@@ -133,6 +133,17 @@ beforeAll( () => {
     expect(res.body.id).toEqual(1)
   })
 
+  // happy path for open event
+  test('PATCH /events/:id/check-in (to open event)', async () => {
+    const res = await request(app)
+      .patch('/api/v1/events/3/check-in')
+      .send({ guid: 1234567 })
+
+    expect(res.status).toEqual(200)
+    let event = app.get("cohort").events.find( event => event._id == 3)
+    expect(event.devices).toHaveLength(3)
+  })
+
   test('PATCH /events/:id/check-in -- error: device guid not found', async () => {
     const guid = "foo"
     const res = await request(app)
