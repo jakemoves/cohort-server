@@ -22,8 +22,8 @@ exports.devices_id = (req, res) => {
 
 exports.devices_create = (req, res) => {
 	// request must include a device guid
-	if(req.body.guid == null || typeof req.body.guid == undefined){
-		res.status = 400
+	if(req.body.guid == null ||  req.body.guid === undefined || req.body.guid ==  ""){
+		res.status(400)
 		res.write('Error: request must include a device GUID')
 		res.send()
 		return
@@ -45,7 +45,7 @@ exports.devices_create = (req, res) => {
 		// happy path
 		let device_guid = req.body.guid
 	
-		if(req.body.isAdmin != null && typeof req.body.isAdmin != undefined){
+		if(req.body.isAdmin != null && req.body.isAdmin !== undefined){
 			device_isAdmin = req.body.isAdmin
 		} else { device_isAdmin = false }
 
@@ -57,7 +57,9 @@ exports.devices_create = (req, res) => {
 			console.log("created device: " + device_guid)
 			return devicesTable.getOneByID(deviceIDs[0])
 			.then( device => {
-				res.status(200).json(device)
+        res.status(201)
+        res.location('/api/v1/devices/' + device.id)
+				res.json(device)
 			})
 		})
 	})

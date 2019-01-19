@@ -12,9 +12,9 @@ getAll = () => {
 
 getOneByID = (deviceId) => {
   return Devices().where('id', parseInt(deviceId))
-  .then( device => {
-    if(device.length == 1){
-      return device[0]
+  .then( devices => {
+    if(devices.length == 1){
+      return devices[0]
     } else {
       throw new Error()
     }
@@ -22,7 +22,14 @@ getOneByID = (deviceId) => {
 }
 
 getOneByDeviceGUID = (deviceGUID) => {
-  return Devices().where('guid', deviceGUID).first()
+  return Devices().where('guid', deviceGUID)
+  .then( devices => {
+    if(devices.length == 1){
+      return devices[0]
+    } else {
+      throw new Error("Error: no device found with guid:" + deviceGUID)
+    }
+  })
 }
 
 addOne = (device) => {

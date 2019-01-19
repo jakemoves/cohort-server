@@ -13,6 +13,7 @@ exports.events = (req, res) => {
     res.status(200).json(events)
   })
   .catch( error => {
+    console.log(error)
     res.status(500)
     res.write(error)
     res.send()
@@ -22,11 +23,18 @@ exports.events = (req, res) => {
 exports.events_id = (req, res) => {
   eventsTable.getOneByID(req.params.id)
   .then( event => {
-    res.status(200).json(event)
+    if(event){
+      res.status(200).json(event)
+    } else {
+      res.status(404)
+      res.write("Error: event with id:" + req.params.id + " not found")
+      res.send()
+    }
   })
   .catch( error => {
-    res.status(404)
-    res.write("Error: event with id:" + req.params.id + " not found")
+    console.log(error)
+    res.status(500)
+    res.write(error)
     res.send()
   })
 }
@@ -38,7 +46,9 @@ exports.events_create = (req, res) => {
     .then( eventIDs => {
       return eventsTable.getOneByID(eventIDs[0])
       .then( event => {
-        res.status(200).json(event)
+        res.status(201)
+        res.location('/api/v1/events/' + event.id)
+        res.json(event)
       })
     })
     .catch( error => {
@@ -55,26 +65,26 @@ exports.events_create = (req, res) => {
 }
 
 exports.events_delete = (req, res) => {
-  if(req.app.get("cohort").events.find( event => event._id == req.params.id)){
+  if(req.app.get("cohort").events.length > 0 &&
+    req.app.get("cohort").events.find( event => event._id == req.params.id) !== undefined){
     res.status(403)
     res.write("Error: this event must be closed before it can be deleted")
     res.send()
   } else {
-    eventsTable.getOneByID(req.params.id)
-    .then( event => {
-      return eventsTable.deleteOne(req.params.id)
-      .then( () => {
-        res.status(200).json(event)
-      })
-      .catch( error => {
-        throw new Error(error)
-      })
+    return eventsTable.deleteOne(req.params.id)
+    .then( (deletedIds) => {
+      if(deletedIds.length == 1) {
+        res.sendStatus(204)
+      } else {
+        res.sendStatus(404)
+      }
     })
     .catch( error => {
+      console.log(error)
       res.status(500)
-      res.write(error)
+      res.write(error.message)
       res.send()
-    })
+    })  
   }
 }
 
@@ -82,7 +92,6 @@ exports.events_checkIn = (req, res) => {
 	if(req.body.guid != null && req.body.guid != undefined && req.body.guid != ""){
     devicesTable.getOneByDeviceGUID(req.body.guid)
     .then( device => {
-
       // if the event is open, we also need to add the device to it in memory
       let event = req.app.get("cohort").events.find( event => event._id == req.params.id)
       if( event !== undefined){
@@ -118,8 +127,8 @@ exports.events_checkIn = (req, res) => {
       })
     })
     .catch( error => {
-      console.log(error)
-      res.status(500)
+      res.status(404)
+      res.write(error.message)
       res.send()
     })
 	} else {

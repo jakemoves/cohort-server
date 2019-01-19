@@ -23,7 +23,13 @@ getAllActiveWithDevices = () => {
 }
 
 getOneByID = (eventId) => {
-  return Events().where('id', parseInt(eventId)).first()
+  return Events().where('id', parseInt(eventId)).then( events => {
+    if(events.length == 1){
+      return events[0]
+    } else {
+      return null
+    }
+  })
   // to sideload devices...
   //   .then( events => {
   //     if(events.length == 1){
@@ -45,7 +51,10 @@ addOne = (event) => {
 }
 
 deleteOne = (eventId) => {
-  return Events().where('id', parseInt(eventId)).del()
+  return Events()
+    .where('id', parseInt(eventId))
+    .del()
+    .returning('id')
 }
 
 checkIn = (eventId, deviceId) => {
