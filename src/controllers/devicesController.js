@@ -28,7 +28,6 @@ exports.devices_create = (req, res) => {
 		res.send()
 		return
 	}
-
 	// no duplicate devices allowed
 	devicesTable.getAll().then( devices => {
 		let matchingDevices = devices.filter((device) => { 
@@ -36,10 +35,16 @@ exports.devices_create = (req, res) => {
 		})
 	
 		if(matchingDevices.length > 0){
-			res.status = 400
-			res.write('Error: device ' + req.body.guid + ' already exists')
-			res.send()
-			return
+			if(matchingDevices.length == 1) {
+				res.status(200)
+				res.json(matchingDevices[0])
+				return
+			} else {
+				res.status(500)
+				res.write('Error 19234')
+				res.send()
+				return
+			}
 		}
 	
 		// happy path

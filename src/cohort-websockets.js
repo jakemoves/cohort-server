@@ -17,8 +17,15 @@ module.exports = (options) => {
       console.log('websocket server: new connection')
   
       socket.on('message', (message) => {
-        const msg = JSON.parse(message)
-        
+        let msg
+
+        try {
+          msg = JSON.parse(message)
+        } catch(error) {
+          console.log("Error: received invalid JSON in message from client: " + error.message)
+          return
+        }
+
         // initial message from device with its GUID
         if((msg.guid != null && msg.guid !== undefined) && 
           (msg.eventId != null && msg.eventId !== undefined)) {
