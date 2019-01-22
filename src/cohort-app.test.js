@@ -12,13 +12,12 @@ beforeEach( async () => {
   await knex.migrate.latest()
   await knex.seed.run()
 
-  app = require('./cohort-app')  
+  app = require('./cohort-app')
 })
 
 afterEach( async () => {
   await knex.migrate.rollback()
   // per issue #12, we should actually tear down the app/server here
-
 })
 
 describe('Basic startup', () => {
@@ -133,7 +132,7 @@ beforeAll( () => {
     expect(res.body.id).toEqual(1)
   })
 
-  // happy path for open event
+  // happy path for checking into an open event
   test('PATCH /events/:id/check-in (to open event)', async () => {
     const res = await request(app)
       .patch('/api/v1/events/3/check-in')
@@ -172,9 +171,27 @@ beforeAll( () => {
     expect(res.text).toEqual("Error: no event found with id:5")
   })
 
-  // open
+  // per issues #12 and #66, these tests persist app state between them and are thus fragile
+  test('PATCH /events/:id/open', async () => {
+    expect(app.get("cohort").events.length).toEqual(2)
+    const res = await request(app)
+      .patch('/api/v1/events/2/open')
+    
+    expect(res.status).toEqual(200)
+    expect(res.body.state).toEqual('open')
+    expect(app.get("cohort").events.length).toEqual(3)
+  })
 
-  // close
+  // per issues #12 and #66, these tests persist app state between them and are thus fragile
+  test('PATCH /events/:id/close', async () => {
+    expect(app.get("cohort").events.length).toEqual(3)
+    const res = await request(app)
+      .patch('/api/v1/events/2/close')
+    
+    expect(res.status).toEqual(200)
+    expect(res.body.state).toEqual('closed')
+    expect(app.get("cohort").events).toHaveLength(2)
+  })
 
   // broadcast
 })
@@ -221,6 +238,17 @@ describe('Device routes', () => {
 
     expect(res1.status).toEqual(200)
     expect(res1.body.guid).toEqual('12345678')
+  })
+
+  test('POST /devices -- device already exists', async () => {
+    const res = await createDevice(12345678)
+    
+    expect(res.status).toEqual(201)
+    expect(res.header.location).toEqual('/api/v1/devices/4')
+    expect(res.body.guid).toEqual('12345678')
+
+    const res1 = await createDevice(12345678)
+    expect(res1.status).toEqual(200)
   })
 
   test('POST /devices -- error: no guid', async () => {
