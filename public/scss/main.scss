@@ -110,6 +110,7 @@ ul#device-list li {
   max-width: 9rem;
   text-overflow: ellipsis;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 #device-list li .device-status {

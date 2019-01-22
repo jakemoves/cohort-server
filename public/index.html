@@ -25,6 +25,8 @@
       <div class="container">
         <div class="row">
 
+          <!-- EVENT LIST -->
+
           <section class="col-sm-auto">
             <h3 class="font-weight-light">Events</h3>
             <div class="event-list list-group list-group-flush">
@@ -53,9 +55,12 @@
             </form>
           </section>
 
-          <section class="col-sm-auto" v-if="activeEvent.label != nullEventLabel">
+          <!-- EVENT DETAILS -->
+
+          <section class="col-sm-auto" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
             <h3 class="font-weight-light">Event details</h3>
-            <p>Name: {{ activeEvent.label }}</p>
+            <p>Name: {{ activeEvent.label }} </br>
+               ID: {{ activeEvent.id }}</p>
             <h4 class="font-weight-light">Event actions</h4>
             <button class="btn btn-secondary" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
 
@@ -101,7 +106,8 @@
             <button class="btn btn-outline-danger delete-event" v-if="!activeEventIsOpen" onclick=deleteCohortEvent()>Delete {{ activeEvent.label }}</button>
           </section>
           
-          <section class="col-sm-auto" v-if="activeEvent.label != nullEventLabel">
+          <!-- DEVICE LIST -->
+          <section class="col-sm-auto" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
             <h3><span class="font-weight-light">Devices 
                 <span class="small-caps">@</span> 
               </span>

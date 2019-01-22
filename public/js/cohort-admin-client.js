@@ -11,7 +11,8 @@ var vm = new Vue({
     activeEventIndex: 0,
     activeEventDevices: [ ],
     broadcastMessagePlaceholder: '{ "mediaDomain": "sound", \n  "cueNumber": 1, \n  "cueAction": "play" }',
-    errorOnBroadcast: false
+    errorOnBroadcast: false,
+    userDidSelectEvent: false
     // activeEventMediaDomains: [ "sound", "video" ],
     // cueActions: [ "play", "pause", "restart" ]
   },
@@ -24,7 +25,12 @@ var vm = new Vue({
     }).then( response => {
       if(response.status == 200 /* this device already exists */ || 
         response.status == 201 /* created this device */ ){
-        this.updateEvents()
+        this.updateEvents().then( () => { // vue shows the event as active (selected) but we don't want it to until the user clicks on it
+          console.log('getting active event element')
+          let activeEventEl = document.getElementsByClassName('event-list__event-item active')[0]
+          console.log(activeEventEl)
+          activeEventEl.classList.remove('active')
+        })
       } else {
         console.log('error registering this app as an admin device')
         response.text().then( error => {
@@ -67,7 +73,7 @@ var vm = new Vue({
 
     updateEvents() {
       // get a list of events
-      fetch(vm.serverURL + '/events', {
+      return fetch(vm.serverURL + '/events', {
         method: 'GET'
       }).then( response => {
         if(response.status == 200){
@@ -88,7 +94,8 @@ var vm = new Vue({
     },
 
     onSelectEvent(eventId) {
-
+      vm.userDidSelectEvent = true
+      
       // check in to the event as admin
       fetch(vm.serverURL + '/events/' + eventId + '/check-in', {
         method: 'PATCH',
