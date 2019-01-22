@@ -5,6 +5,7 @@ var vm = new Vue({
   el: '#cohort-admin',
   data: {
     guid: 12345,  // let guid = Guid() // enable this when you implement #48
+    clientSocket: { readyState: 0 },
     events: [ { id: 0, label: "no events", state: 'closed' } ],
     nullEvent: { id: 0, label: "no events", state: 'closed' }, 
     nullEventLabel: "no events", // duplication is required to avoid many ugly things
@@ -26,9 +27,7 @@ var vm = new Vue({
       if(response.status == 200 /* this device already exists */ || 
         response.status == 201 /* created this device */ ){
         this.updateEvents().then( () => { // vue shows the event as active (selected) but we don't want it to until the user clicks on it
-          console.log('getting active event element')
           let activeEventEl = document.getElementsByClassName('event-list__event-item active')[0]
-          console.log(activeEventEl)
           activeEventEl.classList.remove('active')
         })
       } else {
@@ -234,14 +233,14 @@ window.broadcast = ($event) => {
 
 
 window.openWebSocketConnection = (eventId) => {
-  const client = new WebSocket(vm.socketURL)
+  let clientSocket = new WebSocket(vm.socketURL)
 
-  client.addEventListener('open', () => {
+  clientSocket.addEventListener('open', () => {
     console.log('connection open')
-    client.send(JSON.stringify({ guid: vm.guid, eventId: eventId }))
+    clientSocket.send(JSON.stringify({ guid: vm.guid, eventId: eventId }))
   })
 
-  client.addEventListener('message', (message) => {
+  clientSocket.addEventListener('message', (message) => {
     const msg = JSON.parse(message.data)
     console.log(msg)
     if(msg.status != null && msg.status != undefined){
@@ -249,11 +248,13 @@ window.openWebSocketConnection = (eventId) => {
     }
   })
 
-  client.addEventListener('close', () => {
+  clientSocket.addEventListener('close', () => {
     console.log('connection closed')
   })
 
-  client.addEventListener('error', (err) => {
+  clientSocket.addEventListener('error', (err) => {
     console.log(err)
   })
+
+  vm.clientSocket = clientSocket
 }

@@ -16,7 +16,7 @@
     <div id="cohort-admin">
       <header class="container">
         <div class="row">
-          <div class="col-sm-auto">
+          <div class="col">
             <h1 class="site-title text-muted">Cohort Admin</h1>
           </div>
         </div>
@@ -60,7 +60,9 @@
           <section class="col-sm-auto" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
             <h3 class="font-weight-light">Event details</h3>
             <p>Name: {{ activeEvent.label }} </br>
-               ID: {{ activeEvent.id }}</p>
+               ID: {{ activeEvent.id }} </br>
+               Live connection: {{ clientSocket.readyState == 1 ? 'active' : 'not active' }}
+            </p>
             <h4 class="font-weight-light">Event actions</h4>
             <button class="btn btn-secondary" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
 
