@@ -5,7 +5,9 @@ var vm = new Vue({
   el: '#cohort-admin',
   data: {
     guid: 12345,  // let guid = Guid() // enable this when you implement #48
-    events: [{ id: 0, label: "none", state: 'closed' }],
+    events: [ { id: 0, label: "no events", state: 'closed' } ],
+    nullEvent: { id: 0, label: "no events", state: 'closed' }, 
+    nullEventLabel: "no events", // duplication is required to avoid many ugly things
     activeEventIndex: 0,
     activeEventDevices: [ ],
     broadcastMessagePlaceholder: '{ "mediaDomain": "sound", \n  "cueNumber": 1, \n  "cueAction": "play" }',
@@ -20,10 +22,14 @@ var vm = new Vue({
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify({ guid: this.guid, isAdmin: true })
     }).then( response => {
-      if(response.status == 200){
+      if(response.status == 200 /* this device already exists */ || 
+        response.status == 201 /* created this device */ ){
         this.updateEvents()
       } else {
         console.log('error registering this app as an admin device')
+        response.text().then( error => {
+          console.log(error)
+        })
       }
     })
   },
@@ -67,7 +73,11 @@ var vm = new Vue({
         if(response.status == 200){
           response.json().then( events => {
             vm.activeEventIndex = 0
-            vm.events = events
+            if(events.length > 0){
+              vm.events = events 
+            } else { 
+              vm.events = vm.nullEvent 
+            }
           })
         } else {
           response.text().then( errorText => {

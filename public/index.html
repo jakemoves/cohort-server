@@ -34,7 +34,7 @@
                 v-on:click="onSelectEvent(cohortEvent.id)">
                 <div class="event-title-and-status">
                   <h3>{{ cohortEvent.label }}</h3>
-                  <div class="event-status">
+                  <div class="event-status" v-if="activeEvent.label != nullEventLabel">
                     <small class="status" v-bind:class="cohortEvent.state == 'closed' ? 'text-muted' : 'text-success'">{{ cohortEvent.state }}</small>
                   </div>
                 </div>
@@ -53,7 +53,7 @@
             </form>
           </section>
 
-          <section class="col-sm-auto" v-if="activeEvent.label != 'none'">
+          <section class="col-sm-auto" v-if="activeEvent.label != nullEventLabel">
             <h3 class="font-weight-light">Event details</h3>
             <p>Name: {{ activeEvent.label }}</p>
             <h4 class="font-weight-light">Event actions</h4>
@@ -101,7 +101,7 @@
             <button class="btn btn-outline-danger delete-event" v-if="!activeEventIsOpen" onclick=deleteCohortEvent()>Delete {{ activeEvent.label }}</button>
           </section>
           
-          <section class="col-sm-auto">
+          <section class="col-sm-auto" v-if="activeEvent.label != nullEventLabel">
             <h3><span class="font-weight-light">Devices 
                 <span class="small-caps">@</span> 
               </span>

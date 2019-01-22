@@ -106,16 +106,18 @@ ul#device-list li {
   align-items: center;
 }
 
+#device-list li .device-number {
+  max-width: 9rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 #device-list li .device-status {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: baseline;
   margin-left: 2rem;
-}
-
-#device-list li .device-status {
-  min-width: 9rem;
 }
 
 #device-list li .device-status small {
