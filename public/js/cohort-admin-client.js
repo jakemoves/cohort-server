@@ -215,7 +215,7 @@ window.broadcast = ($event) => {
   const messageText = document.getElementById('broadcast-message').value
   try {
     const message = JSON.parse(messageText)
-    fetch(vm.serverURL + '/broadcast', {
+    fetch(vm.serverURL + '/events/' + vm.activeEvent.id + '/broadcast', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify(message)

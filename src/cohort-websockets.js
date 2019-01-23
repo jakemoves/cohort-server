@@ -36,7 +36,7 @@ module.exports = (options) => {
             socket.close(4002, "No open event found with id:" + msg.eventId)
             return
           } 
-
+          
           let matchingDevices =  event.devices
             .filter( device => device.guid == msg.guid)
   
