@@ -1,8 +1,9 @@
 const request = require('supertest')
-const express = require('express')
-const CHDevice = require('./models/CHDevice')
-const uuid = require('uuid/v4')
+// const express = require('express')
+// const uuid = require('uuid/v4')
 const knex = require('./knex/knex')
+
+const CHSession = require('./models/CHSession')
 
 var app
 process.env.NODE_ENV = 'test'
@@ -13,11 +14,13 @@ beforeEach( async () => {
   await knex.seed.run()
 
   app = require('./cohort-app')
+  CHSession.initAndSetOnApp(app)
 })
 
 afterEach( async () => {
   await knex.migrate.rollback()
   // per issue #12, we should actually tear down the app/server here
+  app.set('cohort', null)
 })
 
 describe('Basic startup', () => {
