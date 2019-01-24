@@ -1,6 +1,6 @@
 const request = require('supertest')
 // const express = require('express')
-// const uuid = require('uuid/v4')
+const uuid = require('uuid/v4')
 const knex = require('./knex/knex')
 const ws = require('ws')
 
@@ -10,6 +10,7 @@ var app
 process.env.NODE_ENV = 'test'
 
 beforeEach( async () => {
+  console.log('global beforeEach()')
   await knex.migrate.rollback()
   await knex.migrate.latest()
   await knex.seed.run()
@@ -21,6 +22,7 @@ beforeEach( async () => {
 })
 
 afterEach( async () => {
+  console.log('global afterEach()')
   await knex.migrate.rollback()
   // per issue #12, we should actually tear down the app/server here
   app.set('cohort', null)
@@ -131,6 +133,9 @@ beforeAll( () => {
     expect(res1.status).toEqual(200)
     const deviceCount = res1.body.length
 
+    // this device already exists in the DB
+    // in a full flow, we would create the device at POST /devices first
+    // yeah it's a bit much
     const res2 = await request(app)
       .patch('/api/v1/events/1/check-in')
       .send({ guid: 1234567 })
@@ -328,6 +333,7 @@ describe('WebSockets', () => {
   var socketURL
 
   beforeEach( () => {
+    console.log('websockets beforeEach()')
     socketURL = 'http://localhost:3000/sockets'
 
     // this is pretty much the same as cohort-server.js
@@ -342,6 +348,7 @@ describe('WebSockets', () => {
   })
 
   afterEach( async () => {
+    console.log('websockets afterEach()')
     await server.close()
   })
 
@@ -364,10 +371,34 @@ describe('WebSockets', () => {
     })
   })
 
-  test('send message: error -- json parse error', async (done) => {
-    expect.assertions(3)
+//   test('send message: error -- json parse error', async (done) => {
+//     expect.assertions(3)
 
-    expect(app.get("cohort").events[0].devices.length).toEqual(2)
+//     expect(app.get("cohort").events[0].devices.length).toEqual(2)
+
+//     const webSocketServer = require('./cohort-websockets')({
+//       app: app, server: server, path: '/sockets'
+//     })
+
+//     expect(webSocketServer).toBeDefined()
+
+//     const wsClient = new ws(socketURL)
+
+//     wsClient.addEventListener('open', event => {
+
+//       wsClient.addEventListener('message', message => {
+//         const msg = JSON.parse(message.data)
+//         expect(msg.error).toEqual("message is not valid JSON (Unexpected string in JSON at position 9)")
+//         done()
+//       })
+
+//       let badJSONString = '{\"blep:\" \"blop\"}'
+//       wsClient.send(badJSONString)
+//     })
+//   })
+
+test('initial handshake: error -- no guid included', async(done) => {
+    const eventId = 3
 
     const webSocketServer = require('./cohort-websockets')({
       app: app, server: server, path: '/sockets'
@@ -378,17 +409,93 @@ describe('WebSockets', () => {
     const wsClient = new ws(socketURL)
 
     wsClient.addEventListener('open', event => {
+      let guid = uuid()
+      wsClient.send(JSON.stringify({ eventId: eventId }))
+    })
 
+    wsClient.addEventListener('close', error => {
+      expect(error.code).toEqual(4003)
+      expect(error.reason).toEqual("First message from client must include fields 'guid' and 'eventId'")
+      done()
+    })
+  })
+
+test('initial handshake: error -- event not found', async(done) => {
+    const eventId = 100
+
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, server: server, path: '/sockets'
+    })
+
+    expect(webSocketServer).toBeDefined()
+
+    const wsClient = new ws(socketURL)
+
+    wsClient.addEventListener('open', event => {
+      let guid = uuid()
+      wsClient.send(JSON.stringify({ guid: guid, eventId: eventId }))
+    })
+
+    wsClient.addEventListener('close', error => {
+      expect(error.code).toEqual(4002)
+      expect(error.reason).toEqual('No open event found with id:' + eventId)
+      done()
+    })
+  })
+
+  test('initial handshake: error -- device not checked in to event', async(done) => {
+    const eventId = 3
+
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, server: server, path: '/sockets'
+    })
+
+    expect(webSocketServer).toBeDefined()
+
+    const wsClient = new ws(socketURL)
+
+    wsClient.addEventListener('open', event => {
+      let guid = uuid()
+      wsClient.send(JSON.stringify({ guid: guid, eventId: eventId }))
+    })
+
+    wsClient.addEventListener('close', error => {
+      expect(error.code).toEqual(4000)
+      expect(error.reason).toEqual("Devices must be registered via HTTP before opening a WebSocket connection")
+      done()
+    })
+  })
+
+  test('initial handshake: happy path', async (done) => {
+    const eventId = 3
+
+    /* 
+       this device is already created and checked in 
+       in a full flow, we would:
+     - POST /devices with {guid: 'whatever'} to create the device
+     - PATCH /events/3/check-in with {guid: 'whatever'} to check in
+
+       yeah it's a bit much
+     */
+    const guid = 54321
+
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, server: server, path: '/sockets'
+    })
+
+    expect(webSocketServer).toBeDefined()
+
+    const wsClient = new ws(socketURL)
+
+    wsClient.addEventListener('open', event => {
       wsClient.addEventListener('message', message => {
         const msg = JSON.parse(message.data)
-        expect(msg.error).toEqual("message is not valid JSON (Unexpected string in JSON at position 9)")
+        expect(msg.response).toEqual("success")
         done()
       })
 
-      let badJSONString = '{\"blep:\" \"blop\"}'
-      wsClient.send(badJSONString)
+      wsClient.send(JSON.stringify({ guid: guid, eventId: 3 }))
     })
-
   })
 })
 

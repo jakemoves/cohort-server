@@ -64,12 +64,14 @@ class CHEvent extends machina.Fsm {
   checkInDevice(device){
     // make sure the device is not already checked in on this event
     if(this.devices.find( existingDevice => {
-      return existingDevice.id === device.id
+      return existingDevice.guid === device.guid
     }) === undefined){
       this.devices.push(device)
       this.emit('deviceCheckedIn', device)
       this.broadcastDeviceStates() // eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
-    } 
+    }  else {
+      return new Error("Error: device guid:" + device.guid + " is already checked in to event " + this.label)
+    }
   }
 
   broadcastDeviceStates(){}

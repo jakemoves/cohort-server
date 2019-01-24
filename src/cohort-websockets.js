@@ -20,30 +20,63 @@ module.exports = (options) => {
       socket.on('message', (message) => {
         let msg
 
+        // validate JSON
         try {
           msg = JSON.parse(message)
         } catch(error) {
           console.log("Error: received invalid JSON in message from client: " + error.message)
           socket.send(JSON.stringify({ error: "message is not valid JSON (" + error.message + ")" }))
+          return
+        }
+
+        // handle initial handshake with device
+        if(socket.cohortDeviceGUID === undefined || 
+           socket.cohortDeviceGUID == null){
+          
+          if(msg.guid == null || msg.guid === undefined ||
+             msg.eventId == null || msg.eventId === undefined){
+          
+            console.log("Error: first message from client must include fields 'guid' and 'eventId'")
+            socket.close(4003, "First message from client must include fields 'guid' and 'eventId'")
+            return
+          }
+          
+          let event = options.app.get('cohort').events
+            .find( event => event.id == msg.eventId)
+      
+          if(event === undefined){
+            console.log('Error: closing socket on handshake, no open event found with id:' + msg.eventId)
+            socket.close(4002, 'No open event found with id:' + msg.eventId)
+            return 
+          }
+
+          let device = event.devices.find( device => device.guid == msg.guid)
+
+          if(device === undefined){
+            console.log("Error: could not open WebSocket, device guid: " + msg.guid + " not found")
+            socket.close(4000, "Devices must be registered via HTTP before opening a WebSocket connection")
+            return 
+          }
+
+          // happy path
+          console.log("completing initial handshake with device guid:" + device.guid)
+          socket.cohortDeviceGUID = device.guid
+          device.socket = socket
+          
+          device.socket.send(JSON.stringify({ response: "success" }))
+
+          event.broadcastDeviceStates() // eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
         }
       })
 
-    //     // initial message from device with its GUID
-    //     if((msg.guid != null && msg.guid !== undefined) && 
-    //       (msg.eventId != null && msg.eventId !== undefined)) {
-          
-    //       let event = getOpenEventWithId(msg.eventId)
-          
-    //       if(event == undefined){
-    //         socket.close(4002, "No open event found with id:" + msg.eventId)
-    //         return
-    //       } 
-          
-    //       let matchingDevices =  event.devices
-    //         .filter( device => device.guid == msg.guid)
+      socket.on('error', (error) => {
+        // console.log('socket error for device ' + device.guid + ': ' + error)
+        console.log(error)
+      })
+    })
+  })
+}
   
-    //       if(matchingDevices.length == 1){
-    //         let device = matchingDevices[0]
 
     //         if(device.socket != null && device.socket !== undefined){
     //           console.log("device already has a socket")
@@ -107,12 +140,7 @@ module.exports = (options) => {
     //     }
     //   })
   
-      socket.on('error', (error) => {
-        // console.log('socket error for device ' + device.guid + ': ' + error)
-        console.log(error)
-      })
-    })
-
+      
     // const keepaliveInterval = setInterval(function ping(){
   
     //   const connectedDevices = allDevices().filter( device => device.socket != null && device.socket !== undefined)
@@ -174,5 +202,3 @@ module.exports = (options) => {
     // function allDevicesWithSockets(){
     //   return allDevices().filter( device => device.socket != null)
     // }
-  })
-}
