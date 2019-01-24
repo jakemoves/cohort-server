@@ -371,31 +371,31 @@ describe('WebSockets', () => {
     })
   })
 
-//   test('send message: error -- json parse error', async (done) => {
-//     expect.assertions(3)
+  test('send message: error -- json parse error', async (done) => {
+    expect.assertions(3)
 
-//     expect(app.get("cohort").events[0].devices.length).toEqual(2)
+    expect(app.get("cohort").events[0].devices.length).toEqual(2)
 
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets'
-//     })
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, server: server, path: '/sockets'
+    })
 
-//     expect(webSocketServer).toBeDefined()
+    expect(webSocketServer).toBeDefined()
 
-//     const wsClient = new ws(socketURL)
+    const wsClient = new ws(socketURL)
 
-//     wsClient.addEventListener('open', event => {
+    wsClient.addEventListener('open', event => {
 
-//       wsClient.addEventListener('message', message => {
-//         const msg = JSON.parse(message.data)
-//         expect(msg.error).toEqual("message is not valid JSON (Unexpected string in JSON at position 9)")
-//         done()
-//       })
+      wsClient.addEventListener('message', message => {
+        const msg = JSON.parse(message.data)
+        expect(msg.error).toEqual("message is not valid JSON (Unexpected string in JSON at position 9)")
+        done()
+      })
 
-//       let badJSONString = '{\"blep:\" \"blop\"}'
-//       wsClient.send(badJSONString)
-//     })
-//   })
+      let badJSONString = '{\"blep:\" \"blop\"}'
+      wsClient.send(badJSONString)
+    })
+  })
 
 test('initial handshake: error -- no guid included', async(done) => {
     const eventId = 3
@@ -497,6 +497,118 @@ test('initial handshake: error -- event not found', async(done) => {
       wsClient.send(JSON.stringify({ guid: guid, eventId: 3 }))
     })
   })
+
+  test('closing socket: error -- socket has no cohortDeviceGUID property', async (done) => {
+
+    const eventId = 3
+    const guid = 54321
+
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, server: server, path: '/sockets'
+    })
+    expect(webSocketServer).toBeDefined()
+
+    const wsClient = new ws(socketURL)
+
+    wsClient.addEventListener('open', event => {
+      wsClient.addEventListener('message', message => {
+        const msg = JSON.parse(message.data)
+        expect(msg.response).toEqual("success")
+
+        let event = app.get("cohort").events.find( event => event.id == eventId)
+        expect(event).toBeDefined()
+
+        let device = event.devices.find( device => device.guid == guid)
+        expect(device).toBeDefined()  
+        expect(device.socket.cohortDeviceGUID).toEqual(guid)
+        
+        delete device.socket.cohortDeviceGUID
+        expect(device.socket.cohortDeviceGUID).toBeUndefined()
+
+        wsClient.close()
+        setTimeout( () => {
+          expect(app.get('cohort').errors[0]).toEqual('Error: Could not find device for closed socket')
+          done()
+        }, 100)
+      })
+
+      wsClient.send(JSON.stringify({ guid: guid, eventId: 3 }))
+    })
+  })
+
+  test('closing socket (explicitly): happy path', async (done) => {
+
+    const eventId = 3
+    const guid = 54321
+
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, server: server, path: '/sockets'
+    })
+    expect(webSocketServer).toBeDefined()
+
+    const wsClient = new ws(socketURL)
+
+    wsClient.addEventListener('open', event => {
+      wsClient.addEventListener('message', message => {
+        const msg = JSON.parse(message.data)
+        expect(msg.response).toEqual("success")
+
+        wsClient.close()
+        setTimeout( () => {
+          expect(wsClient.readyState).toEqual(3)
+          
+          let event = app.get("cohort").events.find( event => event.id == eventId)
+          expect(event).toBeDefined()
+
+          let device = event.devices.find( device => device.guid == guid)
+          expect(device).toBeDefined()  
+          expect(device.socket).toBeNull()
+
+          done()
+        }, 50)
+      })
+
+      wsClient.send(JSON.stringify({ guid: guid, eventId: 3 }))
+    })
+  })
+
+  test('destroying socket: happy path', async (done) => {
+    jest.setTimeout(30000)
+    const eventId = 3
+    const guid = 54321
+
+    const webSocketServer = await require('./cohort-websockets')({
+      app: app, server: server, path: '/sockets'
+    })
+    expect(webSocketServer).toBeDefined()
+
+    let wsClient = new ws(socketURL)
+
+    wsClient.addEventListener('open', event => {
+      wsClient.addEventListener('message', message => {
+        const msg = JSON.parse(message.data)
+        expect(msg.response).toEqual("success")
+        expect(webSocketServer.clients.size).toEqual(1)
+      })
+
+      wsClient.send(JSON.stringify({ guid: guid, eventId: 3 }))
+
+      setTimeout( () => {
+        console.log('simulating a nonresponsive client')
+        wsClient._receiver._events.ping = () => { 
+          console.log('client got ping but is pretending to be dead')
+        }
+
+        setTimeout( () => {
+          expect(webSocketServer.clients.size).toEqual(0)
+          done()
+        }, 10000)
+
+      }, 7000)
+    })
+  })
+
+
 })
 
 

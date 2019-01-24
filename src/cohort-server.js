@@ -17,21 +17,24 @@ const server = app.listen(3000, function(err){
 	console.log('   http server started on port 3000')
 })
 
-/*
- *   WebSocket connections
- */
+start = async () => {
+	/*
+	 *   WebSocket connections
+	 */
 
-const webSocketServer = require('./cohort-websockets')({
-	app: app,
-	server: server,
-	path: '/sockets'
-})
+	const webSocketServer = await require('./cohort-websockets')({
+		app: app,
+		server: server,
+		path: '/sockets'
+	})
 
-/*
- *   Cohort session init
- */
+	/*
+	 *   Cohort session init
+	 */
 
-// this is async, not sure if it causes problems...
-CHSession.initAndSetOnApp(app).then( () => {
-	console.log("   cohort session started")
-}) 
+	await CHSession.initAndSetOnApp(app).then( () => {
+		console.log("   cohort session started")
+	}) 
+}
+
+start()

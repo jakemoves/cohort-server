@@ -1,11 +1,16 @@
+const _flatten = require('lodash/flatten')
+const _uniqBy = require('lodash/uniqBy')
+
 const eventsTable = require('../knex/queries/event-queries')
 const CHEvent = require('./CHEvent')
 
 class CHSession {
   events
+  errors // used for testing
 
   constructor(){
     this.events = []
+    this.errors = []
   }
 
   async init() {
@@ -25,6 +30,15 @@ class CHSession {
     return cohortSession.init().then( () => {
       app.set("cohort", cohortSession)
     })
+  }
+
+  // returns a flat array of all devices checked into active events
+  allDevices(){
+    let nestedDevices = this.events
+    .map( event => event.devices)
+    let flatDevices = _flatten(nestedDevices)
+    let uniqueDevices = _uniqBy(flatDevices, 'id')
+    return uniqueDevices
   }
 } 
 
