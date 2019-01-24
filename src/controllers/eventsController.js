@@ -157,7 +157,7 @@ exports.events_open = (req, res) => {
 exports.events_close = (req, res) => {
   let event = req.app.get('cohort').events.find( event => event.id == req.params.id)
   if( event !== undefined ){ 
-    event.close()
+    event.close() // probably would be good to have this emit an event that bubbles up to CHSession and causes the below removal
     let eventIndex = req.app.get("cohort").events.findIndex(
       event => event.id == req.params.id
     )
