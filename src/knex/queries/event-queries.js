@@ -23,25 +23,29 @@ getAllActiveWithDevices = () => {
 }
 
 getOneByID = (eventId) => {
-  return Events().where('id', parseInt(eventId)).then( events => {
+  return Events().where('id', parseInt(eventId))
+  .then( events => {
     if(events.length == 1){
       return events[0]
     } else {
       return null
     }
   })
-  // to sideload devices...
-  //   .then( events => {
-  //     if(events.length == 1){
-  //       event = events[0]
-  //       return getDevicesForEvent(event.id).then( devices => {
-  //         event.devices = devices
-  //         return event
-  //       })
-  //     } else {
-  //       throw new Error()
-  //     }
-  //   })
+}
+
+getOneByIDWithDevices = (eventId) => {
+  return getOneByID(eventId)
+  .then( events => {
+    if(events.length == 1){
+      event = events[0]
+      return getDevicesForEvent(event.id).then( devices => {
+        event.devices = devices
+        return event
+      })
+    } else {
+      return null
+    }
+  })
 }
 
 addOne = (event) => {
@@ -65,25 +69,13 @@ getDevicesForEvent = (eventId) => {
   return Events()
     .where('events.id', parseInt(eventId))
     .join('events_devices', 'events.id', 'events_devices.event_id')
-    .join('devices', 'device_id', 'devices.id')
+    .join('devices', 'devices.id', 'events_devices.device_id' )
     .select(
-      'event_id',
-      'label', 
-      'device_id as device_id',
-      'guid as device_guid', 
-      'apnsDeviceToken as device_apnsDeviceToken', 
-      'isAdmin as device_isAdmin', 
+      'device_id as id',
+      'guid', 
+      'apnsDeviceToken', 
+      'isAdmin', 
     )
-    .reduce((devices, result) => {
-      let device = new CHDevice( 
-        result.device_id,
-        result.device_guid, 
-        result.device_isAdmin, 
-        result.device_apnsDeviceToken
-      )
-      devices.push(device)
-      return devices
-    }, [])
 }
 
 open = (eventId) => {
@@ -116,6 +108,7 @@ module.exports = {
   getAll: getAll,
   getAllActiveWithDevices: getAllActiveWithDevices,
   getOneByID: getOneByID,
+  getOneByIDWithDevices: getOneByIDWithDevices,
   addOne: addOne,
   deleteOne: deleteOne,
   getDevicesForEvent: getDevicesForEvent,

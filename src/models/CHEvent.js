@@ -3,9 +3,10 @@ const CHDevice = require('./CHDevice')
 
 class CHEvent extends machina.Fsm {
   id
+  label
   devices
   
-  constructor(id, devices = []){
+  constructor(id, label){
     // constructor options for FSM
     super({
       namespace: 'cohort-event',
@@ -16,12 +17,14 @@ class CHEvent extends machina.Fsm {
         },
         open: {
           _onEnter: function(){
-            console.log('event ' + this._label + ' is now open')
+            console.log('event ' + this.label + ' is now open')
           },
           closeEvent: "closed"
         },
         closed: {
-          _onEnter: function(){}, // teardown i.e. websockets
+          _onEnter: function(){
+            // teardown i.e. websockets
+          }, 
           openEvent: "open"
         }
       },
@@ -38,15 +41,38 @@ class CHEvent extends machina.Fsm {
 
     // CHEvent-specific constructor
     this.id = id
-    this.devices = devices
+    this.label = label
+    this.devices = []
   }
 
   static fromDatabaseRow(dbEvent){
-    let eventDevices = []//dbEvent.devices.map( dbDevice => {
-    //   return new CHDevice.fromDatabaseRow(dbDevice)
-    // })
-    return new CHEvent(dbEvent.id, eventDevices)
+    let event = new CHEvent(dbEvent.id, dbEvent.label)
+    
+    if(dbEvent.devices != null &&
+       dbEvent.devices !== undefined &&
+       dbEvent.devices.length > 0){
+      
+        dbEvent.devices.map( dbDevice => {
+          let cohortDevice = CHDevice.fromDatabaseRow(dbDevice)
+          event.checkInDevice(cohortDevice)
+        })
+    } 
+    
+    return event
   }
+
+  checkInDevice(device){
+    // make sure the device is not already checked in on this event
+    if(this.devices.find( existingDevice => {
+      return existingDevice.id === device.id
+    }) === undefined){
+      this.devices.push(device)
+      this.emit('deviceCheckedIn', device)
+      this.broadcastDeviceStates() // eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
+    } 
+  }
+
+  broadcastDeviceStates(){}
 }
 
 // CHEvent = function(id, label, devices = []){

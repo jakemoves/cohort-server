@@ -1,6 +1,6 @@
 const knex = require('../knex/knex.js')
 const WebSocket = require('ws')
-const apn = require('apn')
+// const apn = require('apn')
 
 const eventsTable = require('../knex/queries/event-queries')
 const devicesTable = require('../knex/queries/device-queries')
@@ -66,7 +66,7 @@ exports.events_create = (req, res) => {
 
 exports.events_delete = (req, res) => {
   if(req.app.get("cohort").events.length > 0 &&
-    req.app.get("cohort").events.find( event => event._id == req.params.id) !== undefined){
+    req.app.get("cohort").events.find( event => event.id == req.params.id) !== undefined){
     res.status(403)
     res.write("Error: this event must be closed before it can be deleted")
     res.send()
@@ -93,15 +93,10 @@ exports.events_checkIn = (req, res) => {
     devicesTable.getOneByDeviceGUID(req.body.guid)
     .then( device => {
       // if the event is open, we also need to add the device to it in memory
-      let event = req.app.get("cohort").events.find( event => event._id == req.params.id)
-      if( event !== undefined){
-        let deviceObject = new CHDevice( 
-          device.id,
-          device.guid, 
-          device.isAdmin, 
-          device.apnsDeviceToken
-        )
-        event.checkInDevice(deviceObject)
+      let event = req.app.get("cohort").events.find( event => event.id == req.params.id)
+      if( event !== undefined ){
+        let cohortDevice = CHDevice.fromDatabaseRow(device)
+        event.checkInDevice(cohortDevice)
       }
 
       const eventDeviceRelation = { 
@@ -139,13 +134,12 @@ exports.events_checkIn = (req, res) => {
 }
 
 exports.events_open = (req, res) => {
-  eventsTable.getDevicesForEvent(req.params.id)
-  .then( devices => {
+  eventsTable.getOneByIDWithDevices(req.params.id)
+  .then( event => {
     // update db
     eventsTable.open(req.params.id)
-
     .then( dbEvent => {
-      let event = new CHEvent(dbEvent.id, dbEvent.label, devices)
+      let event =  CHEvent.fromDatabaseRow(dbEvent)
       event.open()
       // need to add listeners here for device add/remove... and then figure out how to DRY that up (repeated in app.js)
       req.app.get("cohort").events.push(event)
@@ -161,13 +155,13 @@ exports.events_open = (req, res) => {
 }
 
 exports.events_close = (req, res) => {
-  let event = req.app.get('cohort').events.find( event => event._id == req.params.id)
+  let event = req.app.get('cohort').events.find( event => event.id == req.params.id)
   if( event !== undefined ){ 
     event.close()
-    req.app.get("cohort").events.splice(
-      req.app.get("cohort").events.findIndex(
-        event => event._id == req.params.id
-      ), 1)
+    let eventIndex = req.app.get("cohort").events.findIndex(
+      event => event.id == req.params.id
+    )
+    req.app.get("cohort").events.splice(eventIndex, 1)
   }
   // update db
   eventsTable.close(req.params.id)
@@ -187,7 +181,7 @@ exports.events_devices = (req, res) => {
 
 exports.events_broadcast = (req, res) => {
   let event =  req.app.get("cohort").events
-  .find( event => event._id == req.params.id)
+  .find( event => event.id == req.params.id)
 
   let connectedSockets = event.devices
     .filter( device => device.isConnected())

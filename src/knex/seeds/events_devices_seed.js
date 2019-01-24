@@ -31,6 +31,7 @@ exports.seed = function(knex, Promise) {
         ]).then( () => {
           return knex.raw('TRUNCATE TABLE events_devices RESTART IDENTITY CASCADE').then( () => {
             return knex('events_devices').insert([
+              { event_id: 2, device_id: 1 },
               { event_id: 3, device_id: 3 },
               { event_id: 3, device_id: 2 },
               { event_id: 4, device_id: 3 }

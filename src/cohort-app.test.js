@@ -14,7 +14,9 @@ beforeEach( async () => {
   await knex.seed.run()
 
   app = require('./cohort-app')
-  CHSession.initAndSetOnApp(app)
+  await CHSession.initAndSetOnApp(app).then( () => {
+    console.log("starting cohort session")
+  })
 })
 
 afterEach( async () => {
@@ -126,24 +128,50 @@ beforeAll( () => {
 
   // happy path
   test('PATCH /events/:id/check-in', async () => {
-    const res = await request(app)
+    const res1 = await request(app).get('/api/v1/events/1/devices')
+    expect(res1.status).toEqual(200)
+    const deviceCount = res1.body.length
+
+    const res2 = await request(app)
       .patch('/api/v1/events/1/check-in')
       .send({ guid: 1234567 })
 
-    expect(res.status).toEqual(200)
-    expect(res.body).toHaveProperty('id')
-    expect(res.body.id).toEqual(1)
+    expect(res2.status).toEqual(200)
+    expect(res2.body).toHaveProperty('id')
+    expect(res2.body.id).toEqual(1)
+
+    const res3 = await request(app).get('/api/v1/events/1/devices')
+    expect(res3.body).toHaveLength(deviceCount+1)
   })
 
   // happy path for checking into an open event
   test('PATCH /events/:id/check-in (to open event)', async () => {
+    let eventId = 3
+
+    // in db
+    const res1 = await request(app).get('/api/v1/events/' + eventId +'/devices')
+    expect(res1.status).toEqual(200)
+    dbDeviceCount = res1.body.length
+
+    // in memory
+    let event = app.get("cohort").events.find( event => event.id == eventId)
+    let deviceCount = event.devices.length
+
+    expect(dbDeviceCount).toEqual(deviceCount)
+
     const res = await request(app)
       .patch('/api/v1/events/3/check-in')
       .send({ guid: 1234567 })
 
     expect(res.status).toEqual(200)
-    let event = app.get("cohort").events.find( event => event._id == 3)
-    expect(event.devices).toHaveLength(3)
+
+    // in memory
+    expect(event.devices).toHaveLength(deviceCount + 1)
+
+    // in db
+    const res3 = await request(app).get('/api/v1/events/' + eventId +
+   '/devices')
+    expect(res3.body).toHaveLength(deviceCount+1)
   })
 
   test('PATCH /events/:id/check-in -- error: device guid not found', async () => {
@@ -174,7 +202,6 @@ beforeAll( () => {
     expect(res.text).toEqual("Error: no event found with id:5")
   })
 
-  // per issues #12 and #66, these tests persist app state between them and are thus fragile
   test('PATCH /events/:id/open', async () => {
     expect(app.get("cohort").events.length).toEqual(2)
     const res = await request(app)
@@ -185,15 +212,14 @@ beforeAll( () => {
     expect(app.get("cohort").events.length).toEqual(3)
   })
 
-  // per issues #12 and #66, these tests persist app state between them and are thus fragile
   test('PATCH /events/:id/close', async () => {
-    expect(app.get("cohort").events.length).toEqual(3)
+    expect(app.get("cohort").events.length).toEqual(2)
     const res = await request(app)
-      .patch('/api/v1/events/2/close')
+      .patch('/api/v1/events/3/close')
     
     expect(res.status).toEqual(200)
     expect(res.body.state).toEqual('closed')
-    expect(app.get("cohort").events).toHaveLength(2)
+    expect(app.get("cohort").events.length).toEqual(1)
   })
 
   // broadcast
