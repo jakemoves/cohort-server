@@ -9,23 +9,24 @@ module.exports = (options) => {
     let webSocketServer = new webSocket.Server({server: options.server, path: options.path})
     
     webSocketServer.on('listening', () => {
-      console.log('websocket server started')
-      console.log('    clientTracking:' + (webSocketServer.clients != null && webSocketServer.clients !== undefined))
+      console.log('   websocket server started')
+      // console.log('    clientTracking:' + (webSocketServer.clients != null && webSocketServer.clients !== undefined))
       resolve(webSocketServer)
     })
     
-    // webSocketServer.on('connection', function connection(socket) {
-    //   console.log('websocket server: new connection')
+    webSocketServer.on('connection', function connection(socket) {
+      console.log('websocket server: new connection')
   
-    //   socket.on('message', (message) => {
-    //     let msg
+      socket.on('message', (message) => {
+        let msg
 
-    //     try {
-    //       msg = JSON.parse(message)
-    //     } catch(error) {
-    //       console.log("Error: received invalid JSON in message from client: " + error.message)
-    //       return
-    //     }
+        try {
+          msg = JSON.parse(message)
+        } catch(error) {
+          console.log("Error: received invalid JSON in message from client: " + error.message)
+          socket.send(JSON.stringify({ error: "message is not valid JSON (" + error.message + ")" }))
+        }
+      })
 
     //     // initial message from device with its GUID
     //     if((msg.guid != null && msg.guid !== undefined) && 
@@ -106,10 +107,11 @@ module.exports = (options) => {
     //     }
     //   })
   
-    //   socket.on('error', (error) => {
-    //     console.log('socket error for device ' + device.guid + ': ' + error)
-    //   })
-    // })
+      socket.on('error', (error) => {
+        // console.log('socket error for device ' + device.guid + ': ' + error)
+        console.log(error)
+      })
+    })
 
     // const keepaliveInterval = setInterval(function ping(){
   

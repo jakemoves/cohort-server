@@ -2,6 +2,7 @@ const request = require('supertest')
 // const express = require('express')
 // const uuid = require('uuid/v4')
 const knex = require('./knex/knex')
+const ws = require('ws')
 
 const CHSession = require('./models/CHSession')
 
@@ -44,8 +45,6 @@ beforeAll( () => {
       .post('/api/v1/devices')
       .send(payload)
   }
-
-  // openSocketForDevice(guid, callback) // callback style gets ugly, this should be better
 })
 
 /*
@@ -320,96 +319,79 @@ describe('Device routes', () => {
 //   })
 })
 
-// /*
-//  *    BROADCAST ROUTES
-//  */
+/*
+ *    WEBSOCKETS
+ */
 
-// describe('Broadcast routes', () => {
+describe('WebSockets', () => { 
+  var server
+  var socketURL
 
-//   beforeEach( async () => {
-//     await knex.migrate.rollback()
-//     await knex.migrate.latest()
-//     await knex.seed.run()
-//   })
+  beforeEach( () => {
+    socketURL = 'http://localhost:3000/sockets'
 
-//   afterEach( async () => {
-//     await knex.migrate.rollback()
-//   })
-
-//   test('broadcast (using websockets) : error: no devices', async () => {
-//     const payload = { "cohortMessage": "test" }
-//     const res = await request(app)
-//       .post('/api/broadcast')
-//       .send(payload)
-//     expect(res.status).toEqual(200)
-//     expect(res.text).toEqual("Warning: No devices are connected, broadcast was not sent")
-//   })
-  
-//   test('broadcast (using websockets) : error: no connected devices', async () => {
-//     // create a device
-//     const guid = uuid()
-//     const res1 = await createDevice({ guid: guid })
-//     expect(res1.status).toEqual(200)
-
-//     // send a message (but device never opened a socket!)
-//     const payload = { "cohortMessage": "test" }
-//     const res = await request(app)
-//       .post('/api/broadcast')
-//       .send(payload)
-//     expect(res.status).toEqual(200)
-//     expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
-//   })
-
-// //   // test('broadcast (using websockets) : happy path' is located in websocket section
-  
-//   test('broadcast/push-notification : happy path (one device)', async () => {
-//     // create a device
-//     const guid = uuid()
-//     const res1 = await createDevice(guid)
-//     expect(res1.status).toEqual(200)
-
-//     // register a device
-//     const payload2 = { token: '12345', guid: guid }
-//     const res2 = await request(app)
-//       .post('/api/devices/register-for-notifications')
-//       .send(payload2)
-//     expect(res2.status).toEqual(200)
-
-//     // test broadcast endpoint
-//     const payload = { 
-//       "text": "hello world",
-//       "bundleId": "rocks.cohort.test",
-//       "simulate": "success"
-//     }
-
-//     const res = await request(app)
-//       .post('/api/broadcast/push-notification')
-//       .send(payload)
-//     expect(res.status).toEqual(200)
-//     expect(res.text).toEqual("Sent notifications to 1/1 registered devices")
-//   })
-// })
-
-// describe('WebSocket connections', () => {
-//   beforeAll( () => {
-//     webSocket = require('ws')
-//     var server
-//   })
-
-//   beforeEach( () => {
-//     server = app.listen(3000, function(err){
-//       if(err) {
-//         throw err
-//       }
+    // this is pretty much the same as cohort-server.js
+    server = app.listen(3000, function(err){
+      if(err) {
+        throw err
+      }
     
-//       console.log('http server started on port 3000')
-//       console.log('environment: ' + process.env.NODE_ENV)
-//     })
-//   })
+      console.log('http server started on port 3000')
+      console.log('environment: ' + process.env.NODE_ENV)
+    })
+  })
 
-//   afterEach( () => {
-//     server.close()
-//   })
+  afterEach( async () => {
+    await server.close()
+  })
+
+  test('startup & new connection', async (done) => {
+    expect.assertions(3)
+
+    expect(app.get("cohort").events[0].devices.length).toEqual(2)
+
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, server: server, path: '/sockets'
+    })
+
+    expect(webSocketServer).toBeDefined()
+
+    const wsClient = new ws(socketURL)
+
+    wsClient.addEventListener('open', event => {
+      expect(wsClient.readyState).toEqual(1)
+      done()
+    })
+  })
+
+  test('send message: error -- json parse error', async (done) => {
+    expect.assertions(3)
+
+    expect(app.get("cohort").events[0].devices.length).toEqual(2)
+
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, server: server, path: '/sockets'
+    })
+
+    expect(webSocketServer).toBeDefined()
+
+    const wsClient = new ws(socketURL)
+
+    wsClient.addEventListener('open', event => {
+
+      wsClient.addEventListener('message', message => {
+        const msg = JSON.parse(message.data)
+        expect(msg.error).toEqual("message is not valid JSON (Unexpected string in JSON at position 9)")
+        done()
+      })
+
+      let badJSONString = '{\"blep:\" \"blop\"}'
+      wsClient.send(badJSONString)
+    })
+
+  })
+})
+
 
 //   test('websocket : new connection', async () => {
 //     expect.assertions(4)
@@ -561,4 +543,74 @@ describe('Device routes', () => {
 //   //     }
 //   //   })
 //   // }, 70000)
+// })
+
+// /*
+//  *    BROADCAST ROUTES
+//  */
+
+// describe('Broadcast routes', () => {
+
+//   beforeEach( async () => {
+//     await knex.migrate.rollback()
+//     await knex.migrate.latest()
+//     await knex.seed.run()
+//   })
+
+//   afterEach( async () => {
+//     await knex.migrate.rollback()
+//   })
+
+//   test('broadcast (using websockets) : error: no devices', async () => {
+//     const payload = { "cohortMessage": "test" }
+//     const res = await request(app)
+//       .post('/api/broadcast')
+//       .send(payload)
+//     expect(res.status).toEqual(200)
+//     expect(res.text).toEqual("Warning: No devices are connected, broadcast was not sent")
+//   })
+  
+//   test('broadcast (using websockets) : error: no connected devices', async () => {
+//     // create a device
+//     const guid = uuid()
+//     const res1 = await createDevice({ guid: guid })
+//     expect(res1.status).toEqual(200)
+
+//     // send a message (but device never opened a socket!)
+//     const payload = { "cohortMessage": "test" }
+//     const res = await request(app)
+//       .post('/api/broadcast')
+//       .send(payload)
+//     expect(res.status).toEqual(200)
+//     expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
+//   })
+
+// //   // test('broadcast (using websockets) : happy path' is located in websocket section
+  
+//   test('broadcast/push-notification : happy path (one device)', async () => {
+//     // create a device
+//     const guid = uuid()
+//     const res1 = await createDevice(guid)
+//     expect(res1.status).toEqual(200)
+
+//     // register a device
+//     const payload2 = { token: '12345', guid: guid }
+//     const res2 = await request(app)
+//       .post('/api/devices/register-for-notifications')
+//       .send(payload2)
+//     expect(res2.status).toEqual(200)
+
+//     // test broadcast endpoint
+//     const payload = { 
+//       "text": "hello world",
+//       "bundleId": "rocks.cohort.test",
+//       "simulate": "success"
+//     }
+
+//     const res = await request(app)
+//       .post('/api/broadcast/push-notification')
+//       .send(payload)
+//     expect(res.status).toEqual(200)
+//     expect(res.text).toEqual("Sent notifications to 1/1 registered devices")
+//   })
 // })
