@@ -44,7 +44,7 @@ class CHEvent extends machina.Fsm {
            connectedDevices.length == 0){
 
           this.handle('closeEvent')
-          
+
         } else {
           const expectedClosedSockets = connectedDevices.length
           let closedSockets = 0
@@ -56,7 +56,7 @@ class CHEvent extends machina.Fsm {
                 this.handle('closeEvent')
               }
             })
-            device.socket.close()
+            device.socket.close(1000, 'cohort event ' + this.label + ' is closing')
           })
         }
       }

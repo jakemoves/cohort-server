@@ -34,17 +34,13 @@ getOneByID = (eventId) => {
 }
 
 getOneByIDWithDevices = (eventId) => {
-  return getOneByID(eventId)
+  return Events().where('id', parseInt(eventId))
   .then( events => {
-    if(events.length == 1){
-      event = events[0]
-      return getDevicesForEvent(event.id).then( devices => {
-        event.devices = devices
-        return event
-      })
-    } else {
-      return null
-    }
+    event = events[0]
+    return getDevicesForEvent(event.id).then( devices => {
+      event.devices = devices
+      return event
+    })
   })
 }
 

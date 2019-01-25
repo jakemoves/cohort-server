@@ -135,17 +135,17 @@ exports.events_checkIn = (req, res) => {
 
 exports.events_open = (req, res) => {
   eventsTable.getOneByIDWithDevices(req.params.id)
-  .then( event => {
+  .then( dbEvent => {
     // update db
     eventsTable.open(req.params.id)
-    .then( dbEvent => {
+    .then( dbOpenedEvent => { // dbOpenedEvent does not have devices along with it
       let event =  CHEvent.fromDatabaseRow(dbEvent)
       req.app.get('cohort').addListenersForEvent(event)
       event.open()
       // need to add listeners here for device add/remove... and then figure out how to DRY that up (repeated in app.js)
 
       res.status(200)
-      res.json(event)
+      res.json(dbOpenedEvent)
       res.send()
     })
     .catch( error => {
