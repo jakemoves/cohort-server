@@ -41,7 +41,7 @@ class CHSession {
       if(data.toState == 'closed'){
         // remove the event from the session
         let eventIndex = this.events.findIndex(
-          event => closedEvent.id == event.id
+          matchingEvent => event.id == event.id
         )
         if(eventIndex !== undefined){
           this.events.splice(eventIndex, 1)

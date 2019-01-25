@@ -40,8 +40,11 @@ class CHEvent extends machina.Fsm {
         // we have to manually count websocket connections as they're closed
         let connectedDevices = this.devices.filter( device => device.socket != null )
         
-        if(connectedDevices === undefined){
+        if(connectedDevices === undefined || 
+           connectedDevices.length == 0){
+
           this.handle('closeEvent')
+          
         } else {
           const expectedClosedSockets = connectedDevices.length
           let closedSockets = 0
