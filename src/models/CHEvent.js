@@ -23,7 +23,13 @@ class CHEvent extends machina.Fsm {
         },
         closed: {
           _onEnter: function(){
-            // teardown i.e. websockets
+            this.devices
+              .filter( device => device.socket != null )
+              .forEach( device => {
+                device.socket.close()
+              })
+
+            console.log('event ' + this.label + ' is now closed')
           }, 
           openEvent: "open"
         }
@@ -88,7 +94,7 @@ class CHEvent extends machina.Fsm {
     })
 
     connectedAdminDevices.forEach( adminDevice => {
-      adminDevice.socket.send(JSON.stringify({ status: deviceStates }))
+      adminDevice.socket.send(JSON.stringify({ eventId: this.id, status: deviceStates }))
     })
   }
 }

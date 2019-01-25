@@ -121,10 +121,10 @@
                   #{{ device.guid }}
                 </div>
                 <div class="device-status">
-                  <small v-if="device.webSocketState == 1" class="connection-status text-success">
+                  <small v-if="device.socketOpen" class="connection-status text-success">
                     connected
                   </small>
-                  <small v-if="device.webSocketState == null" class="connection-status text-warning">
+                  <small v-if="!device.socketOpen" class="connection-status text-warning">
                       not connected
                     </small>
                 </div>

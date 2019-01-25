@@ -95,6 +95,7 @@ module.exports = (options) => {
           console.log('Error: Could not find device for closed socket')
           return
         }
+        
         console.log('closing socket for device ' + device.guid)
         device.socket = null
         

@@ -111,24 +111,23 @@ var vm = new Vue({
               if(response.status == 200){
                 response.json().then( event => {
                   
+                  vm.activeEventIndex = vm.events.findIndex( event => {
+                    return event.id == eventId
+                  })
+                  
                   // if the event is open, connect to it over websockets
                   if(event.state == 'open'){
                     openWebSocketConnection(event.id)
-                  }
-
-                  // get checked-in devices
-                  fetch(vm.serverURL + '/events/' + eventId + '/devices', {
-                    method: 'GET'
-                  }).then( response => {
-                    response.json().then( devices => {
-                      // update the active index
-                      vm.activeEventIndex = vm.events.findIndex( event => {
-                        return event.id == eventId
+                  } else {
+                    // get checked-in devices via HTTP
+                    fetch(vm.serverURL + '/events/' + eventId + '/devices', {
+                      method: 'GET'
+                    }).then( response => {
+                      response.json().then( devices => {
+                        vm.activeEventDevices = devices.filter( device => device.guid != vm.guid) 
                       })
-                      console.log(devices)
-                      vm.activeEventDevices = devices.filter( device => device.guid != vm.guid) 
                     })
-                  })
+                  }
                 })
               } else {
                 response.text().then( errorText => {
@@ -221,7 +220,7 @@ window.broadcast = ($event) => {
       body: JSON.stringify(message)
     }).then( response => {
       response.text().then( text => {
-        console.log(text)
+        // console.log(text)
         vm.errorOnBroadcast = false
       })
     })
@@ -230,7 +229,6 @@ window.broadcast = ($event) => {
     vm.errorOnBroadcast = true
   } 
 }
-
 
 window.openWebSocketConnection = (eventId) => {
   let clientSocket = new WebSocket(vm.socketURL)
@@ -243,7 +241,8 @@ window.openWebSocketConnection = (eventId) => {
   clientSocket.addEventListener('message', (message) => {
     const msg = JSON.parse(message.data)
     console.log(msg)
-    if(msg.status != null && msg.status != undefined){
+    if((msg.status != null && msg.status != undefined) &&
+        msg.eventId == vm.activeEvent.id ){
       vm.activeEventDevices = msg.status.filter( device => device.guid != vm.guid) 
     }
   })

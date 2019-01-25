@@ -19,6 +19,8 @@ class CHSession {
     let activeEvents = dbActiveEvents.map( dbEvent => {
       return CHEvent.fromDatabaseRow(dbEvent)
     })
+
+    // activeEvents.forEach( event => event.open() )
     this.events = activeEvents
     
     return Promise.resolve()

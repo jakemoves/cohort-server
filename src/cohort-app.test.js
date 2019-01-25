@@ -687,6 +687,10 @@ test('initial handshake: error -- event not found', async(done) => {
     })
   })
 
+  // admin devices (2) get status for the correct event...
+
+  // event close shuts down active sockets nicely
+
   test('broadcast: happy path', async (done) => {
     const cohortMessage = {
       targetTags: ["all"],
