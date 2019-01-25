@@ -1,5 +1,4 @@
 const request = require('supertest')
-// const express = require('express')
 const uuid = require('uuid/v4')
 const knex = require('./knex/knex')
 const ws = require('ws')
