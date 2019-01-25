@@ -11,7 +11,7 @@
         "-w",
         "--source-maps",
         "--ignore",
-        "src/cohort-app.test.js"
+        "src/**/*.test.js"
       ],
       "type": "shell",
       "group": {

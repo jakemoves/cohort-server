@@ -23,12 +23,6 @@ class CHEvent extends machina.Fsm {
         },
         closed: {
           _onEnter: function(){
-            this.devices
-              .filter( device => device.socket != null )
-              .forEach( device => {
-                device.socket.close()
-              })
-
             console.log('event ' + this.label + ' is now closed')
           }, 
           openEvent: "open"
@@ -41,8 +35,28 @@ class CHEvent extends machina.Fsm {
       },
 
       close: function() {
-        this.handle('closeEvent')
-      },
+        // once we're listening for device events, this should get refactored as a new state (openWithConnectedDevices)
+
+        // we have to manually count websocket connections as they're closed
+        let connectedDevices = this.devices.filter( device => device.socket != null )
+        
+        if(connectedDevices === undefined){
+          this.handle('closeEvent')
+        } else {
+          const expectedClosedSockets = connectedDevices.length
+          let closedSockets = 0
+
+          connectedDevices.forEach( device => {
+            device.socket.on('close', socket => {
+              closedSockets++
+              if(closedSockets == expectedClosedSockets){
+                this.handle('closeEvent')
+              }
+            })
+            device.socket.close()
+          })
+        }
+      }
     })
 
     // CHEvent-specific constructor

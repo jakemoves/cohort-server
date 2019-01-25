@@ -140,9 +140,9 @@ exports.events_open = (req, res) => {
     eventsTable.open(req.params.id)
     .then( dbEvent => {
       let event =  CHEvent.fromDatabaseRow(dbEvent)
+      req.app.get('cohort').addListenersForEvent(event)
       event.open()
       // need to add listeners here for device add/remove... and then figure out how to DRY that up (repeated in app.js)
-      req.app.get("cohort").events.push(event)
 
       res.status(200)
       res.json(event)
@@ -157,11 +157,7 @@ exports.events_open = (req, res) => {
 exports.events_close = (req, res) => {
   let event = req.app.get('cohort').events.find( event => event.id == req.params.id)
   if( event !== undefined ){ 
-    event.close() // probably would be good to have this emit an event that bubbles up to CHSession and causes the below removal
-    let eventIndex = req.app.get("cohort").events.findIndex(
-      event => event.id == req.params.id
-    )
-    req.app.get("cohort").events.splice(eventIndex, 1)
+    event.close()
   }
   // update db
   eventsTable.close(req.params.id)

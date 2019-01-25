@@ -20,8 +20,10 @@ class CHSession {
       return CHEvent.fromDatabaseRow(dbEvent)
     })
 
-    // activeEvents.forEach( event => event.open() )
-    this.events = activeEvents
+    activeEvents.forEach( event => {
+      this.addListenersForEvent(event)
+      event.open()
+    })
     
     return Promise.resolve()
   }
@@ -34,6 +36,25 @@ class CHSession {
     })
   }
 
+  addListenersForEvent(event){
+    event.on('transition', data => {
+      if(data.toState == 'closed'){
+        // remove the event from the session
+        let eventIndex = this.events.findIndex(
+          event => closedEvent.id == event.id
+        )
+        if(eventIndex !== undefined){
+          this.events.splice(eventIndex, 1)
+        } else {
+          throw new Error("Closed event was not present in session!")
+        }
+      }
+      if(data.toState == 'open'){
+        this.events.push(event)
+      }
+    })
+  }
+  
   // returns a flat array of all devices checked into active events
   allDevices(){
     let nestedDevices = this.events
