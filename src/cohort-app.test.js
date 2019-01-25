@@ -231,7 +231,21 @@ describe('Basic startup', () => {
     expect(app.get("cohort").events.length).toEqual(1)
   })
 
-  // broadcast
+  test('POST /events/:id/broadcast: error -- no devices connected', async () => {
+    const cohortMessage = {
+      targetTags: ["all"],
+	    mediaDomain: "sound",
+	    cueNumber: 1,
+	    cueAction: "play"
+    }
+
+    const res = await request(app)
+      .post('/api/v1/events/3/broadcast')
+      .send(cohortMessage)
+
+    expect(res.status).toEqual(403)
+    expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
+  })
 })
 
 
@@ -306,9 +320,6 @@ describe('Device routes', () => {
     
     expect(res.status).toEqual(400)
   })
-//   // test('device: open websocket', () => {
-
-//   // })
 
 //   test('devices/:id/registerForNotifications : happy path', async () => {
 //     const guid = uuid()
@@ -334,6 +345,7 @@ describe('Device routes', () => {
 //     expect(res.text).toEqual("Error: Request must include a 'token' object")
 //   })
 })
+
 
 /*
  *    WEBSOCKETS
@@ -581,7 +593,7 @@ test('initial handshake: error -- event not found', async(done) => {
     })
   })
 
-  // FYI this test takes ~15-20 seconds to complete
+  // FYI this test takes ~15-20 seconds to complete because it tests the keepalive function
   test('destroying socket: happy path', async (done) => { 
     jest.setTimeout(20000)
     const eventId = 3
@@ -620,16 +632,12 @@ test('initial handshake: error -- event not found', async(done) => {
 
   test('admin device gets broadcasts when device state changes', async (done) => {
     const eventId = 3
-
     const adminGUID = "54321" // this is seeded as an admin device
-
     const device1GUID = "1234567"
-    // const device2GUID = 1250453409
 
     const webSocketServer = require('./cohort-websockets')({
       app: app, server: server, path: '/sockets'
     })
-
     expect(webSocketServer).toBeDefined()
 
     const adminClient = new ws(socketURL)
@@ -678,53 +686,70 @@ test('initial handshake: error -- event not found', async(done) => {
       adminClient.send(JSON.stringify({ guid: adminGUID, eventId: eventId }))
     })
   })
+
+  test('broadcast: happy path', async (done) => {
+    const cohortMessage = {
+      targetTags: ["all"],
+	    mediaDomain: "sound",
+	    cueNumber: 1,
+	    cueAction: "play"
+    }
+
+    const eventId = 3
+    const guid1 = "54321" 
+    const guid2 = "1234567"
+
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, server: server, path: '/sockets'
+    })
+    expect(webSocketServer).toBeDefined()
+
+    const client1 = new ws(socketURL)
+
+    var broadcastsReceived = 0
+
+    client1.addEventListener('open', () => {
+      client1.send(JSON.stringify({ guid: guid1, eventId: eventId }))
+
+      client1.addEventListener('message', message => {
+        const msg = JSON.parse(message.data)
+        if(msg.mediaDomain !== undefined && msg.mediaDomain == 'sound'){
+          broadcastsReceived++
+        }
+      })
+
+      const client2 = new ws(socketURL)
+      
+      client2.addEventListener('open', () => {
+        client2.send(JSON.stringify({ guid: guid2, eventId: eventId }))
+        
+        client2.addEventListener('message', message => {
+          const msg = JSON.parse(message.data)
+          if(msg.mediaDomain !== undefined && msg.mediaDomain == 'sound'){
+            broadcastsReceived++
+          }
+        })
+
+        setTimeout( async () => {
+          setTimeout( () => {
+            expect(broadcastsReceived).toEqual(2)
+            done()
+          }, 500)
+    
+          const res = await request(server)
+            .post('/api/v1/events/3/broadcast')
+            .send(cohortMessage)
+    
+          expect(res.status).toEqual(200)
+          expect(res.text).toEqual("Successfully broadcast to 2 clients")
+        }, 500)
+
+      })
+    })
+  })
 })
 
-
-
-
-
-
-
-
-
-
-
-//   test('websocket : new connection', async () => {
-//     expect.assertions(4)
-
-//     expect(app.get('cohort').devices).toHaveLength(0)
-
-//     const guid = uuid()
-
-//     let device = new CHDevice(guid)
-//     app.get('cohort').devices.push(device)
-//     expect(app.get('cohort').devices).toHaveLength(1)
-
-//     console.log("creating server")
-
-//     const webSocketServer = await require('./cohort-websockets')({ 
-//       app: app, server: server
-//     })
-
-//     expect(webSocketServer).toBeDefined()
-
-//     const wsClient = new webSocket('ws://localhost:3000')
-    
-//     wsClient.addEventListener('open', (event) => {
-//       wsClient.send(JSON.stringify({ guid: guid }))
-//     })
-
-//     const msg = await new Promise ( resolve => {
-//       wsClient.addEventListener('message', (message) => {
-//         const msg = JSON.parse(message.data)
-//         console.log(msg)
-//         resolve(msg)
-//       })
-//     })
-
-//     expect(msg.result).toEqual("success")
-//   })
+// partially written tests, keeping them around for useful bits
 
 //   test('websocket : multiple connections', async () => {
 //     expect.assertions(3)
@@ -791,37 +816,6 @@ test('initial handshake: error -- event not found', async(done) => {
 //     //   }
 //     // })
 
-//   test('websocket : broadcast (happy path)', (done) => {
-//     expect.assertions(4)
-    
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, 
-//       server: server,
-//       callback: () => {
-//         const wsClient = new webSocket('ws://localhost:3000')
-        
-//         wsClient.addEventListener('message', (msg) => {
-//           let message = JSON.parse(msg.data)
-//           console.log(message)
-//           expect(message).toEqual({ cohortMessage: "test" })
-//         })
-
-//         wsClient.addEventListener('open', async (event) => {
-//           expect(app.get('cohort').devices).toHaveLength(1)
-          
-//           const payload = { "cohortMessage": "test" }
-          
-//           const res = await request(app)
-//             .post('/api/broadcast')
-//             .send(payload)
-
-//           expect(res.status).toEqual(200)
-//           expect(res.text).toEqual('Successfully broadcast to 1 clients')
-//           done()
-//         })
-//       }
-//     })
-//   })
 
 //   // test('websocket: keepalive for one minute', (done) => {
 //   //   const webSocketServer = require('./cohort-websockets')({
@@ -841,48 +835,6 @@ test('initial handshake: error -- event not found', async(done) => {
 //   //   })
 //   // }, 70000)
 // })
-
-// /*
-//  *    BROADCAST ROUTES
-//  */
-
-// describe('Broadcast routes', () => {
-
-//   beforeEach( async () => {
-//     await knex.migrate.rollback()
-//     await knex.migrate.latest()
-//     await knex.seed.run()
-//   })
-
-//   afterEach( async () => {
-//     await knex.migrate.rollback()
-//   })
-
-//   test('broadcast (using websockets) : error: no devices', async () => {
-//     const payload = { "cohortMessage": "test" }
-//     const res = await request(app)
-//       .post('/api/broadcast')
-//       .send(payload)
-//     expect(res.status).toEqual(200)
-//     expect(res.text).toEqual("Warning: No devices are connected, broadcast was not sent")
-//   })
-  
-//   test('broadcast (using websockets) : error: no connected devices', async () => {
-//     // create a device
-//     const guid = uuid()
-//     const res1 = await createDevice({ guid: guid })
-//     expect(res1.status).toEqual(200)
-
-//     // send a message (but device never opened a socket!)
-//     const payload = { "cohortMessage": "test" }
-//     const res = await request(app)
-//       .post('/api/broadcast')
-//       .send(payload)
-//     expect(res.status).toEqual(200)
-//     expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
-//   })
-
-// //   // test('broadcast (using websockets) : happy path' is located in websocket section
   
 //   test('broadcast/push-notification : happy path (one device)', async () => {
 //     // create a device
