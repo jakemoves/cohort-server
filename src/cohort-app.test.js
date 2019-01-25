@@ -28,14 +28,6 @@ afterEach( async () => {
   app.set('cohort', null)
 })
 
-describe('Basic startup', () => {
-  test('the app inits', async () => {
-    const res = await request(app).get('/api/v1')
-    expect(res.status).toEqual(200)
-    expect(res.text).toEqual('Cohort rocks')
-  })
-})
-
 /* 
  *    UTILITY METHODS
  */
@@ -48,6 +40,19 @@ beforeAll( () => {
       .send(payload)
   }
 })
+
+/*
+ *    BASIC TESTS
+ */
+
+describe('Basic startup', () => {
+  test('the app inits', async () => {
+    const res = await request(app).get('/api/v1')
+    expect(res.status).toEqual(200)
+    expect(res.text).toEqual('Cohort rocks')
+  })
+})
+
 
 /*
  *    EVENT ROUTES
@@ -124,7 +129,7 @@ beforeAll( () => {
       .get('/api/v1/events/3/devices')
 
     expect(res.status).toEqual(200)
-    expect(res.body).toHaveLength(2)
+    expect(res.body).toHaveLength(3)
   })
 
   // happy path
@@ -138,7 +143,7 @@ beforeAll( () => {
     // yeah it's a bit much
     const res2 = await request(app)
       .patch('/api/v1/events/1/check-in')
-      .send({ guid: 1234567 })
+      .send({ guid: "1234567" })
 
     expect(res2.status).toEqual(200)
     expect(res2.body).toHaveProperty('id')
@@ -165,7 +170,7 @@ beforeAll( () => {
 
     const res = await request(app)
       .patch('/api/v1/events/3/check-in')
-      .send({ guid: 1234567 })
+      .send({ guid: "sifubar" }) // already exists in db
 
     expect(res.status).toEqual(200)
 
@@ -240,7 +245,7 @@ describe('Device routes', () => {
     const res = await request(app).get('/api/v1/devices')
 
     expect(res.status).toEqual(200)
-    expect(res.body).toHaveLength(3)
+    expect(res.body).toHaveLength(4)
     expect(res.body[2]).toHaveProperty('guid')
     expect(res.body[2].guid).toEqual('54321')
   })
@@ -260,10 +265,13 @@ describe('Device routes', () => {
   })
 
   test('POST /devices', async () => {
+    const res0 = await request(app).get('/api/v1/devices')
+    const deviceCount = res0.body.length
+
     const res = await createDevice(12345678)
     
     expect(res.status).toEqual(201)
-    expect(res.header.location).toEqual('/api/v1/devices/4')
+    expect(res.header.location).toEqual('/api/v1/devices/' + (deviceCount + 1))
     expect(res.body.guid).toEqual('12345678')
 
     const res1 = await request(app)
@@ -274,10 +282,13 @@ describe('Device routes', () => {
   })
 
   test('POST /devices -- device already exists', async () => {
+    const res0 = await request(app).get('/api/v1/devices')
+    const deviceCount = res0.body.length
+
     const res = await createDevice(12345678)
     
     expect(res.status).toEqual(201)
-    expect(res.header.location).toEqual('/api/v1/devices/4')
+    expect(res.header.location).toEqual('/api/v1/devices/' + (deviceCount + 1)) 
     expect(res.body.guid).toEqual('12345678')
 
     const res1 = await createDevice(12345678)
@@ -347,15 +358,13 @@ describe('WebSockets', () => {
     })
   })
 
-  afterEach( async () => {
+  afterEach( () => {
     console.log('websockets afterEach()')
-    await server.close()
+    server.close()
   })
 
   test('startup & new connection', async (done) => {
-    expect.assertions(3)
-
-    expect(app.get("cohort").events[0].devices.length).toEqual(2)
+    expect(app.get("cohort").events[0].devices.length).toEqual(3)
 
     const webSocketServer = require('./cohort-websockets')({
       app: app, server: server, path: '/sockets'
@@ -374,7 +383,7 @@ describe('WebSockets', () => {
   test('send message: error -- json parse error', async (done) => {
     expect.assertions(3)
 
-    expect(app.get("cohort").events[0].devices.length).toEqual(2)
+    expect(app.get("cohort").events[0].devices.length).toEqual(3)
 
     const webSocketServer = require('./cohort-websockets')({
       app: app, server: server, path: '/sockets'
@@ -477,7 +486,7 @@ test('initial handshake: error -- event not found', async(done) => {
 
        yeah it's a bit much
      */
-    const guid = 54321
+    const guid = "1234567"
 
     const webSocketServer = require('./cohort-websockets')({
       app: app, server: server, path: '/sockets'
@@ -501,7 +510,7 @@ test('initial handshake: error -- event not found', async(done) => {
   test('closing socket: error -- socket has no cohortDeviceGUID property', async (done) => {
 
     const eventId = 3
-    const guid = 54321
+    const guid = "1234567"
 
     const webSocketServer = require('./cohort-websockets')({
       app: app, server: server, path: '/sockets'
@@ -539,7 +548,7 @@ test('initial handshake: error -- event not found', async(done) => {
   test('closing socket (explicitly): happy path', async (done) => {
 
     const eventId = 3
-    const guid = 54321
+    const guid = "1234567"
 
     const webSocketServer = require('./cohort-websockets')({
       app: app, server: server, path: '/sockets'
@@ -572,10 +581,11 @@ test('initial handshake: error -- event not found', async(done) => {
     })
   })
 
-  test('destroying socket: happy path', async (done) => {
-    jest.setTimeout(30000)
+  // FYI this test takes ~15-20 seconds to complete
+  test('destroying socket: happy path', async (done) => { 
+    jest.setTimeout(20000)
     const eventId = 3
-    const guid = 54321
+    const guid = "1234567"
 
     const webSocketServer = await require('./cohort-websockets')({
       app: app, server: server, path: '/sockets'
@@ -591,7 +601,7 @@ test('initial handshake: error -- event not found', async(done) => {
         expect(webSocketServer.clients.size).toEqual(1)
       })
 
-      wsClient.send(JSON.stringify({ guid: guid, eventId: 3 }))
+      wsClient.send(JSON.stringify({ guid: guid, eventId: eventId }))
 
       setTimeout( () => {
         console.log('simulating a nonresponsive client')
@@ -608,8 +618,76 @@ test('initial handshake: error -- event not found', async(done) => {
     })
   })
 
+  test('admin device gets broadcasts when device state changes', async (done) => {
+    const eventId = 3
 
+    const adminGUID = "54321" // this is seeded as an admin device
+
+    const device1GUID = "1234567"
+    // const device2GUID = 1250453409
+
+    const webSocketServer = require('./cohort-websockets')({
+      app: app, server: server, path: '/sockets'
+    })
+
+    expect(webSocketServer).toBeDefined()
+
+    const adminClient = new ws(socketURL)
+    var device1Client
+
+    adminClient.addEventListener('open', event => {
+      let messagesReceived = 0
+      adminClient.addEventListener('message', message => {
+        const msg = JSON.parse(message.data)
+        messagesReceived++
+
+        if(messagesReceived == 1){        // handshake was successful
+          expect(msg.response).toEqual('success')
+
+          // connect the first device
+          device1Client = new ws(socketURL)
+          device1Client.addEventListener('open', event => {
+            device1Client.send(JSON.stringify({ guid: device1GUID, eventId: eventId}))
+          })
+
+        } else if(messagesReceived == 2){ // first device state broadcast
+          expect(msg.status).toHaveLength(3)
+          expect(msg.status
+            .find( deviceState => deviceState.guid == device1GUID)
+            .socketOpen
+          ).toEqual(false)
+
+        } else if(messagesReceived == 3){ // second device state broadcast 
+          expect(msg.status).toHaveLength(3)
+          expect(msg.status
+            .find( deviceState => deviceState.guid == device1GUID)
+            .socketOpen
+          ).toEqual(true)
+          device1Client.close()
+
+        } else if(messagesReceived == 4){ // last device state broadcast 
+          expect(msg.status).toHaveLength(3)
+          expect(msg.status
+            .find( deviceState => deviceState.guid == device1GUID)
+            .socketOpen
+          ).toEqual(false)
+          done()
+        } 
+      })
+
+      adminClient.send(JSON.stringify({ guid: adminGUID, eventId: eventId }))
+    })
+  })
 })
+
+
+
+
+
+
+
+
+
 
 
 //   test('websocket : new connection', async () => {

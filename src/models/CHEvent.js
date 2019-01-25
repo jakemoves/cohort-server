@@ -74,7 +74,23 @@ class CHEvent extends machina.Fsm {
     }
   }
 
-  broadcastDeviceStates(){}
+  broadcastDeviceStates(){
+    let connectedAdminDevices = this.devices.filter( device => {
+      return (device.isAdmin && device.socket != null && device.socket.readyState == 1)
+    })
+
+    if(connectedAdminDevices.length == 0) {
+      return
+    }
+
+    const deviceStates = this.devices.map( device => {
+      return device.deviceState()
+    })
+
+    connectedAdminDevices.forEach( adminDevice => {
+      adminDevice.socket.send(JSON.stringify({ status: deviceStates }))
+    })
+  }
 }
 
 // CHEvent = function(id, label, devices = []){

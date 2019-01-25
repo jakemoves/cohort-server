@@ -68,14 +68,14 @@ module.exports = (options) => {
           let device = event.devices.find( device => device.guid == msg.guid)
 
           if(device === undefined){
-            console.log("Error: could not open WebSocket, device guid: " + msg.guid + " not found")
+            console.log("Error: could not open WebSocket, device guid:" + msg.guid + " not found")
             socket.close(4000, "Devices must be registered via HTTP before opening a WebSocket connection")
             return 
           }
 
           // happy path
           console.log("completing initial handshake with device guid:" + device.guid)
-          socket.cohortDeviceGUID = parseInt(device.guid)
+          socket.cohortDeviceGUID = device.guid
 
           device.socket = socket
           
@@ -98,8 +98,20 @@ module.exports = (options) => {
         console.log('closing socket for device ' + device.guid)
         device.socket = null
         
-        // send an update to events that this socket was conencted to
-        //event.broadcastDeviceStates() // eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
+        // send an update to events that this socket was connected to
+        const eventsWithDevice = options.app.get('cohort').events
+        .filter( event => {
+          if(event.devices.find( 
+            deviceOnEvent => device.guid == deviceOnEvent.guid
+          ) !== undefined){ 
+            // the device which closed its socket is checked in to this event
+            return event
+          }
+        })
+        
+        eventsWithDevice.forEach( event => {
+          event.broadcastDeviceStates() // eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
+        })
       })
 
       socket.on('error', (error) => {

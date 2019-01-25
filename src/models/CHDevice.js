@@ -23,6 +23,20 @@ class CHDevice {
 		return new CHDevice(dbDevice.id, dbDevice.guid, dbDevice.isAdmin, dbDevice.apnsDeviceToken)
 	}
 
+	deviceState(){
+		let socketIsOpen
+		if(this.socket == null || this.socket.readyState !== 1){
+			socketIsOpen = false
+		} else if(this.socket.readyState == 1){
+			socketIsOpen = true
+		}
+
+		return { 
+			guid: "" + this.guid, // coerce to string in case of numeric guid
+			socketOpen: socketIsOpen
+		}
+	}
+
 }
 
 module.exports = CHDevice

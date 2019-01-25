@@ -6,16 +6,20 @@ exports.seed = function(knex, Promise) {
     // Inserts devices entries
     return knex('devices').insert([
       {
-        guid: 1234567,
+        guid: "1234567",
         apnsDeviceToken: 'dkjsfalkj3400fds',
         isAdmin: false
       },{
-        guid: 1250453409,
+        guid: "1250453409",
         apnsDeviceToken: 'lkafdoeo9304fkdlf',
         isAdmin: false
       },{
-        guid: 54321,
+        guid: "54321",
         apnsDeviceToken: 'kdjfa3r343',
+        isAdmin: true
+      },{
+        guid: "sifubar",
+        apnsDeviceToken: 'fdlakr3rf43f',
         isAdmin: false
       }
     ]).then( () => {
@@ -34,6 +38,7 @@ exports.seed = function(knex, Promise) {
               { event_id: 2, device_id: 1 },
               { event_id: 3, device_id: 3 },
               { event_id: 3, device_id: 2 },
+              { event_id: 3, device_id: 1 },
               { event_id: 4, device_id: 3 }
             ]);
           })
