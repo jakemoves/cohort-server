@@ -89,6 +89,8 @@ module.exports = (options) => {
         let device = options.app.get('cohort').allDevices()
           .find( device => socket.cohortDeviceGUID == device.guid)
 
+        if(code == 4002){ return } // defined above in .open() as a failed handshake
+        
         if(device === undefined) {
           // throw new Error("closed socket did not have a cohortDeviceGUID property")
           options.app.get('cohort').errors.push('Error: Could not find device for closed socket')

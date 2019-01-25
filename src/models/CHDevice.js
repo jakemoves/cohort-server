@@ -33,7 +33,8 @@ class CHDevice {
 
 		return { 
 			guid: "" + this.guid, // coerce to string in case of numeric guid
-			socketOpen: socketIsOpen
+			socketOpen: socketIsOpen,
+			isAdmin: this.isAdmin
 		}
 	}
 
