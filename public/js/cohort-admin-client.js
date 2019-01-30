@@ -35,7 +35,7 @@ var vm = new Vue({
         ]
       }
     },
-    selectedEpisode: null
+    selectedFluxDeluxEpisode: null
   },
   created: function() {
     // register this app as an admin device
@@ -229,20 +229,34 @@ window.closeEvent = ($event) => {
   })
 }
 
-window.broadcast = ($event) => {
+window.onBroadcast = ($event) => {
   $event.preventDefault()
   const messageText = document.getElementById('broadcast-message').value
+  
   try {
     const message = JSON.parse(messageText)
+  } catch (e) {
+    console.log(e.message)
+    vm.errorOnBroadcast = true
+    return
+  }
+
+  broadcast(message)
+}
+
+window.broadcast = (cohortMessage) => {
+  try {
     fetch(vm.serverURL + '/events/' + vm.activeEvent.id + '/broadcast', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify(message)
+      body: JSON.stringify(cohortMessage)
     }).then( response => {
       response.text().then( text => {
         // console.log(text)
         vm.errorOnBroadcast = false
       })
+    }).catch( error => {
+      console.log("Error on broadcast!")
     })
   } catch (e) {
     console.log(e.message)
@@ -276,4 +290,38 @@ window.openWebSocketConnection = (eventId) => {
   })
 
   vm.clientSocket = clientSocket
+}
+
+window.loadFluxDeluxEpisode = (event) => {
+  if(vm.selectedFluxDeluxEpisode != null){
+    let cohortMessage = {
+      mediaDomain: "episode",
+      cueNumber: vm.selectedFluxDeluxEpisode,
+      cueAction: "load"
+    }
+
+    broadcast(cohortMessage)
+  }
+}
+
+window.goFluxDeluxEpisode = (event) => {
+  if(vm.selectedFluxDeluxEpisode != null){
+    let cohortMessage = {
+      mediaDomain: "episode",
+      cueNumber: vm.selectedFluxDeluxEpisode,
+      cueAction: "go"
+    }
+    broadcast(cohortMessage)
+  }
+}
+
+window.stopFluxDeluxEpisode = (event) => {
+  if(vm.selectedFluxDeluxEpisode != null){
+    let cohortMessage = {
+      mediaDomain: "episode",
+      cueNumber: vm.selectedFluxDeluxEpisode,
+      cueAction: "stop"
+    }
+    broadcast(cohortMessage)
+  }
 }

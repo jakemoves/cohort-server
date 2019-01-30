@@ -69,16 +69,16 @@
 
             <div class="form-group episode-control" v-if="activeEvent.label == 'fluxdelux'">
               <h6><label for="episodeSelect">Episode control</label></h6>
-              <select class="form-control" id="episodeSelect" v-model="selectedEpisode">
+              <select class="form-control" id="episodeSelect" v-model="selectedFluxDeluxEpisode">
                 <option disabled value="">Choose an episode</option>
                 <option v-for="episode in eventActionsAndEpisodes.FluxDelux.episodeNames" v-bind:value="episode.id">
                   {{ episode.label}}
                 </option>
               </select>
               <div class="btn-group w-100" role="group" aria-label="Event commands">
-                <button class="btn btn-outline-primary" type="button">Load</button>
-                <button class="btn btn-outline-success" type="button">Go</button>
-                <button class="btn btn-outline-danger" type="button">Stop</button>
+                <button class="btn btn-outline-primary" type="button" v-bind:disabled="selectedFluxDeluxEpisode == null" onclick=loadFluxDeluxEpisode()>Load</button>
+                <button class="btn btn-outline-success" type="button" v-bind:disabled="selectedFluxDeluxEpisode == null" onclick=goFluxDeluxEpisode()>Go</button>
+                <button class="btn btn-outline-danger" type="button" v-bind:disabled="selectedFluxDeluxEpisode == null" onclick=stopFluxDeluxEpisode()>Stop</button>
               </div>
             </div>
 
