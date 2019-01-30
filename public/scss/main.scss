@@ -81,6 +81,12 @@ header {
   }
 }
 
+.episode-control {
+  select {
+    margin-bottom: 1rem
+  }
+}
+
 form.create-event-form, form.broadcast-form {
   margin-top: 1rem;
   margin-bottom: 2rem;

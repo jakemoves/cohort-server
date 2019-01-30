@@ -13,9 +13,29 @@ var vm = new Vue({
     activeEventDevices: [ ],
     broadcastMessagePlaceholder: '{ "mediaDomain": "sound", \n  "cueNumber": 1, \n  "cueAction": "play" }',
     errorOnBroadcast: false,
-    userDidSelectEvent: false
+    userDidSelectEvent: false,
     // activeEventMediaDomains: [ "sound", "video" ],
     // cueActions: [ "play", "pause", "restart" ]
+    eventActionsAndEpisodes: {
+      'FluxDelux': {
+        'episodeActions': [ 
+          {'load': 'primary'},  // values used for bootstrap classes
+          {'go': 'success'}, 
+          {'stop': 'danger'} 
+        ],
+        'episodeNames': [
+          { "label": 'Simple Flux', 'id': 1 },
+          { "label": 'Corners',  'id': 2 },
+          { "label": 'Ship', 'id': 3 },
+          { "label": 'Chip Melt', 'id': 4 },
+          { "label": 'Orbitals', 'id': 5 },
+          { "label": 'Hula Lasso', 'id': 6 },
+          { "label": 'Ship Together', 'id': 7 },
+          { "label": 'Chip Melt Together', 'id': 8 }
+        ]
+      }
+    },
+    selectedEpisode: null
   },
   created: function() {
     // register this app as an admin device

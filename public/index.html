@@ -63,9 +63,26 @@
                ID: {{ activeEvent.id }} </br>
                Live connection: {{ clientSocket.readyState == 1 ? 'active' : 'not active' }}
             </p>
+
             <h4 class="font-weight-light">Event actions</h4>
             <button class="btn btn-secondary" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
 
+            <div class="form-group episode-control" v-if="activeEvent.label == 'fluxdelux'">
+              <h6><label for="episodeSelect">Episode control</label></h6>
+              <select class="form-control" id="episodeSelect" v-model="selectedEpisode">
+                <option disabled value="">Choose an episode</option>
+                <option v-for="episode in eventActionsAndEpisodes.FluxDelux.episodeNames" v-bind:value="episode.id">
+                  {{ episode.label}}
+                </option>
+              </select>
+              <div class="btn-group w-100" role="group" aria-label="Event commands">
+                <button class="btn btn-outline-primary" type="button">Load</button>
+                <button class="btn btn-outline-success" type="button">Go</button>
+                <button class="btn btn-outline-danger" type="button">Stop</button>
+              </div>
+            </div>
+
+            <h6>Raw messages</h6>
             <form action="#" class="broadcast-form" onsubmit=broadcast(event) v-if="activeEventIsOpen && activeEventDevices.length > 0">
               <div class="form-group">
                 <textarea rows=3 class="form-control" id="broadcast-message">{{ broadcastMessagePlaceholder }}</textarea>
@@ -73,35 +90,7 @@
               <div class="form-group">
                 <button type="submit" class="btn btn-secondary btn-block">Send</button>
                 <small class="text-danger" v-if="errorOnBroadcast">Message failed JSON validation</small>
-
-                <!-- disabled if no connected devices \/ \/ \/ -->
-                <!-- <button type="submit" class="btn btn-secondary btn-block" v-bind:disabled="activeEventDevices.length == 0">Send</button> -->
               </div>
-
-              <!-- could maybe be an input group... -->
-              <!-- <div class="input-group">
-
-                <div class="input-group-prepend">
-                  <div class="btn-group btn-group-toggle btn-group-vertical" id="message-media-domain" data-toggle="buttons">
-                      <label class="btn btn-secondary" v-for="domain in activeEventMediaDomains">
-                        <input type="radio" name="media-domains" v-bind:id="mediaDomainInputID(domain)" checked>
-                        {{ domain }}
-                      </label>
-                    </div>
-                </div>
-
-                <input type="number" placeholder="1" id="message-cue-number" class="form-control">
-
-                <div class="input-group-append">
-                  <label for="message-cue-action">Action</label>
-                  <div class="btn-group btn-group-toggle btn-group-vertical" id="message-cue-action" data-toggle="buttons">
-                    <label class="btn btn-secondary" v-for="action in cueActions">
-                      <input type="radio" name="cue-action" v-bind:id="cueActionInputID(action)" checked>
-                      {{ action }}
-                    </label>
-                  </div>
-                </div>
-              </div> -->
             </form>
 
             <button class="btn btn-secondary" v-if="activeEventIsOpen" onclick=closeEvent()>Close event</button>
