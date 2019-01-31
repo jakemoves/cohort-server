@@ -319,7 +319,11 @@ var vmE = new Vue({
 window.onCheckOut = ($event) => {
   console.log('onCheckOut()')
   if(vmE.episodeIsPlaying){
-    vmE.activeEpisode.sound.stop()
+    vmE.episodes.forEach( episode => {
+      if(episode.sound){
+        episode.sound.stop()
+      }
+    })
     vmE.episodeIsPlaying = false
   }
   vmE.clientSocket.close()
@@ -353,19 +357,20 @@ window.openFDWebSocketConnection = (eventId) => {
         let episode = vmE.episodes.find( episode => episode.id == msg.cueNumber )
         if(episode !== undefined){
           switch(msg.cueAction) {
-            case 'go':
-              vmE.activeEpisode = episode
-              vmE.activeEpisode.sound.play()
-              vmE.episodeIsPlaying = true
+            case 'go': // only works when an episode is not playing
+              if(!vmE.episodeIsPlaying){
+                episode.sound.play()
+                vmE.episodeIsPlaying = true
+              }
               break;
             case 'stop':
               episode.sound.stop()
               vmE.episodeIsPlaying = false
-            case 'pause':
-              episode.sound.pause()
-              break;
-            case 'restart':
-              episode.sound.seek(0)
+            // case 'pause':
+            //   episode.sound.pause()
+            //   break;
+            // case 'restart':
+            //   episode.sound.seek(0)
               break;
             default:
               break;
