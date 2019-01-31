@@ -12,7 +12,7 @@ var vmE = new Vue({
     episodeIsPlaying: false,
     audioFileCount: null,
     audioFilesLoaded: 0,
-    activeEpisode: { label: 'no episodes', id: 0, soundtrackURL: null, sound: null },
+    activeEpisode: { label: 'no episodes', id: 0, soundtrackURLs: [], sound: null },
     activeEvent: { id: 0, label: "no events", state: 'closed' },
     // events: [ { id: 0, label: "no events", state: 'closed' } ],
     // nullEvent: { id: 0, label: "no events", state: 'closed' }, 
@@ -22,28 +22,80 @@ var vmE = new Vue({
     ],
     activeOccasionIndex: null,
     episodes: [
-      { label: 'Simple Flux', id: 1, sound: null,
-        soundtrackURL: 'https://s3.us-east-2.amazonaws.com/fluxdelux/simpleflux.mp3'
-        },
-      { label: 'Corners', id: 2, sound: null,
-        soundtrackURL: 'https://s3.us-east-2.amazonaws.com/fluxdelux/corners-blue.mp3' }/*,
-      { label: 'Ship', id: 3, soundtrackURL: '' },
-      { label: 'Chip Melt', id: 4, soundtrackURL: '' },
-      { label: 'Orbitals', id: 5, soundtrackURL: '' },
-      { label: 'Hula Lasso', id: 6, soundtrackURL: '' },
-      { label: 'Ship Together', id: 7, soundtrackURL: '' },
-      { label: 'Chip Melt Together', id: 8, soundtrackURL: '' }*/
-    ]
+      { 
+        label: 'Simple Flux', id: 1, sound: null,
+        soundtrackURLs: [ 'https://s3.us-east-2.amazonaws.com/fluxdelux/simpleflux.mp3' ]
+      },{ 
+        label: 'Corners', id: 2, sound: null,
+        soundtrackURLs: [{ 
+          group: 'blue',
+          url: 'https://s3.us-east-2.amazonaws.com/fluxdelux/corners-blue.mp3'
+        }, { 
+          group: 'red',
+          url: 'https://s3.us-east-2.amazonaws.com/fluxdelux/corners-red.mp3' 
+        }]
+      },{ 
+        label: 'Ship', id: 3, sound: null,
+        soundtrackURLs: [{ 
+          group: 'blue',
+          url: 'https://s3.us-east-2.amazonaws.com/fluxdelux/ship-blue.mp3'
+        }, { 
+          group: 'red',
+          url: 'https://s3.us-east-2.amazonaws.com/fluxdelux/ship-red.mp3' 
+        }]
+      },{ 
+        label: 'Chip Melt', id: 4, sound: null,
+        soundtrackURLs: [{ 
+          group: 'blue',
+          url: 'https://s3.us-east-2.amazonaws.com/fluxdelux/chip-melt-blue.mp3'
+        }, { 
+          group: 'red',
+          url: 'https://s3.us-east-2.amazonaws.com/fluxdelux/chip-melt-red.mp3' 
+        }]
+      },{ 
+        label: 'Orbitals', id: 5, sound: null,
+        soundtrackURLs: [{ 
+          group: 'blue',
+          url: 'https://s3.us-east-2.amazonaws.com/fluxdelux/orbitals-blue.mp3'
+        }, { 
+          group: 'red',
+          url: 'https://s3.us-east-2.amazonaws.com/fluxdelux/orbitals-red.mp3' 
+        }]
+      },{ 
+        label: 'Hula Lasso', id: 6, sound: null,
+        soundtrackURLs: [{ 
+          group: 'blue',
+          url: 'https://s3.us-east-2.amazonaws.com/fluxdelux/hula-lasso-blue.mp3'
+        }, { 
+          group: 'red',
+          url: 'https://s3.us-east-2.amazonaws.com/fluxdelux/hula-lasso-blue.mp3' 
+        }]
+      },{ 
+        label: 'Ship Together', id: 7, sound: null,
+        soundtrackURLs: [ 'https://s3.us-east-2.amazonaws.com/fluxdelux/ship-together.mp3' ]
+      },{ 
+        label: 'Chip Melt Together', id: 8, sound: null,
+        soundtrackURLs: [ 'https://s3.us-east-2.amazonaws.com/fluxdelux/chip-melt-together.mp3' ]
+      }
+    ],
+    participantGroupColour: ""
   },
   created: function() {
     console.log('starting cohort event page vue instance')
+
+    // assign participant to either 'red' or 'blue' group
+    let coinFlipResult = Math.round(Math.random())
+    if(coinFlipResult == 1){
+      this.participantGroupColour = "blue"
+    } else if(coinFlipResult == 0){
+      this.participantGroupColour = "red"
+    } else { throw new Error}
     
     // get event occasions (from an older server)
     fetch(this.fdOccasionServerURL, {
       method: 'GET'
     }).then( response => {
       if(response.status == 200) {
-        console.log("response ok")
         response.text().then( jsonText => {
           let occasions = JSON.parse(jsonText)
           vmE.occasions = occasions
@@ -90,12 +142,11 @@ var vmE = new Vue({
       }
     },
     occasionsForDisplay: function() {
-      console.log(this.activeOccasionIndex)
       if(this.activeOccasionIndex != null && this.activeOccasionIndex < this.occasions.length){
-        console.log('showing one occasion')
+        // console.log('showing one occasion')
         return [this.occasions[this.activeOccasionIndex]]
       } else {
-        console.log('showing all occasions')
+        // console.log('showing all occasions')
         return this.occasions
       }
     },
@@ -150,22 +201,38 @@ var vmE = new Vue({
       vmE.activeOccasionIndex = occasionIndex
 
       vmE.checkInAndConnectToCohortServer()
-    
+      
       if(vmE.audioLoadState == 'unloaded'){
         // start audio setup, first check in only
+        vmE.audioLoadState = 'loading'
+        
         vmE.episodes.forEach( episode => {
-          vmE.audioFileCount = vmE.episodes.map( episode => episode.soundtrackURL).length
+          vmE.audioFileCount = vmE.episodes.length
 
-          vmE.audioLoadState = 'loading'
-          
+          let audioFileURL
+          if(episode.soundtrackURLs.length == 1){
+            audioFileURL = episode.soundtrackURLs[0]
+          } else if(episode.soundtrackURLs.length == 2){
+            let soundtrack = episode.soundtrackURLs.find( soundtrackURL => { 
+              return soundtrackURL.group == vmE.participantGroupColour
+            })
+            if(soundtrack !== undefined){
+              audioFileURL = soundtrack.url
+            } else { 
+              throw new Error("Error: failed to find a matching soundtrack URL")
+            }
+          } else { 
+            throw new Error 
+          }
+
           const sound = new Howl({
-            src: episode.soundtrackURL,
+            src: audioFileURL,
             pool: vmE.audioFileCount,
             onload: function() {
               console.log('loaded sound for episode ' + episode.label)
               vmE.audioFilesLoaded++
               if(vmE.audioFilesLoaded == vmE.audioFileCount){
-                console.log('loaded all sound for event ' + vmE.activeEvent.label)
+                console.log('loaded all sound for event ' + vmE.activeEvent.label + ' (' + vmE.participantGroupColour + ' group)')
                 
                 // allow the 100% progress bar to show for a moment
                 setTimeout(() => {
@@ -197,7 +264,7 @@ var vmE = new Vue({
       }).then( response => {
         if(response.status == 200 /* this device already exists */ || 
           response.status == 201 /* created this device */ ){
-          
+        
           // check in to the event
           fetch(vmE.serverURL + '/events/' + vmE.eventId + '/check-in', {
             method: 'PATCH',
