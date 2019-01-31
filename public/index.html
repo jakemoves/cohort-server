@@ -105,7 +105,7 @@
               <span class="selected-event-label">{{ activeEvent.label }}</span></h3>
             
               <ul id="device-list" v-if="activeEventDevices.length > 0">
-              <li v-for="device in activeEventDevices">
+              <li v-for="device in activeEventDevicesByConnectionState">
                 <div class="device-number device-item">
                   #{{ device.guid }}
                 </div>

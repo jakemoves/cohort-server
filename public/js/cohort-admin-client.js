@@ -88,6 +88,13 @@ var vm = new Vue({
         return a.label.toLowerCase().localeCompare(b.label.toLowerCase())
       })
       return sortedEvents
+    },
+    activeEventDevicesByConnectionState: function() {
+      let sortedDevices = this.activeEventDevices
+      .sort(function(a, b){
+        return a.socketOpen - b.socketOpen
+      }).reverse()
+      return sortedDevices
     }
   },
   methods: {
