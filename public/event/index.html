@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/main.css">
+
+    <title>Cohort Event</title>
+  </head>
+  <body>
+    <div id="cohort-event-page" v-bind:class="stateClass">
+        
+      <header class="container">
+        <div class="row">
+          <div class="col">
+            <h1 class="site-title text-muted">Cohort Event</h1>
+          </div>
+        </div>
+      </header>
+      
+      <div class="container">
+        <div class="row">
+          <!-- OCCASION LIST -->
+          <section class="col-sm" v-if="state == 'occasions-loaded'">
+            <h2>FluxDelux</h2>
+            <ul class="list-group occasion-list list-group-flush">
+              <li class="occasion-list__occasion-list-item list-group-item" v-for="(occasion, index) in occasionsForDisplay">
+                <h5>{{ occasion.city }}</h5>
+                
+                <div class="occasion-list-item__occasion-body" v-if="state == 'occasions-loaded'">
+                  <div class="occasion-list__occasion-details">
+                    <h6>{{ occasion.venue }}</h6>
+                    <p>{{ occasion.address }}</p>
+                    <h6>{{ occasion.date }}, {{occasion.startTime }} – {{ occasion.endTime }}</h6>
+                    <p>Doors open at {{ occasion.doorsOpenTime }}</p>
+                  </div>
+                  
+                  <button class="occasion-list__check-in btn btn-primary btn-lg" v-on:click="onCheckIn(index)" v-if="cohortState == 'occasions-loaded'">Check In</button>
+                </div>
+                
+                <div class="progress-container" v-if="audioLoadState == 'loading'">
+                  <p><strong>Loading audio...</strong></p>
+                  <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" v-bind:style="{ width: audioLoadProgress }" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </section>
+
+          <!-- CHECKED IN VIEW -->
+          <section class="col-sm" v-if="state == 'ready'">
+            <button class="btn btn-lg btn-primary" onclick=onCheckOut()>Check out</button>
+
+            <h2>When the next episode starts in a few minutes, we’ll loop you in. Until then:</h2>
+            <ul>
+              <li>move into the open space along a curving path</li>
+              <li>be careful not to bump or brush against anyone else</li>
+              <li>vary your speed whenever you want</li>
+              <li>pause and be still whenever the impulse strikes you</li>
+              <li>follow beside or behind others when you want</li>
+              <li>copy, repeat, and experiment with movements that you see around you, whenever you want</li>
+            </ul>
+          </section>
+
+          <!-- EPISODE VIEW -->
+          <section class="col-sm" v-if="state == 'playing-episode'">
+            <button class="btn btn-lg btn-primary" onclick=onCheckOut()>Check out</button>
+            <h2>{{ activeEpisode.label }}</h2>
+          </section>
+
+
+          <!-- EVENT LIST -->
+<!-- 
+          <section class="col-sm-auto">
+            <h3 class="font-weight-light">Events</h3>
+            <div class="event-list list-group list-group-flush">
+              <button class="event-list__event-item list-group-item list-group-item-action" v-for="cohortEvent in eventsByLabel" 
+                v-bind:class="cohortEvent.id == activeEvent.id ? 'active':''"
+                v-bind:data-event-id="cohortEvent.id"
+                v-on:click="onSelectEvent(cohortEvent.id)">
+                <div class="event-title-and-status">
+                  <h3>{{ cohortEvent.label }}</h3>
+                  <div class="event-status" v-if="activeEvent.label != nullEventLabel">
+                    <small class="status" v-bind:class="cohortEvent.state == 'closed' ? 'text-muted' : 'text-success'">{{ cohortEvent.state }}</small>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <form action="#" class="create-event-form" onsubmit=createCohortEvent(event)>
+              <div class="form-row">
+                <div class="col-auto">
+                  <input type="text" class="form-control" id="new-event-label" placeholder="new event">
+                </div>
+                <div class="col-auto">
+                  <button type="submit" class="btn btn-secondary">Create</button>
+                </div>
+              </div>
+            </form>
+          </section> -->
+
+          <!-- EVENT DETAILS -->
+<!-- 
+          <section class="col-sm-auto" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
+            <h3 class="font-weight-light">Event details</h3>
+            <p>Name: {{ activeEvent.label }} </br>
+              ID: {{ activeEvent.id }} </br>
+              Live connection: {{ clientSocket.readyState == 1 ? 'active' : 'not active' }}
+            </p>
+
+            <h4 class="font-weight-light">Event actions</h4>
+            <button class="btn btn-secondary" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
+
+            <div class="form-group episode-control" v-if="activeEvent.label == 'fluxdelux'">
+              <h6><label for="episodeSelect">Episode control</label></h6>
+              <select class="form-control" id="episodeSelect" v-model="selectedFluxDeluxEpisode">
+                <option disabled value="">Choose an episode</option>
+                <option v-for="episode in eventActionsAndEpisodes.FluxDelux.episodeNames" v-bind:value="episode.id">
+                  {{ episode.label}}
+                </option>
+              </select>
+              <div class="btn-group w-100" role="group" aria-label="Event commands">
+                <button class="btn btn-outline-primary" type="button" v-bind:disabled="selectedFluxDeluxEpisode == null" onclick=loadFluxDeluxEpisode()>Load</button>
+                <button class="btn btn-outline-success" type="button" v-bind:disabled="selectedFluxDeluxEpisode == null" onclick=goFluxDeluxEpisode()>Go</button>
+                <button class="btn btn-outline-danger" type="button" v-bind:disabled="selectedFluxDeluxEpisode == null" onclick=stopFluxDeluxEpisode()>Stop</button>
+              </div>
+            </div>
+
+            <h6>Raw messages</h6>
+            <form action="#" class="broadcast-form" onsubmit=broadcast(event) v-if="activeEventIsOpen && activeEventDevices.length > 0">
+              <div class="form-group">
+                <textarea rows=3 class="form-control" id="broadcast-message">{{ broadcastMessagePlaceholder }}</textarea>
+              </div>
+              <div class="form-group">
+                <button type="submit" class="btn btn-secondary btn-block">Send</button>
+                <small class="text-danger" v-if="errorOnBroadcast">Message failed JSON validation</small>
+              </div>
+            </form>
+
+            <button class="btn btn-secondary" v-if="activeEventIsOpen" onclick=closeEvent()>Close event</button>
+            <button class="btn btn-outline-danger delete-event" v-if="!activeEventIsOpen" onclick=deleteCohortEvent()>Delete {{ activeEvent.label }}</button>
+          </section> -->
+          
+          <!-- DEVICE LIST -->
+          <!-- <section class="col-sm-auto" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
+            <h3><span class="font-weight-light">Devices 
+                <span class="small-caps">@</span> 
+              </span>
+              <span class="selected-event-label">{{ activeEvent.label }}</span></h3>
+            
+              <ul id="device-list" v-if="activeEventDevices.length > 0">
+              <li v-for="device in activeEventDevices">
+                <div class="device-number device-item">
+                  #{{ device.guid }}
+                </div>
+                <div class="device-status">
+                  <small v-if="device.socketOpen" class="connection-status text-success">
+                    connected
+                  </small>
+                  <small v-if="!device.socketOpen" class="connection-status text-warning">
+                      not connected
+                    </small>
+                </div>
+              </li>
+            </ul>
+
+            <p v-if="activeEventDevices.length == 0">
+              No devices checked in
+            </p>
+          </section> -->
+        </div>
+      </div>
+    </div> 
+    <script src="/main.js"></script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script> -->
+  </body>
+</html>

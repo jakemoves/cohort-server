@@ -48,7 +48,9 @@ var vm = new Vue({
         response.status == 201 /* created this device */ ){
         this.updateEvents().then( () => { // vue shows the event as active (selected) but we don't want it to until the user clicks on it
           let activeEventEl = document.getElementsByClassName('event-list__event-item active')[0]
-          activeEventEl.classList.remove('active')
+          if(activeEventEl !== undefined){
+            activeEventEl.classList.remove('active')
+          }
         })
       } else {
         console.log('error registering this app as an admin device')

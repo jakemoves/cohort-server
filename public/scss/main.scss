@@ -156,3 +156,44 @@ ul#device-list li {
 span.small-caps {
   font-variant-caps: all-small-caps;
 }
+
+
+/*
+ *    Event page
+ */
+
+#cohort-event-page {
+  &.state-default, &.state-ambiguous {}
+
+  &.state-occasions-loaded{
+    background: #072B69;
+    color: #fff;
+  }
+
+  &.state-ready {
+    background: #D4420D;
+    color: #fff;
+  }
+
+  &.state-playing-episode {
+    background: #F0C829;
+    color: #000000;
+  }   
+
+  .occasion-list__occasion-list-item {
+    background: inherit;
+  }
+
+  .occasion-list-item__occasion-body {
+    display: flex;
+    align-items: center;
+
+    h6, p:last-child {
+      margin-bottom: 0
+    }
+
+    & > *:not(:last-child) {
+      margin-right: 2rem;
+    }
+  }
+}

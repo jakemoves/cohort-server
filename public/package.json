@@ -5,6 +5,7 @@
   "author": "Jacob Niedzwiecki",
   "license": "MIT",
   "dependencies": {
+    "howler": "^2.1.1",
     "uuid": "^3.3.2",
     "vue": "^2.5.21"
   },
@@ -12,12 +13,12 @@
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
     "babel-loader": "^8.0.5",
+    "node-sass": "^4.11.0",
     "webpack": "^4.28.1",
-    "webpack-cli": "^3.2.1",
-    "node-sass": "^4.11.0"
+    "webpack-cli": "^3.2.1"
   },
   "scripts": {
-    "dev": "webpack --mode development ./js/cohort-admin-client.js --output ./main.js && node-sass --source-map true ./scss/ -o ./",
-    "build": "webpack --mode production ./js/cohort-admin-client.js --output ./main.js && node-sass --source-map true ./scss/ -o ./"
+    "dev": "webpack --mode development ./js/*.js --output ./main.js && node-sass --source-map true ./scss/ -o ./",
+    "build": "webpack --mode production ./js/*.js --output ./main.js && node-sass --source-map true ./scss/ -o ./"
   }
 }
