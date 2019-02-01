@@ -38,27 +38,30 @@ var vm = new Vue({
     selectedFluxDeluxEpisode: null
   },
   created: function() {
-    // register this app as an admin device
-    fetch(this.serverURL + '/devices', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({ guid: this.guid, isAdmin: true })
-    }).then( response => {
-      if(response.status == 200 /* this device already exists */ || 
-        response.status == 201 /* created this device */ ){
-        this.updateEvents().then( () => { // vue shows the event as active (selected) but we don't want it to until the user clicks on it
-          let activeEventEl = document.getElementsByClassName('event-list__event-item active')[0]
-          if(activeEventEl !== undefined){
-            activeEventEl.classList.remove('active')
-          }
-        })
-      } else {
-        console.log('error registering this app as an admin device')
-        response.text().then( error => {
-          console.log(error)
-        })
-      }
-    })
+    if(document.getElementById('cohort-admin')){
+      console.log('starting cohort admin page vue instance')
+      // register this app as an admin device
+      fetch(this.serverURL + '/devices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({ guid: this.guid, isAdmin: true })
+      }).then( response => {
+        if(response.status == 200 /* this device already exists */ || 
+          response.status == 201 /* created this device */ ){
+          this.updateEvents().then( () => { // vue shows the event as active (selected) but we don't want it to until the user clicks on it
+            let activeEventEl = document.getElementsByClassName('event-list__event-item active')[0]
+            if(activeEventEl !== undefined){
+              activeEventEl.classList.remove('active')
+            }
+          })
+        } else {
+          console.log('error registering this app as an admin device')
+          response.text().then( error => {
+            console.log(error)
+          })
+        }
+      })
+    }
   },
   computed: {
     // process.env.NODE_ENV is patched in by webpack based on the mode (dev/prod) provided in the package.json build scripts

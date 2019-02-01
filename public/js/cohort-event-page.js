@@ -8,11 +8,11 @@ var vmE = new Vue({
     guid: Guid(), // enable this when you implement #48
     clientSocket: { readyState: 0 },
     cohortState: '',
-    audioLoadState: 'unloaded',
-    episodeIsPlaying: false,
-    audioFileCount: null,
-    audioFilesLoaded: 0,
-    activeEpisode: { label: 'no episodes', id: 0, soundtrackURLs: [], sound: null },
+    // audioLoadState: 'unloaded',
+    // episodeIsPlaying: false,
+    // audioFileCount: null,
+    // audioFilesLoaded: 0,
+    currentPlayingEpisode: null,
     activeEvent: { id: 0, label: "no events", state: 'closed' },
     // events: [ { id: 0, label: "no events", state: 'closed' } ],
     // nullEvent: { id: 0, label: "no events", state: 'closed' }, 
@@ -81,55 +81,57 @@ var vmE = new Vue({
     participantGroupColour: ""
   },
   created: function() {
-    console.log('starting cohort event page vue instance')
+    if(document.getElementById('cohort-event-page')){
+      console.log('starting cohort event page vue instance')
 
-    // assign participant to either 'red' or 'blue' group
-    let coinFlipResult = Math.round(Math.random())
-    if(coinFlipResult == 1){
-      this.participantGroupColour = "blue"
-    } else if(coinFlipResult == 0){
-      this.participantGroupColour = "red"
-    } else { throw new Error}
-    
-    // get event occasions (from an older server)
-    fetch(this.fdOccasionServerURL, {
-      method: 'GET'
-    }).then( response => {
-      if(response.status == 200) {
-        response.text().then( jsonText => {
-          let occasions = JSON.parse(jsonText)
-          vmE.occasions = occasions
-          vmE.cohortState = 'occasions-loaded'
-        })
-      } else {
-        console.log("response not ok")
-        response.text().then( text => {
-          console.log(text)
-        })
-      }
-    }).catch ( error => {
-      console.log(error)
-    })
+      // assign participant to either 'red' or 'blue' group
+      let coinFlipResult = Math.round(Math.random())
+      if(coinFlipResult == 1){
+        this.participantGroupColour = "blue"
+      } else if(coinFlipResult == 0){
+        this.participantGroupColour = "red"
+      } else { throw new Error}
+      
+      // get event occasions (from an older server)
+      fetch(this.fdOccasionServerURL, {
+        method: 'GET'
+      }).then( response => {
+        if(response.status == 200) {
+          response.text().then( jsonText => {
+            let occasions = JSON.parse(jsonText)
+            vmE.occasions = occasions
+            vmE.cohortState = 'occasions-loaded'
+          })
+        } else {
+          console.log("response not ok")
+          response.text().then( text => {
+            console.log(text)
+          })
+        }
+      }).catch ( error => {
+        console.log(error)
+      })
+    }
   },
   computed: {
     // process.env.NODE_ENV is patched in by webpack based on the mode (dev/prod) provided in the package.json build scripts
     serverURL: function() {
       if(process.env.NODE_ENV == 'development'){
-        return 'http://localhost:3000/api/v1'
+        return 'http://jakemoves.local:3000/api/v1'
       } else {
         return 'https://cohort.rocks/api/v1'
       }
     },
     socketURL: function() {
       if(process.env.NODE_ENV == 'development'){
-        return 'ws://localhost:3000/sockets'
+        return 'ws://jakemoves.local:3000/sockets'
       } else {
         return 'wss://cohort.rocks/sockets'
       }
     },
     fdOccasionServerURL: function() {
       if(process.env.NODE_ENV == 'development'){
-        return "http://localhost:8000/events"
+        return "http://jakemoves.local:8000/events"
       } else {
         return "http://cohortserver-fluxdelux.herokuapp.com/events"
       }
@@ -150,23 +152,23 @@ var vmE = new Vue({
         return this.occasions
       }
     },
-    audioLoadProgress: function(){
-      if(this.audioLoadState == 'unloaded') {
-        return '0%'
-      } else if(this.audioLoadState == 'loaded') {
-        return '100%'
-      } else if(this.audioLoadState == 'loading') {
-        let progress = this.audioFilesLoaded / this.audioFileCount * 100
-        let minimumIncrement = 1 / this.audioFileCount * 100
-        if(progress < minimumIncrement) {
-          return minimumIncrement / 2 + '%'
-        } else {
-          return progress + '%'
-        }
-      }
-    },
+    // audioLoadProgress: function(){
+    //   if(this.audioLoadState == 'unloaded') {
+    //     return '0%'
+    //   } else if(this.audioLoadState == 'loaded') {
+    //     return '100%'
+    //   } else if(this.audioLoadState == 'loading') {
+    //     let progress = this.audioFilesLoaded / this.audioFileCount * 100
+    //     let minimumIncrement = 1 / this.audioFileCount * 100
+    //     if(progress < minimumIncrement) {
+    //       return minimumIncrement / 2 + '%'
+    //     } else {
+    //       return progress + '%'
+    //     }
+    //   }
+    // },
     state: function() {
-      if(this.audioLoadState == 'unloaded' && this.cohortState == ''){
+      if(this.cohortState == ''){
         return 'default'
       }
 
@@ -175,18 +177,13 @@ var vmE = new Vue({
       }
 
       if(this.cohortState == 'connected'){
-        if(this.audioLoadState == 'loaded'){
-          if(this.episodeIsPlaying){
-            return 'playing-episode'
-          } else {
-            return 'ready'
-          }
+        if(this.currentPlayingEpisode){
+          return 'playing-episode'
         } else {
-          return 'occasions-loaded'
+          return 'ready'
         }
       }
 
-      console.log('audioLoadState: ' + this.audioLoadState)
       console.log('cohortState: ' + this.cohortState)
       return 'ambiguous'
     },
@@ -202,65 +199,66 @@ var vmE = new Vue({
 
       vmE.checkInAndConnectToCohortServer()
       
-      if(vmE.audioLoadState == 'unloaded'){
-        // start audio setup, first check in only
-        vmE.audioLoadState = 'loading'
-        
-        vmE.episodes.forEach( episode => {
-          vmE.audioFileCount = vmE.episodes.length
+      // if(vmE.audioLoadState == 'unloaded'){
+        // start audio setup
+        // vmE.audioLoadState = 'loading'
+      
+      vmE.episodes.forEach( episode => {
+        // vmE.audioFileCount = vmE.episodes.length
 
-          let audioFileURL
-          if(episode.soundtrackURLs.length == 1){
-            audioFileURL = episode.soundtrackURLs[0]
-          } else if(episode.soundtrackURLs.length == 2){
-            let soundtrack = episode.soundtrackURLs.find( soundtrackURL => { 
-              return soundtrackURL.group == vmE.participantGroupColour
-            })
-            if(soundtrack !== undefined){
-              audioFileURL = soundtrack.url
-            } else { 
-              throw new Error("Error: failed to find a matching soundtrack URL")
-            }
-          } else { 
-            throw new Error 
-          }
-
-          const sound = new Howl({
-            src: audioFileURL,
-            pool: vmE.audioFileCount,
-            onload: function() {
-              console.log('loaded sound for episode ' + episode.label)
-              vmE.audioFilesLoaded++
-              if(vmE.audioFilesLoaded == vmE.audioFileCount){
-                console.log('loaded all sound for event ' + vmE.activeEvent.label + ' (' + vmE.participantGroupColour + ' group)')
-                
-                // allow the 100% progress bar to show for a moment
-                setTimeout(() => {
-                  vmE.audioLoadState = 'loaded'
-                }, 1000)
-                
-              }
-            },
-            onloaderror: function(){
-              console.log('error loading sound for episode ' + episode.label)
-            },
-            onend: function(){
-              console.log('finished playing episode ' + episode.label )
-              vmE.episodeIsPlaying = false
-            }
+        let audioFileURL
+        if(episode.soundtrackURLs.length == 1){
+          audioFileURL = episode.soundtrackURLs[0]
+        } else if(episode.soundtrackURLs.length == 2){
+          let soundtrack = episode.soundtrackURLs.find( soundtrackURL => { 
+            return soundtrackURL.group == vmE.participantGroupColour
           })
-    
-          episode.sound = sound
+          if(soundtrack !== undefined){
+            audioFileURL = soundtrack.url
+          } else { 
+            throw new Error("Error: failed to find a matching soundtrack URL")
+          }
+        } else { 
+          throw new Error 
+        }
+        
+        let shouldPreload = (episode.id == vmE.episodes[0].id)
+
+        episode.sound = new Howl({
+          src: audioFileURL,
+          preload: shouldPreload,
+          html5: true, // to support playback before fully downloaded
+          onload: function() {
+            console.log('loaded sound for episode ' + episode.label + ' (' + vmE.participantGroupColour + ' group)')
+            // vmE.audioFilesLoaded++
+            // if(vmE.audioFilesLoaded == vmE.audioFileCount){
+            //   console.log('loaded all sound for event ' + vmE.activeEvent.label + ' (' + vmE.participantGroupColour + ' group)')
+              
+              // allow the 100% progress bar to show for a moment
+              // setTimeout(() => {
+              //   vmE.audioLoadState = 'loaded'
+              // }, 1000)
+              
+            // }
+          },
+          onloaderror: function(){
+            console.log('error loading sound for episode ' + episode.label)
+          },
+          onend: function(){
+            console.log('finished playing episode ' + episode.label )
+            vmE.currentPlayingEpisode = null
+          }
         })
-      }
+      })
+      // }
     },
     checkInAndConnectToCohortServer: function(){
       console.log('checkInAndConnectToCohortServer()')
       // register this app as a device
-      fetch(this.serverURL + '/devices', {
+      fetch(vmE.serverURL + '/devices', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({ guid: this.guid })
+        body: JSON.stringify({ guid: vmE.guid })
       }).then( response => {
         if(response.status == 200 /* this device already exists */ || 
           response.status == 201 /* created this device */ ){
@@ -318,13 +316,8 @@ var vmE = new Vue({
 
 window.onCheckOut = ($event) => {
   console.log('onCheckOut()')
-  if(vmE.episodeIsPlaying){
-    vmE.episodes.forEach( episode => {
-      if(episode.sound){
-        episode.sound.stop()
-      }
-    })
-    vmE.episodeIsPlaying = false
+  if(vmE.currentPlayingEpisode){
+    currentPlayingEpisode.sound.stop()
   }
   vmE.clientSocket.close()
   setTimeout( () => {
@@ -357,15 +350,32 @@ window.openFDWebSocketConnection = (eventId) => {
         let episode = vmE.episodes.find( episode => episode.id == msg.cueNumber )
         if(episode !== undefined){
           switch(msg.cueAction) {
-            case 'go': // only works when an episode is not playing
-              if(!vmE.episodeIsPlaying){
-                episode.sound.play()
-                vmE.episodeIsPlaying = true
+            case 'load':
+              // new loading behaviour
+              episode.sound.load()
+              break;
+            case 'go': // should only have an effect when an episode is not playing
+              if(!vmE.currentPlayingEpisode){
+                
+                vmE.currentPlayingEpisode = episode
+                if(episode.sound.state == 'unloaded'){
+                  episode.sound.load()
+                }
+
+                setTimeout( () => {
+                  if(episode.sound.state == 'loading'){
+                    console.log('Warning: starting playback of partially loaded sound file for episode ' + episode.label)
+                  } else if(episode.sound.state == 'unloaded'){
+                    console.log('Warning: starting playback of unloaded sound file for episode ' + episode.label)
+                  }
+                  episode.sound.play()
+                }, 5000) // delay to allow for buffering
               }
               break;
             case 'stop':
               episode.sound.stop()
-              vmE.episodeIsPlaying = false
+              vmE.currentPlayingEpisode = null
+              console.log("episode count: " + vmE.episodes.length)
             // case 'pause':
             //   episode.sound.pause()
             //   break;
