@@ -98,30 +98,44 @@ var vmE = new Vue({
         this.participantGroupColour = "red"
       } else { throw new Error}
       
-      // get event occasions (from an older server)
-      fetch(this.fdOccasionServerURL, {
-        method: 'GET'
-      }).then( response => {
-        if(response.status == 200) {
-          response.text().then( jsonText => {
-            let occasions = JSON.parse(jsonText)
-            occasions.forEach( occasion => {
-              occasion.doorsOpenMoment = moment(occasion.doorsOpenDateAndTimeEST)
-              occasion.startMoment = moment(occasion.startDateAndTimeEST)
-              occasion.endMoment = moment(occasion.endDateAndTimeEST)
-            })
-            vmE.occasions = occasions
-            vmE.cohortState = 'occasions-loaded'
-          })
-        } else {
-          console.log("response not ok")
-          response.text().then( text => {
-            console.log(text)
-          })
-        }
-      }).catch ( error => {
-        console.log(error)
+      // the old server doesn't support https so we can't request the occasions... sigh.
+      let occasions = [
+        {"city":"Toronto","venue":"National Ballet School","address":"400 Jarvis St","geocode":["43.434","-79.4343"],"date":"2019-02-01","doorsOpenTime":"12:30","startTime":"13:00","endTime":"14:30","hosts":[{"name":"no host name","url":"no host url"}],"signupURL":"no signup url","checkInCode":"no code","startDateAndTimeEST":"2019-02-01T13:00:00-05:00","doorsOpenDateAndTimeEST":"2019-02-01T12:30:00-05:00","endDateAndTimeEST":"2019-02-01T14:30:00-05:00","_id":"CfIPSksu9tNKiJV3"},
+        {"city":"Toronto","venue":"National Ballet School","address":"400 Jarvis St","geocode":["43.434","-79.4343"],"date":"2019-02-01","doorsOpenTime":"10:00","startTime":"10:15","endTime":"12:30","hosts":[{"name":"no host name","url":"no host url"}],"signupURL":"no signup url","checkInCode":"no code","startDateAndTimeEST":"2019-02-01T10:15:00-05:00","doorsOpenDateAndTimeEST":"2019-02-01T10:00:00-05:00","endDateAndTimeEST":"2019-02-01T12:30:00-05:00","_id":"CfIPSksu9tNKiJV3"}
+      ]
+
+      occasions.forEach( occasion => {
+        occasion.doorsOpenMoment = moment(occasion.doorsOpenDateAndTimeEST)
+        occasion.startMoment = moment(occasion.startDateAndTimeEST)
+        occasion.endMoment = moment(occasion.endDateAndTimeEST)
       })
+
+      this.occasions = occasions
+      this.cohortState = 'occasions-loaded'
+      // // get event occasions (from an older server)
+      // fetch(this.fdOccasionServerURL, {
+      //   method: 'GET'
+      // }).then( response => {
+      //   if(response.status == 200) {
+      //     response.text().then( jsonText => {
+      //       let occasions = JSON.parse(jsonText)
+      //       occasions.forEach( occasion => {
+      //         occasion.doorsOpenMoment = moment(occasion.doorsOpenDateAndTimeEST)
+      //         occasion.startMoment = moment(occasion.startDateAndTimeEST)
+      //         occasion.endMoment = moment(occasion.endDateAndTimeEST)
+      //       })
+      //       vmE.occasions = occasions
+      //       vmE.cohortState = 'occasions-loaded'
+      //     })
+      //   } else {
+      //     console.log("response not ok")
+      //     response.text().then( text => {
+      //       console.log(text)
+      //     })
+      //   }
+      // }).catch ( error => {
+      //   console.log(error)
+      // })
     }
   },
   watch: {
@@ -207,7 +221,7 @@ var vmE = new Vue({
       return 'state-' + this.state 
     },
     clientIsProbablyNotInEST: function() {
-      if(vmE.clientTimezoneOffset >= 270 && vmE.clientTimezoneOffset <= 330){
+      if(this.clientTimezoneOffset >= 270 && this.clientTimezoneOffset <= 330){
         return false
       } else {
         return true
