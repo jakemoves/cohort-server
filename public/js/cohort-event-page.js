@@ -171,7 +171,7 @@ var vmE = new Vue({
       if(process.env.NODE_ENV == 'development'){
         return 4
       } else {
-        return 5
+        return 4
       }
     },
     occasionsForDisplay: function() {
