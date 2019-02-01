@@ -389,8 +389,9 @@ window.openFDWebSocketConnection = (eventId) => {
                 if(episode.sound.state !== 'loaded'){
                   vmE.audioLoading = true
                 }
-                
-                episode.sound.play()
+                setTimeout( () => {
+                  episode.sound.play()
+                }, 1000) // delay to help make sure all clients are ready to go
                 // catch up logic (in case of delayed start) would go here
               }
               break;
