@@ -6,6 +6,8 @@
   "license": "MIT",
   "dependencies": {
     "howler": "^2.1.1",
+    "js-cookie": "^2.2.0",
+    "moment": "^2.24.0",
     "uuid": "^3.3.2",
     "vue": "^2.5.21"
   },

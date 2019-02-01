@@ -1,12 +1,15 @@
 import Vue from "vue"
 import Guid from "uuid/v4"
 import {Howl, Howler} from 'howler'
+import Cookies from 'js-cookie'
+import moment from 'moment'
 
 var vmE = new Vue({
   el: '#cohort-event-page',
   data: {
-    guid: Guid(), // enable this when you implement #48
+    guid: '',
     clientSocket: { readyState: 0 },
+    clientTimezoneOffset: null,
     cohortState: '',
     // audioLoadState: 'unloaded',
     // episodeIsPlaying: false,
@@ -87,6 +90,15 @@ var vmE = new Vue({
     if(document.getElementById('cohort-event-page')){
       console.log('starting cohort event page vue instance')
 
+      this.clientTimezoneOffset = new Date().getTimezoneOffset()
+      this.now = moment()
+
+      if(Cookies.get('cohort-device-guid') === undefined){
+        Cookies.set('cohort-device-guid', Guid(), { expires: 7 })
+      }
+      
+      this.guid = Cookies.get('cohort-device-guid')
+
       // assign participant to either 'red' or 'blue' group
       let coinFlipResult = Math.round(Math.random())
       if(coinFlipResult == 1){
@@ -102,6 +114,11 @@ var vmE = new Vue({
         if(response.status == 200) {
           response.text().then( jsonText => {
             let occasions = JSON.parse(jsonText)
+            occasions.forEach( occasion => {
+              occasion.doorsOpenMoment = moment(occasion.doorsOpenDateAndTimeEST)
+              occasion.startMoment = moment(occasion.startDateAndTimeEST)
+              occasion.endMoment = moment(occasion.endDateAndTimeEST)
+            })
             vmE.occasions = occasions
             vmE.cohortState = 'occasions-loaded'
           })
@@ -158,7 +175,17 @@ var vmE = new Vue({
         return [this.occasions[this.activeOccasionIndex]]
       } else {
         // console.log('showing all occasions')
-        return this.occasions
+        return this.occasions.filter( occasion => {
+          return this.now.isBefore(occasion.endMoment)
+        }).sort(function(a, b){
+          if(b.startMoment.isAfter(a.startMoment)){
+            return -1
+          } else if(b.startMoment.isBefore(a.startMoment)){
+            return 1
+          } else {
+            return 0
+          }
+        })
       }
     },
     // audioLoadProgress: function(){
@@ -202,6 +229,13 @@ var vmE = new Vue({
     },
     stateClass: function() {
       return 'state-' + this.state 
+    },
+    clientIsProbablyNotInEST: function() {
+      if(vmE.clientTimezoneOffset >= 270 && vmE.clientTimezoneOffset <= 330){
+        return false
+      } else {
+        return true
+      }
     }
   },
   methods: {
@@ -345,6 +379,7 @@ window.onCheckOut = ($event) => {
   }
   vmE.clientSocket.close()
   setTimeout( () => {
+    vmE.now = moment()
     vmE.cohortState = 'occasions-loaded'
   }, 100) // because socket.close() is async and changes the state
   vmE.activeOccasionIndex = null
@@ -411,6 +446,7 @@ window.openFDWebSocketConnection = (eventId) => {
 
   clientSocket.addEventListener('close', () => {
     console.log('connection closed')
+    vmE.now = moment()
     vmE.cohortState = 'checked-in'
   })
 
