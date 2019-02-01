@@ -13,6 +13,8 @@ var vmE = new Vue({
     // audioFileCount: null,
     // audioFilesLoaded: 0,
     currentPlayingEpisode: null,
+    // bgSound: null,
+    // bgSoundURL: 'https://s3.us-east-2.amazonaws.com/fluxdelux/Wild-Eep.mp3',
     activeEvent: { id: 0, label: "no events", state: 'closed' },
     // events: [ { id: 0, label: "no events", state: 'closed' } ],
     // nullEvent: { id: 0, label: "no events", state: 'closed' }, 
@@ -78,7 +80,8 @@ var vmE = new Vue({
         soundtrackURLs: [ 'https://s3.us-east-2.amazonaws.com/fluxdelux/chip-melt-together.mp3' ]
       }
     ],
-    participantGroupColour: ""
+    participantGroupColour: "",
+    audioLoading: false
   },
   created: function() {
     if(document.getElementById('cohort-event-page')){
@@ -111,6 +114,12 @@ var vmE = new Vue({
       }).catch ( error => {
         console.log(error)
       })
+    }
+  },
+  watch: {
+    stateClass: function(stateClass){
+      document.body.classList.remove('state-occasions-loaded','state-audio-loading', 'state-ready', 'state-playing-episode')
+      document.body.classList.add(stateClass)
     }
   },
   computed: {
@@ -180,7 +189,11 @@ var vmE = new Vue({
         if(this.currentPlayingEpisode){
           return 'playing-episode'
         } else {
-          return 'ready'
+          if(this.audioLoading){
+            return 'audio-loading'
+          } else {
+            return 'ready'
+          }
         }
       }
 
@@ -194,6 +207,12 @@ var vmE = new Vue({
   methods: {
     onCheckIn: function(occasionIndex){
       console.log('onCheckIn(' + occasionIndex + ')')
+
+      // vmE.bgSound = new Howl({
+      //   src: vmE.bgSoundURL,
+      //   html5: true
+      // })
+      // vmE.bgSound.play()
 
       vmE.activeOccasionIndex = occasionIndex
 
@@ -223,12 +242,14 @@ var vmE = new Vue({
         }
         
         let shouldPreload = (episode.id == vmE.episodes[0].id)
+        vmE.audioLoading = true
 
         episode.sound = new Howl({
           src: audioFileURL,
           preload: shouldPreload,
-          html5: true, // to support playback before fully downloaded
+          // html5: true, // to support playback before fully downloaded
           onload: function() {
+            vmE.audioLoading = false
             console.log('loaded sound for episode ' + episode.label + ' (' + vmE.participantGroupColour + ' group)')
             // vmE.audioFilesLoaded++
             // if(vmE.audioFilesLoaded == vmE.audioFileCount){
@@ -246,6 +267,8 @@ var vmE = new Vue({
           },
           onend: function(){
             console.log('finished playing episode ' + episode.label )
+            vmE.currentPlayingEpisode.sound.stop()
+            vmE.currentPlayingEpisode.sound.unload()
             vmE.currentPlayingEpisode = null
           }
         })
@@ -317,7 +340,8 @@ var vmE = new Vue({
 window.onCheckOut = ($event) => {
   console.log('onCheckOut()')
   if(vmE.currentPlayingEpisode){
-    currentPlayingEpisode.sound.stop()
+    vmE.currentPlayingEpisode.sound.stop()
+    vmE.currentPlayingEpisode = null
   }
   vmE.clientSocket.close()
   setTimeout( () => {
@@ -353,29 +377,24 @@ window.openFDWebSocketConnection = (eventId) => {
             case 'load':
               // new loading behaviour
               episode.sound.load()
+              vmE.audioLoading = true
               break;
             case 'go': // should only have an effect when an episode is not playing
               if(!vmE.currentPlayingEpisode){
                 
                 vmE.currentPlayingEpisode = episode
-                if(episode.sound.state == 'unloaded'){
-                  episode.sound.load()
+                if(episode.sound.state !== 'loaded'){
+                  vmE.audioLoading = true
                 }
-
-                setTimeout( () => {
-                  if(episode.sound.state == 'loading'){
-                    console.log('Warning: starting playback of partially loaded sound file for episode ' + episode.label)
-                  } else if(episode.sound.state == 'unloaded'){
-                    console.log('Warning: starting playback of unloaded sound file for episode ' + episode.label)
-                  }
-                  episode.sound.play()
-                }, 5000) // delay to allow for buffering
+                episode.sound.play()
+                // catch up logic (in case of delayed start) would go here
               }
               break;
             case 'stop':
               episode.sound.stop()
+              episode.sound.unload()
+              vmE.audioLoading = false
               vmE.currentPlayingEpisode = null
-              console.log("episode count: " + vmE.episodes.length)
             // case 'pause':
             //   episode.sound.pause()
             //   break;

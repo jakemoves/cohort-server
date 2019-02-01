@@ -162,10 +162,26 @@ span.small-caps {
  *    Event page
  */
 
+body {
+  &.state-default, &.state-ambiguous {}
+
+  &.state-occasions-loaded, &.state-audio-loading {
+    background: #072B69;
+  }
+
+  &.state-ready {
+    background: #D4420D;
+  }
+
+  &.state-playing-episode {
+    background: #F0C829;
+  }   
+}
+
 #cohort-event-page {
   &.state-default, &.state-ambiguous {}
 
-  &.state-occasions-loaded{
+  &.state-occasions-loaded, &.state-audio-loading {
     background: #072B69;
     color: #fff;
   }

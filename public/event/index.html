@@ -68,6 +68,11 @@
             </ul>
           </section>
 
+          <!-- AUDIO LOADING (for episode) VIEW -->
+          <section class="col-sm" v-if="state == 'audio-loading'">
+            <h2 v-if="!currentPlayingEpisode">Preloading audio...</h2>
+          </section>
+
           <!-- EPISODE VIEW -->
           <section class="col-sm" v-if="state == 'playing-episode'">
             <button class="btn btn-lg btn-primary" onclick=onCheckOut()>Check out</button>
