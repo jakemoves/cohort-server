@@ -11,17 +11,10 @@ var vmE = new Vue({
     clientSocket: { readyState: 0 },
     clientTimezoneOffset: null,
     cohortState: '',
-    // audioLoadState: 'unloaded',
-    // episodeIsPlaying: false,
-    // audioFileCount: null,
-    // audioFilesLoaded: 0,
     currentPlayingEpisode: null,
-    // bgSound: null,
-    // bgSoundURL: 'https://s3.us-east-2.amazonaws.com/fluxdelux/Wild-Eep.mp3',
+    participantGroupColour: "",
+    audioLoading: false,
     activeEvent: { id: 0, label: "no events", state: 'closed' },
-    // events: [ { id: 0, label: "no events", state: 'closed' } ],
-    // nullEvent: { id: 0, label: "no events", state: 'closed' }, 
-    // nullEventLabel: "no events", // duplication is required to avoid many ugly things
     occasions: [ 
       {"city":"Toronto","venue":"National Ballet School",  "address":"400 Jarvis St","geocode":["43.434","-79.4343"],"date":"2019-02-01","doorsOpenTime":"12:30","startTime":"13:00","endTime":"14:30","hosts":[{"name":"no host name","url":"no host url"}],"signupURL":"no signup url","checkInCode":"no code","startDateAndTimeEST":"2019-02-01T13:00:00-05:00","doorsOpenDateAndTimeEST":"2019-02-01T12:30:00-05:00","endDateAndTimeEST":"2019-02-01T14:30:00-05:00","_id":"CfIPSksu9tNKiJV3"}
     ],
@@ -82,9 +75,7 @@ var vmE = new Vue({
         label: 'Chip Melt Together', id: 8, sound: null,
         soundtrackURLs: [ 'https://s3.us-east-2.amazonaws.com/fluxdelux/chip-melt-together.mp3' ]
       }
-    ],
-    participantGroupColour: "",
-    audioLoading: false
+    ]
   },
   created: function() {
     if(document.getElementById('cohort-event-page')){
@@ -188,21 +179,6 @@ var vmE = new Vue({
         })
       }
     },
-    // audioLoadProgress: function(){
-    //   if(this.audioLoadState == 'unloaded') {
-    //     return '0%'
-    //   } else if(this.audioLoadState == 'loaded') {
-    //     return '100%'
-    //   } else if(this.audioLoadState == 'loading') {
-    //     let progress = this.audioFilesLoaded / this.audioFileCount * 100
-    //     let minimumIncrement = 1 / this.audioFileCount * 100
-    //     if(progress < minimumIncrement) {
-    //       return minimumIncrement / 2 + '%'
-    //     } else {
-    //       return progress + '%'
-    //     }
-    //   }
-    // },
     state: function() {
       if(this.cohortState == ''){
         return 'default'
@@ -242,22 +218,11 @@ var vmE = new Vue({
     onCheckIn: function(occasionIndex){
       console.log('onCheckIn(' + occasionIndex + ')')
 
-      // vmE.bgSound = new Howl({
-      //   src: vmE.bgSoundURL,
-      //   html5: true
-      // })
-      // vmE.bgSound.play()
-
       vmE.activeOccasionIndex = occasionIndex
 
       vmE.checkInAndConnectToCohortServer()
       
-      // if(vmE.audioLoadState == 'unloaded'){
-        // start audio setup
-        // vmE.audioLoadState = 'loading'
-      
       vmE.episodes.forEach( episode => {
-        // vmE.audioFileCount = vmE.episodes.length
 
         let audioFileURL
         if(episode.soundtrackURLs.length == 1){
@@ -281,20 +246,9 @@ var vmE = new Vue({
         episode.sound = new Howl({
           src: audioFileURL,
           preload: shouldPreload,
-          // html5: true, // to support playback before fully downloaded
           onload: function() {
             vmE.audioLoading = false
             console.log('loaded sound for episode ' + episode.label + ' (' + vmE.participantGroupColour + ' group)')
-            // vmE.audioFilesLoaded++
-            // if(vmE.audioFilesLoaded == vmE.audioFileCount){
-            //   console.log('loaded all sound for event ' + vmE.activeEvent.label + ' (' + vmE.participantGroupColour + ' group)')
-              
-              // allow the 100% progress bar to show for a moment
-              // setTimeout(() => {
-              //   vmE.audioLoadState = 'loaded'
-              // }, 1000)
-              
-            // }
           },
           onloaderror: function(){
             console.log('error loading sound for episode ' + episode.label)
@@ -421,6 +375,7 @@ window.openFDWebSocketConnection = (eventId) => {
                 if(episode.sound.state !== 'loaded'){
                   vmE.audioLoading = true
                 }
+                
                 episode.sound.play()
                 // catch up logic (in case of delayed start) would go here
               }
