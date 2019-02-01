@@ -1,6 +1,6 @@
 {
   "name": "cohort-admin-client",
-  "version": "0.0.2",
+  "version": "0.1.1",
   "main": "cohort-admin-client.js",
   "author": "Jacob Niedzwiecki",
   "license": "MIT",
