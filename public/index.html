@@ -27,7 +27,7 @@
 
           <!-- EVENT LIST -->
 
-          <section class="col-sm-auto">
+          <section class="col">
             <h3 class="font-weight-light">Events</h3>
             <div class="event-list list-group list-group-flush">
               <button class="event-list__event-item list-group-item list-group-item-action" v-for="cohortEvent in eventsByLabel" 
@@ -45,11 +45,11 @@
 
             <form action="#" class="create-event-form" onsubmit=createCohortEvent(event)>
               <div class="form-row">
-                <div class="col-auto">
-                  <input type="text" class="form-control" id="new-event-label" placeholder="new event">
-                </div>
-                <div class="col-auto">
-                  <button type="submit" class="btn btn-secondary">Create</button>
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" placeholder="Event name" aria-label="Event name" id="new-event-label">
+                  <div class="input-group-append">
+                    <button class="btn btn-secondary" type="submit" id="button-addon2">Create</button>
+                  </div>
                 </div>
               </div>
             </form>
@@ -57,7 +57,7 @@
 
           <!-- EVENT DETAILS -->
 
-          <section class="col-sm-auto" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
+          <section class="col" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
             <h3 class="font-weight-light">Event details</h3>
             <p>Name: {{ activeEvent.label }} </br>
                ID: {{ activeEvent.id }} </br>
@@ -98,7 +98,7 @@
           </section>
           
           <!-- DEVICE LIST -->
-          <section class="col-sm-auto" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
+          <section class="col" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
             <h3><span class="font-weight-light">Devices 
                 <span class="small-caps">@</span> 
               </span>
