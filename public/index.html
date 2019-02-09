@@ -28,7 +28,46 @@
           <!-- EVENT LIST -->
 
           <section class="col events-column">
-            <h3 class="font-weight-light">Events <a role="button" aria-expanded="false" aria-controls="event-list" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">show all</a></h3>
+            <section class="occasions" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
+              
+              <h3><span class="font-weight-light">
+              <span class="selected-event-label">{{ activeEvent.label }}</span> Occasions</h3>
+              
+              <button v-if="occasionFormIsCollapsed" class="btn btn-secondary btn-block" data-toggle="collapse" type="button" data-target="#occasion-form-content" onclick=showOccasionForm(event)>Add occasion</button>
+              
+              <form action="#" class="create-occasion-form" onsubmit=createCohortOccasion(event)>
+                <div class="form-group collapse" id="occasion-form-content">
+                  <label for="start-date">Start date</label>
+                  <input class="form-control" type="date" id="start-date" name="start-date" placeholder="dd/mm/yyyy">
+
+
+                  <label for="doors-open-time">Doors open</label>
+                  <input class="form-control" type="time" id="doors-open-time" name="doors-open-time">
+
+                  <label for="start-time">Start time</label>
+                  <input class="form-control" type="time" id="start-time" name="start-time" >
+
+
+                  <label for="end-date">End date</label>
+                  <input class="form-control" type="date" id="end-date" name="end-date" placeholder="dd/mm/yyyy">
+
+                  <label for="end-time">End time</label>
+                  <input class="form-control" type="time" id="end-time" name="end-time">
+
+                  <label for="venue-location">Location label</label>
+                  <input class="form-control" type="text" id="venue-location" name="venue-location">
+
+                  <label for="venue-address">Address</label>
+                  <input class="form-control" type="text" id="venue-address" name="venue address">
+                  
+                  <button v-if="!occasionFormIsCollapsed" class="btn btn-primary btn-block" type="submit">Add occasion</button>
+                </div>
+              </form>
+
+            </section>
+
+
+            <h3 class="font-weight-light">Events</h3>
             <div class="event-list list-group list-group-flush" id="event-list">
               <button class="event-list__event-item list-group-item list-group-item-action" v-for="cohortEvent in eventsByLabel" 
                 v-bind:class="cohortEvent.id == activeEvent.id ? 'active':''"
@@ -53,9 +92,6 @@
                 </div>
               </div>
             </form>
-<!-- 
-            <h4><span class="font-weight-light">Occasions for  
-              <span class="selected-event-label">{{ activeEvent.label }}</span></h4> -->
           </section>
 
           <!-- EVENT DETAILS -->

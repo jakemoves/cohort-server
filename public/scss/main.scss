@@ -58,6 +58,11 @@ header {
   }
 }
 
+.occasions {
+  .form-control {
+    margin-bottom: 1rem;
+  }
+}
 .event-list__event-item {
   display: block;
   padding: 0.25rem 0.25rem 0.5rem 0;
@@ -130,6 +135,7 @@ form.broadcast-form {
 }
 
 .selected-event-label {
+  font-weight: 500;
   font-variant-caps: all-small-caps;
 }
 

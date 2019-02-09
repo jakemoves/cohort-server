@@ -1,5 +1,7 @@
 import Vue from "vue"
 import Guid from "uuid/v4"
+import $ from 'jquery'
+import 'bootstrap'
 
 var vm = new Vue({
   el: '#cohort-admin',
@@ -14,6 +16,7 @@ var vm = new Vue({
     broadcastMessagePlaceholder: '{ "mediaDomain": "sound", \n  "cueNumber": 1, \n  "cueAction": "play" }',
     errorOnBroadcast: false,
     userDidSelectEvent: false,
+    occasionFormIsCollapsed: true,
     // activeEventMediaDomains: [ "sound", "video" ],
     // cueActions: [ "play", "pause", "restart" ]
     eventActionsAndEpisodes: {
@@ -239,6 +242,16 @@ window.closeEvent = ($event) => {
       console.log(vm.activeEvent)
     }
   })
+}
+
+window.showOccasionForm = ($event) => {
+  vm.occasionFormIsCollapsed = false
+}
+
+window.createCohortOccasion = ($event) => {
+  console.log('createCohortOccasion')
+  document.getElementById('occasion-form-content').classList.remove('show')
+  vm.occasionFormIsCollapsed = true
 }
 
 window.onBroadcast = ($event) => {
