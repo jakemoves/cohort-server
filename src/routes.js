@@ -42,6 +42,6 @@ router.patch('/devices/:id/register-for-notifications', devicesController.device
  */
 
 router.get('/events/:id/occasions', occasionsController.occasions)
-// router.post('/events/:id/occasions', ________ )
+router.post('/events/:id/occasions', occasionsController.occasions_create)
 
 module.exports = router

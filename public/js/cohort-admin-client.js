@@ -141,7 +141,7 @@ var vm = new Vue({
           response.json().then( event_device => {
 
             // refresh the event details
-            fetch(vm.serverURL + '/events/' + eventId + {
+            fetch(vm.serverURL + '/events/' + eventId, {
               method: 'GET'
             }).then( response => {
               if(response.status == 200){
@@ -267,8 +267,48 @@ window.onHideOccasionForm = ($event) => {
 }
 
 window.createCohortOccasion = ($event) => {
-  document.getElementById('occasion-form').classList.remove('show')
-  vm.occasionFormIsCollapsed = true
+  $event.preventDefault()
+  $event.stopPropagation()
+
+  let locationLabel = document.getElementById('venue-location').value
+  let streetAddress = document.getElementById('venue-address').value
+  let startDateTime = moment(document.getElementById('start-date').value 
+    + 'T' + document.getElementById('start-time').value).format()
+  let doorsOpenDateTime = moment(document.getElementById('start-date').value 
+    + 'T' + document.getElementById('doors-open-time').value).format()
+  let endDateTime = moment(document.getElementById('end-date').value 
+    + 'T' + document.getElementById('end-time').value).format()
+
+  let occasion = {
+    locationLabel: locationLabel,
+    locationAddress: streetAddress,
+    startDateTime: startDateTime,
+    doorsOpenDateTime: doorsOpenDateTime,
+    endDateTime: endDateTime
+  }
+
+  fetch(vm.serverURL + '/events/' + vm.activeEvent.id + '/occasions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json'},
+    body: JSON.stringify(occasion)
+  }).then( response => {
+    if(response.status == 200 || response.status == 201) {
+      response.json().then( occasion => {
+        vm.activeEventOccasions.push(occasion)
+
+        document.getElementById('occasion-form').reset()
+        document.getElementById('occasion-form').classList.remove('show')
+        vm.occasionFormIsCollapsed = true
+      })
+    } else {
+      response.text().then( errorText => {
+        console.log(errorText)
+      })
+    }
+  }).catch( error => {
+    console.log(error.messageText)
+  })
+
 }
 
 window.onBroadcast = ($event) => {

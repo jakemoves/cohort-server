@@ -27,7 +27,7 @@
 
           <!-- EVENT LIST -->
 
-          <section class="col events-column">
+          <section class="col-auto events-column">
             <section class="occasions" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
               
               <h3><span class="font-weight-light">
@@ -48,29 +48,42 @@
               
               <form action="#" class="create-occasion-form collapse" onsubmit=createCohortOccasion(event) id="occasion-form">
                 <h4>Add an occasion</h4>
+
+                <label for="venue-location">Venue / Location</label>
+                <input class="form-control" type="text" id="venue-location" name="venue-location">
+
+                <label for="venue-address">Address</label>
+                <input class="form-control" type="text" id="venue-address" name="venue address">
+
                 <div class="form-group">
-                  <label for="start-date">Start date</label>
-                  <input class="form-control" type="date" id="start-date" name="start-date" placeholder="dd/mm/yyyy">
+                  <div class="form-row">
+                    <div class="col-7">
+                      <label for="start-date">Start date</label>
+                      <input class="form-control" type="date" id="start-date" name="start-date" placeholder="dd/mm/yyyy">
+                    </div>
+                    <div class="col-5">
+                      <label for="start-time">Start time</label>
+                      <input class="form-control" type="time" id="start-time" name="start-time">
+                    </div>
+                  </div>
+                  
+                  <div class="form-row justify-content-end">
+                    <div class="col-5">
+                        <label for="doors-open-time">Doors open</label>
+                        <input class="form-control" type="time" id="doors-open-time" name="doors-open-time">
+                    </div>
+                  </div>
 
-
-                  <label for="doors-open-time">Doors open</label>
-                  <input class="form-control" type="time" id="doors-open-time" name="doors-open-time">
-
-                  <label for="start-time">Start time</label>
-                  <input class="form-control" type="time" id="start-time" name="start-time" >
-
-
-                  <label for="end-date">End date</label>
-                  <input class="form-control" type="date" id="end-date" name="end-date" placeholder="dd/mm/yyyy">
-
-                  <label for="end-time">End time</label>
-                  <input class="form-control" type="time" id="end-time" name="end-time">
-
-                  <label for="venue-location">Location label</label>
-                  <input class="form-control" type="text" id="venue-location" name="venue-location">
-
-                  <label for="venue-address">Address</label>
-                  <input class="form-control" type="text" id="venue-address" name="venue address">
+                  <div class="form-row">
+                    <div class="col-7">
+                      <label for="end-date">End date</label>
+                      <input class="form-control" type="date" id="end-date" name="end-date" placeholder="dd/mm/yyyy">
+                    </div>
+                    <div class="col-5">
+                      <label for="end-time">End time</label>
+                      <input class="form-control" type="time" id="end-time" name="end-time">
+                    </div>
+                  </div>
                   
                   <div class="form-row d-flex">
                     <a class="btn btn-link" data-toggle="collapse" href="#occasion-form" onclick=onHideOccasionForm()>Cancel</a>
@@ -111,7 +124,7 @@
 
           <!-- EVENT DETAILS -->
 
-          <section class="col" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
+          <section class="col-auto" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
             <h3 class="font-weight-light">Event details</h3>
             <p>Name: {{ activeEvent.label }} </br>
                ID: {{ activeEvent.id }} </br>
@@ -154,9 +167,11 @@
           <!-- DEVICE LIST -->
           <section class="col" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
             <h3><span class="font-weight-light">Devices 
-                <span class="small-caps">@</span> 
+                <!-- <span class="small-caps">@</span> 
               </span>
-              <span class="selected-event-label">{{ activeEvent.label }}</span></h3>
+              <span class="selected-event-label">{{ activeEvent.label }}</span>
+               -->
+            </h3>
             
               <ul id="device-list" v-if="activeEventDevices.length > 0">
               <li v-for="device in activeEventDevicesByConnectionState">
@@ -165,10 +180,12 @@
                 </div>
                 <div class="device-status">
                   <small v-if="device.socketOpen" class="connection-status text-success">
-                    connected
+                    •
+                    <!-- connected -->
                   </small>
                   <small v-if="!device.socketOpen" class="connection-status text-warning">
-                      not connected
+                    •
+                    <!-- not connected -->
                     </small>
                 </div>
               </li>
