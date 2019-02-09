@@ -27,9 +27,9 @@
 
           <!-- EVENT LIST -->
 
-          <section class="col">
-            <h3 class="font-weight-light">Events</h3>
-            <div class="event-list list-group list-group-flush">
+          <section class="col events-column">
+            <h3 class="font-weight-light">Events <a role="button" aria-expanded="false" aria-controls="event-list" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">show all</a></h3>
+            <div class="event-list list-group list-group-flush" id="event-list">
               <button class="event-list__event-item list-group-item list-group-item-action" v-for="cohortEvent in eventsByLabel" 
                 v-bind:class="cohortEvent.id == activeEvent.id ? 'active':''"
                 v-bind:data-event-id="cohortEvent.id"
@@ -53,6 +53,9 @@
                 </div>
               </div>
             </form>
+<!-- 
+            <h4><span class="font-weight-light">Occasions for  
+              <span class="selected-event-label">{{ activeEvent.label }}</span></h4> -->
           </section>
 
           <!-- EVENT DETAILS -->
@@ -64,7 +67,7 @@
                Live connection: {{ clientSocket.readyState == 1 ? 'active' : 'not active' }}
             </p>
 
-            <h4 class="font-weight-light">Event actions</h4>
+            <h4>Event actions</h4>
             <button class="btn btn-secondary" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
 
             <div class="form-group episode-control" v-if="activeEvent.label == 'fluxdelux'">
@@ -82,7 +85,7 @@
               </div>
             </div>
 
-            <h6>Raw messages</h6>
+            <h6 v-if="activeEventIsOpen && activeEventDevices.length > 0">Raw messages</h6>
             <form action="#" class="broadcast-form" onsubmit=broadcast(event) v-if="activeEventIsOpen && activeEventDevices.length > 0">
               <div class="form-group">
                 <textarea rows=3 class="form-control" id="broadcast-message">{{ broadcastMessagePlaceholder }}</textarea>

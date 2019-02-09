@@ -1,5 +1,19 @@
-.col-sm-auto {
-  //min-width: 17rem;
+@import "./../node_modules/bootstrap/scss/_functions.scss";
+@import "./../node_modules/bootstrap/scss/_variables.scss";
+@import "./../node_modules/bootstrap/scss/mixins/_breakpoints.scss";
+
+/*    Tablet landscape  */
+@include media-breakpoint-down(md) { 
+  h3 {
+    font-size: 1.25rem;
+  }
+  h4 {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  h6 {
+    font-weight: 400;
+  }
 }
 
 /* 
@@ -32,6 +46,17 @@ header {
   }
 }
 
+.events-column {
+  h3 > a {    
+    float: right;
+    color: #007bff!important;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
 
 .event-list__event-item {
   display: block;
@@ -95,6 +120,7 @@ form.create-event-form, form.broadcast-form {
 form.broadcast-form {
   #broadcast-message {
     font-family: monospace;
+    min-width: 14rem;
   }
 }
 
