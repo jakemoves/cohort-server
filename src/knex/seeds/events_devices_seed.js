@@ -34,13 +34,37 @@ exports.seed = function(knex, Promise) {
           {label: 'fluxdelux', state: 'open' }
         ]).then( () => {
           return knex.raw('TRUNCATE TABLE events_devices RESTART IDENTITY CASCADE').then( () => {
+            // add events/devices relations
             return knex('events_devices').insert([
               { event_id: 2, device_id: 1 },
               { event_id: 3, device_id: 3 },
               { event_id: 3, device_id: 2 },
               { event_id: 3, device_id: 1 },
               { event_id: 4, device_id: 3 }
-            ]);
+            ]).then( () => {
+              // add occasions to events
+              return knex.raw('TRUNCATE TABLE occasions RESTART IDENTITY CASCADE').then( () => {
+                return knex('occasions').insert([
+                  { 
+                    event_id: 4,
+                    doorsOpenDateTime: '2019-04-01 13:30:00+05:00',
+                    startDateTime: '2019-04-01 14:00:00+05:00',
+                    endDateTime: '2019-04-01 15:30:00+05:00',
+                    locationLabel: "Jacob's house",
+                    locationAddress: '125 Emerson Ave, Toronto'
+                  },
+                  {
+                    // overnight occasion
+                    event_id: 4,
+                    doorsOpenDateTime: '2019-05-31 09:30:00+05:00',
+                    startDateTime: '2019-05-31 11:00:00+05:00',
+                    endDateTime: '2019-06-01 17:00:00+05:00',
+                    locationLabel: "Studio 5B, National Ballet School",
+                    locationAddress: '400 Jarvis St, Toronto'
+                  }
+                ])
+              });
+            });
           })
         })
       })
