@@ -3,6 +3,7 @@ const router = express.Router()
 
 const eventsController = require('./controllers/eventsController')
 const devicesController = require('./controllers/devicesController')
+const occasionsController = require('./controllers/occasionsController')
 
 router.get('', (req, res) => {
   res.send('Cohort rocks')
@@ -35,5 +36,12 @@ router.get('/devices/:id', devicesController.devices_id)
 router.post('/devices', devicesController.devices_create)
 
 router.patch('/devices/:id/register-for-notifications', devicesController.devices_registerForNotifications)
+
+/*
+ *   occasions
+ */
+
+router.get('/events/:id/occasions', occasionsController.occasions)
+// router.post('/events/:id/occasions', ________ )
 
 module.exports = router
