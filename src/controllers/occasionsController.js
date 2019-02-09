@@ -26,6 +26,7 @@ exports.occasions_create = (req, res) => {
   }
 
   let occasion = req.body
+  
   occasion.event_id = eventId
   occasionsTable.addOne(occasion).then( occasionId => {
     let occasion = occasionsTable.getOneByID(occasionId).then( occasion => {

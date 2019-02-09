@@ -272,6 +272,8 @@ window.createCohortOccasion = ($event) => {
 
   let locationLabel = document.getElementById('venue-location').value
   let streetAddress = document.getElementById('venue-address').value
+  let city = document.getElementById('venue-city').value
+
   let startDateTime = moment(document.getElementById('start-date').value 
     + 'T' + document.getElementById('start-time').value).format()
   let doorsOpenDateTime = moment(document.getElementById('start-date').value 
@@ -282,6 +284,7 @@ window.createCohortOccasion = ($event) => {
   let occasion = {
     locationLabel: locationLabel,
     locationAddress: streetAddress,
+    locationCity: city,
     startDateTime: startDateTime,
     doorsOpenDateTime: doorsOpenDateTime,
     endDateTime: endDateTime

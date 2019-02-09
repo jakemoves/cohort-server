@@ -28,17 +28,17 @@
         <div class="row">
           <!-- OCCASION LIST -->
           <section class="col-sm" v-if="state == 'occasions-loaded'">
-            <div class="alert alert-warning" v-if="clientIsProbablyNotInEST">
-              The times listed below are in <strong>your local time</strong> — not the local time of the city
+            <div class="alert alert-warning">
+              All times listed below are in <strong>your local time</strong>
             </div>
             <ul class="list-group occasion-list list-group-flush">
               <li class="occasion-list__occasion-list-item list-group-item" v-for="(occasion, index) in occasionsForDisplay">
-                <h5>{{ occasion.city }}</h5>
+                <h5>{{ occasion.locationCity }}</h5>
                 
                 <div class="occasion-list__occasion-details">
                   <p>
-                    <strong>{{ occasion.venue }}</strong><br />
-                    {{ occasion.address }}
+                    <strong>{{ occasion.locationLabel }}</strong><br />
+                    {{ occasion.locationAddress }}
                   </p>
                   <p>
                     <strong>{{ occasion.startMoment.format('ddd MMM DD, YYYY') }}, {{occasion.startMoment.format('h:mma') }} – {{ occasion.endMoment.format('h:mma') }}</strong><br />

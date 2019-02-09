@@ -51,7 +51,8 @@ exports.seed = function(knex, Promise) {
                     startDateTime: '2019-04-01 14:00:00+05:00',
                     endDateTime: '2019-04-01 15:30:00+05:00',
                     locationLabel: "Jacob's house",
-                    locationAddress: '125 Emerson Ave, Toronto'
+                    locationAddress: '125 Emerson Ave',
+                    locationCity: 'Toronto'
                   },
                   {
                     // overnight occasion
@@ -60,7 +61,8 @@ exports.seed = function(knex, Promise) {
                     startDateTime: '2019-05-31 11:00:00+05:00',
                     endDateTime: '2019-06-01 17:00:00+05:00',
                     locationLabel: "Studio 5B, National Ballet School",
-                    locationAddress: '400 Jarvis St, Toronto'
+                    locationAddress: '400 Jarvis St',
+                    locationCity: 'Toronto'
                   }
                 ])
               });

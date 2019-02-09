@@ -13,6 +13,7 @@ exports.up = function(knex, Promise) {
       table.timestamp('endDateTime')
       table.string('locationLabel')
       table.string('locationAddress')
+      table.string('locationCity')
       table.timestamps()
     })
   ])

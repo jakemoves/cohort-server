@@ -36,7 +36,7 @@
                 <li class="occasions-list__occasions-list-item" v-for="occasion in activeEventOccasions">
                   <p class="small">
                   {{ occasion.locationLabel }} <br />
-                  {{ occasion.locationAddress }} <br />
+                  {{ occasion.locationAddress }}, {{ occasion.locationCity }} <br />
                   Doors open: {{ prettyDateTime(occasion.doorsOpenDateTime) }} <br />
                   Starts: {{ prettyDateTime(occasion.startDateTime) }} <br />
                   Ends: {{ prettyDateTime(occasion.endDateTime) }}
@@ -52,8 +52,11 @@
                 <label for="venue-location">Venue / Location</label>
                 <input class="form-control" type="text" id="venue-location" name="venue-location">
 
-                <label for="venue-address">Address</label>
-                <input class="form-control" type="text" id="venue-address" name="venue address">
+                <label for="venue-address">Street Address</label>
+                <input class="form-control" type="text" id="venue-address" name="venue-address">
+
+                <label for="venue-city">City</label>
+                <input class="form-control" type="text" id="venue-city" name="venue-city">
 
                 <div class="form-group">
                   <div class="form-row">
