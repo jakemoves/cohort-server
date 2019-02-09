@@ -32,11 +32,23 @@
               
               <h3><span class="font-weight-light">
               <span class="selected-event-label">{{ activeEvent.label }}</span> Occasions</h3>
+              <ul class="occasions-list">
+                <li class="occasions-list__occasions-list-item" v-for="occasion in activeEventOccasions">
+                  <p class="small">
+                  {{ occasion.locationLabel }} <br />
+                  {{ occasion.locationAddress }} <br />
+                  Doors open: {{ prettyDateTime(occasion.doorsOpenDateTime) }} <br />
+                  Starts: {{ prettyDateTime(occasion.startDateTime) }} <br />
+                  Ends: {{ prettyDateTime(occasion.endDateTime) }}
+                  </p>
+                </li>
+              </ul>
+
+              <button v-if="occasionFormIsCollapsed" class="btn btn-secondary btn-block" data-toggle="collapse" type="button" data-target="#occasion-form" onclick=onShowOccasionForm(event)>Add occasion</button>
               
-              <button v-if="occasionFormIsCollapsed" class="btn btn-secondary btn-block" data-toggle="collapse" type="button" data-target="#occasion-form-content" onclick=showOccasionForm(event)>Add occasion</button>
-              
-              <form action="#" class="create-occasion-form" onsubmit=createCohortOccasion(event)>
-                <div class="form-group collapse" id="occasion-form-content">
+              <form action="#" class="create-occasion-form collapse" onsubmit=createCohortOccasion(event) id="occasion-form">
+                <h4>Add an occasion</h4>
+                <div class="form-group">
                   <label for="start-date">Start date</label>
                   <input class="form-control" type="date" id="start-date" name="start-date" placeholder="dd/mm/yyyy">
 
@@ -60,7 +72,10 @@
                   <label for="venue-address">Address</label>
                   <input class="form-control" type="text" id="venue-address" name="venue address">
                   
-                  <button v-if="!occasionFormIsCollapsed" class="btn btn-primary btn-block" type="submit">Add occasion</button>
+                  <div class="form-row d-flex">
+                    <a class="btn btn-link" data-toggle="collapse" href="#occasion-form" onclick=onHideOccasionForm()>Cancel</a>
+                    <button class="btn btn-secondary flex-grow-1" type="submit">Add occasion</button>
+                  </div>
                 </div>
               </form>
 

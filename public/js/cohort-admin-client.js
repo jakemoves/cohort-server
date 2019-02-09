@@ -1,18 +1,19 @@
 import Vue from "vue"
 import Guid from "uuid/v4"
-import $ from 'jquery'
 import 'bootstrap'
+import moment from 'moment'
 
 var vm = new Vue({
   el: '#cohort-admin',
   data: {
     guid: 12345,  // let guid = Guid() // enable this when you implement #48
     clientSocket: { readyState: 0 },
-    events: [ { id: 0, label: "no events", state: 'closed' } ],
+    events: [ { id: 0, label: "no events", state: 'closed'} ],
     nullEvent: { id: 0, label: "no events", state: 'closed' }, 
     nullEventLabel: "no events", // duplication is required to avoid many ugly things
     activeEventIndex: 0,
     activeEventDevices: [ ],
+    activeEventOccasions: [ ],
     broadcastMessagePlaceholder: '{ "mediaDomain": "sound", \n  "cueNumber": 1, \n  "cueAction": "play" }',
     errorOnBroadcast: false,
     userDidSelectEvent: false,
@@ -150,6 +151,15 @@ var vm = new Vue({
                     return event.id == eventId
                   })
                   
+                  // get occasions for this event
+                  fetch(vm.serverURL + '/events/' + eventId + '/occasions', {
+                    method: 'GET'
+                  }).then( response =>{
+                    response.json().then( occasions => {
+                      vm.activeEventOccasions = occasions
+                    })
+                  })
+                  
                   // if the event is open, connect to it over websockets
                   if(event.state == 'open'){
                     openWebSocketConnection(event.id)
@@ -186,6 +196,10 @@ var vm = new Vue({
 
     cueActionInputID: function(cueAction){
       return "cue-action-" + cueAction
+    },
+
+    prettyDateTime: function(utcTimestamp){
+      return moment(utcTimestamp).format('ddd MMM DD, YYYY @ h:mma')
     }
   }
 })
@@ -244,13 +258,16 @@ window.closeEvent = ($event) => {
   })
 }
 
-window.showOccasionForm = ($event) => {
+window.onShowOccasionForm = ($event) => {
   vm.occasionFormIsCollapsed = false
 }
 
+window.onHideOccasionForm = ($event) => {
+  vm.occasionFormIsCollapsed = true
+}
+
 window.createCohortOccasion = ($event) => {
-  console.log('createCohortOccasion')
-  document.getElementById('occasion-form-content').classList.remove('show')
+  document.getElementById('occasion-form').classList.remove('show')
   vm.occasionFormIsCollapsed = true
 }
 
