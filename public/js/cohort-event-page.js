@@ -253,13 +253,10 @@ var vmE = new Vue({
         } else { 
           throw new Error 
         }
-        
-        let shouldPreload = (episode.id == vmE.episodes[0].id)
-        vmE.audioLoading = true
 
         episode.sound = new Howl({
           src: audioFileURL,
-          preload: shouldPreload,
+          preload: false,
           onload: function() {
             vmE.audioLoading = false
             console.log('loaded sound for episode ' + episode.label + ' (' + vmE.participantGroupColour + ' group)')
@@ -345,6 +342,7 @@ window.onCheckOut = ($event) => {
     vmE.currentPlayingEpisode.sound.stop()
     vmE.currentPlayingEpisode = null
   }
+  Howl.unload()
   vmE.clientSocket.close()
   setTimeout( () => {
     vmE.now = moment()
@@ -391,7 +389,7 @@ window.openFDWebSocketConnection = (eventId) => {
                 }
                 setTimeout( () => {
                   episode.sound.play()
-                }, 1000) // delay to help make sure all clients are ready to go
+                }, 4000) // delay to help make sure all clients are ready to go
                 // catch up logic (in case of delayed start) would go here
               }
               break;
