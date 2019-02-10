@@ -39,7 +39,8 @@
                   {{ occasion.locationAddress }}, {{ occasion.locationCity }} <br />
                   Doors open: {{ prettyDateTime(occasion.doorsOpenDateTime) }} <br />
                   Starts: {{ prettyDateTime(occasion.startDateTime) }} <br />
-                  Ends: {{ prettyDateTime(occasion.endDateTime) }}
+                  Ends: {{ prettyDateTime(occasion.endDateTime) }}<br >
+                  <a href="#" v-bind:data-occasion-id="occasion.id" onclick=deleteCohortOccasion(event)>Delete this occasion</a>
                   </p>
                 </li>
               </ul>

@@ -36,3 +36,20 @@ exports.occasions_create = (req, res) => {
     })
   })
 }
+
+exports.occasions_delete = (req, res) => {
+  return occasionsTable.deleteOne(req.params.id)
+  .then( (deletedIds) => {
+    if(deletedIds.length == 1) {
+      res.sendStatus(204)
+    } else {
+      res.sendStatus(404)
+    }
+  })
+  .catch( error => {
+    console.log(error)
+    res.status(500)
+    res.write(error.message)
+    res.send()
+  })  
+}

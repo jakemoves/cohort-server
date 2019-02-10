@@ -311,7 +311,30 @@ window.createCohortOccasion = ($event) => {
   }).catch( error => {
     console.log(error.messageText)
   })
+}
 
+window.deleteCohortOccasion = ($event) => {
+  $event.preventDefault()
+  $event.stopPropagation()
+
+  let id = $event.target.getAttribute('data-occasion-id')
+
+  fetch(vm.serverURL + '/occasions/' + id, {
+    method: 'DELETE'
+  }).then( response => {
+    if(response.status == 204) {
+      let i = vm.activeEventOccasions.findIndex( occasion => {
+        return occasion.id == id
+      })
+      vm.activeEventOccasions.splice(i, 1)
+    } else {
+      response.text().then( errorText => {
+        console.log(errorText)
+      })
+    }
+  }).catch( error => {
+    console.log(error.messageText)
+  })
 }
 
 window.onBroadcast = ($event) => {

@@ -26,8 +26,16 @@ addOne = (occasion) => {
     .returning('id')
 }
 
+deleteOne = (occasionId) => {
+  return Occasions()
+    .where('id', parseInt(occasionId))
+    .del()
+    .returning('id')
+}
+
 module.exports = {
   getOneByID: getOneByID,
   getAllForEvent: getAllForEvent,
-  addOne: addOne
+  addOne: addOne,
+  deleteOne: deleteOne
 }
