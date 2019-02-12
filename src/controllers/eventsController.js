@@ -1,5 +1,6 @@
 const knex = require('../knex/knex.js')
 const WebSocket = require('ws')
+const fetch = require('node-fetch')
 // const apn = require('apn')
 
 const eventsTable = require('../knex/queries/event-queries')
@@ -97,6 +98,49 @@ exports.events_checkIn = (req, res) => {
       if( event !== undefined ){
         let cohortDevice = CHDevice.fromDatabaseRow(device)
         event.checkInDevice(cohortDevice)
+
+        if(event.flagDemoIsActive != null && event.flagDemoIsActive == true){
+          console.log('demo flag is active')
+          // demo mode allows one check-in, then deletes the occasion
+          let serverURL = req.protocol + '://' + req.get('host')
+          fetch(serverURL + '/api/v1/occasions', {
+            method: 'GET'
+          }).then( response => {
+            if(response.status == 200) {
+              response.json().then( occasions => {
+                let demoOccasion = occasions.find( occasion => occasion.locationLabel == 'Apple Park')
+
+                // start an episode in 5 seconds
+                setTimeout(() => {
+                  let message = {
+                    targetTags: ["all"],
+                    mediaDomain: "episode",
+                    cueNumber: 2,
+                    cueAction: "go"
+                  }
+                  fetch(serverURL + '/api/v1/events/' + event.id + '/broadcast',{ 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json'},
+                    body: JSON.stringify(message)
+                  })
+                }, 5000)
+
+                fetch(serverURL + '/api/v1/occasions/' + demoOccasion.id, {
+                  method: 'DELETE'
+                }).then( response => {
+                  if(response.status == 204){
+                    console.log('deleted demo occasion')
+                    event.flagDemoIsActive = null
+                  } else {
+                    console.log('Warning: failed to delete demo occasion')
+                  }
+                })
+              })
+            } else {
+              console.log('Error: could not get occasions to process demo check-in')
+            }
+          })
+        }
       }
 
       const eventDeviceRelation = { 
@@ -117,6 +161,10 @@ exports.events_checkIn = (req, res) => {
         } else if(error.code == '23503'){
           res.status(404)
           res.write("Error: no event found with id:" + req.params.id)
+          res.send()
+        } else {
+          console.log('Error: unknown error')
+          res.status(500)
           res.send()
         }
       })
@@ -139,10 +187,12 @@ exports.events_open = (req, res) => {
     // update db
     eventsTable.open(req.params.id)
     .then( dbOpenedEvent => { // dbOpenedEvent does not have devices along with it
-      let event =  CHEvent.fromDatabaseRow(dbEvent)
-      req.app.get('cohort').addListenersForEvent(event)
-      event.open()
-      // need to add listeners here for device add/remove... and then figure out how to DRY that up (repeated in app.js)
+      if(req.app.get('cohort').events.find( event => event.id == dbOpenedEvent.id) === undefined){
+        let event =  CHEvent.fromDatabaseRow(dbEvent)
+        req.app.get('cohort').addListenersForEvent(event)
+        event.open()
+        // need to add listeners here for device add/remove... and then figure out how to DRY that up (repeated in app.js)
+      }
 
       res.status(200)
       res.json(dbOpenedEvent)

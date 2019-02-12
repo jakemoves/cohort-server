@@ -27,6 +27,7 @@ getOneByDeviceGUID = (deviceGUID) => {
     if(devices.length == 1){
       return devices[0]
     } else {
+      console.log(devices.length + " devices found matching that GUID!")
       throw new Error("Error: no device found with guid:" + deviceGUID)
     }
   })

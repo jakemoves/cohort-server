@@ -20,6 +20,10 @@ getAllForEvent = (eventId) => {
   return Occasions().where('event_id', parseInt(eventId))
 }
 
+getAll = () => {
+  return Occasions()
+}
+
 addOne = (occasion) => {
   return Occasions()
     .insert(occasion)
@@ -36,6 +40,7 @@ deleteOne = (occasionId) => {
 module.exports = {
   getOneByID: getOneByID,
   getAllForEvent: getAllForEvent,
+  getAll: getAll,
   addOne: addOne,
   deleteOne: deleteOne
 }

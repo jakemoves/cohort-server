@@ -1,7 +1,7 @@
 const occasionsTable = require('../knex/queries/occasion-queries')
 const eventsTable = require('../knex/queries/event-queries')
 
-exports.occasions = ( req, res ) => {
+exports.occasionsForEvent = ( req, res ) => {
   let eventId = req.params.id
 
   occasionsTable.getAllForEvent(eventId)
@@ -10,6 +10,18 @@ exports.occasions = ( req, res ) => {
   })
   .catch( error => {
     console.log(error)
+    res.status(500).write(error.message).send()
+  })
+}
+
+exports.occasions = (req, res) => {
+  occasionsTable.getAll()
+  .then( occasions => {
+    res.status(200).json(occasions)
+  })
+  .catch( error => {
+    console.log(error)
+    res.status(500).write(error.message).send()
   })
 }
 
