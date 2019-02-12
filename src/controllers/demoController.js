@@ -42,20 +42,17 @@ exports.prepare_demo = (req, res) => {
                 endDateTime: oneHourFromNow.format()
               }
 
-              console.log('creating demo occasion')
               let url = serverURL + '/api/v1/events/' + req.params.id + '/occasions'
               let payload = JSON.stringify(occasion)
-              console.log(url)
+              // console.log(url)
 
               fetch(url, { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
                 body: payload
               }).then( response2 => {
-                console.log(response2.status)
                 if(response2.status == 200 || response2.status == 201){
                   response2.json().then( occasion => {
-                    console.log(occasion)
                     res.status(200)
                     res.write('Created demo occasion for event FluxDelux')
                     res.send()

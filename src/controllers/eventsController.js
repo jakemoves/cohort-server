@@ -121,6 +121,7 @@ exports.events_checkIn = (req, res) => {
                 // start an episode in 5 seconds
                 console.log('   ...starting episode 1 in five seconds')
                 setTimeout(() => {
+                  console.log('starting episode 1 for demo')
                   let message = {
                     targetTags: ["all"],
                     mediaDomain: "episode",
