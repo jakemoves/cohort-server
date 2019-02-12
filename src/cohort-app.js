@@ -18,7 +18,7 @@ app.use( (req, res, next) => {
   next()
 })
 
-app.enable('trust proxy')
+app.set('trust proxy', true)
 
 app.use('/api/v1', routes)
 app.use(express.static('public'))
