@@ -26,7 +26,6 @@ exports.occasions = (req, res) => {
 }
 
 exports.occasions_create = (req, res) => {
-  console.log('1')
   // validate request
   // must have valid event
   let eventId = req.params.id
@@ -42,7 +41,6 @@ exports.occasions_create = (req, res) => {
 
   // add validation!
   
-  console.log('2')
   occasion.event_id = eventId
   occasionsTable.addOne(occasion)
   .then( occasionId => {
