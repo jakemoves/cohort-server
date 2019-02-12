@@ -9,9 +9,6 @@ const knex = require('./knex/knex.js')
 const app = express()
 const jsonParser = bodyParser.json()
 const routes = require('./routes.js')
-
-app.set('trust proxy', true)
-
 app.use(bodyParser.json())
 
 app.use( (req, res, next) => {
@@ -21,6 +18,7 @@ app.use( (req, res, next) => {
   next()
 })
 
+app.set('trust proxy', true)
 
 app.use('/api/v1', routes)
 app.use(express.static('public'))
