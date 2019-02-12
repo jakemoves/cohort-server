@@ -49,16 +49,18 @@ exports.occasions_create = (req, res) => {
   occasionsTable.addOne(occasion)
   .then( occasionId => {
     console.log('created occasion id:' + occasionId)
-    occasionsTable.getOneByID(occasionId).then( createdOccasion => {
+    return occasionsTable.getOneByID(occasionId).then( createdOccasion => {
       console.log('got occasion id:' + createdOccasion.id)
       res.status(201)
       res.location('api/v1/events/' + eventId + '/occasions/' + createdOccasion.id)
       res.json(createdOccasion)
+      return
     })
   })
   .catch( error => {
     console.log('failed to create occasion')
     console.log(error)
+    return error
   })
 }
 

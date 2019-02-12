@@ -24,9 +24,7 @@ app.use( (req, res, next) => {
 
 app.use('/api/v1', routes)
 
-console.log(__dirname)
-let staticPath = path.join(__dirname, '../public')
-console.log('path: ' + staticPath)
+let staticPath = path.join(__dirname, '../public') // because we run the app from /lib
 app.use(express.static(staticPath))
 
 /*
