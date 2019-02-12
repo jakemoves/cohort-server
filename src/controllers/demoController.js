@@ -3,6 +3,7 @@ const fetch = require('node-fetch')
 
 exports.prepare_demo = (req, res) => {
   let serverURL = req.protocol + '://' + req.get('host')
+  console.log('server: ' + serverURL)
   
   fetch(serverURL + '/api/v1/events/' + req.params.id + '/open', { 
     method: 'PATCH'   
