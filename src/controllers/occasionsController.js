@@ -2,7 +2,6 @@ const occasionsTable = require('../knex/queries/occasion-queries')
 const eventsTable = require('../knex/queries/event-queries')
 
 exports.occasionsForEvent = ( req, res ) => {
-  console.log('Y')
   let eventId = req.params.id
 
   occasionsTable.getAllForEvent(eventId)
@@ -16,7 +15,6 @@ exports.occasionsForEvent = ( req, res ) => {
 }
 
 exports.occasions = (req, res) => {
-  console.log('X')
   occasionsTable.getAll()
   .then( occasions => {
     res.status(200).json(occasions)
@@ -28,8 +26,8 @@ exports.occasions = (req, res) => {
 }
 
 exports.occasions_create = (req, res) => {
-  console.log('1')
   // validate request
+
   // must have valid event
   let eventId = req.params.id
   let event = eventsTable.getOneByID(eventId)
@@ -44,11 +42,9 @@ exports.occasions_create = (req, res) => {
 
   // add validation!
   
-  console.log('2')
   occasion.event_id = eventId
   occasionsTable.addOne(occasion)
   .then( occasionId => {
-    console.log('created occasion id:' + occasionId)
     return occasionsTable.getOneByID(occasionId).then( createdOccasion => {
       console.log('got occasion id:' + createdOccasion.id)
       res.status(201)
@@ -58,7 +54,6 @@ exports.occasions_create = (req, res) => {
     })
   })
   .catch( error => {
-    console.log('failed to create occasion')
     console.log(error)
     return error
   })
