@@ -42,8 +42,7 @@ exports.occasions_create = (req, res) => {
   // add validation!
   
   occasion.event_id = eventId
-  occasionsTable.addOne(occasion)
-  .then( occasionId => {
+  occasionsTable.addOne(occasion).then( occasionId => {
     console.log('created occasion id:' + occasionId)
     occasionsTable.getOneByID(occasionId).then( createdOccasion => {
       console.log('got occasion id:' + createdOccasion.id)
@@ -53,7 +52,6 @@ exports.occasions_create = (req, res) => {
     })
   })
   .catch( error => {
-    console.log('failed to create occasion')
     console.log(error)
   })
 }
