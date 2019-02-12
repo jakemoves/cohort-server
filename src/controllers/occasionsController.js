@@ -39,14 +39,14 @@ exports.occasions_create = (req, res) => {
 
   let occasion = req.body
 
-  console.log(occasion)
+  // add validation!
   
   occasion.event_id = eventId
   occasionsTable.addOne(occasion).then( occasionId => {
-    let occasion = occasionsTable.getOneByID(occasionId).then( occasion => {
+    occasionsTable.getOneByID(occasionId).then( createdOccasion => {
       res.status(201)
-      res.location('api/v1/events/' + eventId + '/occasions/' + occasion.id)
-      res.json(occasion)
+      res.location('api/v1/events/' + eventId + '/occasions/' + createdOccasion.id)
+      res.json(createdOccasion)
     })
   })
   .catch( error => {
