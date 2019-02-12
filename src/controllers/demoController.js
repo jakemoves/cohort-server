@@ -32,13 +32,11 @@ exports.prepare_demo = (req, res) => {
           endDateTime: oneHourFromNow.format()
         }
 
-        console.log('creating demo occasion')
         fetch(serverURL + '/api/v1/events/' + req.params.id + '/occasions', { 
           method: 'POST',
           headers: { 'Content-Type': 'application/json'},
           body: JSON.stringify(occasion)
         }).then( response2 => {
-          console.log(response2.status)
           if(response2.status == 200 || response2.status == 201){
             response2.json().then( occasion => {
               console.log(occasion)
