@@ -33,15 +33,10 @@ exports.prepare_demo = (req, res) => {
         }
 
         console.log('creating demo occasion')
-        let url = serverURL + '/api/v1/events/' + req.params.id + '/occasions'
-        let payload = JSON.stringify(occasion)
-        console.log(url)
-        console.log(payload)
-
-        fetch(url, { 
+        fetch(serverURL + '/api/v1/events/' + req.params.id + '/occasions', { 
           method: 'POST',
           headers: { 'Content-Type': 'application/json'},
-          body: payload
+          body: JSON.stringify(occasion)
         }).then( response2 => {
           console.log(response2.status)
           if(response2.status == 200 || response2.status == 201){
