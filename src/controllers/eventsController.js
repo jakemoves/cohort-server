@@ -102,7 +102,7 @@ exports.events_checkIn = (req, res) => {
         if(event.flagDemoIsActive != null && event.flagDemoIsActive == true){
           console.log('demo flag is active...')
           // demo mode allows one check-in, then deletes the occasion
-          let serverURL = req.protocol + '://' + req.get('host')
+          let serverURL = 'http://localhost:3000'
           fetch(serverURL + '/api/v1/occasions', {
             method: 'GET'
           }).then( response => {
