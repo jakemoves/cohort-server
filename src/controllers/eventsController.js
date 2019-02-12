@@ -100,22 +100,32 @@ exports.events_checkIn = (req, res) => {
         event.checkInDevice(cohortDevice)
 
         if(event.flagDemoIsActive != null && event.flagDemoIsActive == true){
-          console.log('demo flag is active')
+          console.log('demo flag is active...')
           // demo mode allows one check-in, then deletes the occasion
-          let serverURL = req.protocol + '://' + req.get('host')
+          let serverURL = 'http://localhost:3000'
           fetch(serverURL + '/api/v1/occasions', {
             method: 'GET'
           }).then( response => {
             if(response.status == 200) {
               response.json().then( occasions => {
-                let demoOccasion = occasions.find( occasion => occasion.locationLabel == 'Apple Park')
+                let demoOccasion = occasions.find( occasion => occasion.locationLabel == 'Demo for Apple')
+
+                if(demoOccasion === undefined) {
+                  let error = 'Error: demo occasion does not exist'
+                  console.log(error)
+                  res.status(500)
+                  res.write(error)
+                  res.send()
+                }
 
                 // start an episode in 5 seconds
+                console.log('   ...starting episode 1 in five seconds')
                 setTimeout(() => {
+                  console.log('starting episode 1 for demo')
                   let message = {
                     targetTags: ["all"],
                     mediaDomain: "episode",
-                    cueNumber: 2,
+                    cueNumber: 1,
                     cueAction: "go"
                   }
                   fetch(serverURL + '/api/v1/events/' + event.id + '/broadcast',{ 

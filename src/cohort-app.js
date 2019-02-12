@@ -1,6 +1,8 @@
 // import dependencies
 const express = require('express');
 const bodyParser = require('body-parser')
+const path = require('path')
+
 require('dotenv').config({ path: __dirname + '/../.env' })
 
 const knex = require('./knex/knex.js')
@@ -19,7 +21,9 @@ app.use( (req, res, next) => {
 })
 
 app.use('/api/v1', routes)
-app.use(express.static('public'))
+
+let staticPath = path.join(__dirname, '../public') // because we run the app from /lib
+app.use(express.static(staticPath))
 
 /*
  *   Cohort
