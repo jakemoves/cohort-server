@@ -8,7 +8,6 @@ exports.prepare_demo = (req, res) => {
     method: 'PATCH'   
   }).then( response => {
     if(response.status == 200) {
-      console.log('opened event ' + req.params.id + ' for demo')
       response.json().then( dbEvent => {
 
         let demoEvent = req.app.get('cohort').events.find( event => {
@@ -22,6 +21,7 @@ exports.prepare_demo = (req, res) => {
         let oneAndAHalfHoursAgo = oneHourAgo.clone().subtract(0.5, 'hours')
         let oneHourFromNow = now.clone().add(1, 'hours')
 
+        
         // make a new occasion centered on now
         let occasion = {
           locationLabel: 'Apple Park',
@@ -40,7 +40,7 @@ exports.prepare_demo = (req, res) => {
           if(response.status == 200 || response.status == 201){
             response.json().then( occasion => {
               res.status(200)
-              res.write('Created demo occasion for event FluxDelux')
+              res.json(occasion)
               res.send()
             })
           } else {
