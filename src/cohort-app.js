@@ -10,8 +10,6 @@ const app = express()
 const jsonParser = bodyParser.json()
 const routes = require('./routes.js')
 
-app.set('trust proxy', true)
-
 app.use(bodyParser.json())
 
 app.use( (req, res, next) => {
