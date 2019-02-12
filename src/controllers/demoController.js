@@ -3,12 +3,10 @@ const fetch = require('node-fetch')
 
 exports.prepare_demo = (req, res) => {
   let serverURL = req.protocol + '://' + req.get('host')
-  
-  console.log('1')
+
   fetch(serverURL + '/api/v1/events/' + req.params.id + '/open', { 
     method: 'PATCH'   
   }).then( response => {
-    console.log('2')  
     if(response.status == 200) {
       console.log('opened event ' + req.params.id + ' for demo')
       response.json().then( dbEvent => {
@@ -38,15 +36,15 @@ exports.prepare_demo = (req, res) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json'},
           body: JSON.stringify(occasion)
-        }).then( response2 => {
-          if(response2.status == 200 || response2.status == 201){
-            response2.json().then( occasion => {
+        }).then( response => {
+          if(response.status == 200 || response.status == 201){
+            response.json().then( occasion => {
               res.status(200)
               res.write('Created demo occasion for event FluxDelux')
               res.send()
             })
           } else {
-            response2.text().then( error => {
+            response.text().then( error => {
               res.status(500)
               res.write(error)
               res.send()
