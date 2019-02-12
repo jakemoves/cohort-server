@@ -18,6 +18,8 @@ app.use( (req, res, next) => {
   next()
 })
 
+app.enable('trust proxy')
+
 app.use('/api/v1', routes)
 app.use(express.static('public'))
 
