@@ -38,6 +38,8 @@ exports.occasions_create = (req, res) => {
   }
 
   let occasion = req.body
+
+  console.log(occasion)
   
   occasion.event_id = eventId
   occasionsTable.addOne(occasion).then( occasionId => {
@@ -46,6 +48,9 @@ exports.occasions_create = (req, res) => {
       res.location('api/v1/events/' + eventId + '/occasions/' + occasion.id)
       res.json(occasion)
     })
+  })
+  .catch( error => {
+    console.log(error)
   })
 }
 
