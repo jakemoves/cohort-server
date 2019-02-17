@@ -148,6 +148,14 @@ var vmC = new Vue({
           })
         }
       })
+    },
+    imageThumbnailURL: function(imageURL) {
+      // console.log(imageURL)
+      let splitURL = imageURL.split('.')
+      let urlNoExt = splitURL[0]
+      let thumbnailURL = urlNoExt + '-thumbnail.' + splitURL[1]
+      // console.log(thumbnailURL)
+      return thumbnailURL
     }
   }
 })
@@ -201,4 +209,32 @@ window.openWebSocketConnection = (eventId) => {
   })
 
   vmC.clientSocket = clientSocket
+}
+
+window.onSelectImage = ($event) => {
+  $event.stopPropagation()
+  $event.preventDefault()
+
+  let selectedImgCueNumber = $event.target.getAttribute('data-cue-number')
+
+  let message = {
+    targetTags: ["all"],
+    mediaDomain: "image",
+    cueNumber: selectedImgCueNumber,
+    cueAction: "go"
+  }
+  
+  fetch(vmC.serverURL + '/events/' + vmC.eventId + '/broadcast', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json'},
+    body: JSON.stringify(message)
+  }).then( response => {
+    if(response.status == 200){
+      console.log('sent image cue')
+    } else {
+      console.log(response.status)
+    }
+  }).catch( error => {
+    console.log(error)
+  })
 }

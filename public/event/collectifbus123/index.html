@@ -23,12 +23,24 @@
         </div>
       </header>
       
-      <div class="container">
+      <div class="container-fluid">
         <div class="row">
           <!-- CHECKED IN VIEW -->
           <section class="col-sm checked-in-view" v-if="state == 'ready'">
             <img src="" alt="" id="hero-image" class="img-fluid">
           </section>
+        </div>
+      </div>
+
+      <div class="thumbnails container">
+        <div class="row">
+          <ul class="thumbnails">
+            <li v-for="cue in cuesheet.cues">
+              <a class="thumbnail-link" href="#" onclick=onSelectImage(event)>
+                <img class="thumbnail" v-bind:src="imageThumbnailURL(cue.assetURL)" alt="" v-bind:data-cue-number="cue.cueNumber">
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </div> 

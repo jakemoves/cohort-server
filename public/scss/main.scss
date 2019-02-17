@@ -305,4 +305,20 @@ body#fluxdelux {
   #hero-image {
     width: 100%;
   }
+
+  ul.thumbnails {
+    li {
+      display: inline-block;
+
+      a.thumbnail-link {
+        display: inline-block;
+
+        img.thumbnail {
+          width: 100px;
+          height: 100px;
+          object-fit: cover;
+        }
+      }
+    }
+  }
 }
