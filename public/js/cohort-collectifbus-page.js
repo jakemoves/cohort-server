@@ -206,6 +206,7 @@ window.openWebSocketConnection = (eventId) => {
 
   clientSocket.addEventListener('error', (err) => {
     console.log(err)
+    vmC.cohortState = 'default'
   })
 
   vmC.clientSocket = clientSocket
