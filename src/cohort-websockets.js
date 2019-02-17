@@ -34,6 +34,7 @@ module.exports = (options) => {
       console.log('websocket server: new connection')
       socket.on('message', (message) => {
         let msg
+        console.log(message)
 
         // validate JSON
         try {
@@ -65,6 +66,8 @@ module.exports = (options) => {
             return 
           }
 
+          console.log(msg.guid)
+          console.log(event.devices)
           let device = event.devices.find( device => device.guid == msg.guid)
 
           if(device === undefined){

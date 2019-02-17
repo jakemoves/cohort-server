@@ -202,7 +202,7 @@ span.small-caps {
  *    Event page
  */
 
-body {
+body#fluxdelux {
   &.state-default, &.state-ambiguous {}
 
   &.state-occasions-loaded, &.state-audio-loading {
@@ -288,11 +288,21 @@ body {
     }
 
     p:last-child {
-      margin-bottom: 0
+      margin-bottom: 0;
     }
 
     button {
       margin-top: 1rem;
     }
+  }
+}
+
+/* 
+ *   Collectifbus page
+ */
+
+#cohort-collectifbus-page {
+  #hero-image {
+    width: 100%;
   }
 }

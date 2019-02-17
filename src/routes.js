@@ -24,6 +24,7 @@ router.get('/events/:id/devices', eventsController.events_devices)
 router.patch('/events/:id/open', eventsController.events_open)
 router.patch('/events/:id/close', eventsController.events_close)
 
+router.get('/events/:id/cuesheet', eventsController.cuesheet)
 router.post('/events/:id/broadcast', eventsController.events_broadcast)
 // router.post('/events/:id/broadcast-push-notification', eventsController.events_broadcast_push_notification)
 

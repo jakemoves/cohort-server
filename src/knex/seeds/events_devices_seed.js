@@ -31,7 +31,8 @@ exports.seed = function(knex, Promise) {
           {label: 'pimohtēwak', state: 'closed'},
           {label: 'lot_x', state: 'closed'},
           {label: 'midway', state: 'open' },
-          {label: 'fluxdelux', state: 'open' }
+          {label: 'fluxdelux', state: 'open' },
+          {label: 'collectifbus123', state: 'open'}
         ]).then( () => {
           return knex.raw('TRUNCATE TABLE events_devices RESTART IDENTITY CASCADE').then( () => {
             // add events/devices relations

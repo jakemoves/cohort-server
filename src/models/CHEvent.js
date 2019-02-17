@@ -1,4 +1,6 @@
 const machina = require('machina')
+const fs = require('fs')
+const path = require('path')
 const CHDevice = require('./CHDevice')
 
 class CHEvent extends machina.Fsm {
@@ -65,22 +67,47 @@ class CHEvent extends machina.Fsm {
     // CHEvent-specific constructor
     this.id = id
     this.label = label
+    this.cuesheet = null
     this.devices = []
   }
 
   static fromDatabaseRow(dbEvent){
     let event = new CHEvent(dbEvent.id, dbEvent.label)
     
+    // add devices
     if(dbEvent.devices != null &&
        dbEvent.devices !== undefined &&
        dbEvent.devices.length > 0){
       
-        dbEvent.devices.map( dbDevice => {
-          let cohortDevice = CHDevice.fromDatabaseRow(dbDevice)
-          event.checkInDevice(cohortDevice)
-        })
+      dbEvent.devices.map( dbDevice => {
+        const cohortDevice = CHDevice.fromDatabaseRow(dbDevice)
+        event.checkInDevice(cohortDevice)
+      })
     } 
-    
+
+    // add cuesheet if it exists
+    let cuesheet = null
+    try {
+      const cuesheetPath = path.join(__dirname, '../../event-assets/cuesheets')
+      cuesheet = fs.readFileSync(cuesheetPath + '/' + event.label + '-' + event.id + '.json')
+    } catch (error){
+      // console.log(error)
+    }
+
+    if(cuesheet){
+      let parsedCuesheet = null
+      try {
+        parsedCuesheet = JSON.parse(cuesheet)
+      } catch (error) {
+        console.log(error)
+      }
+
+      if(parsedCuesheet){
+        // console.log(parsedCuesheet)
+        event.cuesheet = parsedCuesheet
+      }
+    }
+
     return event
   }
 

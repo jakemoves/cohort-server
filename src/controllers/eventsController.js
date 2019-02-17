@@ -235,6 +235,19 @@ exports.events_devices = (req, res) => {
   })
 }
 
+exports.cuesheet = (req, res) => {
+  let event =  req.app.get("cohort").events
+  .find( event => event.id == req.params.id)
+  if(event.cuesheet !== null) {
+    res.status(200)
+    res.json(event.cuesheet)
+  } else {
+    res.status(404)
+    res.write('Event id:' + event.id + ' has no cuesheet associated with it')
+    res.send()
+  }
+}
+
 exports.events_broadcast = (req, res) => {
   let event =  req.app.get("cohort").events
   .find( event => event.id == req.params.id)

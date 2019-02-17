@@ -22,8 +22,10 @@ app.use( (req, res, next) => {
 
 app.use('/api/v1', routes)
 
-let staticPath = path.join(__dirname, '../public') // because we run the app from /lib
-app.use(express.static(staticPath))
+let publicPath = path.join(__dirname, '../public') // because we run the app from /lib
+app.use(express.static(publicPath))
+let assetsPath = path.join(__dirname, '../event-assets')
+app.use('/event-assets', express.static(assetsPath))
 
 /*
  *   Cohort

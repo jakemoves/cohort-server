@@ -1,0 +1,13 @@
+{
+  "cues": [
+    {
+      "cueNumber": 1,
+      "mediaDomain": "image",
+      "assetURL": "/event-assets/images/cat-typing.gif"
+    },{
+      "cueNumber": 2,
+      "mediaDomain": "image",
+      "assetURL": "/event-assets/images/taco-cat.jpeg"
+    }
+  ]
+}
