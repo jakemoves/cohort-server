@@ -2,6 +2,7 @@ import Vue from "vue"
 import Guid from "uuid/v4"
 import 'bootstrap'
 import moment from 'moment'
+import CHMessage from './CHMessage'
 
 var vm = new Vue({
   el: '#cohort-admin',
@@ -340,14 +341,15 @@ window.deleteCohortOccasion = ($event) => {
 window.onBroadcast = ($event) => {
   $event.preventDefault()
   const messageText = document.getElementById('broadcast-message').value
-  let cohortMessage
+  let chMsgJSON
   try {
-    cohortMessage = JSON.parse(messageText)
+    chMsgJSON = JSON.parse(messageText)
   } catch (e) {
     console.log(e.message)
     vm.errorOnBroadcast = true
     return
   }
+  const cohortMessage = CHMessage(chMsgJSON["mediaDomain"], chMsgJSON["cueNumber"], chMsgJSON["cueAction"]);
   broadcast(cohortMessage)
 }
 

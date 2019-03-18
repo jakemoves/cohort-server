@@ -11,7 +11,7 @@ class CHDevice {
 		this.isAdmin = isAdmin
 		this.apnsDeviceToken = apnsDeviceToken
 	}
-	
+
 	isConnected(){
 		return (
 			this.socket != null && 
