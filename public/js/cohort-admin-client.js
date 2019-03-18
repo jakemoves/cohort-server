@@ -340,16 +340,15 @@ window.deleteCohortOccasion = ($event) => {
 window.onBroadcast = ($event) => {
   $event.preventDefault()
   const messageText = document.getElementById('broadcast-message').value
-  
+  let cohortMessage
   try {
-    const message = JSON.parse(messageText)
+    cohortMessage = JSON.parse(messageText)
   } catch (e) {
     console.log(e.message)
     vm.errorOnBroadcast = true
     return
   }
-
-  broadcast(message)
+  broadcast(cohortMessage)
 }
 
 window.broadcast = (cohortMessage) => {

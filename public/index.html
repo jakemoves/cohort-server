@@ -154,7 +154,7 @@
             </div>
 
             <h6 v-if="activeEventIsOpen && activeEventDevices.length > 0">Raw messages</h6>
-            <form action="#" class="broadcast-form" onsubmit=broadcast(event) v-if="activeEventIsOpen && activeEventDevices.length > 0">
+            <form action="#" class="broadcast-form" onsubmit=onBroadcast(event) v-if="activeEventIsOpen && activeEventDevices.length > 0">
               <div class="form-group">
                 <textarea rows=3 class="form-control" id="broadcast-message">{{ broadcastMessagePlaceholder }}</textarea>
               </div>
