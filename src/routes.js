@@ -25,7 +25,7 @@ router.patch('/events/:id/open', eventsController.events_open)
 router.patch('/events/:id/close', eventsController.events_close)
 
 router.post('/events/:id/broadcast', eventsController.events_broadcast)
-// router.post('/events/:id/broadcast-push-notification', eventsController.events_broadcast_push_notification)
+router.post('/events/:id/broadcast-push-notification', eventsController.events_broadcast_push_notification)
 
 /*
  *   devices
