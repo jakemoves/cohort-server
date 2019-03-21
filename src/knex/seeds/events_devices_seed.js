@@ -31,7 +31,8 @@ exports.seed = function(knex, Promise) {
           {label: 'pimohtēwak', state: 'closed'},
           {label: 'lot_x', state: 'closed'},
           {label: 'midway', state: 'open' },
-          {label: 'fluxdelux', state: 'open' }
+          {label: 'fluxdelux', state: 'open' },
+          {label: 'café sarajevo', state: 'closed'}
         ])
         .then( () => {
           // add occasions to events
