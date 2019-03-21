@@ -299,21 +299,39 @@ exports.events_broadcast = (req, res) => {
 }
 
 exports.events_broadcast_push_notification = (req, res) => {
+  if(req.params.eventId == null || req.params.eventId === undefined){
+    res.status(400)
+    res.write("Error: request must include 'eventId' field")
+    res.send()
+  }
+
   let devices = eventsTable.getDevicesForEvent(req.params.eventId).then( devices => {
+    // handle errors!
+
     broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
   })
 
 }
 
 exports.events_occasions_broadcast_push_notification = (req, res) => {
-  let devices = eventsTable.getDevicesForEventOccasion(req.params.eventId).then( devices => {
+  if(req.params.eventId === undefined || req.params.eventId == null){
+    res.status(400)
+    res.write("Error: request must include 'eventId' field")
+    res.send()
+  }
+
+  if(req.params.occasionId === undefined || req.params.occasionId == null){
+    res.status(400)
+    res.write("Error: request must include 'eventId' field")
+    res.send()
+  }
+
+  let devices = eventsTable.getDevicesForEventOccasion(req.params.eventId, req.params.occasionId).then( devices => {
     broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
   })
 }
 
 function broadcastPushNotification(devices, req, res) {
-  // let devices = req.app.get('cohort').devices
-
 	if(req.body != null 
 		&& req.body.text != null && req.body.text != "" 
 		&& req.body.bundleId != null && req.body.bundleId != ""){

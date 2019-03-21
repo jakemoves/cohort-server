@@ -80,12 +80,13 @@ getDevicesForEventOccasion = (eventId, occasionId) => {
     .where('events.id', parseInt(eventId))
     .join('events_devices', 'events.id', 'events_devices.event_id')
     .join('devices', 'devices.id', 'events_devices.device_id' )
-    .where('occasion_id', occasionId)
+    .whereNotNull('occasion_id')
+    .where('occasion_id', parseInt(occasionId))
     .select(
       'device_id as id',
       'guid', 
       'apnsDeviceToken', 
-      'isAdmin', 
+      'isAdmin'
     )
 }
 
