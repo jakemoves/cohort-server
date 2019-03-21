@@ -2,7 +2,7 @@ const apn = require('apn')
 
 var options = {
 	token: {
-		key: "../AuthKey_6TA7832PAJ.p8",
+		key: process.env.PATH_TO_APNS_KEY,
 		keyId: "6TA7832PAJ",
 		teamId: "J93D25NHHG"
 	}

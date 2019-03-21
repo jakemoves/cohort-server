@@ -18,8 +18,10 @@
         "kind": "build",
         "isDefault": true
       },
-      "isBackground": true
-    },{
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
       "label": "build-fe",
       "type": "npm",
       "script": "dev",

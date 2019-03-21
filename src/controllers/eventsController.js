@@ -94,7 +94,7 @@ exports.events_checkIn = (req, res) => {
     devicesTable.getOneByDeviceGUID(req.body.guid)
     .then( device => {
       // if the event is open, we also need to add the device to it in memory
-      let event = req.app.get("cohort").events.find( event => event.id == req.params.id)
+      let event = req.app.get("cohort").events.find( event => event.id == req.params.eventId)
       if( event !== undefined ){
         let cohortDevice = CHDevice.fromDatabaseRow(device)
         event.checkInDevice(cohortDevice)
@@ -154,13 +154,18 @@ exports.events_checkIn = (req, res) => {
       }
 
       const eventDeviceRelation = { 
-        event_id: parseInt(req.params.id),
+        event_id: parseInt(req.params.eventId),
         device_id: device.id
       }
+
+      if(req.params.occasionId != null && req.params.occasionId !== undefined){
+        eventDeviceRelation.occasion_id = req.params.occasionId
+      }
+
       return knex('events_devices')
       .insert(eventDeviceRelation).returning('id')
       .then( (eventDeviceRelationId) => {
-        return eventsTable.getOneByID(req.params.id).then( updatedEvent => {
+        return eventsTable.getOneByID(req.params.eventId).then( updatedEvent => {
           res.status(200).json(updatedEvent)
         })
       })
@@ -170,7 +175,7 @@ exports.events_checkIn = (req, res) => {
           res.json(eventDeviceRelation)
         } else if(error.code == '23503'){
           res.status(404)
-          res.write("Error: no event found with id:" + req.params.id)
+          res.write("Error: no event found with id:" + req.params.eventId)
           res.send()
         } else {
           console.log('Error: unknown error')
@@ -229,10 +234,17 @@ exports.events_close = (req, res) => {
 }
 
 exports.events_devices = (req, res) => {
-  eventsTable.getDevicesForEvent(req.params.id)
-  .then( result => {
-    res.status(200).json(result)
-  })
+  if(req.params.occasionId == null || req.params.occasionId == undefined){
+    eventsTable.getDevicesForEvent(req.params.eventId)
+    .then( result => {
+      res.status(200).json(result)
+    })
+  } else {
+    eventsTable.getDevicesForEventOccasion(req.params.eventId, req.params.occasionId)
+    .then( result => {
+      res.status(200).json(result)
+    })
+  }
 }
 
 exports.events_broadcast = (req, res) => {
@@ -287,7 +299,20 @@ exports.events_broadcast = (req, res) => {
 }
 
 exports.events_broadcast_push_notification = (req, res) => {
-  let devices = req.app.get('cohort').devices
+  let devices = eventsTable.getDevicesForEvent(req.params.eventId).then( devices => {
+    broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
+  })
+
+}
+
+exports.events_occasions_broadcast_push_notification = (req, res) => {
+  let devices = eventsTable.getDevicesForEventOccasion(req.params.eventId).then( devices => {
+    broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
+  })
+}
+
+function broadcastPushNotification(devices, req, res) {
+  // let devices = req.app.get('cohort').devices
 
 	if(req.body != null 
 		&& req.body.text != null && req.body.text != "" 

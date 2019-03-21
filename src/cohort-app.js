@@ -42,7 +42,7 @@ app.use(express.static(staticPath))
  * 	 Apple Push Notifications 
  */
 
-//const apnProvider = require('./cohort-apple-notifications')
-//app.set('apnProvider', apnProvider)
+const apnProvider = require('./cohort-apple-notifications')
+app.set('apnProvider', apnProvider)
 
 module.exports = app

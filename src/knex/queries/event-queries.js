@@ -70,6 +70,21 @@ getDevicesForEvent = (eventId) => {
       'device_id as id',
       'guid', 
       'apnsDeviceToken', 
+      'isAdmin'
+    )
+}
+
+// DRY this up
+getDevicesForEventOccasion = (eventId, occasionId) => {
+  return Events()
+    .where('events.id', parseInt(eventId))
+    .join('events_devices', 'events.id', 'events_devices.event_id')
+    .join('devices', 'devices.id', 'events_devices.device_id' )
+    .where('occasion_id', occasionId)
+    .select(
+      'device_id as id',
+      'guid', 
+      'apnsDeviceToken', 
       'isAdmin', 
     )
 }
@@ -108,6 +123,7 @@ module.exports = {
   addOne: addOne,
   deleteOne: deleteOne,
   getDevicesForEvent: getDevicesForEvent,
+  getDevicesForEventOccasion: getDevicesForEventOccasion,
   open: open,
   close: close
 }

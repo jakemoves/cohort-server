@@ -123,7 +123,7 @@ describe('Basic startup', () => {
     expect(res2.status).toEqual(200)
   })
 
-  test('GET /events/:id/devices', async () => {
+  test('GET /events/:eventId/devices', async () => {
     const res = await request(app)
       .get('/api/v1/events/3/devices')
 
@@ -131,8 +131,16 @@ describe('Basic startup', () => {
     expect(res.body).toHaveLength(3)
   })
 
+  test('GET /events/:eventId/occasions/:occasionId/devices', async () => {
+    const res = await request(app)
+      .get('/api/v1/events/4/occasions/1/devices')
+
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(1)
+  })
+
   // happy path
-  test('PATCH /events/:id/check-in', async () => {
+  test('PATCH /events/:eventId/check-in', async () => {
     const res1 = await request(app).get('/api/v1/events/1/devices')
     expect(res1.status).toEqual(200)
     const deviceCount = res1.body.length
@@ -149,6 +157,34 @@ describe('Basic startup', () => {
     expect(res2.body.id).toEqual(1)
 
     const res3 = await request(app).get('/api/v1/events/1/devices')
+    expect(res3.body).toHaveLength(deviceCount+1)
+  })
+  
+  // happy path for checking into a specific occasion of an event
+  test('PATCH /events/:eventId/occasions/:occasionId/check-in', async () => {
+    const getDevicesEndpoint = '/api/v1/events/4/occasions/1/devices'
+    const res1 = await request(app).get(getDevicesEndpoint)
+    expect(res1.status).toEqual(200)
+    const deviceCount = res1.body.length
+
+    // this device already exists in the DB
+    // in a full flow, we would create the device at POST /devices first
+    // yeah it's a bit much
+    const res2 = await request(app)
+      .patch('/api/v1/events/4/occasions/1/check-in')
+      .send({ guid: "1234567" })
+
+    console.log(res2.body)
+    expect(res2.status).toEqual(200)
+
+    const eventsTable = require('./knex/queries/event-queries')
+    let devices = await eventsTable.getDevicesForEventOccasion(4,1)
+    // expect(devices.length).toEqual(2)
+    
+    // expect(res2.body).toHaveProperty('id')
+    // expect(res2.body.id).toEqual(1)
+
+    const res3 = await request(app).get(getDevicesEndpoint)
     expect(res3.body).toHaveLength(deviceCount+1)
   })
 
@@ -245,6 +281,22 @@ describe('Basic startup', () => {
     expect(res.status).toEqual(403)
     expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
   })
+
+  // push notifications
+  test('POST /events/:id/broadcast-push-notification', async () =>{
+    const eventsTable = require('./knex/queries/event-queries')
+    getDevicesForEvent(4).then( devices => {
+      expect(devices.length).toEqual(2)
+    })
+  })
+
+  test('POST /events/:eventId/occasions/:occasionId/broadcast-push-notification', async () => {
+    const eventsTable = require('./knex/queries/event-queries')
+    getDevicesForEventOccasion(4, 1).then( devices => {
+      console.log(devices)
+      expect(devices.length).toEqual(1)
+    })
+  })
 })
 
 
@@ -320,29 +372,30 @@ describe('Device routes', () => {
     expect(res.status).toEqual(400)
   })
 
-//   test('devices/:id/registerForNotifications : happy path', async () => {
-//     const guid = uuid()
-//     const interimResponse = await createDevice(guid)
-//     const payload = { token: 'abcde12345' }
-//     const deviceId = interimResponse.body.id
-    
-//     const res = await request(app)
-//       .patch('/api/devices/' + deviceId + '/register-for-notifications')
-//       .send(payload)
-//     expect(res.status).toEqual(200)
-//     expect(res.body.apnsDeviceToken).toEqual('abcde12345')
-//   })
-  
-//   // test for id not found
+  test('devices/:id/registerForNotifications : happy path', async () => {
+    const guid = uuid()
+    const interimResponse = await createDevice(guid)
 
-//   test('devices/registerForNotifications : error: missing token', async () => {
-//     const payload = { 'blep': '012345678901234567890123456789012345'}
-//     const res = await request(app)
-//       .patch('/api/devices/1/register-for-notifications')
-//       .send(payload)
-//     expect(res.status).toEqual(400)
-//     expect(res.text).toEqual("Error: Request must include a 'token' object")
-//   })
+    const payload = { token: 'abcde12345' }
+    const deviceId = interimResponse.body.id
+    
+    const res = await request(app)
+      .patch('/api/v1/devices/' + deviceId + '/register-for-notifications')
+      .send(payload)
+    expect(res.status).toEqual(200)
+    expect(res.body.apnsDeviceToken).toEqual('abcde12345')
+  })
+  
+  // test for id not found
+
+  test('devices/registerForNotifications : error: missing token', async () => {
+    const payload = { 'blep': '012345678901234567890123456789012345'}
+    const res = await request(app)
+      .patch('/api/v1/devices/1/register-for-notifications')
+      .send(payload)
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual("Error: Request must include a 'token' object")
+  })
 })
 
 
@@ -686,9 +739,9 @@ test('initial handshake: error -- event not found', async(done) => {
     })
   })
 
-  // admin devices (2) get status for the correct event...
+  // test that admin devices (2) get status for the correct event...
 
-  // event close shuts down active sockets nicely
+  // test that event close shuts down active sockets nicely
 
   test('broadcast: happy path', async (done) => {
     const cohortMessage = {
