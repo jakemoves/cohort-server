@@ -39,8 +39,12 @@ var vm = new Vue({
           { "label": 'Chip Melt Together', 'id': 8 }
         ]
       }
-    },
-    selectedFluxDeluxEpisode: null
+    }, // this will eventually get pulled server-side
+    selectedFluxDeluxEpisode: null,
+    broadcastToEventOrOccasion: 'event',
+    selectedOccasion: null,
+    includeCohortMsgWithN10n: false,
+    n10nBroadcastResults: ''
   },
   created: function() {
     if(document.getElementById('cohort-admin')){
@@ -155,9 +159,10 @@ var vm = new Vue({
                   // get occasions for this event
                   fetch(vm.serverURL + '/events/' + eventId + '/occasions', {
                     method: 'GET'
-                  }).then( response =>{
+                  }).then( response => {
                     response.json().then( occasions => {
-                      vm.activeEventOccasions = occasions
+                      vm.activeEventOccasions.length = 0 
+                      vm.activeEventOccasions.push(...occasions)
                     })
                   })
                   
@@ -201,6 +206,10 @@ var vm = new Vue({
 
     prettyDateTime: function(utcTimestamp){
       return moment(utcTimestamp).format('ddd MMM DD, YYYY @ h:mma')
+    },
+
+    prettyShortDateTime: function(utcTimestamp){
+      return moment(utcTimestamp).format('MMM D @ h:mma')
     }
   }
 })
@@ -341,15 +350,7 @@ window.deleteCohortOccasion = ($event) => {
 window.onBroadcast = ($event) => {
   $event.preventDefault()
   const messageText = document.getElementById('broadcast-message').value
-  let chMsgJSON
-  try {
-    chMsgJSON = JSON.parse(messageText)
-  } catch (e) {
-    console.log(e.message)
-    vm.errorOnBroadcast = true
-    return
-  }
-  const cohortMessage = CHMessage(chMsgJSON["mediaDomain"], chMsgJSON["cueNumber"], chMsgJSON["cueAction"]);
+  validateCohortMessage(messageText)
   broadcast(cohortMessage)
 }
 
@@ -371,6 +372,65 @@ window.broadcast = (cohortMessage) => {
     console.log(e.message)
     vm.errorOnBroadcast = true
   } 
+}
+
+window.onBroadcastPushNotification = ($event) => {
+  $event.preventDefault()
+  let alertBody = document.getElementById('notification-text').value
+  let requestURL
+  if(vm.broadcastToEventOrOccasion == 'event'){
+    requestURL = vm.serverURL + '/events/' + vm.activeEvent.id + '/broadcast-push-notification'
+  } else if(vm.broadcastToEventOrOccasion == 'occasion'){
+    requestURL = vm.serverURL + '/events/' + vm.activeEvent.id + '/occasions/' + vm.selectedOccasion + '/broadcast-push-notification'
+  }
+
+  let n10n = { 
+    text: alertBody,
+    bundleId: 'rocks.cohort.lotx'
+  }
+
+  if(vm.includeCohortMsgWithN10n){
+    let msg = validateCohortMessage(document.getElementById('n10n-broadcast-message').value)
+    n10n.cohortMessage = msg
+    console.log(n10n)
+  }
+
+  try {
+    fetch(requestURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify(n10n)
+    }).then( response => {
+      if(response.status == 200){
+        response.text().then( text => {
+          // console.log(text)
+          vm.errorOnBroadcast = false
+        })
+      } else {
+        response.json().then( body => {
+          vm.n10nBroadcastResults = body.error
+        })
+      }
+    }).catch( error => {
+      console.log("Error on push notification broadcast!")
+    })
+  } catch (e) {
+    console.log(e.message)
+    vm.errorOnBroadcast = true
+  } 
+}
+
+function validateCohortMessage(messageText){
+  let chMsgJSON
+  try {
+    chMsgJSON = JSON.parse(messageText)
+  } catch (e) {
+    console.log(e.message)
+    vm.errorOnBroadcast = true
+    return new Error('cohort message failed validation')
+  }
+  const cohortMessage = CHMessage(chMsgJSON["mediaDomain"], chMsgJSON["cueNumber"], chMsgJSON["cueAction"])
+  return cohortMessage
 }
 
 window.openWebSocketConnection = (eventId) => {

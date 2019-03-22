@@ -64,7 +64,7 @@ header {
 
 .occasions {
   .form-group {
-    max-width: 18.5rem;
+    max-width: 20.5rem;
   }
   
   .form-control {
@@ -119,6 +119,12 @@ header {
   }
 }
 
+.code-textarea {
+  font-family: monospace;
+  min-width: 15rem;
+  overflow-x: hidden;
+}
+
 .episode-control {
   select {
     margin-bottom: 1rem
@@ -128,14 +134,6 @@ header {
 form.create-event-form, form.broadcast-form {
   margin-top: 1rem;
   margin-bottom: 2rem;
-}
-
-form.broadcast-form {
-  #broadcast-message {
-    font-family: monospace;
-    min-width: 15rem;
-    overflow-x: hidden;
-  }
 }
 
 .delete-event {

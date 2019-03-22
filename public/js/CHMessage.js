@@ -13,10 +13,12 @@ module.exports = function CHMessage(domain, cueNum, cueAct) {
     "stop": 3
   }
 
-  let msg = {}
-  msg.mediaDomain = mediaDomains[domain]
-  msg.cueNumber = cueNum
-  msg.cueAction = cueActions[cueAct]
+  let msg = {
+    targetTags: ["all"],
+    mediaDomain: "" + mediaDomains[domain],
+    cueNumber: cueNum,
+    cueAction: "" + cueActions[cueAct]
+  }
   
   return msg
 }

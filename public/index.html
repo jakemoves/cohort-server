@@ -136,7 +136,10 @@
             </p>
 
             <h4>Event actions</h4>
-            <button class="btn btn-secondary" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
+
+            <div class="form-group">
+              <button class="btn btn-secondary" v-if="!activeEventIsOpen" onclick=openEvent()>Open event</button>
+            </div>
 
             <div class="form-group episode-control" v-if="activeEvent.label == 'fluxdelux'">
               <h6><label for="episodeSelect">Episode control</label></h6>
@@ -152,18 +155,65 @@
                 <button class="btn btn-outline-danger" type="button" v-bind:disabled="selectedFluxDeluxEpisode == null" onclick=stopFluxDeluxEpisode()>Stop</button>
               </div>
             </div>
-
+            
+            <div class="notification-control" v-if="activeEvent.label == 'lot_x'">
+              <h6>Push notifications</h6>
+              <form action="#" class="broadcast-push-notification-form" onsubmit=onBroadcastPushNotification(event)>
+                <div class="form-group">
+                  <label for="notification-text">Notification text</label>
+                  <input type="text" class="form-control" id="notification-text">
+                </div>
+                <div class="form-group" v-if="activeEventOccasions.length > 0">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="broadcastToEventOrOccasion" v-model="broadcastToEventOrOccasion" id="broadcastToEvent" value="event" checked>
+                    <label class="form-check-label" for="broadcastToEvent">
+                      Broadcast to all event participants
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="broadcastToEventOrOccasion" v-model="broadcastToEventOrOccasion"  id="broadcastToOccasion" value="occasion">
+                    <label class="form-check-label" for="broadcastToOccasion">
+                      Broadcast to specific occasion participants
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group" v-if="broadcastToEventOrOccasion === 'occasion'">
+                  <select class="form-control" id="episodeSelect" v-model="selectedOccasion">
+                    <option disabled value="">Choose an occasion</option>
+                    <option v-for="occasion in activeEventOccasions" v-bind:value="occasion.id">
+                      {{ prettyShortDateTime(occasion.startDateTime) }} @ 
+                      {{ occasion.locationLabel }}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="sendN10nWithCohortMessage" v-model="includeCohortMsgWithN10n">
+                    <label class="form-check-label" for="sendN10nWithCohortMessage">
+                      Send notification with cue
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group" v-if="includeCohortMsgWithN10n">
+                    <textarea rows=3 class="form-control code-textarea" id="n10n-broadcast-message">{{ broadcastMessagePlaceholder }}</textarea>
+                  </div>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-secondary btn-block">Broadcast notification</button>
+                  <small class="text-secondary">{{ n10nBroadcastResults }}</small>
+                </div>
+              </form>
+            </div>
+            
             <h6 v-if="activeEventIsOpen && activeEventDevices.length > 0">Raw messages</h6>
             <form action="#" class="broadcast-form" onsubmit=onBroadcast(event) v-if="activeEventIsOpen && activeEventDevices.length > 0">
               <div class="form-group">
-                <textarea rows=3 class="form-control" id="broadcast-message">{{ broadcastMessagePlaceholder }}</textarea>
+                <textarea rows=3 class="form-control code-textarea" id="broadcast-message">{{ broadcastMessagePlaceholder }}</textarea>
               </div>
               <div class="form-group">
-                <button type="submit" class="btn btn-secondary btn-block">Send</button>
+                <button type="submit" class="btn btn-secondary btn-block">Broadcast cue</button>
                 <small class="text-danger" v-if="errorOnBroadcast">Message failed JSON validation</small>
               </div>
             </form>
-
             <button class="btn btn-secondary" v-if="activeEventIsOpen" onclick=closeEvent()>Close event</button>
             <button class="btn btn-outline-danger delete-event" v-if="!activeEventIsOpen" onclick=deleteCohortEvent()>Delete {{ activeEvent.label }}</button>
           </section>
