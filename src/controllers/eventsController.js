@@ -5,6 +5,7 @@ const apn = require('apn')
 
 const eventsTable = require('../knex/queries/event-queries')
 const devicesTable = require('../knex/queries/device-queries')
+const cohortMessagesTable = require('../knex/queries/cohort-message-queries')
 const CHDevice = require('../models/CHDevice')
 const CHEvent = require('../models/CHEvent')
 
@@ -322,7 +323,7 @@ exports.events_occasions_broadcast_push_notification = (req, res) => {
 
   if(req.params.occasionId === undefined || req.params.occasionId == null){
     res.status(400)
-    res.write("Error: request must include 'eventId' field")
+    res.write("Error: request must include 'occasionId' field")
     res.send()
   }
 
@@ -331,6 +332,7 @@ exports.events_occasions_broadcast_push_notification = (req, res) => {
   })
 }
 
+// this feels Service-y
 function broadcastPushNotification(devices, req, res) {
 	if(req.body != null 
 		&& req.body.text != null && req.body.text != "" 
@@ -355,7 +357,8 @@ function broadcastPushNotification(devices, req, res) {
 		}
 
 		if(req.body.cohortMessage) {
-			note.payload.cohortMessage = req.body.cohortMessage
+      note.payload.cohortMessage = req.body.cohortMessage
+      cohortMessagesTable.addOne(req.body.cohortMessage, req.params.eventId)
 		}
 
 		note.body = req.body.text
@@ -448,3 +451,17 @@ function broadcastPushNotification(devices, req, res) {
 		console.log("failed to send notification")
 	}
 }
+
+exports.events_lastCohortMessage = (req, res) => {
+  cohortMessagesTable.getLatestByEvent(req.params.eventId)
+  .then( msg => {
+    res.status(200).json(msg)
+  })
+  .catch( error => {
+    console.log(error)
+    res.status(500)
+    res.write(error)
+    res.send()
+  })
+}
+
