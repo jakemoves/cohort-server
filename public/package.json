@@ -1,7 +1,0 @@
-{
-  "name": "cohort-public-site",
-  "version": "0.0.1",
-  "dependencies": {
-    "bootstrap": "^4.3.1"
-  }
-}
