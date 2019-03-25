@@ -1,0 +1,29 @@
+{
+  "name": "cohort-admin-client",
+  "version": "0.1.1",
+  "main": "cohort-admin-client.js",
+  "author": "Jacob Niedzwiecki",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^4.2.1",
+    "howler": "^2.1.1",
+    "jquery": "^3.3.1",
+    "js-cookie": "^2.2.0",
+    "moment": "^2.24.0",
+    "popper.js": "^1.14.7",
+    "uuid": "^3.3.2",
+    "vue": "^2.5.21"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "babel-loader": "^8.0.5",
+    "node-sass": "^4.11.0",
+    "webpack": "^4.28.1",
+    "webpack-cli": "^3.2.1"
+  },
+  "scripts": {
+    "dev": "webpack --mode development ./js/*.js --output ./main.js && node-sass --source-map true ./scss/ -o ./",
+    "build": "webpack --mode production ./js/*.js --output ./main.js && node-sass --source-map true ./scss/ -o ./"
+  }
+}
