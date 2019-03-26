@@ -1,6 +1,7 @@
 const moment = require('moment')
 const fetch = require('node-fetch')
 
+// for fluxdelux app only!!
 exports.prepare_demo = (req, res) => {
   let serverURL = 'http://localhost:3000' // is this best? I don't know 
 
@@ -87,4 +88,48 @@ exports.prepare_demo = (req, res) => {
   })
 }
 
+exports.prepare_lotx_demo = (req, res) => {
+  console.log('0')
+  // prep and send a notification with a cohort cue (sound 1 play)
+  const payload = {
+    text: "hello world",
+    bundleId: "rocks.cohort.lotx",
+    sound: "meow.caf",
+    cohortMessage: {
+    	targetTags: ["all"],
+    	mediaDomain: 0,
+    	cueNumber: 1,
+    	cueAction: 0
+    }
+  }
+
+  const url = 'http://localhost:3000/api/v1/events/2/broadcast-push-notification'
+
+  const payloadJson = JSON.stringify(payload)
+  console.log()
+  fetch(url, { 
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json'},
+    body: payloadJson
+  }).then( response => {
+    if(response.status == 200){
+      response.text().then( responseText => {
+        console.log(responseText)
+        res.status(200)
+        res.write('Sent cue to device')
+        res.send()
+        return
+      })
+    } else {
+      response.text().then( error => {
+        res.status(500)
+        res.write(error)
+        res.send()
+        return
+      })
+    }
+  }).catch( error => {
+    console.log(error)
+  })
+}
 // need to have a start-demo and clean-up-after-demo method...

@@ -59,5 +59,6 @@ router.post('/events/:eventId/occasions/:occasionId/broadcast-push-notification'
  */
 
 router.get('/events/:id/demo/prepare', demoController.prepare_demo)
+router.get('/events/:id/demo', demoController.prepare_lotx_demo)
 
 module.exports = router
