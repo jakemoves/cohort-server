@@ -22,11 +22,10 @@
       "problemMatcher": []
     },
     {
-      "label": "build-fe",
+      "label": "build-admin",
       "type": "npm",
       "script": "dev",
-      "path": "public/",
-      "problemMatcher": [],
+      "path": "public/admin/",
       "group": {
         "kind": "build",
         "isDefault": true
