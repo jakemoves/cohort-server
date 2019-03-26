@@ -61,7 +61,7 @@ describe('Basic startup', () => {
   test('GET /events', async () => {
     const res = await request(app).get('/api/v1/events')
     expect(res.status).toEqual(200)
-    expect(res.body).toHaveLength(4)
+    expect(res.body).toHaveLength(5)
 
     expect(res.body[0]).toHaveProperty('label')
     expect(res.body[0].label).toEqual('pimohtēwak')
@@ -86,10 +86,10 @@ describe('Basic startup', () => {
   })
 
   test('GET /events/:id : error: event not found', async () => {
-    const res = await request(app).get('/api/v1/events/5')
+    const res = await request(app).get('/api/v1/events/99')
     expect(res.status).toEqual(404)
 
-    expect(res.text).toEqual("Error: event with id:5 not found")
+    expect(res.text).toEqual("Error: event with id:99 not found")
   })
 
   test('POST /events', async () =>{
@@ -98,9 +98,9 @@ describe('Basic startup', () => {
       .send({ label: 'new event' })
 
     expect(res.status).toEqual(201)
-    expect(res.header.location).toEqual('/api/v1/events/5')
+    expect(res.header.location).toEqual('/api/v1/events/6')
     expect(res.body).toHaveProperty('id')
-    expect(res.body.id).toEqual(5)
+    expect(res.body.id).toEqual(6)
     expect(res.body.label).toEqual('new event')
     expect(res.body.state).toEqual('closed')
   })
@@ -239,11 +239,11 @@ describe('Basic startup', () => {
 
   test('PATCH /events/:id/check-in -- error: invalid event id', async () => {
     const res = await request(app)
-      .patch('/api/v1/events/5/check-in')
+      .patch('/api/v1/events/99/check-in')
       .send({ guid: "1234567" })
 
     expect(res.status).toEqual(404)
-    expect(res.text).toEqual("Error: no event found with id:5")
+    expect(res.text).toEqual("Error: no event found with id:99")
   })
 
   test('PATCH /events/:id/open', async () => {
