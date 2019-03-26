@@ -14,7 +14,7 @@ exports.up = function(knex, Promise) {
       table.string('locationLabel')
       table.string('locationAddress')
       table.string('locationCity')
-      table.timestamps()
+      table.timestamps(false, true)
     })
   ])
 };

@@ -6,7 +6,7 @@ exports.up = function(knex, Promise) {
       table.string('guid').notNullable()
       table.string('apnsDeviceToken')
       table.boolean('isAdmin').notNullable()
-      table.timestamps()
+      table.timestamps(false, true)
     })
   ])
 };

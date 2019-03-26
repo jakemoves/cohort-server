@@ -1,7 +1,7 @@
 const knex = require('../knex.js')
 
 CohortMessages = () => {
-  return knex('cohort_messages')
+  return knex('cohort_messages_n10n')
 }
 
 // queries

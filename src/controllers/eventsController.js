@@ -358,6 +358,7 @@ function broadcastPushNotification(devices, req, res) {
 
 		if(req.body.cohortMessage) {
       note.payload.cohortMessage = req.body.cohortMessage
+      console.log('saving cohort message on server')
       cohortMessagesTable.addOne(req.body.cohortMessage, req.params.eventId)
 		}
 
@@ -453,9 +454,14 @@ function broadcastPushNotification(devices, req, res) {
 }
 
 exports.events_lastCohortMessage = (req, res) => {
+  console.log('1')
   cohortMessagesTable.getLatestByEvent(req.params.eventId)
   .then( msg => {
-    res.status(200).json(msg)
+    if(msg !== undefined && msg != null){
+      res.status(200).json(msg)
+    } else {
+      res.sendStatus(404)
+    }
   })
   .catch( error => {
     console.log(error)

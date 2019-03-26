@@ -4,7 +4,7 @@ exports.up = function(knex, Promise) {
     knex.schema.createTable('events', (table) => {
       table.increments('id').primary().notNullable()
       table.string('label').notNullable()
-      table.timestamps()
+      table.timestamps(false, true)
     })
   ])
 }
