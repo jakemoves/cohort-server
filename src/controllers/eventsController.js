@@ -306,12 +306,20 @@ exports.events_broadcast_push_notification = (req, res) => {
     res.send()
   }
 
-  let devices = eventsTable.getDevicesForEvent(req.params.eventId).then( devices => {
-    // handle errors!
+  eventsTable.getOneByID(req.params.eventId).then( event => {
+    // DRY this up
+    if(event == null){
+      res.status(404)
+      res.write("Event with id:" + req.params.eventId + " not found")
+      res.send()
+    } else {
+      let devices = eventsTable.getDevicesForEvent(req.params.eventId).then( devices => {
+        // handle errors!
 
-    broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
+        broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
+      })
+    }
   })
-
 }
 
 exports.events_occasions_broadcast_push_notification = (req, res) => {
@@ -327,8 +335,17 @@ exports.events_occasions_broadcast_push_notification = (req, res) => {
     res.send()
   }
 
-  let devices = eventsTable.getDevicesForEventOccasion(req.params.eventId, req.params.occasionId).then( devices => {
-    broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
+  eventsTable.getOneByID(req.params.eventId).then( event => {
+    console.log(event)
+    if(event == null){
+      res.status(404)
+      res.write("Event with id:" + req.params.eventId + " not found")
+      res.send()
+    } else {
+      let devices = eventsTable.getDevicesForEventOccasion(req.params.eventId, req.params.occasionId).then( devices => {
+        broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
+      })
+    }
   })
 }
 
@@ -359,7 +376,11 @@ function broadcastPushNotification(devices, req, res) {
 		if(req.body.cohortMessage) {
       note.payload.cohortMessage = req.body.cohortMessage
       console.log('saving cohort message on server')
-      cohortMessagesTable.addOne(req.body.cohortMessage, req.params.eventId)
+      cohortMessagesTable
+      .addOne(req.body.cohortMessage, req.params.eventId)
+      .catch( error => {
+        console.log(error)
+      })
 		}
 
 		note.body = req.body.text
