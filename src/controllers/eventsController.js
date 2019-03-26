@@ -312,13 +312,14 @@ exports.events_broadcast_push_notification = (req, res) => {
       res.status(404)
       res.write("Event with id:" + req.params.eventId + " not found")
       res.send()
-    } else {
-      let devices = eventsTable.getDevicesForEvent(req.params.eventId).then( devices => {
-        // handle errors!
-
-        broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
-      })
+      return
     }
+    
+    let devices = eventsTable.getDevicesForEvent(req.params.eventId).then( devices => {
+      // handle errors!
+
+      broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
+    })
   })
 }
 
@@ -327,25 +328,27 @@ exports.events_occasions_broadcast_push_notification = (req, res) => {
     res.status(400)
     res.write("Error: request must include 'eventId' field")
     res.send()
+    return
   }
 
   if(req.params.occasionId === undefined || req.params.occasionId == null){
     res.status(400)
     res.write("Error: request must include 'occasionId' field")
     res.send()
+    return
   }
 
   eventsTable.getOneByID(req.params.eventId).then( event => {
-    console.log(event)
     if(event == null){
       res.status(404)
       res.write("Event with id:" + req.params.eventId + " not found")
       res.send()
-    } else {
-      let devices = eventsTable.getDevicesForEventOccasion(req.params.eventId, req.params.occasionId).then( devices => {
-        broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
-      })
+      return
     }
+
+    let devices = eventsTable.getDevicesForEventOccasion(req.params.eventId, req.params.occasionId).then( devices => {
+      broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
+    })
   })
 }
 
