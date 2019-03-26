@@ -454,7 +454,6 @@ function broadcastPushNotification(devices, req, res) {
 }
 
 exports.events_lastCohortMessage = (req, res) => {
-  console.log('1')
   cohortMessagesTable.getLatestByEvent(req.params.eventId)
   .then( msg => {
     if(msg !== undefined && msg != null){

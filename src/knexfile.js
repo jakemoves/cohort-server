@@ -3,6 +3,7 @@
 module.exports = {
   development: {
     client: 'pg',
+    timezone: 'UTC',
     connection: {
       host : 'localhost',
       user : 'cohort_admin',
