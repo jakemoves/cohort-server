@@ -160,7 +160,7 @@ exports.events_checkIn = (req, res) => {
       }
 
       if(req.params.occasionId != null && req.params.occasionId !== undefined){
-        eventDeviceRelation.occasion_id = req.params.occasionId
+        eventDeviceRelation.occasion_id = parseInt(req.params.occasionId)
       }
 
       return knex('events_devices')
@@ -168,12 +168,22 @@ exports.events_checkIn = (req, res) => {
       .then( (eventDeviceRelationId) => {
         return eventsTable.getOneByID(req.params.eventId).then( updatedEvent => {
           res.status(200).json(updatedEvent)
+          console.log('checked device into event ' + updatedEvent.label)
+          if(eventDeviceRelation.occasion_id !== undefined && eventDeviceRelation.occasion_id != null){
+            console.log('   ...and into occasion id:' + eventDeviceRelation.occasion_id)
+          }
         })
       })
       .catch( error => {
         if(error.code == '23505'){
+          // device already checked into event
           res.status(200)
           res.json(eventDeviceRelation)
+          console.log('device already checked into event id:' + eventDeviceRelation.event_id)
+          
+          if(eventDeviceRelation.occasion_id !== undefined && eventDeviceRelation.occasion_id != null) {
+            console.log('   ...and into occasion id:' + eventDeviceRelation.occasion_id)
+          }
         } else if(error.code == '23503'){
           res.status(404)
           res.write("Error: no event found with id:" + req.params.eventId)
