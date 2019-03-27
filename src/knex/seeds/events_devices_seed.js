@@ -46,8 +46,7 @@ exports.seed = function(knex, Promise) {
                 locationLabel: "Jacob's house",
                 locationAddress: '125 Emerson Ave',
                 locationCity: 'Toronto'
-              },
-              {
+              },{
                 // overnight occasion
                 event_id: 4,
                 doorsOpenDateTime: '2019-05-31 09:30:00+05:00',
@@ -56,7 +55,32 @@ exports.seed = function(knex, Promise) {
                 locationLabel: "Studio 5B, National Ballet School",
                 locationAddress: '400 Jarvis St',
                 locationCity: 'Toronto'
-              }
+              },{ 
+                // for lot_x 
+                event_id: 2,
+                doorsOpenDateTime: '2019-06-01 13:30:00+05:00',
+                startDateTime: '2019-06-01 14:00:00+05:00',
+                endDateTime: '2019-06-01 15:30:00+05:00',
+                locationLabel: "Harbourfront Centre",
+                locationAddress: '235 Queens Quay W',
+                locationCity: 'Toronto'
+              },,{ 
+                event_id: 2,
+                doorsOpenDateTime: '2019-06-02 13:30:00+05:00',
+                startDateTime: '2019-06-02 14:00:00+05:00',
+                endDateTime: '2019-06-02 15:30:00+05:00',
+                locationLabel: "Harbourfront Centre",
+                locationAddress: '235 Queens Quay W',
+                locationCity: 'Toronto'
+              },,{ 
+                event_id: 2,
+                doorsOpenDateTime: '2019-06-03 13:30:00+05:00',
+                startDateTime: '2019-06-03 14:00:00+05:00',
+                endDateTime: '2019-06-03 15:30:00+05:00',
+                locationLabel: "Harbourfront Centre",
+                locationAddress: '235 Queens Quay W',
+                locationCity: 'Toronto'
+              },
             ])
             .then( () => {
               return knex.raw('TRUNCATE TABLE events_devices RESTART IDENTITY CASCADE').then( () => {

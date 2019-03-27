@@ -3,12 +3,14 @@ class CHDevice {
 	isAdmin
 	guid
 	socket = null
+	tags
 	apnsDeviceToken // apple push notification service -- uses unique id generated on the device
 	
-	constructor(id, guid, isAdmin = false, apnsDeviceToken = null){
+	constructor(id, guid, isAdmin = false, tags = [], apnsDeviceToken = null){
 		this.id = id // database ID
 		this.guid = guid // device unique ID
 		this.isAdmin = isAdmin
+		this.tags = tags
 		this.apnsDeviceToken = apnsDeviceToken
 	}
 
@@ -20,7 +22,8 @@ class CHDevice {
 	}
 
 	static fromDatabaseRow(dbDevice){
-		return new CHDevice(dbDevice.id, dbDevice.guid, dbDevice.isAdmin, dbDevice.apnsDeviceToken)
+		const tags = new Set(JSON.parse(dbDevice.tags))
+		return new CHDevice(dbDevice.id, dbDevice.guid, dbDevice.isAdmin, tags, dbDevice.apnsDeviceToken)
 	}
 
 	deviceState(){
