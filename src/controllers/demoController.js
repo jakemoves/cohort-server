@@ -89,7 +89,6 @@ exports.prepare_demo = (req, res) => {
 }
 
 exports.prepare_lotx_demo = (req, res) => {
-  console.log('0')
   // prep and send a notification with a cohort cue (sound 1 play)
   const payload = {
     text: "hello world",
