@@ -163,34 +163,57 @@ exports.events_checkIn = (req, res) => {
         eventDeviceRelation.occasion_id = parseInt(req.params.occasionId)
       }
 
+      // check if this event & device are already present in a row
       return knex('events_devices')
-      .insert(eventDeviceRelation).returning('id')
-      .then( (eventDeviceRelationId) => {
-        return eventsTable.getOneByID(req.params.eventId).then( updatedEvent => {
-          res.status(200).json(updatedEvent)
-          console.log('checked device into event ' + updatedEvent.label)
-          if(eventDeviceRelation.occasion_id !== undefined && eventDeviceRelation.occasion_id != null){
-            console.log('   ...and into occasion id:' + eventDeviceRelation.occasion_id)
-          }
-        })
-      })
-      .catch( error => {
-        if(error.code == '23505'){
-          // device already checked into event
-          res.status(200)
-          res.json(eventDeviceRelation)
-          console.log('device already checked into event id:' + eventDeviceRelation.event_id)
-          
-          if(eventDeviceRelation.occasion_id !== undefined && eventDeviceRelation.occasion_id != null) {
-            console.log('   ...and into occasion id:' + eventDeviceRelation.occasion_id)
-          }
-        } else if(error.code == '23503'){
-          res.status(404)
-          res.write("Error: no event found with id:" + req.params.eventId)
-          res.send()
+      .where('event_id', eventDeviceRelation.event_id)
+      .where('device_id', eventDeviceRelation.device_id)
+      .then( existingEventDeviceRelations => {
+        console.log(existingEventDeviceRelations)
+
+        if(existingEventDeviceRelations.length == 0){
+          // do the check-in
+          return knex('events_devices')
+          .insert(eventDeviceRelation).returning('id')
+          .then( (eventDeviceRelationId) => {
+            return eventsTable.getOneByID(req.params.eventId).then( updatedEvent => {
+              res.status(200).json(updatedEvent)
+              console.log('checked device into event ' + updatedEvent.label)
+              if(eventDeviceRelation.occasion_id !== undefined && eventDeviceRelation.occasion_id != null){
+                console.log('   ...and into occasion id:' + eventDeviceRelation.occasion_id)
+              }
+            })
+          })
+          .catch( error => {
+            if(error.code == '23503'){
+              res.status(404)
+              res.write("Error: no event found with id:" + req.params.eventId)
+              res.send()
+            } else {
+              console.log('Error: unknown error: code' + error.code)
+              res.status(500)
+              res.send()
+            }
+          })
+        } else if(existingEventDeviceRelations.length == 1){
+          // update the existing relation
+          const relationId = existingEventDeviceRelations[0].id
+          console.log('relationId: ' + relationId)
+          return knex('events_devices')
+          .where({id: relationId})
+          .update({occasion_id: eventDeviceRelation.occasion_id}).returning('id')
+          .then( eventDeviceRelationId => {
+            return eventsTable.getOneByID(req.params.eventId).then( updatedEvent => {
+              res.status(200).json(updatedEvent)
+            })
+          })
+          .catch( error => {
+            console.log(error)
+          })
         } else {
-          console.log('Error: unknown error')
+          const errorString = 'Error: duplicate records in events_devices table'
+          console.log(errorString)
           res.status(500)
+          res.write(errorString)
           res.send()
         }
       })
