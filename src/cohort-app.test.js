@@ -196,13 +196,11 @@ describe('Basic startup', () => {
     const res1 = await request(app).get('/api/v1/events/' + eventId + '/devices')
     expect(res1.status).toEqual(200)
     const deviceCount = res1.body.length
-
     // check into event
     
     const res2 = await request(app)
       .patch('/api/v1/events/' + eventId + '/check-in')
       .send({ guid: "1234567" }) // this device already exists in the DB
-
     expect(res2.status).toEqual(200)
     expect(res2.body).toHaveProperty('id')
     expect(res2.body.id).toEqual(4)
@@ -222,6 +220,7 @@ describe('Basic startup', () => {
     console.log(res4.body)
     expect(res4.status).toEqual(200)
 
+
     const eventsDevicesTable = knex('events_devices')
 
     const eventDeviceRelations = await eventsDevicesTable
@@ -239,14 +238,6 @@ describe('Basic startup', () => {
 
     console.log(res5.body)
     expect(res5.status).toEqual(200)
-
-    const eventDeviceRelations2 = await eventsDevicesTable
-    .where('event_id', eventId)
-    .where('device_id', deviceId)
-  
-    console.log(eventDeviceRelations2)
-    expect(eventDeviceRelations2.length).toEqual(1)
-    expect(eventDeviceRelations2[0].occasion_id).toBeUndefined()
   })
 
   // happy path for checking into an open event

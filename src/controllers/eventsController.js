@@ -156,7 +156,7 @@ exports.events_checkIn = (req, res) => {
 
       const eventDeviceRelation = { 
         event_id: parseInt(req.params.eventId),
-        device_id: device.id
+        device_id: parseInt(device.id)
       }
 
       if(req.params.occasionId != null && req.params.occasionId !== undefined){
@@ -168,7 +168,6 @@ exports.events_checkIn = (req, res) => {
       .where('event_id', eventDeviceRelation.event_id)
       .where('device_id', eventDeviceRelation.device_id)
       .then( existingEventDeviceRelations => {
-        console.log(existingEventDeviceRelations)
 
         if(existingEventDeviceRelations.length == 0){
           // do the check-in
@@ -195,20 +194,23 @@ exports.events_checkIn = (req, res) => {
             }
           })
         } else if(existingEventDeviceRelations.length == 1){
-          // update the existing relation
-          const relationId = existingEventDeviceRelations[0].id
-          console.log('relationId: ' + relationId)
-          return knex('events_devices')
-          .where({id: relationId})
-          .update({occasion_id: eventDeviceRelation.occasion_id}).returning('id')
-          .then( eventDeviceRelationId => {
-            return eventsTable.getOneByID(req.params.eventId).then( updatedEvent => {
-              res.status(200).json(updatedEvent)
+          // this device is already checked into this event...
+          // is the occasion different?
+          if(eventDeviceRelation.occasion_id == existingEventDeviceRelations[0].occasion_id){
+            res.sendStatus(200)
+          } else {
+            // update the existing relation
+            const relationId = existingEventDeviceRelations[0].id
+            return knex('events_devices')
+            .where({id: relationId})
+            .update({occasion_id: 1}, ['id'])
+            .then( existingRow => {
+              res.sendStatus(200)
             })
-          })
-          .catch( error => {
-            console.log(error)
-          })
+            .catch( error => {
+              console.log(error)
+            })
+          }
         } else {
           const errorString = 'Error: duplicate records in events_devices table'
           console.log(errorString)
