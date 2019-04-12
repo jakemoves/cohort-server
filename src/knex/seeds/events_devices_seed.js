@@ -64,7 +64,7 @@ exports.seed = function(knex, Promise) {
                 locationLabel: "Harbourfront Centre",
                 locationAddress: '235 Queens Quay W',
                 locationCity: 'Toronto'
-              },,{ 
+              },{ 
                 event_id: 2,
                 doorsOpenDateTime: '2019-06-02 13:30:00+05:00',
                 startDateTime: '2019-06-02 14:00:00+05:00',
@@ -72,7 +72,7 @@ exports.seed = function(knex, Promise) {
                 locationLabel: "Harbourfront Centre",
                 locationAddress: '235 Queens Quay W',
                 locationCity: 'Toronto'
-              },,{ 
+              },{ 
                 event_id: 2,
                 doorsOpenDateTime: '2019-06-03 13:30:00+05:00',
                 startDateTime: '2019-06-03 14:00:00+05:00',
