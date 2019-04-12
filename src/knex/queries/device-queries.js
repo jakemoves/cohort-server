@@ -34,7 +34,6 @@ getOneByDeviceGUID = (deviceGUID) => {
 }
 
 addOne = (device) => {
-  device.tags = JSON.stringify(Array.from(device.tags))
   return Devices()
     .insert(device)
     .returning('id')

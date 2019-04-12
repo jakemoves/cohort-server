@@ -54,10 +54,14 @@ exports.devices_create = (req, res) => {
 			device_isAdmin = req.body.isAdmin
 		} else { device_isAdmin = false }
 
-		const device_tags = req.body.tags 
+		let device_tags = new Set([])
+		if(req.body.tags){
+			device_tags = JSON.stringify(Array.from(device.tags))
+		}
 
 		// add device to DB
-		const device = new CHDevice(null, device_guid, device_isAdmin, device_tags)
+		const device = {guid: device_guid, isAdmin: device_isAdmin, tags: device_tags}
+		
 		devicesTable.addOne(device)
 		.then( deviceIDs => {
 			console.log("created device: " + device_guid)
