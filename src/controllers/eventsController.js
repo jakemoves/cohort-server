@@ -353,6 +353,14 @@ exports.events_broadcast_push_notification = (req, res) => {
     let devices = eventsTable.getDevicesForEvent(req.params.eventId).then( devices => {
       // handle errors!
 
+      if(req.query.tag !== undefined){
+        devices = devices.filter( device => {
+          console.log(device)
+          if(device.tags == null) { return false }
+          return device.tags.includes(req.query.tag)
+        })
+      } // duped to devicesController, DRY it up
+
       broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
     })
   })
@@ -382,6 +390,15 @@ exports.events_occasions_broadcast_push_notification = (req, res) => {
     }
 
     let devices = eventsTable.getDevicesForEventOccasion(req.params.eventId, req.params.occasionId).then( devices => {
+      
+      if(req.query.tag !== undefined){
+        devices = devices.filter( device => {
+          console.log(device)
+          if(device.tags == null) { return false }
+          return device.tags.includes(req.query.tag)
+        })
+      } // duped to devicesController, DRY it up
+
       broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
     })
   })

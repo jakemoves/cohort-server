@@ -4,6 +4,12 @@ const devicesTable = require('../knex/queries/device-queries')
 exports.devices = (req, res) => {
 	devicesTable.getAll()
 	.then( devices => {
+		if(req.query.tag !== undefined){
+			devices = devices.filter( device => {
+				if(device.tags == null) { return false }
+				return device.tags.includes(req.query.tag)
+			})
+		} // duped to eventsController, DRY it up
 		res.status(200).json(devices)
 	})
 }
@@ -56,7 +62,7 @@ exports.devices_create = (req, res) => {
 
 		let device_tags = new Set([])
 		if(req.body.tags){
-			device_tags = JSON.stringify(Array.from(device.tags))
+			device_tags = JSON.stringify(Array.from(req.body.tags))
 		}
 
 		// add device to DB
@@ -75,6 +81,35 @@ exports.devices_create = (req, res) => {
 	})
 }
 
+exports.devices_setTags= (req, res) => {
+	let tags = req.body.tags
+	if(tags){
+		// request is well-formed
+		let devices = devicesTable.getOneByID(req.params.id).then( device => {
+			// we found a single device with a matching id
+			return devicesTable.setTags(device.id, tags).then( deviceId => {
+				return devicesTable.getOneByID(deviceId).then(updatedDevice => {
+					res.status(200)
+					res.json(updatedDevice)
+					res.send()
+					console.log("set tags for device:" + device.guid)
+				})
+			})
+		})
+		.catch( error => {
+			res.statusCode = 404
+			res.write("Error: no device found with id: " + req.params.id)
+			res.send()
+			console.log("Error: failed to add tags; no device found with matching id: " + req.params.id)
+		})
+	} else {
+		res.statusCode = 400
+		res.write("Error: Request must include a 'tags' array")
+		res.send()
+		console.log("Error: failed to set tags; request missing tags array")
+	}
+}
+
 exports.devices_registerForNotifications = (req, res) => {
   let token = req.body.token
 	if(token){
@@ -82,15 +117,14 @@ exports.devices_registerForNotifications = (req, res) => {
 		let devices = devicesTable.getOneByID(req.params.id)
 		.then( device => {
 			// we found a single device with a matching id
-			return devicesTable.addApnsDeviceToken(device.id, token)
-				.then( deviceId => {
-					return devicesTable.getOneByID(deviceId).then(updatedDevice => {
-						res.status(200)
-						res.json(updatedDevice)
-						res.send()
-						console.log("registered device for notifications: " + device.guid)
-					})
+			return devicesTable.addApnsDeviceToken(device.id, token).then( deviceId => {
+				return devicesTable.getOneByID(deviceId).then(updatedDevice => {
+					res.status(200)
+					res.json(updatedDevice)
+					res.send()
+					console.log("registered device for notifications: " + device.guid)
 				})
+			})
 		})
 		.catch( error => {
 			res.statusCode = 404

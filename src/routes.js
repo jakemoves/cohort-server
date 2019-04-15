@@ -39,6 +39,7 @@ router.get('/devices/:id', devicesController.devices_id)
 router.post('/devices', devicesController.devices_create)
 
 router.patch('/devices/:id/register-for-notifications', devicesController.devices_registerForNotifications)
+router.patch('/devices/:id/set-tags', devicesController.devices_setTags)
 
 /*
  *   occasions
