@@ -23,7 +23,7 @@ class CHDevice {
 
 	static fromDatabaseRow(dbDevice){
 		let tags 
-		if(dbDevice.tags === undefined){
+		if(dbDevice.tags === undefined || dbDevice.tags == null){
 			tags = new Set([])
 		} else {
 			tags = new Set(JSON.parse(dbDevice.tags))

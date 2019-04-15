@@ -60,7 +60,7 @@ exports.devices_create = (req, res) => {
 			device_isAdmin = req.body.isAdmin
 		} else { device_isAdmin = false }
 
-		let device_tags = new Set([])
+		let device_tags = null
 		if(req.body.tags){
 			device_tags = JSON.stringify(Array.from(req.body.tags))
 		}
