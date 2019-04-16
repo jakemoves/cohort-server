@@ -338,7 +338,7 @@ describe('Basic startup', () => {
   })
 
   // push notifications
-  // limited test! only verifying which devices will have n10ns attempted
+  // limited tests! only verifying which devices will have n10ns attempted
   test('POST /events/:id/broadcast-push-notification', async () =>{
     const eventsTable = require('./knex/queries/event-queries')
     getDevicesForEvent(4).then( devices => {
@@ -353,7 +353,84 @@ describe('Basic startup', () => {
       expect(devices.length).toEqual(1)
     })
   })
+
+  test('PATCH /events/:id/cuelist', async () => {
+    const cuelist = [{
+      cueNumber: 1, videoClip: { length: 10.0 }
+    },{
+      cueNumber: 2, videoClip: { length: 25.5 }
+    }]
+
+    const res = await request(app)
+      .patch('/api/v1/events/1/cuelist')
+      .send({cuelist: cuelist})
+    
+    expect(res.status).toEqual(200)
+    expect(res.body.cuelist).toBeDefined()
+    expect(res.body.cuelist).toHaveLength(2)
+  })
+
+  test('PATCH /events/:id/cuelist -- error: event not found', async () => {
+    const cuelist = [{
+      cueNumber: 1, videoClip: { length: 10.0 }
+    },{
+      cueNumber: 2, videoClip: { length: 25.5 }
+    }]
+
+    const res = await request(app)
+      .patch('/api/v1/events/999/cuelist')
+      .send({cuelist: cuelist})
+    
+    expect(res.status).toEqual(404)
+    expect(res.text).toEqual("Error: event with id:999 not found")
+  })
+
+  test('PATCH /events/:id/cuelist -- error: request missing "cuelist" object', async () => {
+    const cuelist = [{
+      cueNumber: 1, videoClip: { length: 10.0 }
+    },{
+      cueNumber: 2, videoClip: { length: 25.5 }
+    }]
+
+    const res = await request(app)
+      .patch('/api/v1/events/1/cuelist')
+      .send(cuelist)
+    
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual('Error: request must include a "cuelist" object')
+  })
+
+  test('GET /events/:id/cuelist', async () => {
+    const cuelist = [{
+      cueNumber: 1, videoClip: { length: 10.0 }
+    },{
+      cueNumber: 2, videoClip: { length: 25.5 }
+    }]
+
+    const res = await request(app)
+      .patch('/api/v1/events/1/cuelist')
+      .send({cuelist: cuelist})
+    
+    expect(res.status).toEqual(200)
+    expect(res.body.cuelist).toBeDefined()
+    expect(res.body.cuelist).toHaveLength(2)
+
+    const res2 = await request(app).get('/api/v1/events/1/cuelist')
+    
+    expect(res2.status).toEqual(200)
+    expect(res2.body).toBeDefined()
+    expect(res2.body).toHaveLength(2)
+  })
+
+  test('GET /events/:id/cuelist -- error: event not found', async () => {
+    const res = await request(app).get('/api/v1/events/999/cuelist')
+    
+    expect(res.status).toEqual(404)
+    expect(res.text).toEqual("Error: event with id:999 not found")
+  })
 })
+
+
 
 
 /*

@@ -546,3 +546,63 @@ exports.events_lastCohortMessage = (req, res) => {
   })
 }
 
+exports.events_getCuelist = (req, res) => {
+  return eventsTable.getOneByID(req.params.id)
+  .then( event => {
+    if(event){
+      return eventsTable.getCuelist(event.id)
+      .then( result => {
+        res.status(200)
+        res.json(result.cuelist)
+        res.send()
+      })
+    } else {
+      res.status(404)
+      res.write("Error: event with id:" + req.params.id + " not found")
+      res.send()
+    }
+  })
+  .catch( error => {
+    console.log(error)
+    res.status(500)
+    res.write(error)
+    res.send()
+  }) 
+}
+
+
+exports.events_setCuelist = (req, res) => {
+  if(req.body.cuelist === undefined){
+    res.status(400)
+    res.write('Error: request must include a "cuelist" object')
+    res.send()
+    return
+  }
+
+  return eventsTable.getOneByID(req.params.id)
+  .then( event => {
+    if(event){
+      return eventsTable.setCuelist(req.params.id, req.body.cuelist)
+      .then( eventId => {
+        return eventsTable.getOneByID(eventId)
+        .then( updatedEvent => {
+          res.status(200)
+          res.json(updatedEvent)
+          res.send()
+          console.log('set cuelist for event:' + updatedEvent.id)
+        })
+      })
+    } else {
+      res.status(404)
+      res.write("Error: event with id:" + req.params.id + " not found")
+      res.send()
+    }
+  })
+  .catch( error => {
+    res.status(500)
+    console.log(error)
+    res.write(error)
+    res.send()
+  })
+}
+
