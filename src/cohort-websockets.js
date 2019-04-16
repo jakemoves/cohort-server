@@ -7,7 +7,7 @@ module.exports = (options) => {
     let webSocketServer = new webSocket.Server({server: options.server, path: options.path, clientTracking: true})
     
     const keepaliveInterval = setInterval(function ping(){
-      // console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
+      console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
 
       webSocketServer.clients.forEach( (socket) => {
         if(socket.isAlive === false){
@@ -20,7 +20,7 @@ module.exports = (options) => {
           socket.ping(noop)
         }
       })
-    }, 5000)
+    }, 25000)
 
     webSocketServer.on('listening', () => {
       console.log('   websocket server started')
@@ -126,7 +126,7 @@ module.exports = (options) => {
     function noop() {}
     
     function keepalive() {
-      // console.log('keepalive called from pong for socket ' + this.cohortDeviceGUID)
+      console.log('keepalive called from pong for socket ' + this.cohortDeviceGUID)
       this.isAlive = true
     }
   })

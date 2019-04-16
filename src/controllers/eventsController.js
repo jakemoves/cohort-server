@@ -261,6 +261,8 @@ exports.events_broadcast = (req, res) => {
     res.write("Warning: No devices are connected via WebSockets, broadcast was not sent")
     res.send()
 		return
+  } else {
+    console.log("connectedSockets: " + connectedSockets.length)
   }
 
   // per https://github.com/websockets/ws/issues/617#issuecomment-393396339
@@ -277,6 +279,7 @@ exports.events_broadcast = (req, res) => {
 
 		// skip this client if it's not open
 		if(socket.readyState != WebSocket.OPEN) {
+			console.log("skipped a socket due to readyState")
 			return Promise.resolve()
 		}
 
