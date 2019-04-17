@@ -243,6 +243,8 @@ exports.events_open = (req, res) => {
         req.app.get('cohort').addListenersForEvent(event)
         event.open()
         // need to add listeners here for device add/remove... and then figure out how to DRY that up (repeated in app.js)
+      } else {
+        console.log("Error: failed to open event, inconsistency between db and memory")
       }
 
       res.status(200)

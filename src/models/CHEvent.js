@@ -42,7 +42,7 @@ class CHEvent extends machina.Fsm {
         
         if(connectedDevices === undefined || 
            connectedDevices.length == 0){
-
+        
           this.handle('closeEvent')
 
         } else {

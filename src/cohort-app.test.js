@@ -302,6 +302,10 @@ describe('Basic startup', () => {
   })
 
   test('PATCH /events/:id/open', async () => {
+    let consoleOutput = "";
+    storeLog = inputs => (consoleOutput += inputs)
+
+    console["log"] = jest.fn(storeLog)
     expect(app.get("cohort").events.length).toEqual(2)
     const res = await request(app)
       .patch('/api/v1/events/2/open')
@@ -309,6 +313,7 @@ describe('Basic startup', () => {
     expect(res.status).toEqual(200)
     expect(res.body.state).toEqual('open')
     expect(app.get("cohort").events.length).toEqual(3)
+    expect(consoleOutput).toEqual("event lot_x is now open")
   })
 
   test('PATCH /events/:id/close', async () => {
@@ -319,6 +324,51 @@ describe('Basic startup', () => {
     expect(res.status).toEqual(200)
     expect(res.body.state).toEqual('closed')
     expect(app.get("cohort").events.length).toEqual(1)
+  })
+
+  test('PATCH /events/:id/open and /close', async () => {
+    let consoleOutput = "";
+    storeLog = inputs => (consoleOutput += inputs)
+
+    console["log"] = jest.fn(storeLog)
+    expect(app.get("cohort").events.length).toEqual(2)
+    const res1 = await request(app)
+      .patch('/api/v1/events/2/open')
+    
+    expect(res1.status).toEqual(200)
+    expect(res1.body.state).toEqual('open')
+    expect(app.get("cohort").events.length).toEqual(3)
+    expect(consoleOutput).toEqual("event lot_x is now open")
+
+    // next close it
+
+    expect(app.get("cohort").events.length).toEqual(3)
+    const res2 = await request(app)
+      .patch('/api/v1/events/2/close')
+    
+    expect(res2.status).toEqual(200)
+    expect(res2.body.state).toEqual('closed')
+    expect(app.get("cohort").events.length).toEqual(2)
+    expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closed")
+
+    // now re-open it
+    const res3 = await request(app)
+      .patch('/api/v1/events/2/open')
+    
+    expect(res3.status).toEqual(200)
+    expect(res3.body.state).toEqual('open')
+    expect(app.get("cohort").events.length).toEqual(3)
+    expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closedevent lot_x is now open")
+
+    // now close it once more
+    const res4 = await request(app)
+      .patch('/api/v1/events/2/close')
+    
+    expect(res4.status).toEqual(200)
+    expect(res4.body.state).toEqual('closed')
+    expect(app.get("cohort").events.length).toEqual(2)
+    expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closedevent lot_x is now openevent lot_x is now closed")
+
   })
 
   test('POST /events/:id/broadcast: error -- no devices connected', async () => {
