@@ -83,6 +83,7 @@ exports.devices_create = (req, res) => {
 
 exports.devices_setTags= (req, res) => {
 	let tags = req.body.tags
+
 	if(tags){
 		// request is well-formed
 		let devices = devicesTable.getOneByID(req.params.id).then( device => {
@@ -97,6 +98,7 @@ exports.devices_setTags= (req, res) => {
 			})
 		})
 		.catch( error => {
+			console.log(error)
 			res.statusCode = 404
 			res.write("Error: no device found with id: " + req.params.id)
 			res.send()

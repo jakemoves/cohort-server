@@ -51,9 +51,10 @@ addApnsDeviceToken = (deviceId, apnsDeviceToken) => {
 }
 
 setTags = (deviceId, tags) => {
+  tags = JSON.stringify(tags) // for db -- note that a JSON.parse() does *not* seem to be necessary when retrieving, with knex (!)
   return Devices()
     .where('id', deviceId)
-    .update({ tags: JSON.stringify(tags)})
+    .update({ tags: tags})
     .returning('id')
 }
 

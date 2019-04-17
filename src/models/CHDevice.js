@@ -26,7 +26,13 @@ class CHDevice {
 		if(dbDevice.tags === undefined){
 			tags = new Set([])
 		} else {
-			tags = new Set(JSON.parse(dbDevice.tags))
+			let tagsArray
+			if(Array.isArray(dbDevice.tags)){
+				tagsArray = dbDevice.tags
+			} else {
+				tagsArray = JSON.parse(dbDevice.tags)
+			}
+			tags = new Set(tagsArray)
 		}
 		return new CHDevice(dbDevice.id, dbDevice.guid, dbDevice.isAdmin, tags, dbDevice.apnsDeviceToken)
 	}
