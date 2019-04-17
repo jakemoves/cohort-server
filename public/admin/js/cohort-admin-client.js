@@ -17,6 +17,8 @@ var vm = new Vue({
     activeEventOccasions: [ ],
     broadcastMessagePlaceholder: '{ "mediaDomain": "sound", \n  "cueNumber": 1, \n  "cueAction": "play" }',
     errorOnBroadcast: false,
+    uploadJSONCuelistPlaceholder: 'paste JSON cuelist here',
+    errorOnJSONCuelistUpload: false,
     userDidSelectEvent: false,
     occasionFormIsCollapsed: true,
     // activeEventMediaDomains: [ "sound", "video" ],
@@ -144,7 +146,7 @@ var vm = new Vue({
       }).then( response => {
         if(response.status == 200){
           response.json().then( event_device => {
-
+            
             // refresh the event details
             fetch(vm.serverURL + '/events/' + eventId, {
               method: 'GET'
@@ -431,6 +433,52 @@ function validateCohortMessage(messageText){
   }
   const cohortMessage = CHMessage(chMsgJSON["mediaDomain"], chMsgJSON["cueNumber"], chMsgJSON["cueAction"])
   return cohortMessage
+}
+
+window.onJSONCuelistUpload = ($event) => {
+  $event.preventDefault()
+  const cuelistText = document.getElementById('json-cuelist').value
+  let cuelist = validateCuelist(cuelistText)
+  let requestURL = vm.serverURL + '/events/' + vm.activeEvent.id + '/cuelist'
+  if(vm.errorOnJSONCuelistUpload == false){
+    try {
+      fetch(requestURL, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({ cuelist: cuelist })
+      }).then( response => {
+        if(response.status == 200){
+          response.text().then( text => {
+            // console.log(text)
+            vm.errorOnJSONCuelistUpload = false
+          })
+        } else {
+          response.json().then( body => {
+            console.log(body.error)
+            vm.errorOnJSONCuelistUpload = true
+          })
+        }
+      }).catch( error => {
+        console.log("Error on cuelist upload")
+        vm.errorOnJSONCuelistUpload = true
+      })
+    } catch (e) {
+      console.log(e.message)
+      vm.errorOnJSONCuelistUpload = true
+    } 
+  }
+}
+
+function validateCuelist(cuelistText){
+  let cuelistJSON
+  try {
+    cuelistJSON = JSON.parse(cuelistText)
+  } catch (e) {
+    console.log(e.message)
+    vm.errorOnJSONCuelistUpload = true
+    return new Error('cuelist JSON failed validation')
+  }
+  return cuelistJSON
 }
 
 window.openWebSocketConnection = (eventId) => {

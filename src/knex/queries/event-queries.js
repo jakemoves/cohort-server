@@ -118,6 +118,19 @@ checkOutAllDevices = (eventId) => {
   .del()
 }
 
+getCuelist = (eventId) => {
+  return Events()
+  .where('events.id', parseInt(eventId))
+  .first('cuelist')
+}
+
+setCuelist = (eventId, cuelist) => {
+  return Events()
+  .where('id', parseInt(eventId))
+  .update({cuelist: JSON.stringify(cuelist)})
+  .returning('id')
+}
+
 module.exports = { 
   getAll: getAll,
   getAllActiveWithDevices: getAllActiveWithDevices,
@@ -128,5 +141,7 @@ module.exports = {
   getDevicesForEvent: getDevicesForEvent,
   getDevicesForEventOccasion: getDevicesForEventOccasion,
   open: open,
-  close: close
+  close: close,
+  getCuelist: getCuelist,
+  setCuelist: setCuelist
 }

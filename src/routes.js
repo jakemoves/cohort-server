@@ -29,6 +29,9 @@ router.post('/events/:eventId/broadcast-push-notification', eventsController.eve
 
 router.get('/events/:eventId/last-cohort-message', eventsController.events_lastCohortMessage)
 
+router.get('/events/:id/cuelist', eventsController.events_getCuelist)
+router.patch('/events/:id/cuelist', eventsController.events_setCuelist)
+
 /*
  *   devices
  */ 
