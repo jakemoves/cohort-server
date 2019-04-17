@@ -156,31 +156,66 @@ exports.events_checkIn = (req, res) => {
 
       const eventDeviceRelation = { 
         event_id: parseInt(req.params.eventId),
-        device_id: device.id
+        device_id: parseInt(device.id)
       }
 
       if(req.params.occasionId != null && req.params.occasionId !== undefined){
-        eventDeviceRelation.occasion_id = req.params.occasionId
+        eventDeviceRelation.occasion_id = parseInt(req.params.occasionId)
       }
 
+      // check if this event & device are already present in a row
       return knex('events_devices')
-      .insert(eventDeviceRelation).returning('id')
-      .then( (eventDeviceRelationId) => {
-        return eventsTable.getOneByID(req.params.eventId).then( updatedEvent => {
-          res.status(200).json(updatedEvent)
-        })
-      })
-      .catch( error => {
-        if(error.code == '23505'){
-          res.status(200)
-          res.json(eventDeviceRelation)
-        } else if(error.code == '23503'){
-          res.status(404)
-          res.write("Error: no event found with id:" + req.params.eventId)
-          res.send()
+      .where('event_id', eventDeviceRelation.event_id)
+      .where('device_id', eventDeviceRelation.device_id)
+      .then( existingEventDeviceRelations => {
+
+        if(existingEventDeviceRelations.length == 0){
+          // do the check-in
+          return knex('events_devices')
+          .insert(eventDeviceRelation).returning('id')
+          .then( (eventDeviceRelationId) => {
+            return eventsTable.getOneByID(req.params.eventId).then( updatedEvent => {
+              res.status(200).json(updatedEvent)
+              console.log('checked device into event ' + updatedEvent.label)
+              if(eventDeviceRelation.occasion_id !== undefined && eventDeviceRelation.occasion_id != null){
+                console.log('   ...and into occasion id:' + eventDeviceRelation.occasion_id)
+              }
+            })
+          })
+          .catch( error => {
+            if(error.code == '23503'){
+              res.status(404)
+              res.write("Error: no event found with id:" + req.params.eventId)
+              res.send()
+            } else {
+              console.log('Error: unknown error: code' + error.code)
+              res.status(500)
+              res.send()
+            }
+          })
+        } else if(existingEventDeviceRelations.length == 1){
+          // this device is already checked into this event...
+          // is the occasion different?
+          if(eventDeviceRelation.occasion_id == existingEventDeviceRelations[0].occasion_id){
+            res.sendStatus(200)
+          } else {
+            // update the existing relation
+            const relationId = existingEventDeviceRelations[0].id
+            return knex('events_devices')
+            .where({id: relationId})
+            .update({occasion_id: 1}, ['id'])
+            .then( existingRow => {
+              res.sendStatus(200)
+            })
+            .catch( error => {
+              console.log(error)
+            })
+          }
         } else {
-          console.log('Error: unknown error')
+          const errorString = 'Error: duplicate records in events_devices table'
+          console.log(errorString)
           res.status(500)
+          res.write(errorString)
           res.send()
         }
       })
@@ -321,6 +356,14 @@ exports.events_broadcast_push_notification = (req, res) => {
     let devices = eventsTable.getDevicesForEvent(req.params.eventId).then( devices => {
       // handle errors!
 
+      if(req.query.tag !== undefined){
+        devices = devices.filter( device => {
+          console.log(device)
+          if(device.tags == null) { return false }
+          return device.tags.includes(req.query.tag)
+        })
+      } // duped to devicesController, DRY it up
+
       broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
     })
   })
@@ -350,6 +393,15 @@ exports.events_occasions_broadcast_push_notification = (req, res) => {
     }
 
     let devices = eventsTable.getDevicesForEventOccasion(req.params.eventId, req.params.occasionId).then( devices => {
+      
+      if(req.query.tag !== undefined){
+        devices = devices.filter( device => {
+          console.log(device)
+          if(device.tags == null) { return false }
+          return device.tags.includes(req.query.tag)
+        })
+      } // duped to devicesController, DRY it up
+
       broadcastPushNotification(devices, req, res) // do NOT send the req / res to the service when this gets refactored
     })
   })

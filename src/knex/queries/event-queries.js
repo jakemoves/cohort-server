@@ -70,7 +70,8 @@ getDevicesForEvent = (eventId) => {
       'device_id as id',
       'guid', 
       'apnsDeviceToken', 
-      'isAdmin'
+      'isAdmin',
+      'tags'
     )
 }
 
@@ -86,7 +87,8 @@ getDevicesForEventOccasion = (eventId, occasionId) => {
       'device_id as id',
       'guid', 
       'apnsDeviceToken', 
-      'isAdmin'
+      'isAdmin',
+      'tags'
     )
 }
 

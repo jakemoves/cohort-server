@@ -32,8 +32,11 @@ afterEach( async () => {
  */
 
 beforeAll( () => {
-  createDevice = (guid) => {
-    const payload = { guid: guid }
+  createDevice = (guid, tags) => {
+    let payload = { guid: guid }
+    if(tags !== undefined){
+      payload.tags = tags
+    }
     return request(app)
       .post('/api/v1/devices')
       .send(payload)
@@ -188,6 +191,58 @@ describe('Basic startup', () => {
     expect(res3.body).toHaveLength(deviceCount+1)
   })
 
+  test('PATCH /events/:eventId/check-in => occasion check-in -- error: device is already checked in', async () => {
+    const eventId = 4
+    const deviceId = 1
+    const occasionId = 1
+
+    const res1 = await request(app).get('/api/v1/events/' + eventId + '/devices')
+    expect(res1.status).toEqual(200)
+    const deviceCount = res1.body.length
+    // check into event
+    
+    const res2 = await request(app)
+      .patch('/api/v1/events/' + eventId + '/check-in')
+      .send({ guid: "1234567" }) // this device already exists in the DB
+    expect(res2.status).toEqual(200)
+    expect(res2.body).toHaveProperty('id')
+    expect(res2.body.id).toEqual(4)
+
+    // verify event check-in
+    const getDevicesEndpoint = '/api/v1/events/' + eventId + '/devices'
+    const res3 = await request(app).get(getDevicesEndpoint)
+    expect(res3.status).toEqual(200)
+    const deviceCountAfterEventCheckin = res3.body.length
+    expect(deviceCountAfterEventCheckin).toEqual(deviceCount + 1)
+
+    // now check into occasion
+    const res4 = await request(app)
+      .patch('/api/v1/events/' + eventId + '/occasions/' + occasionId + '/check-in')
+      .send({ guid: "1234567" })
+
+    console.log(res4.body)
+    expect(res4.status).toEqual(200)
+
+
+    const eventsDevicesTable = knex('events_devices')
+
+    const eventDeviceRelations = await eventsDevicesTable
+      .where('event_id', eventId)
+      .where('device_id', deviceId)
+    
+    console.log(eventDeviceRelations)
+    expect(eventDeviceRelations.length).toEqual(1)
+    expect(eventDeviceRelations[0].occasion_id).toEqual(1)
+
+    // now check in to event 
+    const res5 = await request(app)
+      .patch('/api/v1/events/' + eventId + '/check-in')
+      .send({ guid: "1234567" })
+
+    console.log(res5.body)
+    expect(res5.status).toEqual(200)
+  })
+
   // happy path for checking into an open event
   test('PATCH /events/:id/check-in (to open event)', async () => {
     let eventId = 3
@@ -283,6 +338,7 @@ describe('Basic startup', () => {
   })
 
   // push notifications
+  // limited test! only verifying which devices will have n10ns attempted
   test('POST /events/:id/broadcast-push-notification', async () =>{
     const eventsTable = require('./knex/queries/event-queries')
     getDevicesForEvent(4).then( devices => {
@@ -346,7 +402,33 @@ describe('Device routes', () => {
     expect(res1.body.guid).toEqual('12345678')
   })
 
-  test('POST /devices -- device already exists', async () => {
+  test('POST /devices with tags', async () => {
+    const res0 = await request(app).get('/api/v1/devices')
+    const deviceCount = res0.body.length
+
+    const res1 = await createDevice(123456789, ['blue', 'red'])
+    expect(res1.status).toEqual(201)
+    expect(res1.header.location).toEqual('/api/v1/devices/' + (deviceCount + 1))
+    expect(res1.body.guid).toEqual('123456789')
+    expect(res1.body.tags).toEqual(['blue', 'red'])
+  })
+
+  test('GET /devices -- filter by tag', async () => {
+    const res1 = await createDevice(123456789, ['blue', 'red'])
+    expect(res1.status).toEqual(201)
+
+    const res2 = await createDevice(1234567890, ['blue'])
+    expect(res2.status).toEqual(201)
+
+
+    const res3 = await createDevice(12345678900, ['red'])
+    expect(res3.status).toEqual(201)
+    
+    const res4 = await request(app).get('/api/v1/devices?tag=blue')
+    expect(res4.body).toHaveLength(2)
+  })
+
+  test('POST /devices -- error: device already exists', async () => {
     const res0 = await request(app).get('/api/v1/devices')
     const deviceCount = res0.body.length
 
@@ -386,15 +468,31 @@ describe('Device routes', () => {
     expect(res.body.apnsDeviceToken).toEqual('abcde12345')
   })
   
-  // test for id not found
+  // add test for id not found
 
-  test('devices/registerForNotifications : error: missing token', async () => {
+  test('devices/register-for-notifications : error: missing token', async () => {
     const payload = { 'blep': '012345678901234567890123456789012345'}
     const res = await request(app)
       .patch('/api/v1/devices/1/register-for-notifications')
       .send(payload)
     expect(res.status).toEqual(400)
     expect(res.text).toEqual("Error: Request must include a 'token' object")
+  })
+
+  test('devices/set-tags', async () => {
+    const payload = { tags: [ 'blue', 'red' ]}
+    const res = await request(app)
+      .patch('/api/v1/devices/1/set-tags')
+      .send(payload)
+    expect(res.status).toEqual(200)
+    expect(res.body.tags).toEqual(['blue', 'red'])
+
+    const payload1 = { tags: [ 'purple' ]}
+    const res1 = await request(app)
+      .patch('/api/v1/devices/1/set-tags')
+      .send(payload1)
+    expect(res1.status).toEqual(200)
+    expect(res1.body.tags).toEqual(['purple'])
   })
 })
 

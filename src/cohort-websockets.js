@@ -75,6 +75,14 @@ module.exports = (options) => {
 
           // happy path
           console.log("completing initial handshake with device guid:" + device.guid)
+
+          console.log(device.socket)
+          
+          if(device.socket != null){
+            device.socket.isAlive = false
+            device.socket.close(4001, "Device opened a new socket")
+          }
+
           socket.cohortDeviceGUID = device.guid
 
           device.socket = socket

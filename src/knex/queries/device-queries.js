@@ -50,11 +50,19 @@ addApnsDeviceToken = (deviceId, apnsDeviceToken) => {
     .returning('id')
 }
 
+setTags = (deviceId, tags) => {
+  return Devices()
+    .where('id', deviceId)
+    .update({ tags: JSON.stringify(tags)})
+    .returning('id')
+}
+
 module.exports = { 
   getAll: getAll,
   getOneByID: getOneByID,
   getOneByDeviceGUID: getOneByDeviceGUID,
   addOne: addOne,
   deleteOne: deleteOne,
-  addApnsDeviceToken, addApnsDeviceToken
+  addApnsDeviceToken: addApnsDeviceToken,
+  setTags: setTags
 }
