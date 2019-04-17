@@ -75,8 +75,6 @@ module.exports = (options) => {
 
           // happy path
           console.log("completing initial handshake with device guid:" + device.guid)
-
-          console.log(device.socket)
           
           if(device.socket != null){
             device.socket.isAlive = false
