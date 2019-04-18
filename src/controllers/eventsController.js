@@ -401,7 +401,6 @@ exports.events_occasions_broadcast_push_notification = (req, res) => {
       
       if(req.query.tag !== undefined){
         devices = devices.filter( device => {
-          console.log(device)
           if(device.tags == null) { return false }
           return device.tags.includes(req.query.tag)
         })
