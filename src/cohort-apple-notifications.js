@@ -12,6 +12,7 @@ function start(){
 				keyId: "6TA7832PAJ",
 				teamId: "J93D25NHHG"
 			}
+			//, production: false // uncomment if you are testing local builds from Xcode against this server, or you will get 400 errors (Bad Device Token) b/c those builds always use the APNS sandbox
 		}
 	} else if(process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'test'){
 		options = {
