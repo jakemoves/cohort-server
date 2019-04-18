@@ -17,6 +17,8 @@ var vm = new Vue({
     activeEventOccasions: [ ],
     broadcastMessagePlaceholder: '{ "mediaDomain": "sound", \n  "cueNumber": 1, \n  "cueAction": "play" }',
     errorOnBroadcast: false,
+    // uploadJSONCuelistPlaceholder: 'paste JSON cuelist here',
+    // errorOnJSONCuelistUpload: false,
     userDidSelectEvent: false,
     occasionFormIsCollapsed: true,
     // activeEventMediaDomains: [ "sound", "video" ],
@@ -41,6 +43,29 @@ var vm = new Vue({
       }
     }, // this will eventually get pulled server-side
     selectedFluxDeluxEpisode: null,
+    cafeSarajevo360Cues: [
+      { cueNumber: "1",	label: "Grand Central" },
+      { cueNumber: "2",	label: "Brooklyn steps" },
+      { cueNumber: "3",	label: "Poretch" },
+      { cueNumber: "5",	label: "Driving" },
+      { cueNumber: "6",	label: "Three coffees" },
+      { cueNumber: "7",	label: "Mosque" },
+      { cueNumber: "8",	label: "Cafe Sarajevo" },
+      { cueNumber: "9",	label: "Lucy subway" },
+      { cueNumber: "10",	label: "Gondola" },
+      { cueNumber: "11",	label: "Sarajevo" },
+      { cueNumber: "12",	label: "Jewish cemetery" },
+      { cueNumber: "13",	label: "Mostra" },
+      { cueNumber: "14",	label: "Stari Most Catholic" },
+      { cueNumber: "15",	label: "Streetcar" },
+      { cueNumber: "16",	label: "Sunset Stari Most" },
+      { cueNumber: "17",	label: "Gavrilo Princip" },
+      { cueNumber: "18",	label: "Jasmine" },
+      { cueNumber: "19",	label: "Stari Most sunset" },
+      { cueNumber: "20",	label: "Stari Most" },
+      { cueNumber: "21",	label: "Tom Zagreb" }
+    ],
+    selected360Cue: "0",
     broadcastToEventOrOccasion: 'event',
     selectedOccasion: null,
     includeCohortMsgWithN10n: false,
@@ -144,7 +169,7 @@ var vm = new Vue({
       }).then( response => {
         if(response.status == 200){
           response.json().then( event_device => {
-
+            
             // refresh the event details
             fetch(vm.serverURL + '/events/' + eventId, {
               method: 'GET'
@@ -362,7 +387,10 @@ window.broadcast = (cohortMessage) => {
       body: JSON.stringify(cohortMessage)
     }).then( response => {
       response.text().then( text => {
-        // console.log(text)
+        console.log(text)
+        if(vm.activeEvent.label == "café sarajevo"){
+          document.getElementById('sarajevoCueResults').innerText = text
+        }
         vm.errorOnBroadcast = false
       })
     }).catch( error => {
@@ -433,6 +461,52 @@ function validateCohortMessage(messageText){
   return cohortMessage
 }
 
+// window.onJSONCuelistUpload = ($event) => {
+//   $event.preventDefault()
+//   const cuelistText = document.getElementById('json-cuelist').value
+//   let cuelist = validateCuelist(cuelistText)
+//   let requestURL = vm.serverURL + '/events/' + vm.activeEvent.id + '/cuelist'
+//   if(vm.errorOnJSONCuelistUpload == false){
+//     try {
+//       fetch(requestURL, {
+//         method: 'PATCH',
+//         headers: { 'Content-Type': 'application/json'},
+//         body: JSON.stringify({ cuelist: cuelist })
+//       }).then( response => {
+//         if(response.status == 200){
+//           response.text().then( text => {
+//             // console.log(text)
+//             vm.errorOnJSONCuelistUpload = false
+//           })
+//         } else {
+//           response.json().then( body => {
+//             console.log(body.error)
+//             vm.errorOnJSONCuelistUpload = true
+//           })
+//         }
+//       }).catch( error => {
+//         console.log("Error on cuelist upload")
+//         vm.errorOnJSONCuelistUpload = true
+//       })
+//     } catch (e) {
+//       console.log(e.message)
+//       vm.errorOnJSONCuelistUpload = true
+//     } 
+//   }
+// }
+
+function validateCuelist(cuelistText){
+  let cuelistJSON
+  try {
+    cuelistJSON = JSON.parse(cuelistText)
+  } catch (e) {
+    console.log(e.message)
+    vm.errorOnJSONCuelistUpload = true
+    return new Error('cuelist JSON failed validation')
+  }
+  return cuelistJSON
+}
+
 window.openWebSocketConnection = (eventId) => {
   let clientSocket = new WebSocket(vm.socketURL)
 
@@ -493,4 +567,19 @@ window.stopFluxDeluxEpisode = (event) => {
     }
     broadcast(cohortMessage)
   }
+}
+
+window.onSelected360Cue = (event) => {
+  let cueNumber = event.target.dataset.cueNumber
+  vm.selected360Cue = cueNumber
+}
+
+window.onFire360Cue = (event) => {
+  console.log('firing ' + vm.selected360Cue)
+  const cohortMsg = {
+    "mediaDomain": 1,
+    "cueNumber": parseInt(vm.selected360Cue),
+    "cueAction": 0
+  }
+  broadcast(cohortMsg)
 }

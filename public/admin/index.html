@@ -204,6 +204,32 @@
               </form>
             </div>
             
+            <!-- <h6 v-if="activeEventIsOpen && activeEvent.label === 'café sarajevo'">Upload cuelist</h6>
+            <form action="#" class="json-cuelist-form" onsubmit=onJSONCuelistUpload(event) v-if="activeEventIsOpen && activeEvent.label === 'café sarajevo'">
+              <div class="form-group">
+                <textarea rows=3 class="form-control code-textarea" id="json-cuelist">{{ uploadJSONCuelistPlaceholder }}</textarea>
+              </div>
+              <div class="form-group">
+                <button type="submit" class="btn btn-secondary btn-block">Upload cuelist</button>
+                <small class="text-danger" v-if="errorOnJSONCuelistUpload == true">Error uploading cuelist (check console)</small>
+              </div>
+            </form> -->
+
+            <h6 v-if="activeEventIsOpen && activeEvent.label === 'café sarajevo'">Predefined cues</h6>
+            <div class="form-group" v-if="activeEventIsOpen && activeEvent.label === 'café sarajevo'">
+              <div class="btn-group btn-group-toggle flex-wrap">
+                <button class="btn btn-outline-secondary" v-for="cue in cafeSarajevo360Cues" onclick=onSelected360Cue(event) v-bind:data-cue-number="cue.cueNumber">
+                  {{ cue.cueNumber }}: {{ cue.label}}
+                </button>
+              </div>
+            </div>
+            <p>Selected cue: {{ selected360Cue }}</p>
+            <div class="form-group" v-if="activeEventIsOpen && activeEvent.label === 'café sarajevo'">
+              <button class="btn btn-outline-success" onclick=onFire360Cue(event)>Fire cue</button>
+              
+              <p class="small" id="sarajevoCueResults"></p>
+            </div>
+
             <h6 v-if="activeEventIsOpen && activeEventDevices.length > 0">Raw messages</h6>
             <form action="#" class="broadcast-form" onsubmit=onBroadcast(event) v-if="activeEventIsOpen && activeEventDevices.length > 0">
               <div class="form-group">
@@ -214,7 +240,14 @@
                 <small class="text-danger" v-if="errorOnBroadcast">Message failed JSON validation</small>
               </div>
             </form>
-            <button class="btn btn-secondary" v-if="activeEventIsOpen" onclick=closeEvent()>Close event</button>
+
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <h4>Event admin</h4>
+            <button class="btn btn-outline-danger" v-if="activeEventIsOpen" onclick=closeEvent()>Close event</button>
             <button class="btn btn-outline-danger delete-event" v-if="!activeEventIsOpen" onclick=deleteCohortEvent()>Delete {{ activeEvent.label }}</button>
           </section>
           

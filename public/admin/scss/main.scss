@@ -125,6 +125,14 @@ header {
   overflow-x: hidden;
 }
 
+.btn-group-toggle {
+  max-width: 38rem;
+
+  .btn {
+    border-radius: 0 !important;
+  }
+}
+
 .episode-control {
   select {
     margin-bottom: 1rem

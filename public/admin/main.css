@@ -84,6 +84,11 @@ header h1.site-title {
   min-width: 15rem;
   overflow-x: hidden; }
 
+.btn-group-toggle {
+  max-width: 38rem; }
+  .btn-group-toggle .btn {
+    border-radius: 0 !important; }
+
 .episode-control select {
   margin-bottom: 1rem; }
 
