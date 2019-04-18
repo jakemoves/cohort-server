@@ -6,7 +6,11 @@ exports.devices = (req, res) => {
 	.then( devices => {
 		if(req.query.tag !== undefined){
 			devices = devices.filter( device => {
+				console.log(device)
 				if(device.tags == null) { return false }
+				if(!Array.isArray(device.tags)){ 
+					return new Error("Error: tags for device id:" + device.id + " are not an array")
+				}
 				return device.tags.includes(req.query.tag)
 			})
 		} // duped to eventsController, DRY it up

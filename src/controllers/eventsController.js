@@ -362,6 +362,9 @@ exports.events_broadcast_push_notification = (req, res) => {
         devices = devices.filter( device => {
           console.log(device)
           if(device.tags == null) { return false }
+          if(!Array.isArray(device.tags)){ 
+            return new Error("Error: tags for device id:" + device.id + " are not an array")
+          }
           return device.tags.includes(req.query.tag)
         })
       } // duped to devicesController, DRY it up
