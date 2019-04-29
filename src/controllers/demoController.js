@@ -93,7 +93,7 @@ exports.prepare_lotx_demo = (req, res) => {
   const payload = {
     text: "hello world",
     bundleId: "rocks.cohort.lotx",
-    sound: "meow.caf",
+    sound: "default.caf",
     cohortMessage: {
     	targetTags: ["all"],
     	mediaDomain: 0,
