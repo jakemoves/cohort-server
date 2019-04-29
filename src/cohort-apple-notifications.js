@@ -17,7 +17,7 @@ function start(){
 				keyId: "6TA7832PAJ",
 				teamId: "J93D25NHHG"
 			}
-			, production: useSandboxAPNS 
+			, production: !useSandboxAPNS 
 		}
 	} else if(process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'test'){
 		options = {
