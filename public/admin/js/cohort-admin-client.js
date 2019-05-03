@@ -15,7 +15,7 @@ var vm = new Vue({
     activeEventIndex: 0,
     activeEventDevices: [ ],
     activeEventOccasions: [ ],
-    broadcastMessagePlaceholder: '{ "mediaDomain": "sound", \n  "cueNumber": 1, \n  "cueAction": "play" }',
+    broadcastMessagePlaceholder: '{ "mediaDomain": 0, \n  "cueNumber": 1, \n  "cueAction": 0 }',
     errorOnBroadcast: false,
     userDidSelectEvent: false,
     occasionFormIsCollapsed: true,
