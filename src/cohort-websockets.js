@@ -7,7 +7,7 @@ module.exports = (options) => {
     let webSocketServer = new webSocket.Server({server: options.server, path: options.path, clientTracking: true})
     
     const keepaliveInterval = setInterval(function ping(){
-      console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
+      // console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
 
       webSocketServer.clients.forEach( (socket) => {
         if(socket.isAlive === false){
