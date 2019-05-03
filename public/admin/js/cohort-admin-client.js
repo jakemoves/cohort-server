@@ -141,52 +141,49 @@ var vm = new Vue({
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify({ guid: vm.guid })
-      }).then( response => {
-        if(response.status == 200){
-          response.json().then( event_device => {
+      }).then( response1 => {
+        if(response1.status == 200){
 
-            // refresh the event details
-            fetch(vm.serverURL + '/events/' + eventId, {
-              method: 'GET'
-            }).then( response => {
-              if(response.status == 200){
-                response.json().then( event => {
-                  
-                  vm.activeEventIndex = vm.events.findIndex( event => {
-                    return event.id == eventId
+          // refresh the event details
+          fetch(vm.serverURL + '/events/' + eventId, {
+            method: 'GET'
+          }).then( response2 => {
+            if(response2.status == 200){
+              response2.json().then( event => {
+                
+                vm.activeEventIndex = vm.events.findIndex( event => {
+                  return event.id == eventId
+                })
+                
+                // get occasions for this event
+                fetch(vm.serverURL + '/events/' + eventId + '/occasions', {
+                  method: 'GET'
+                }).then( response3 => {
+                  response3.json().then( occasions => {
+                    vm.activeEventOccasions.length = 0 
+                    vm.activeEventOccasions.push(...occasions)
                   })
-                  
-                  // get occasions for this event
-                  fetch(vm.serverURL + '/events/' + eventId + '/occasions', {
+                })
+                
+                // if the event is open, connect to it over websockets
+                if(event.state == 'open'){
+                  openWebSocketConnection(event.id)
+                } else {
+                  // get checked-in devices via HTTP
+                  fetch(vm.serverURL + '/events/' + eventId + '/devices', {
                     method: 'GET'
-                  }).then( response => {
-                    response.json().then( occasions => {
-                      vm.activeEventOccasions.length = 0 
-                      vm.activeEventOccasions.push(...occasions)
+                  }).then( response4 => {
+                    response4.json().then( devices => {
+                      vm.activeEventDevices = devices.filter( device => device.guid != vm.guid) 
                     })
                   })
-                  
-                  // if the event is open, connect to it over websockets
-                  if(event.state == 'open'){
-                    openWebSocketConnection(event.id)
-                  } else {
-                    // get checked-in devices via HTTP
-                    fetch(vm.serverURL + '/events/' + eventId + '/devices', {
-                      method: 'GET'
-                    }).then( response => {
-                      response.json().then( devices => {
-                        vm.activeEventDevices = devices.filter( device => device.guid != vm.guid) 
-                      })
-                    })
-                  }
-                })
-              } else {
-                response.text().then( errorText => {
-                  console.log(errorText)
-                })
-              }
-            })
-          
+                }
+              })
+            } else {
+              response.text().then( errorText => {
+                console.log(errorText)
+              })
+            }
           })
         } else {
           response.text().then( errorText => {
