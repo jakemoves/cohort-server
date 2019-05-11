@@ -1,5 +1,9 @@
 {
-   "applinks": {
-       "apps": [ "J93D25NHHG.rocks.cohort.lotx" ]
-    }
+	"applinks": {
+		"apps": [ ],
+		"details": [{
+			"appID": "J93D25NHHG.rocks.cohort.lotx",
+			"paths": [ "/api/v1/events/2" ]
+		}]
+	}
 }
