@@ -1,9 +1,9 @@
 {
 	"applinks": {
-		"apps": [ ],
+		"apps": [],
 		"details": [{
 			"appID": "J93D25NHHG.rocks.cohort.lotx",
-			"paths": [ "/api/v1/events/2" ]
+			"paths": ["/api/v1/events/2"]
 		}]
 	}
 }
