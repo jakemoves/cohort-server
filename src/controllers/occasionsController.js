@@ -45,7 +45,7 @@ exports.occasions_create = (req, res) => {
   occasion.event_id = eventId
   occasionsTable.addOne(occasion).then( occasionId => {
     return occasionsTable.getOneByID(occasionId).then( createdOccasion => {
-      occasion.id = occasionId
+      occasion.id = occasionId[0]
       res.status(201)
       res.location('api/v1/events/' + eventId + '/occasions/' + occasion.id)
       res.json(occasion)
