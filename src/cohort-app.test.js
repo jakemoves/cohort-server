@@ -2,6 +2,7 @@ const request = require('supertest')
 const uuid = require('uuid/v4')
 const knex = require('./knex/knex')
 const ws = require('ws')
+const moment = require('moment')
 
 const CHSession = require('./models/CHSession')
 
@@ -452,6 +453,56 @@ describe('Basic startup', () => {
       console.log(devices)
       expect(devices.length).toEqual(1)
     })
+  })
+
+  test('POST /events/:eventId/occasions', async () => {
+    const payload = { 
+      "doorsOpenDateTime": "2019-02-09T16:00:00-05:00",
+      "endDateTime": "2019-02-09T18:00:00-05:00",
+      "locationCity": "Cupertino",
+      "locationAddress": "One Infinite Loop",
+      "locationLabel": "Apple Park",
+      "startDateTime": "2019-02-09T15:30:00-05:00"
+    }
+
+    const res = await request(app)
+      .post('/api/v1/events/2/occasions')
+      .send(payload)
+
+    expect(res.status).toEqual(201)
+    expect(res.body.event_id).toEqual("2")
+    expect(res.body.id).toBeDefined()
+    expect(res.body.locationCity).toEqual("Cupertino")
+  })
+
+  test('GET /events/:eventId/occasions/:occasionId/today', async () => {
+    const todaysDate = moment().format("YYYY-MM-DD")
+
+    const payload = { 
+      "doorsOpenDateTime": todaysDate + "T16:00:00-05:00",
+      "endDateTime": todaysDate + "T18:00:00-05:00",
+      "locationCity": "Cupertino",
+      "locationAddress": "One Infinite Loop",
+      "locationLabel": "Apple Park",
+      "startDateTime": todaysDate + "T15:30:00-05:00"
+    }
+
+    const res1 = await request(app)
+      .post('/api/v1/events/2/occasions')
+      .send(payload)
+
+    expect(res1.status).toEqual(201)
+    expect(res1.body.event_id).toEqual("2")
+    expect(res1.body.id).toBeDefined()
+    expect(res1.body.locationCity).toEqual("Cupertino")
+
+    const res2 = await request(app)
+      .get('/api/v1/events/2/occasions/today')
+
+    expect(res2.status).toEqual(200)
+    expect(res2.body).toHaveLength(1)
+    expect(res2.body[0].locationLabel).toEqual("Apple Park")
+    expect(res2.body[0].locationCity).toEqual("Cupertino")
   })
 })
 

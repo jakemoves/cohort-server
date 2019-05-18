@@ -50,6 +50,8 @@ router.post('/events/:id/occasions', occasionsController.occasions_create)
 router.get('/occasions', occasionsController.occasions)
 router.delete('/occasions/:id', occasionsController.occasions_delete)
 
+router.get('/events/:id/occasions/today', occasionsController.event_occasions_for_today)
+
 // these are handled by the events controller, not sure if that's best
 router.get('/events/:eventId/occasions/:occasionId/devices', eventsController.events_devices)
 router.patch('/events/:eventId/occasions/:occasionId/check-in', eventsController.events_checkIn) 
