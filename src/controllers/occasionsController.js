@@ -1,3 +1,5 @@
+const moment = require('moment')
+
 const occasionsTable = require('../knex/queries/occasion-queries')
 const eventsTable = require('../knex/queries/event-queries')
 
@@ -43,6 +45,7 @@ exports.occasions_create = (req, res) => {
   occasion.event_id = eventId
   occasionsTable.addOne(occasion).then( occasionId => {
     return occasionsTable.getOneByID(occasionId).then( createdOccasion => {
+      occasion.id = occasionId
       res.status(201)
       res.location('api/v1/events/' + eventId + '/occasions/' + occasion.id)
       res.json(occasion)
@@ -51,7 +54,9 @@ exports.occasions_create = (req, res) => {
   })
   .catch( error => {
     console.log(error)
-    return error
+    res.status(500)
+    res.write(error.message)
+    res.send()
   })
 }
 
@@ -70,4 +75,20 @@ exports.occasions_delete = (req, res) => {
     res.write(error.message)
     res.send()
   })  
+}
+
+exports.event_occasions_for_today = (req, res) => {
+  const todaysDate = moment().format("YYYY-MM-DD")
+  return occasionsTable.getByDateForEvent(req.params.id, todaysDate)
+  .then( occasions => {
+    res.status(200)
+    console.log(occasions)
+    res.json(occasions)
+  })
+  .catch( error => {
+    console.log(error)
+    res.status(500)
+    res.write(error.message)
+    res.send()
+  })
 }
