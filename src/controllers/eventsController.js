@@ -443,7 +443,21 @@ function broadcastPushNotification(devices, req, res) {
       .catch( error => {
         console.log(error)
       })
-		}
+		} else {
+      cohortMessage = {
+        mediaDomain: 2,
+        cueNumber: 0,
+        cueAction: 0,
+        cueContent: req.body.text
+      }
+      console.log('saving cohort text cue on server for notification')
+      console.log(cohortMessage)
+      cohortMessagesTable
+      .addOne(cohortMessage, req.params.eventId)
+      .catch( error => {
+        console.log(error)
+      })
+    }
 
 		note.body = req.body.text
 		note.payload.messageFrom = 'Cohort Server'
