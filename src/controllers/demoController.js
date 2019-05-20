@@ -102,7 +102,7 @@ exports.prepare_lotx_demo = (req, res) => {
     }
   }
 
-  const url = 'http://localhost:3000/api/v1/events/2/broadcast-push-notification'
+  const url = 'http://localhost:3000/api/v1/events/2/occasion/14/broadcast-push-notification'
 
   const payloadJson = JSON.stringify(payload)
   console.log()
