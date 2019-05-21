@@ -28,6 +28,7 @@ router.post('/events/:id/broadcast', eventsController.events_broadcast)
 router.post('/events/:eventId/broadcast-push-notification', eventsController.events_broadcast_push_notification) // eventId rather than id to disambiguate when the user checks in to a specific occasion (see that route listed under occasions)
 
 router.get('/events/:eventId/last-cohort-message', eventsController.events_lastCohortMessage)
+router.get('/events/:id/lotx-ar-tweaks', eventsController.events_getLotXARTweaks)
 
 /*
  *   devices
