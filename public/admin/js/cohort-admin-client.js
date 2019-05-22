@@ -44,7 +44,18 @@ var vm = new Vue({
     broadcastToEventOrOccasion: 'event',
     selectedOccasion: null,
     includeCohortMsgWithN10n: false,
-    n10nBroadcastResults: ''
+    n10nBroadcastResults: '',
+    alertSounds: [
+      "default.caf",
+      "distortion-feedback-v1.caf",
+      "distortion-2-v1.caf",
+      "lukas-22.caf",
+      "luke-1984.caf",
+      "naishi-07_07.caf",
+      "alana-9-14.caf"
+    ],
+    selectedAlertSound: "default.caf",
+    selectedGrouping: "all"
   },
   created: function() {
     if(document.getElementById('cohort-admin')){
@@ -374,6 +385,7 @@ window.broadcast = (cohortMessage) => {
 window.onBroadcastPushNotification = ($event) => {
   $event.preventDefault()
   let alertBody = document.getElementById('notification-text').value
+ 
   let requestURL
   if(vm.broadcastToEventOrOccasion == 'event'){
     requestURL = vm.serverURL + '/events/' + vm.activeEvent.id + '/broadcast-push-notification'
@@ -381,10 +393,20 @@ window.onBroadcastPushNotification = ($event) => {
     requestURL = vm.serverURL + '/events/' + vm.activeEvent.id + '/occasions/' + vm.selectedOccasion + '/broadcast-push-notification'
   }
 
+  if(vm.selectedGrouping != "all"){
+    const queryString = "?tag=" + vm.selectedGrouping
+    requestURL += queryString
+  }
+
+  console.log(requestURL)
+
   let n10n = { 
     text: alertBody,
-    bundleId: 'rocks.cohort.lotx'
+    bundleId: 'rocks.cohort.lotx',
+    sound: vm.selectedAlertSound
   }
+
+  console.log(n10n)
 
   if(vm.includeCohortMsgWithN10n){
     let msg = validateCohortMessage(document.getElementById('n10n-broadcast-message').value)
