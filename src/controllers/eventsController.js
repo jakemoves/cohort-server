@@ -573,8 +573,8 @@ exports.events_getLotXARTweaks = (req, res) => {
     res.status(200)
     const tweaks = {
       "tweaks": { 
-        "scale": 1.0,
-        "position" :[0.002, 0.039, 0.0]
+        "scale": [20.012526, 11.866646],
+        "position" :[0.0635, 2.2667, 0.0]
       }
     }
     res.json(tweaks)
