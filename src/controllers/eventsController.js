@@ -197,7 +197,11 @@ exports.events_checkIn = (req, res) => {
           // this device is already checked into this event...
           // is the occasion different?
           if(eventDeviceRelation.occasion_id == existingEventDeviceRelations[0].occasion_id){
-            console.log("device id:" + existingEventDeviceRelations[0].device_id + " is already checked into occasion " + req.params.occasionId)
+            if(eventDeviceRelation.occasion_id === undefined){
+              console.log("device id:" + existingEventDeviceRelations[0].device_id + " is already checked into event:" + eventDeviceRelation.event_id)
+            } else {
+              console.log("device id:" + existingEventDeviceRelations[0].device_id + " is already checked into event:" + eventDeviceRelation.event_id + " and occasion " + eventDeviceRelation.occasion_id)
+            }
             res.sendStatus(200)
           } else {
             // update the existing relation
