@@ -442,13 +442,16 @@ window.onBroadcastPushNotification = ($event) => {
 function validateCohortMessage(messageText){
   let chMsgJSON
   try {
+    console.log(messageText)
     chMsgJSON = JSON.parse(messageText)
+    console.log(chMsgJSON)
   } catch (e) {
     console.log(e.message)
     vm.errorOnBroadcast = true
     return new Error('cohort message failed validation')
   }
   const cohortMessage = CHMessage(chMsgJSON["mediaDomain"], chMsgJSON["cueNumber"], chMsgJSON["cueAction"])
+  console.log(cohortMessage)
   return cohortMessage
 }
 
