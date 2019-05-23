@@ -197,14 +197,16 @@ exports.events_checkIn = (req, res) => {
           // this device is already checked into this event...
           // is the occasion different?
           if(eventDeviceRelation.occasion_id == existingEventDeviceRelations[0].occasion_id){
+            console.log("device id:" + existingEventDeviceRelations[0].device_id + " is already checked into occasion " + req.params.occasionId)
             res.sendStatus(200)
           } else {
             // update the existing relation
             const relationId = existingEventDeviceRelations[0].id
             return knex('events_devices')
             .where({id: relationId})
-            .update({occasion_id: 1}, ['id'])
+            .update({occasion_id: req.params.occasionId}, ['id'])
             .then( existingRow => {
+              console.log('checked device into event:' + req.params.eventId + "\n   ...and into occasion id:" + req.params.occasionId)
               res.sendStatus(200)
             })
             .catch( error => {
