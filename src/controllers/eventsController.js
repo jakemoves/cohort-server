@@ -577,11 +577,9 @@ exports.events_lastCohortMessage = (req, res) => {
 exports.events_getLotXARTweaks = (req, res) => {
   if(req.params.id == 2){
     res.status(200)
-    const tweaks = {
-      "tweaks": { 
-        "scale": [20.012526, 11.866646],
-        "position" :[0.0635, 2.2667, 0.0]
-      }
+  const tweaks = {
+      "scale": [20.012526, 11.866646],
+      "position" :[0.0635, 2.2667, 0.0]
     }
     res.json(tweaks)
   } else {
