@@ -7,7 +7,7 @@ import CHMessage from './CHMessage'
 var vm = new Vue({
   el: '#cohort-admin',
   data: {
-    guid: 12345,  // let guid = Guid() // enable this when you implement #48
+    guid: Guid(), // enable this when you implement #48
     clientSocket: { readyState: 0 },
     events: [ { id: 0, label: "no events", state: 'closed'} ],
     nullEvent: { id: 0, label: "no events", state: 'closed' }, 
@@ -55,11 +55,79 @@ var vm = new Vue({
       "alana-9-14.caf"
     ],
     selectedAlertSound: "default.caf",
-    selectedGrouping: "all"
+    selectedGrouping: "all",
+    activeLotXCue: {
+      cueNumber: 5,
+      notifications: [
+        {
+          targetGroup: "22",
+          text: "Your ID# is 22. It means 22 will be your guide.\n\nOther people share your number.",
+          alertSound: "default.caf"
+        },{
+          targetGroup: "9-14",
+          text: "Your ID# is 9-14. This means 9-14 will be your guide.\n\nOther people share your number.",
+          alertSound: "default.caf"
+        },{
+          targetGroup: "1984",
+          text: "Your ID# is 1984. This means 1984 will be your guide.\n\nOther people share your number.",
+          alertSound: "default.caf"
+        },{
+          targetGroup: "07_07",
+          text: "Your ID# is 07_07. This means 07_07 will be your guide.\n\nOther people share your number.",
+          alertSound: "default.caf"
+        }
+      ]
+    },
+    errorOnGo: false,
+    goResults: null,
+    lotXCues: [
+      {
+        cueNumber: 5,
+        notifications: [
+          {
+            targetGroup: "22",
+            text: "Your ID# is 22. It means 22 will be your guide.\n\nOther people share your number.",
+            alertSound: "default.caf"
+          },{
+            targetGroup: "9-14",
+            text: "Your ID# is 9-14. This means 9-14 will be your guide.\n\nOther people share your number.",
+            alertSound: "default.caf"
+          },{
+            targetGroup: "1984",
+            text: "Your ID# is 1984. This means 1984 will be your guide.\n\nOther people share your number.",
+            alertSound: "default.caf"
+          },{
+            targetGroup: "07_07",
+            text: "Your ID# is 07_07. This means 07_07 will be your guide.\n\nOther people share your number.",
+            alertSound: "default.caf"
+          }
+        ]
+      },
+      {
+        cueNumber: 13,
+        notifications: [
+          {
+            targetGroup: "07_07",
+            text: "Please proceed",
+            alertSound: "default.caf",
+            cohortCue: {
+              mediaDomain: 0,
+              cueNumber: 4,
+              cueAction: 0
+            }
+          }
+        ]
+      }
+    ]
   },
   created: function() {
     if(document.getElementById('cohort-admin')){
       console.log('starting cohort admin page vue instance')
+
+      // HACK
+      // load lot x first cue
+      this.activeLotXCue = this.lotXCues.find( cue => cue.cueNumber === 5 )
+
       // register this app as an admin device
       fetch(this.serverURL + '/devices', {
         method: 'POST',
@@ -118,7 +186,13 @@ var vm = new Vue({
         return a.socketOpen - b.socketOpen
       }).reverse()
       return sortedDevices
-    }
+    },
+    activeCueIndex: function() {
+      const activeCueIndex = this.lotXCues.findIndex( cue => {
+        return cue.cueNumber == this.activeLotXCue.cueNumber
+      })
+      return activeCueIndex
+    } 
   },
   methods: {
 
@@ -218,6 +292,14 @@ var vm = new Vue({
 
     prettyShortDateTime: function(utcTimestamp){
       return moment(utcTimestamp).format('MMM D @ h:mma')
+    },
+
+    resetSlider: function(){
+      const slider = document.getElementById('cue-control-go')
+      slider.classList.remove('cue-sent-response-success')
+      slider.classList.remove('cue-sent-response-pending')
+      slider.classList.remove('cue-sent-response-error')
+      slider.value = 0
     }
   }
 })
@@ -382,6 +464,7 @@ window.broadcast = (cohortMessage) => {
   } 
 }
 
+// duplicated for GO slider, refactor asap
 window.onBroadcastPushNotification = ($event) => {
   $event.preventDefault()
   let alertBody = document.getElementById('notification-text').value
@@ -515,4 +598,101 @@ window.stopFluxDeluxEpisode = (event) => {
     }
     broadcast(cohortMessage)
   }
+}
+
+window.onCueSliderInput = (event) => {
+  const value = event.target.value
+  console.log(value)
+  if(value == 100){
+    event.target.classList.add('cue-sent-response-pending')
+    // disable the button
+    event.target.disabled = true
+
+    // send the notification(s)
+    vm.activeLotXCue.notifications.forEach( cuelistN10n => {
+      let requestURL = vm.serverURL + '/events/' + vm.activeEvent.id + '/occasions/' + vm.selectedOccasion + '/broadcast-push-notification'
+
+      if(cuelistN10n.targetGroup != "all"){
+        const queryString = "?tag=" + cuelistN10n.targetGroup
+        requestURL += queryString
+      }
+      console.log(requestURL)
+      
+      let n10n = { 
+        text: cuelistN10n.text,
+        bundleId: 'rocks.cohort.lotx',
+        sound: cuelistN10n.alertSound
+      }
+
+      if(cuelistN10n.cohortCue !== undefined && cuelistN10n.cohortCue != null){
+        console.log(cuelistN10n.cohortCue)
+        const cohortMessage = {
+          mediaDomain: cuelistN10n.cohortCue.mediaDomain,
+          cueNumber: cuelistN10n.cohortCue.cueNumber,
+          cueAction: cuelistN10n.cohortCue.cueAction
+        }
+        let msg = cohortMessage
+        n10n.cohortMessage = msg
+      }
+      console.log(n10n)
+
+      try {
+        fetch(requestURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json'},
+          body: JSON.stringify(n10n)
+        }).then( response => {
+          if(response.status == 200){
+            response.text().then( text => {
+              console.log(text)
+              vm.errorOnGo = false
+              event.target.disabled = false
+              event.target.value = 0
+              event.target.classList.add('cue-sent-response-success')
+              event.target.classList.remove('cue-sent-response-pending')
+            })
+          } else {
+            response.json().then( body => {
+              console.log('error on request: ' + body.error)
+              vm.errorOnGo = true
+              vm.goResults = body.error
+              event.target.disabled = false
+              event.target.value = 0
+              event.target.classList.add('cue-sent-response-error')
+              event.target.classList.remove('cue-sent-response-pending')
+            })
+          }
+        }).catch( error => {
+          console.log("Error on push notification broadcast!")
+        })
+      } catch (e) {
+        console.log(e.message)
+        vm.errorOnGo = true
+      } 
+    })
+  }
+}
+
+window.onPreviousLotXCue = (event) => {
+  // update active cue
+  vm.activeLotXCue = vm.lotXCues[vm.activeCueIndex - 1];
+
+  // reset slider
+  vm.resetSlider()
+
+  // hide results
+  vm.errorOnGo = false
+  vm.goResults = null
+}
+
+window.onNextLotXCue = (event) => {
+  // update active cue
+  vm.activeLotXCue = vm.lotXCues[vm.activeCueIndex + 1];
+
+  // reset slider
+  vm.resetSlider()
+
+  // hide results
+  vm.errorOnGo = false
+  vm.goResults = null
 }
