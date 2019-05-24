@@ -27,7 +27,34 @@
 
           <!-- EVENT LIST -->
 
-          <section class="col-auto events-column">
+          <section class="col events-column">
+            <section class="cue-controls" v-if="activeEvent.label == 'lot_x'">
+              <div class="form-group" v-if="activeEvent">
+                <select class="form-control" id="episodeSelect" v-model="selectedOccasion">
+                  <option disabled value="">Choose an occasion</option>
+                  <option v-for="occasion in activeEventOccasions" v-bind:value="occasion.id">
+                    {{ prettyShortDateTime(occasion.startDateTime) }} @ 
+                    {{ occasion.locationLabel }}
+                  </option>
+                </select>
+              </div>
+
+              <h4>Cue {{ activeLotXCue.cueNumber }}</h4>
+              <p>Target Group: {{ activeLotXCue.notifications.length == 1 ? activeLotXCue.notifications[0].targetGroup : 'multiple' }}</p>
+              <p>Alert Sound: {{ activeLotXCue.notifications.length == 1 ? activeLotXCue.notifications[0].alertSound : 'multiple' }}</p>
+              <p>Attached Sound Cue: (concat these in JS)</p>
+              <h6>Notification Text</h6>
+              <p>{{ activeLotXCue.notifications[0].text }}</p>
+
+              <div class="form-group d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" v-bind:disabled="activeCueIndex == 0" onclick=onPreviousLotXCue(event)>&lang; Previous</button>
+                <button type="button" class="btn btn-secondary" v-bind:disabled="activeCueIndex == lotXCues.length-1" onclick=onNextLotXCue(event)>Next &rang;</button>
+              </div>
+              <div class="form-group">
+                <input class="cue-controls__cue-controls-go" type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event) v-bind:disabled="selectedOccasion == null">
+              </div>
+              <p class="small" v-if="errorOnGo">{{ goResults }}</p>
+            </section>
             <section class="occasions" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
               
               <h3><span class="font-weight-light">
@@ -177,13 +204,13 @@
                   <div class="form-check">
                     <input class="form-check-input" type="radio" name="broadcastToEventOrOccasion" v-model="broadcastToEventOrOccasion" id="broadcastToEvent" value="event" checked>
                     <label class="form-check-label" for="broadcastToEvent">
-                      Broadcast to all event participants
+                      Send to all event participants
                     </label>
                   </div>
                   <div class="form-check">
                     <input class="form-check-input" type="radio" name="broadcastToEventOrOccasion" v-model="broadcastToEventOrOccasion"  id="broadcastToOccasion" value="occasion">
                     <label class="form-check-label" for="broadcastToOccasion">
-                      Broadcast to specific occasion participants
+                      Send to specific occasion
                     </label>
                   </div>
                 </div>
