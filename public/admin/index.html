@@ -28,7 +28,7 @@
           <!-- EVENT LIST -->
 
           <section class="col events-column">
-            <section class="cue-controls" v-if="activeEvent.label == 'lot_x'">
+            <section class="cue-controls" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent && activeEvent.label == 'lot_x'">
               <div class="form-group" v-if="activeEvent">
                 <select class="form-control" id="episodeSelect" v-model="selectedOccasion">
                   <option disabled value="">Choose an occasion</option>
@@ -42,7 +42,7 @@
               <h4>Cue {{ activeLotXCue.cueNumber }}</h4>
               <p>Target Group: {{ activeLotXCue.notifications.length == 1 ? activeLotXCue.notifications[0].targetGroup : 'multiple' }}</p>
               <p>Alert Sound: {{ activeLotXCue.notifications.length == 1 ? activeLotXCue.notifications[0].alertSound : 'multiple' }}</p>
-              <p>Attached Sound Cue: (concat these in JS)</p>
+              <p v-if="activeLotXCue.notifications[0].cohortMessage !== undefined">Attached Sound Cue: {{ activeLotXCue.notifications[0].cohortMessage.cueNumber }}</p>
               <h6>Notification Text</h6>
               <p>{{ activeLotXCue.notifications[0].text }}</p>
 
@@ -55,6 +55,7 @@
               </div>
               <p class="small" v-if="errorOnGo">{{ goResults }}</p>
             </section>
+            
             <section class="occasions" v-if="activeEvent.label != nullEventLabel && userDidSelectEvent">
               
               <h3><span class="font-weight-light">

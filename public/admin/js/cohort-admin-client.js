@@ -57,69 +57,194 @@ var vm = new Vue({
     selectedAlertSound: "default.caf",
     selectedGrouping: "all",
     activeLotXCue: {
-      cueNumber: 5,
-      notifications: [
-        {
-          targetGroup: "22",
-          text: "Your ID# is 22. It means 22 will be your guide.\n\nOther people share your number.",
-          alertSound: "default.caf"
-        },{
-          targetGroup: "9-14",
-          text: "Your ID# is 9-14. This means 9-14 will be your guide.\n\nOther people share your number.",
-          alertSound: "default.caf"
-        },{
-          targetGroup: "1984",
-          text: "Your ID# is 1984. This means 1984 will be your guide.\n\nOther people share your number.",
-          alertSound: "default.caf"
-        },{
-          targetGroup: "07_07",
-          text: "Your ID# is 07_07. This means 07_07 will be your guide.\n\nOther people share your number.",
-          alertSound: "default.caf"
-        }
-      ]
+      cueNumber: 1,
+      notifications: [{
+        targetGroup: "all",
+        text: "Hello and thank you for being here",
+        alertSound: "default.caf"
+      }]
     },
     errorOnGo: false,
     goResults: null,
-    lotXCues: [
-      {
-        cueNumber: 5,
-        notifications: [
-          {
-            targetGroup: "22",
-            text: "Your ID# is 22. It means 22 will be your guide.\n\nOther people share your number.",
-            alertSound: "default.caf"
-          },{
-            targetGroup: "9-14",
-            text: "Your ID# is 9-14. This means 9-14 will be your guide.\n\nOther people share your number.",
-            alertSound: "default.caf"
-          },{
-            targetGroup: "1984",
-            text: "Your ID# is 1984. This means 1984 will be your guide.\n\nOther people share your number.",
-            alertSound: "default.caf"
-          },{
-            targetGroup: "07_07",
-            text: "Your ID# is 07_07. This means 07_07 will be your guide.\n\nOther people share your number.",
-            alertSound: "default.caf"
-          }
-        ]
-      },
-      {
-        cueNumber: 13,
-        notifications: [
-          {
-            targetGroup: "07_07",
-            text: "Please proceed",
-            alertSound: "default.caf",
-            cohortCue: {
-              mediaDomain: 0,
-              cueNumber: 4,
-              cueAction: 0
-            }
-          }
-        ]
-      }
-    ]
-  },
+    lotXCues: [{
+      cueNumber: 1,
+      notifications: [{
+        targetGroup: "all",
+        text: "Hello and thank you for being here",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 2,
+      notifications: [{
+        targetGroup: "all",
+        text: "Having a device like you do provides you a few X-tras. You may notice others without devices. Sharing information / experiences provided through this medium is up to you.",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 4,
+      notifications: [{
+        targetGroup: "all",
+        text: "In LOT X - as you move from place to place, we ask you to consider the people you move with",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 5,
+      notifications: [{
+        targetGroup: "22",
+        text: "Your ID# is 22. It means 22 will be your guide.\n\nOther people share your number.",
+        alertSound: "default.caf"
+      },{
+        targetGroup: "9-14",
+        text: "Your ID# is 9-14. This means 9-14 will be your guide.\n\nOther people share your number.",
+        alertSound: "default.caf"
+      },{
+        targetGroup: "1984",
+        text: "Your ID# is 1984. This means 1984 will be your guide.\n\nOther people share your number.",
+        alertSound: "default.caf"
+      },{
+        targetGroup: "07_07",
+        text: "Your ID# is 07_07. This means 07_07 will be your guide.\n\nOther people share your number.",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 6,
+      notifications: [{
+        targetGroup: "22",
+        text: "22: it is time! If you haven’t already, please proceed to the square.",
+        alertSound: "default.caf"
+      },{
+        targetGroup: "9-14",
+        text: "9-14: it is time! If you haven’t already, please proceed to the square.",
+        alertSound: "default.caf"
+      },{
+        targetGroup: "1984",
+        text: "1984: it is time! If you haven’t already, please proceed to the square.",
+        alertSound: "default.caf"
+      },{
+        targetGroup: "07_07",
+        text: "07_07: it is time! If you haven’t already, please proceed to the square.",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 7,
+      notifications: [{
+        targetGroup: "all",
+        text: "While you wait, please familiarize yourself with some terms:\n\nX-23=arrived\nX-25=meet in person",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 8,
+      notifications: [{
+        targetGroup: "all",
+        text: "You are ready. We are ready too.",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 10,
+      notifications: [{
+        targetGroup: "all",
+        text: "X-12 = ready",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 11,
+      notifications: [{
+        targetGroup: "all",
+        text: "If you need assistance, ushers are nearby and ready to help, look for them",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 12,
+      notifications: [{
+        targetGroup: "9-14",
+        text: "X-12. Please proceed to underground.",
+        alertSound: "alana-9-14.caf"
+      },{
+        targetGroup: "22",
+        text: "X-12. Please proceed to underground.",
+        alertSound: "lukas-22.caf"
+      }]
+    },{
+      cueNumber: 13,
+      notifications: [{
+        targetGroup: "07_07",
+        text: "Please proceed",
+        alertSound: "default.caf",
+        cohortMessage: {
+          mediaDomain: 0,
+          cueNumber: 4,
+          cueAction: 0
+        }
+      },{
+        targetGroup: "1984",
+        text: "Please proceed",
+        alertSound: "default.caf",
+        cohortMessage: {
+          mediaDomain: 0,
+          cueNumber: 4,
+          cueAction: 0
+        }
+      },{
+        targetGroup: "9-14",
+        text: "It won’t be long before you go too",
+        alertSound: "default.caf",
+        cohortMessage: {
+          mediaDomain: 0,
+          cueNumber: 5,
+          cueAction: 0
+        }
+      },{
+        targetGroup: "22",
+        text: "It won’t be long before you go too",
+        alertSound: "default.caf",
+        cohortMessage: {
+          mediaDomain: 0,
+          cueNumber: 5
+          ,
+          cueAction: 0
+        }
+      }]
+    },{
+      cueNumber: 14,
+      notifications: [{
+        targetGroup: "1984",
+        text: "X-12. Please proceed to Ice Plant.",
+        alertSound: "luke-1984.caf"
+      },{
+        targetGroup: "07_07",
+        text: "X-12. Please proceed to Ice Plant.",
+        alertSound: "naishi-07_07.caf"
+      }]
+    },{
+      cueNumber: 15,
+      notifications: [{
+        targetGroup: "all",
+        text: "Set your phone to silent mode now",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 16,
+      notifications: [{
+        targetGroup: "all",
+        text: "An augmented reality installation exists outside the theatre on the east wall of the Power Plant. It is part of LOT X. Feel free to visit it now or later.",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 17,
+      notifications: [{
+        targetGroup: "all",
+        text: "Thank YOU for joining us",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 18,
+      notifications: [{
+        targetGroup: "all",
+        text: "Made possible by support from: Canada Council New Chapter, Harbourfront Centre, Danceworks, and Lindy & Sam Chaiton",
+        alertSound: "default.caf"
+      }]
+    }
+  ]},
   created: function() {
     if(document.getElementById('cohort-admin')){
       console.log('starting cohort admin page vue instance')
