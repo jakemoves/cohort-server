@@ -18,6 +18,24 @@ getLatestByEvent = (eventId) => {
   })
 }
 
+getLatestByEventForTag = (eventId, tag) => {
+  return CohortMessages()
+  .where('event_id', parseInt(eventId))
+  .orderBy('created_at', 'desc')
+  .then(messages => {
+    if(messages.length == 0){
+      return undefined
+    }
+    for(i = 0; i < messages.length; i++){
+      const msg = messages[i].message
+      if(msg.targetTags.includes(tag) || msg.targetTags.includes("all")){
+        return messages[i]
+      }
+    }
+    return undefined
+  })
+}
+
 addOne = (cohortMessage, eventId) => {
   let wrappedMsg = {
     event_id: eventId,
@@ -30,5 +48,6 @@ addOne = (cohortMessage, eventId) => {
 
 module.exports = {
   getLatestByEvent: getLatestByEvent,
+  getLatestByEventForTag: getLatestByEventForTag,
   addOne: addOne
 }

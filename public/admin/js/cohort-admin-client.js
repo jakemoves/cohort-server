@@ -262,7 +262,7 @@ var vm = new Vue({
       cueNumber: 18,
       notifications: [{
         targetGroup: "all",
-        text: "Made possible by support from: Canada Council New Chapter, Harbourfront Centre, Danceworks, and Lindy & Sam Chaiton",
+        text: "Made possible by support from: Canada Council New Chapter, Harbourfront Centre, Danceworks, and Lindy Green & Sam Chaiton",
         alertSound: "default.caf"
       }]
     }

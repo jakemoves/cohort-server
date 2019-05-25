@@ -450,7 +450,15 @@ function broadcastPushNotification(devices, req, res) {
         console.log(error)
       })
 		} else {
+      // we save the text of notifications as cohort text cues. this is useful when an app wakes up and wants to display the most recent notification within its own UI
+      let tags
+      if(req.query.tag === undefined){
+        tags = ["all"]
+      } else {
+        tags = ["" + req.query.tag]
+      }
       cohortMessage = {
+        targetTags: tags,
         mediaDomain: 2,
         cueNumber: 0,
         cueAction: 0,
@@ -557,20 +565,37 @@ function broadcastPushNotification(devices, req, res) {
 }
 
 exports.events_lastCohortMessage = (req, res) => {
-  cohortMessagesTable.getLatestByEvent(req.params.eventId)
-  .then( msg => {
-    if(msg !== undefined && msg != null){
-      res.status(200).json(msg)
-    } else {
-      res.sendStatus(404)
-    }
-  })
-  .catch( error => {
-    console.log(error)
-    res.status(500)
-    res.write(error)
-    res.send()
-  })
+  if(req.query.tag === undefined){
+    cohortMessagesTable.getLatestByEvent(req.params.eventId)
+    .then( msg => {
+      if(msg !== undefined && msg != null){
+        res.status(200).json(msg)
+      } else {
+        res.sendStatus(404)
+      }
+    })
+    .catch( error => {
+      console.log(error)
+      res.status(500)
+      res.write(error)
+      res.send()
+    })
+  } else {
+    cohortMessagesTable.getLatestByEventForTag(req.params.eventId, req.query.tag)
+    .then( msg => {
+      if(msg !== undefined && msg != null){
+        res.status(200).json(msg)
+      } else {
+        res.sendStatus(404)
+      }
+    })
+    .catch( error => {
+      console.log(error)
+      res.status(500)
+      res.write(error)
+      res.send()
+    })
+  }
 }
 
 // SUPER HACKY
