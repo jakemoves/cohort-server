@@ -171,6 +171,7 @@ var vm = new Vue({
         text: "Please proceed",
         alertSound: "default.caf",
         cohortMessage: {
+          targetTags: ["07_07"],
           mediaDomain: 0,
           cueNumber: 4,
           cueAction: 0
@@ -180,6 +181,7 @@ var vm = new Vue({
         text: "Please proceed",
         alertSound: "default.caf",
         cohortMessage: {
+          targetTags: ["1984"],
           mediaDomain: 0,
           cueNumber: 4,
           cueAction: 0
@@ -189,6 +191,7 @@ var vm = new Vue({
         text: "It won’t be long before you go too",
         alertSound: "default.caf",
         cohortMessage: {
+          targetTags: ["9-14"],
           mediaDomain: 0,
           cueNumber: 5,
           cueAction: 0
@@ -198,9 +201,9 @@ var vm = new Vue({
         text: "It won’t be long before you go too",
         alertSound: "default.caf",
         cohortMessage: {
+          targetTags: ["22"],
           mediaDomain: 0,
-          cueNumber: 5
-          ,
+          cueNumber: 5,
           cueAction: 0
         }
       }]
