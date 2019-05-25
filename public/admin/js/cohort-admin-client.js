@@ -142,42 +142,42 @@ var vm = new Vue({
     },{
       cueNumber: 9.1,
       notifications: [{
-        targetGroup: "all",
+        targetGroup: "22",
         text: "Welcome everyone. Today, we are standing on history. About 100 years ago this Complex didn’t exist. If you look south from here, towards the water, you see two buildings: The Power Plant and the Ice Plant (or what is known now as Harbourfront Centre Theatre); these two buildings were constructed in 1926.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 9.2,
       notifications: [{
-        targetGroup: "all",
+        targetGroup: "22",
         text: "100 years ago, you would have been standing (and walking) on water. We are not standing on water today. The soles of all of our feet are touching land, and this land was manufactured. For a moment — feel your feet on this ground.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 9.3,
       notifications: [{
-        targetGroup: "all",
+        targetGroup: "22",
         text: "What we are standing on is the extension of a territory that was part of a peaceable covenant between Nations: between the Anishinaabe and Haudenosaunee. This is Dish with One Spoon Territory. West to East, the Dish extends from the Great Lakes to Quebec. The Dish is what we all eat out of — all who share the territory.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 9.4,
       notifications: [{
-        targetGroup: "all",
+        targetGroup: "22",
         text: "Having one spoon means sharing responsibility to ensure the Dish is never empty. This means taking care of the land, and the creatures we share it with. This treaty was made hundreds years ago, before colonial settlement. European settlers were welcomed into it.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 9.5,
       notifications: [{
-        targetGroup: "all",
+        targetGroup: "22",
         text: "The problem was these newcomers considered the land individually — to own and do with as they wished. The Indigenous people held the land communally, seeing their presence as transitory, and thinking about future unborn generations.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 9.6,
       notifications: [{
-        targetGroup: "all",
+        targetGroup: "22",
         text: "HERE — in this spot where we are right now, right below us, the ground has been hollowed out, to make more space for us, and the things we own. We’re going into that underground space — all of us — together.",
         alertSound: "default.caf"
       }]
