@@ -168,7 +168,7 @@ var vm = new Vue({
       cueNumber: 13,
       notifications: [{
         targetGroup: "07_07",
-        text: "Please proceed",
+        text: "TAP THIS",
         alertSound: "default.caf",
         cohortMessage: {
           targetTags: ["07_07"],
@@ -178,7 +178,7 @@ var vm = new Vue({
         }
       },{
         targetGroup: "1984",
-        text: "Please proceed",
+        text: "TAP THIS",
         alertSound: "default.caf",
         cohortMessage: {
           targetTags: ["1984"],
@@ -188,7 +188,7 @@ var vm = new Vue({
         }
       },{
         targetGroup: "9-14",
-        text: "It won’t be long before you go too",
+        text: "TAP THIS",
         alertSound: "default.caf",
         cohortMessage: {
           targetTags: ["9-14"],
@@ -198,7 +198,7 @@ var vm = new Vue({
         }
       },{
         targetGroup: "22",
-        text: "It won’t be long before you go too",
+        text: "TAP THIS",
         alertSound: "default.caf",
         cohortMessage: {
           targetTags: ["22"],
@@ -206,6 +206,25 @@ var vm = new Vue({
           cueNumber: 5,
           cueAction: 0
         }
+      }]
+    },{
+      cueNumber: 13.5,
+      notifications: [{
+        targetGroup: "1984",
+        text: "Please proceed",
+        alertSound: "default.caf"
+      },{
+        targetGroup: "07_07",
+        text: "Please proceed",
+        alertSound: "default.caf"
+      },{
+        targetGroup: "22",
+        text: "It won't be long before you go too",
+        alertSound: "default.caf"
+      },{
+        targetGroup: "9-14",
+        text: "It won't be long before you go too",
+        alertSound: "default.caf"
       }]
     },{
       cueNumber: 14,
