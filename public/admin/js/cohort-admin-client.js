@@ -252,9 +252,9 @@ var vm = new Vue({
     if(document.getElementById('cohort-admin')){
       console.log('starting cohort admin page vue instance')
 
-      // HACK
-      // load lot x first cue
-      this.activeLotXCue = this.lotXCues.find( cue => cue.cueNumber === 5 )
+      // // HACK
+      // // load lot x first cue
+      // this.activeLotXCue = this.lotXCues.find( cue => cue.cueNumber === 1 )
 
       // register this app as an admin device
       fetch(this.serverURL + '/devices', {
@@ -752,15 +752,15 @@ window.onCueSliderInput = (event) => {
         sound: cuelistN10n.alertSound
       }
 
-      if(cuelistN10n.cohortCue !== undefined && cuelistN10n.cohortCue != null){
-        console.log(cuelistN10n.cohortCue)
+      if(cuelistN10n.cohortMessage !== undefined && cuelistN10n.cohortMessage != null){
+        console.log(cuelistN10n.cohortMessage)
         const cohortMessage = {
-          mediaDomain: cuelistN10n.cohortCue.mediaDomain,
-          cueNumber: cuelistN10n.cohortCue.cueNumber,
-          cueAction: cuelistN10n.cohortCue.cueAction
+          targetTags: cuelistN10n.cohortMessage.targetTags,
+          mediaDomain: cuelistN10n.cohortMessage.mediaDomain,
+          cueNumber: cuelistN10n.cohortMessage.cueNumber,
+          cueAction: cuelistN10n.cohortMessage.cueAction
         }
-        let msg = cohortMessage
-        n10n.cohortMessage = msg
+        n10n.cohortMessage = cohortMessage
       }
       console.log(n10n)
 
