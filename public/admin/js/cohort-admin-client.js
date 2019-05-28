@@ -60,7 +60,7 @@ var vm = new Vue({
       cueNumber: 1,
       notifications: [{
         targetGroup: "all",
-        text: "Hello and thank you for being here",
+        text: "Hello and thank you for being here. Tonight is a dress rehearsal.",
         alertSound: "default.caf"
       }]
     },
@@ -70,7 +70,7 @@ var vm = new Vue({
       cueNumber: 1,
       notifications: [{
         targetGroup: "all",
-        text: "Hello and thank you for being here",
+        text: "Hello and thank you for being here. Tonight is a dress rehearsal.",
         alertSound: "default.caf"
       }]
     },{
@@ -78,6 +78,13 @@ var vm = new Vue({
       notifications: [{
         targetGroup: "all",
         text: "Having a device like you do provides you a few X-tras. You may notice others without devices. Sharing information / experiences provided through this medium is up to you.",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 3,
+      notifications: [{
+        targetGroup: "all",
+        text: "You are encouraged to take photos any time you wish. Our hashtag is #lot_x",
         alertSound: "default.caf"
       }]
     },{
@@ -248,7 +255,7 @@ var vm = new Vue({
       cueNumber: 14,
       notifications: [{
         targetGroup: "all",
-        text: "Set your phone to silent or vibrate mode now",
+        text: "Set your phone to silent or vibrate mode now. You are still welcome to take photos anytime you wish - #lot_x",
         alertSound: "default.caf"
       }]
     },{
