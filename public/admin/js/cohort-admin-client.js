@@ -191,6 +191,19 @@ var vm = new Vue({
     },{
       cueNumber: 13,
       notifications: [{
+        targetGroup: "all",
+        text: "TAP THIS",
+        alertSound: "default.caf",
+        cohortMessage: {
+          targetTags: ["all"],
+          mediaDomain: 0,
+          cueNumber: 4,
+          cueAction: 0
+        }
+      }]
+    },{
+      cueNumber: 13.5,
+      notifications: [{
         targetGroup: "1984",
         text: "Please proceed to surface",
         alertSound: "luke-1984.caf"
@@ -206,19 +219,6 @@ var vm = new Vue({
         targetGroup: "9-14",
         text: "Look for the person in the BLUE uniform; they will guide you up",
         alertSound: "alana-9-14.caf"
-      }]
-    },{
-      cueNumber: 13.5,
-      notifications: [{
-        targetGroup: "all",
-        text: "TAP THIS",
-        alertSound: "default.caf",
-        cohortMessage: {
-          targetTags: ["all"],
-          mediaDomain: 0,
-          cueNumber: 4,
-          cueAction: 0
-        }
       }]
     },{
       cueNumber: 14,
