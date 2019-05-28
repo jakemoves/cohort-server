@@ -110,19 +110,19 @@ var vm = new Vue({
       cueNumber: 6,
       notifications: [{
         targetGroup: "22",
-        text: "22: it is time! If you haven’t already, please proceed to the square.",
+        text: "It is time! If you haven’t already, please proceed to the square.",
         alertSound: "default.caf"
       },{
         targetGroup: "9-14",
-        text: "9-14: it is time! If you haven’t already, please proceed to the square.",
+        text: "It is time! If you haven’t already, please proceed to the square.",
         alertSound: "default.caf"
       },{
         targetGroup: "1984",
-        text: "1984: it is time! If you haven’t already, please proceed to the square.",
+        text: "It is time! If you haven’t already, please proceed to the square.",
         alertSound: "default.caf"
       },{
         targetGroup: "07_07",
-        text: "07_07: it is time! If you haven’t already, please proceed to the square.",
+        text: "It is time! If you haven’t already, please proceed to the square.",
         alertSound: "default.caf"
       }]
     },{
@@ -136,7 +136,7 @@ var vm = new Vue({
       cueNumber: 8,
       notifications: [{
         targetGroup: "all",
-        text: "You are ready. We are ready too.",
+        text: "You are ready. We are ready too. X-12 = ready",
         alertSound: "default.caf"
       }]
     },{
@@ -182,13 +182,6 @@ var vm = new Vue({
         alertSound: "default.caf"
       }]
     },{
-      cueNumber: 10,
-      notifications: [{
-        targetGroup: "all",
-        text: "X-12 = ready",
-        alertSound: "default.caf"
-      }]
-    },{
       cueNumber: 11,
       notifications: [{
         targetGroup: "all",
@@ -196,115 +189,84 @@ var vm = new Vue({
         alertSound: "default.caf"
       }]
     },{
-      cueNumber: 12,
-      notifications: [{
-        targetGroup: "9-14",
-        text: "X-12. Please proceed to underground.",
-        alertSound: "alana-9-14.caf"
-      },{
-        targetGroup: "22",
-        text: "X-12. Please proceed to underground.",
-        alertSound: "lukas-22.caf"
-      }]
-    },{
       cueNumber: 13,
       notifications: [{
-        targetGroup: "07_07",
-        text: "TAP THIS",
-        alertSound: "default.caf",
-        cohortMessage: {
-          targetTags: ["07_07"],
-          mediaDomain: 0,
-          cueNumber: 4,
-          cueAction: 0
-        }
-      },{
         targetGroup: "1984",
-        text: "TAP THIS",
-        alertSound: "default.caf",
-        cohortMessage: {
-          targetTags: ["1984"],
-          mediaDomain: 0,
-          cueNumber: 4,
-          cueAction: 0
-        }
+        text: "Please proceed to surface",
+        alertSound: "luke-1984.caf"
       },{
-        targetGroup: "9-14",
-        text: "TAP THIS",
-        alertSound: "default.caf",
-        cohortMessage: {
-          targetTags: ["9-14"],
-          mediaDomain: 0,
-          cueNumber: 5,
-          cueAction: 0
-        }
+        targetGroup: "07_07",
+        text: "Please proceed to surface",
+        alertSound: "naishi-07_07.caf"
       },{
         targetGroup: "22",
-        text: "TAP THIS",
-        alertSound: "default.caf",
-        cohortMessage: {
-          targetTags: ["22"],
-          mediaDomain: 0,
-          cueNumber: 5,
-          cueAction: 0
-        }
+        text: "22 and 59 will soon be with you. Wait where you are for now",
+        alertSound: "lukas-22.caf"
+      },{
+        targetGroup: "9-14",
+        text: "Look for the person in the BLUE uniform; they will guide you up",
+        alertSound: "alana-9-14.caf"
       }]
     },{
       cueNumber: 13.5,
       notifications: [{
-        targetGroup: "1984",
-        text: "Please proceed",
-        alertSound: "default.caf"
-      },{
-        targetGroup: "07_07",
-        text: "Please proceed",
-        alertSound: "default.caf"
-      },{
-        targetGroup: "22",
-        text: "It won't be long before you go too",
-        alertSound: "default.caf"
-      },{
-        targetGroup: "9-14",
-        text: "It won't be long before you go too",
-        alertSound: "default.caf"
+        targetGroup: "all",
+        text: "TAP THIS",
+        alertSound: "default.caf",
+        cohortMessage: {
+          targetTags: ["all"],
+          mediaDomain: 0,
+          cueNumber: 4,
+          cueAction: 0
+        }
       }]
     },{
       cueNumber: 14,
       notifications: [{
-        targetGroup: "1984",
-        text: "X-12. Please proceed to Ice Plant.",
-        alertSound: "luke-1984.caf"
-      },{
-        targetGroup: "07_07",
-        text: "X-12. Please proceed to Ice Plant.",
-        alertSound: "naishi-07_07.caf"
+        targetGroup: "all",
+        text: "Set your phone to silent or vibrate mode now",
+        alertSound: "default.caf"
       }]
     },{
       cueNumber: 15,
       notifications: [{
         targetGroup: "all",
-        text: "Set your phone to silent mode now",
-        alertSound: "default.caf"
+        text: "Retrace your steps. Walk back the way you came and down the stairs. At ground level you will be guided into the theatre.",
+        alertSound: "distortion-feedback-v1.caf"
       }]
     },{
       cueNumber: 16,
       notifications: [{
         targetGroup: "all",
-        text: "An augmented reality installation exists outside the theatre on the east wall of the Power Plant. It is part of LOT X. Feel free to visit it now or later.",
+        text: "Sit on benches or floor, or stand in a place that is comfortable. Choose your view",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 17,
       notifications: [{
         targetGroup: "all",
-        text: "Thank YOU for joining us",
+        text: "An augmented reality installation exists outside the theatre on the east wall of the Power Plant. It is part of LOT X. Feel free to visit it now or later.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 18,
       notifications: [{
         targetGroup: "all",
+        text: "Thank YOU for joining us",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 19,
+      notifications: [{
+        targetGroup: "all",
         text: "Made possible by support from: Canada Council New Chapter, Harbourfront Centre, Danceworks, and Lindy Green & Sam Chaiton",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 20,
+      notifications: [{
+        targetGroup: "all",
+        text: "This should be the last LOT_X notification you receive. If there are more, please let us know at info@adelheid.ca. You can write to let us know other things too. Our hashtag is LOT_X.\n\nOver + out",
         alertSound: "default.caf"
       }]
     }
