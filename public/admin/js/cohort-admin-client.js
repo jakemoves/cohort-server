@@ -60,7 +60,7 @@ var vm = new Vue({
       cueNumber: 1,
       notifications: [{
         targetGroup: "all",
-        text: "Hello and thank you for being here. Tonight is a dress rehearsal.",
+        text: "Hello and thank you for being here",
         alertSound: "default.caf"
       }]
     },
@@ -70,7 +70,7 @@ var vm = new Vue({
       cueNumber: 1,
       notifications: [{
         targetGroup: "all",
-        text: "Hello and thank you for being here. Tonight is a dress rehearsal.",
+        text: "Hello and thank you for being here",
         alertSound: "default.caf"
       }]
     },{
@@ -98,19 +98,19 @@ var vm = new Vue({
       cueNumber: 5,
       notifications: [{
         targetGroup: "22",
-        text: "Your ID# is 22. It means 22 will be your guide.\n\nOther people share your number.",
+        text: "Your ID# is in the top corner of the app.\n\nOther people share your number.",
         alertSound: "default.caf"
       },{
         targetGroup: "9-14",
-        text: "Your ID# is 9-14. This means 9-14 will be your guide.\n\nOther people share your number.",
+        text: "Your ID# is in the top corner of the app.\n\nOther people share your number.",
         alertSound: "default.caf"
       },{
         targetGroup: "1984",
-        text: "Your ID# is 1984. This means 1984 will be your guide.\n\nOther people share your number.",
+        text: "Your ID# is in the top corner of the app.\n\nOther people share your number.",
         alertSound: "default.caf"
       },{
         targetGroup: "07_07",
-        text: "Your ID# is 07_07. This means 07_07 will be your guide.\n\nOther people share your number.",
+        text: "Your ID# is in the top corner of the app.\n\nOther people share your number.",
         alertSound: "default.caf"
       }]
     },{
@@ -255,7 +255,7 @@ var vm = new Vue({
       cueNumber: 14,
       notifications: [{
         targetGroup: "all",
-        text: "Set your phone to silent or vibrate mode now. You are still welcome to take photos anytime you wish - #lot_x",
+        text: "Set your phone to silent or vibrate mode now. You are still welcome to take photos anytime you wish — but NO FLASH OR VIDEO. #lot_x",
         alertSound: "default.caf"
       }]
     },{
@@ -276,28 +276,14 @@ var vm = new Vue({
       cueNumber: 17,
       notifications: [{
         targetGroup: "all",
-        text: "An augmented reality installation exists outside the theatre on the east wall of the Power Plant. It is part of LOT X. Feel free to visit it now or later.",
+        text: "An augmented reality installation exists outside the theatre on the east wall of the Power Plant. It is part of LOT X. Feel free to visit it now or later. Ushers can point you in the right direction.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 18,
       notifications: [{
         targetGroup: "all",
-        text: "Thank YOU for joining us",
-        alertSound: "default.caf"
-      }]
-    },{
-      cueNumber: 19,
-      notifications: [{
-        targetGroup: "all",
-        text: "Made possible by support from: Canada Council New Chapter, Harbourfront Centre, Danceworks, and Lindy Green & Sam Chaiton",
-        alertSound: "default.caf"
-      }]
-    },{
-      cueNumber: 20,
-      notifications: [{
-        targetGroup: "all",
-        text: "This should be the last LOT_X notification you receive. If there are more, please let us know at info@adelheid.ca. You can write to let us know other things too. Our hashtag is LOT_X.\n\nOver + out",
+        text: "Thank YOU for joining us. This should be the last LOT_X notification you receive. If there are more, please let us know at info@adelheid.ca. You can write to let us know other things too. Our hashtag is LOT_X.\n\nOver + out",
         alertSound: "default.caf"
       }]
     }
