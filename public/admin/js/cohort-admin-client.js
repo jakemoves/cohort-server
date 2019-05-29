@@ -118,19 +118,19 @@ var vm = new Vue({
       notifications: [{
         targetGroup: "22",
         text: "It is time! If you haven’t already, please proceed to the square.",
-        alertSound: "default.caf"
+        alertSound: "distortion-feedback-v1.caf"
       },{
         targetGroup: "9-14",
         text: "It is time! If you haven’t already, please proceed to the square.",
-        alertSound: "default.caf"
+        alertSound: "distortion-feedback-v1.caf"
       },{
         targetGroup: "1984",
         text: "It is time! If you haven’t already, please proceed to the square.",
-        alertSound: "default.caf"
+        alertSound: "distortion-feedback-v1.caf"
       },{
         targetGroup: "07_07",
         text: "It is time! If you haven’t already, please proceed to the square.",
-        alertSound: "default.caf"
+        alertSound: "distortion-feedback-v1.caf"
       }]
     },{
       cueNumber: 7,
@@ -263,7 +263,7 @@ var vm = new Vue({
       notifications: [{
         targetGroup: "all",
         text: "Retrace your steps. Walk back the way you came and down the stairs. At ground level you will be guided into the theatre.",
-        alertSound: "distortion-feedback-v1.caf"
+        alertSound: "default.caf"
       }]
     },{
       cueNumber: 16,
