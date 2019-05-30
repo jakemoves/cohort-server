@@ -124,14 +124,14 @@ var vm = new Vue({
       cueNumber: 7,
       notifications: [{
         targetGroup: "all",
-        text: "While you wait, please familiarize yourself with some terms:\n\nX-23=arrived\nX-25=meet in person",
+        text: "While you wait, please familiarize yourself with some terms:\n\n\nX-23=arrived\n\nX-25=meet in person",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 8,
       notifications: [{
         targetGroup: "all",
-        text: "You are ready. We are ready too. X-12 = ready",
+        text: "You are ready. We are ready too.\n\n\nX-12 = ready",
         alertSound: "default.caf"
       }]
     },{
@@ -215,7 +215,7 @@ var vm = new Vue({
       cueNumber: 12.3,
       notifications: [{
         targetGroup: "22",
-        text: "Sometimes things that enter can’t always exit. There was a splinter; the splinter entered my leg; the splinter sprouted: it was a seed. There was a quarantine, and the sprout was severed.\n\nThat's impossible.\n\n[disbelieving crosstalk]",
+        text: "Sometimes things that enter can’t always exit. There was a splinter; the splinter entered my leg; the splinter sprouted: it was a seed. There was a quarantine, and the sprout was severed.\n\n\nThat's impossible!\n\n\n[disbelieving crosstalk]",
         alertSound: "default.caf"
       }]
     },{
@@ -243,7 +243,7 @@ var vm = new Vue({
       cueNumber: 12.5,
       notifications: [{
         targetGroup: "22",
-        text: "My grandparents ran a mechanic shop out of their farm for over fifty years. When my grandfather died, my grandmother looked into selling the land. She had some people come and assess it. They said she would need to pay to have the soil cleaned. Not just the first few layers that had been contaminated by gas and oil, but deeper layer of contamination that happened long before my grandparents’ time there. Is that her responsibility?",
+        text: "My grandparents ran a mechanic shop out of their farm for over fifty years. When my grandfather died, my grandmother looked into selling the land. She had some people come and assess it. They said she would need to pay to have the soil cleaned. Not just the first few layers that had been contaminated by gas and oil, but deeper layers of contamination that happened long before my grand- parents' time there. Is that her responsibility?",
         alertSound: "default.caf"
       }]
     },{
