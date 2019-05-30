@@ -91,7 +91,7 @@ var vm = new Vue({
       cueNumber: 4,
       notifications: [{
         targetGroup: "all",
-        text: "In LOT X - as you move from place to place, we ask you to consider the people you move with",
+        text: "In LOT X - as you move from place to place, we ask you to consider the people you move with. Offer seats to those who need them",
         alertSound: "default.caf"
       }]
     },{
@@ -187,42 +187,63 @@ var vm = new Vue({
       cueNumber: 12,
       notifications: [{
         targetGroup: "22",
-        text: "Here at our location of 43.7° North by 79.6° West, the air is rich in oxygen, nitrogen, and argon. Down here, elevated levels of carbon dioxide due to remains of exhaust.\n\nPresence of glass and oil. Proximity to petroleum, metal, carbon fibre, and lithium.",
+        text: "Here at our location of 43.7° N by 79.6° W, the air is rich in oxygen, nitrogen, and argon. Down here, elevated levels of carbon dioxide due to remains of exhaust.\n\n\nPresence of glass and oil. Proximity to petroleum, metal, carbon fibre, and lithium.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 12.1,
       notifications: [{
         targetGroup: "22",
-        text: "Are we inside or outside? The light in here continues to be confusing. Registering 70% natural, 30% artificial.\n\nRegistering wildlife. Bird at third pipe east, second floor.\n\nThere is evidence of water, powdered limestone, and clay. Processed together: strong artificial stone.",
+        text: "Are we inside or outside? The light in here continues to be confusing. Registering 70% natural, 30% artificial.\n\n\nRegistering wildlife. Bird at third pipe east, second floor.\n\n\nThere is evidence of water, powdered limestone, and clay. Processed together: strong artificial stone.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 12.2,
       notifications: [{
         targetGroup: "22",
-        text: "The water has cracked the concrete and rusted the metal. The cracks and rust are not immediately visible, but there are multiple structural instabilities.\n\nCalcium deposit growth on the south wall increasing rapidly at a rate of 38%.\n\nI once lived in a place that had a high level of limestone in the water. It accumulated in the kettle and formed lime scale. It also accumulated in my body, and I developed kidney stones.",
+        text: "The water has cracked the concrete and rusted the metal. The cracks and rust are not immediately visible, but there are multiple structural instabilities.\n\n\nCalcium deposit growth on the south wall increasing rapidly at a rate of 38%.",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 12.25,
+      notifications: [{
+        targetGroup: "22",
+        text: "I once lived in a place that had a high level of limestone in the water. It accumulated in the kettle and formed lime scale. It also accumulated in my body, and I developed kidney stones.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 12.3,
       notifications: [{
         targetGroup: "22",
-        text: "Sometimes things that enter can’t always exit. There was a splinter; the splinter entered my leg; the splinter sprouted: it was a seed. There was a quarantine, and the sprout was severed.\n\n[disbelieving crosstalk]\n\nAnd the body heals itself. The cells regenerate: this is nature. The body is made of 30 to 40 trillion cells.",
+        text: "Sometimes things that enter can’t always exit. There was a splinter; the splinter entered my leg; the splinter sprouted: it was a seed. There was a quarantine, and the sprout was severed.\n\nThat's impossible.\n\n[disbelieving crosstalk]",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 12.35,
+      notifications: [{
+        targetGroup: "22",
+        text: "The body heals itself. The cells regenerate: this is nature. The body is made of 30 to 40 trillion cells.",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 12.375,
+      notifications: [{
+        targetGroup: "22",
+        text: "Body is like a territory. Body is like a country. It ages; it has boundaries.\n\n\nIt is a host — and a guest.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 12.4,
       notifications: [{
         targetGroup: "22",
-        text: "Boundaries can be transcended. If you’re a host you open yourself up to invasion. Something that enters, that gets stuck, and never leaves.\n\nSometimes leaving leaves a mark.\n\nIt’s like a scar.\n\nSometimes, it’s a trauma that you don’t even know if you personally experienced. Like an inherited scar.",
+        text: "Boundaries can be transcended. If you’re a host you open your self up to invasion. Something that enters, that gets stuck, and never leaves.\n\nSometimes leaving leaves a mark.\n\nIt’s like a scar.\n\nSometimes, it’s a trauma that you don’t even know if you personally experienced. Like an inherited scar.",
         alertSound: "default.caf"
       }]
     },{
       cueNumber: 12.5,
       notifications: [{
         targetGroup: "22",
-        text: "My grandparents ran a mechanic shop out of their farm for over fifty years. When my grandfather died, my grandmother looked into selling the land. She had some people come and assess the value. They told her she would need to pay to have the soil cleaned. Not just the first few layers that had been contaminated by gas and oil, but layer upon layer, deeper and deeper, of contamination that happened long before my grandparents’ time there. Is that her responsibility?",
+        text: "My grandparents ran a mechanic shop out of their farm for over fifty years. When my grandfather died, my grandmother looked into selling the land. She had some people come and assess it. They said she would need to pay to have the soil cleaned. Not just the first few layers that had been contaminated by gas and oil, but deeper layer of contamination that happened long before my grandparents’ time there. Is that her responsibility?",
         alertSound: "default.caf"
       }]
     },{
@@ -236,7 +257,7 @@ var vm = new Vue({
       cueNumber: 12.7,
       notifications: [{
         targetGroup: "22",
-        text: "I have a seed stuck in my teeth. I think it’s a seed? Maybe it’s a shell? I’m not quite sure, but it’s really in there, and for the life of me I can’t get it out.",
+        text: "I have a seed stuck in my teeth. I think it’s a seed? Maybe it’s a shell? I’m not quite sure, but it’s really in there, and for the life of me I can’t\n\nget it\n\nout.",
         alertSound: "default.caf"
       }]
     },{
