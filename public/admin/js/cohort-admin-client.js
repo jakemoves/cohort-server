@@ -243,7 +243,7 @@ var vm = new Vue({
       cueNumber: 12.5,
       notifications: [{
         targetGroup: "22",
-        text: "My grandparents ran a mechanic shop out of their farm for over fifty years. When my grandfather died, my grandmother looked into selling the land. She had some people come and assess it. They said she would need to pay to have the soil cleaned. Not just the first few layers that had been contaminated by gas and oil, but deeper layers of contamination that happened long before my grand- parents' time there. Is that her responsibility?",
+        text: "My grandparents ran a mechanic shop on farm for over 50 years. When my grandfather died, my grandmother looked into selling the land. She had some people come and assess it. They said she would need to pay to have the soil cleaned. Not just the first few layers that had been contaminated by gas and oil, but deeper layers of contamination that happened long before my grand- parents' time there. Is that her responsibility?",
         alertSound: "default.caf"
       }]
     },{
