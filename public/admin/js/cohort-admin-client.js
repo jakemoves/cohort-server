@@ -54,7 +54,7 @@ var vm = new Vue({
       "naishi-07_07.caf",
       "alana-9-14.caf"
     ],
-    selectedAlertSound: "derp.caf",
+    selectedAlertSound: "default.caf",
     selectedGrouping: "all",
     activeLotXCue: {
       cueNumber: 1,
@@ -81,6 +81,13 @@ var vm = new Vue({
         alertSound: "default.caf"
       }]
     },{
+      cueNumber: 2.5,
+      notifications: [{
+        targetGroup: "22",
+        text: "Some sections of the show are captioned. Captions are easier to read within the app",
+        alertSound: "default.caf"
+      }]
+    },{
       cueNumber: 3,
       notifications: [{
         targetGroup: "all",
@@ -91,7 +98,7 @@ var vm = new Vue({
       cueNumber: 4,
       notifications: [{
         targetGroup: "all",
-        text: "In LOT X - as you move from place to place, we ask you to consider the people you move with. Offer seats to those who need them",
+        text: "In LOT X - as you move from place to place, we ask you to consider the people you move with",
         alertSound: "default.caf"
       }]
     },{
@@ -132,6 +139,13 @@ var vm = new Vue({
       notifications: [{
         targetGroup: "all",
         text: "You are ready. We are ready too.\n\n\nX-12 = ready",
+        alertSound: "default.caf"
+      }]
+    },{
+      cueNumber: 8.5,
+      notifications: [{
+        targetGroup: "22",
+        text: "Set your phone to vibrate mode now",
         alertSound: "default.caf"
       }]
     },{
