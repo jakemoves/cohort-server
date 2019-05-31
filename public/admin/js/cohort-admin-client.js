@@ -54,7 +54,7 @@ var vm = new Vue({
       "naishi-07_07.caf",
       "alana-9-14.caf"
     ],
-    selectedAlertSound: "default.caf",
+    selectedAlertSound: "derp.caf",
     selectedGrouping: "all",
     activeLotXCue: {
       cueNumber: 1,
