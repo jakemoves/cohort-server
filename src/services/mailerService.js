@@ -22,11 +22,10 @@ exports.initService = async function(){
   })
 }
 
-exports.sendMail = function(text, subject, recipient){
-  console.log('sendMail()')
+exports.sendMail = function(text, subject, recipients){
   return transporter.sendMail({
     from: '"Cohort" <cohortrocks@gmail.com>',
-    to: recipient,
+    to: recipients,
     subject: subject,
     text: text
   })
