@@ -17,6 +17,7 @@
     "machina": "^4.0.2",
     "moment": "^2.24.0",
     "node-fetch": "^2.3.0",
+    "nodemailer": "^6.2.1",
     "npx": "^10.2.0",
     "pg": "^7.7.1",
     "supertest": "^3.3.0",

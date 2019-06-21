@@ -1,4 +1,5 @@
 const webSocket = require('ws')
+const mailerService = require('./services/mailerService')
 const app = require('./cohort-app')
 const CHSession = require('./models/CHSession')
 
@@ -35,6 +36,9 @@ start = async () => {
 	await CHSession.initAndSetOnApp(app).then( () => {
 		console.log("   cohort session started")
 	}) 
+
+	/* mail service init */
+	mailerService.initService()
 }
 
 start()

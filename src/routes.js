@@ -5,6 +5,7 @@ const eventsController = require('./controllers/eventsController')
 const devicesController = require('./controllers/devicesController')
 const occasionsController = require('./controllers/occasionsController')
 const demoController = require('./controllers/demoController')
+const servicesController = require('./controllers/servicesController')
 
 router.get('', (req, res) => {
   res.send('Cohort rocks')
@@ -57,6 +58,12 @@ router.get('/events/:id/occasions/today', occasionsController.event_occasions_fo
 router.get('/events/:eventId/occasions/:occasionId/devices', eventsController.events_devices)
 router.patch('/events/:eventId/occasions/:occasionId/check-in', eventsController.events_checkIn) 
 router.post('/events/:eventId/occasions/:occasionId/broadcast-push-notification', eventsController.events_occasions_broadcast_push_notification) // yes this is a little weird, it's located in the events controller for convenience... eventually the broadcast stuff should get extracted to a service
+
+/* 
+ *   one-offs
+ */
+
+router.post('/services/mail', servicesController.send_email)
 
 /*
  *   demo stuff
