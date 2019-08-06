@@ -37,7 +37,7 @@ deleteOne = (occasionId) => {
     .returning('id')
 }
 
-getByDateForEvent = (eventId, dateString /* '1984-04-01', ie ISO8601 'YYYY-MM-DD' part only*/ ) => {
+getOccasionsOnOrAfterDate = (eventId, dateString /* '1984-04-01', ie ISO8601 'YYYY-MM-DD' part only*/ ) => {
   return Occasions()
     .where('event_id', eventId)
     .andWhere(knex.raw("date_trunc('day', \"startDateTime\") >= '" + dateString + "';"))
@@ -49,5 +49,5 @@ module.exports = {
   getAll: getAll,
   addOne: addOne,
   deleteOne: deleteOne,
-  getByDateForEvent: getByDateForEvent
+  getOccasionsOnOrAfterDate: getOccasionsOnOrAfterDate
 }

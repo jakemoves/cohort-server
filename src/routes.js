@@ -51,7 +51,6 @@ router.get('/events/:id/occasions', occasionsController.occasionsForEvent)
 router.post('/events/:id/occasions', occasionsController.occasions_create)
 router.get('/occasions', occasionsController.occasions)
 router.delete('/occasions/:id', occasionsController.occasions_delete)
-
 router.get('/events/:id/occasions/upcoming', occasionsController.event_occasions_upcoming)
 
 // these are handled by the events controller, not sure if that's best

@@ -78,8 +78,17 @@ exports.occasions_delete = (req, res) => {
 }
 
 exports.event_occasions_upcoming = (req, res) => {
-  const todaysDate = moment().format("YYYY-MM-DD")
-  return occasionsTable.getByDateForEvent(req.params.id, todaysDate)
+  if(!req.query.onOrAfterDate){
+    res.status(400)
+    res.write('Error: request must include an "onOrAfterDate" query parameter in YYYY-MM-DD format')
+    res.send()
+    return
+  }
+
+  const todaysDate = req.query.onOrAfterDate
+  console.log(todaysDate)
+
+  return occasionsTable.getOccasionsOnOrAfterDate(req.params.id, todaysDate)
   .then( occasions => {
     res.status(200)
     console.log(occasions)

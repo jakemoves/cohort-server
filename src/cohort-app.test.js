@@ -516,7 +516,7 @@ describe('Basic startup', () => {
     expect(res2.body.locationCity).toEqual("Cupertino")
 
     const res3 = await request(app)
-      .get('/api/v1/events/2/occasions/upcoming')
+      .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
 
     expect(res3.status).toEqual(200)
     expect(res3.body).toHaveLength(1)
@@ -547,7 +547,7 @@ describe('Basic startup', () => {
     expect(res1.body.locationCity).toEqual("Cupertino")
 
     const res2 = await request(app)
-      .get('/api/v1/events/2/occasions/upcoming')
+      .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
 
     expect(res2.status).toEqual(200)
     expect(res2.body).toHaveLength(1)
@@ -577,7 +577,7 @@ describe('Basic startup', () => {
     expect(res1.body.locationCity).toEqual("Cupertino")
 
     const res2 = await request(app)
-      .get('/api/v1/events/2/occasions/upcoming')
+      .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
 
     expect(res2.status).toEqual(200)
     expect(res2.body).toHaveLength(1)
