@@ -475,7 +475,8 @@ describe('Basic startup', () => {
     expect(res.body.locationCity).toEqual("Cupertino")
   })
 
-  test('GET /events/:eventId/occasions/:occasionId/today', async () => {
+  test('GET /events/:eventId/occasions/:occasionId/upcoming', async () => {
+    const yesterdaysDate = moment().subtract(1, 'days').format("YYYY-MM-DD")
     const todaysDate = moment().format("YYYY-MM-DD")
 
     const payload = { 
@@ -496,8 +497,87 @@ describe('Basic startup', () => {
     expect(res1.body.id).toBeDefined()
     expect(res1.body.locationCity).toEqual("Cupertino")
 
+    const payload2 = { 
+      "doorsOpenDateTime": yesterdaysDate + "T16:00:00-05:00",
+      "endDateTime": yesterdaysDate + "T18:00:00-05:00",
+      "locationCity": "Cupertino",
+      "locationAddress": "One Infinite Loop",
+      "locationLabel": "Apple Park",
+      "startDateTime": yesterdaysDate + "T15:30:00-05:00"
+    }
+
     const res2 = await request(app)
-      .get('/api/v1/events/2/occasions/today')
+      .post('/api/v1/events/2/occasions')
+      .send(payload2)
+
+    expect(res2.status).toEqual(201)
+    expect(res2.body.event_id).toEqual("2")
+    expect(res2.body.id).toBeDefined()
+    expect(res2.body.locationCity).toEqual("Cupertino")
+
+    const res3 = await request(app)
+      .get('/api/v1/events/2/occasions/upcoming')
+
+    expect(res3.status).toEqual(200)
+    expect(res3.body).toHaveLength(1)
+    expect(res3.body[0].locationLabel).toEqual("Apple Park")
+    expect(res3.body[0].locationCity).toEqual("Cupertino")
+
+  })
+
+  test('GET /events/:eventId/occasions/:occasionId/upcoming -- edge case: event late in day', async () => {
+    const todaysDate = moment().format("YYYY-MM-DD")
+
+    const payload = { 
+      "doorsOpenDateTime": todaysDate + "T22:50:00-05:00",
+      "endDateTime": todaysDate + "T23:50:00-05:00",
+      "locationCity": "Cupertino",
+      "locationAddress": "One Infinite Loop",
+      "locationLabel": "Apple Park",
+      "startDateTime": todaysDate + "T23:00:00-05:00"
+    }
+
+    const res1 = await request(app)
+      .post('/api/v1/events/2/occasions')
+      .send(payload)
+
+    expect(res1.status).toEqual(201)
+    expect(res1.body.event_id).toEqual("2")
+    expect(res1.body.id).toBeDefined()
+    expect(res1.body.locationCity).toEqual("Cupertino")
+
+    const res2 = await request(app)
+      .get('/api/v1/events/2/occasions/upcoming')
+
+    expect(res2.status).toEqual(200)
+    expect(res2.body).toHaveLength(1)
+    expect(res2.body[0].locationLabel).toEqual("Apple Park")
+    expect(res2.body[0].locationCity).toEqual("Cupertino")
+  })
+
+  test('GET /events/:eventId/occasions/:occasionId/upcoming -- edge case: event early in day', async () => {
+    const todaysDate = moment().format("YYYY-MM-DD")
+
+    const payload = { 
+      "doorsOpenDateTime": todaysDate + "T00:50:00-05:00",
+      "endDateTime": todaysDate + "T02:00:00-05:00",
+      "locationCity": "Cupertino",
+      "locationAddress": "One Infinite Loop",
+      "locationLabel": "Apple Park",
+      "startDateTime": todaysDate + "T01:00:00-05:00"
+    }
+
+    const res1 = await request(app)
+      .post('/api/v1/events/2/occasions')
+      .send(payload)
+
+    expect(res1.status).toEqual(201)
+    expect(res1.body.event_id).toEqual("2")
+    expect(res1.body.id).toBeDefined()
+    expect(res1.body.locationCity).toEqual("Cupertino")
+
+    const res2 = await request(app)
+      .get('/api/v1/events/2/occasions/upcoming')
 
     expect(res2.status).toEqual(200)
     expect(res2.body).toHaveLength(1)

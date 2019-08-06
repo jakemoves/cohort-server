@@ -77,7 +77,7 @@ exports.occasions_delete = (req, res) => {
   })  
 }
 
-exports.event_occasions_for_today = (req, res) => {
+exports.event_occasions_upcoming = (req, res) => {
   const todaysDate = moment().format("YYYY-MM-DD")
   return occasionsTable.getByDateForEvent(req.params.id, todaysDate)
   .then( occasions => {
