@@ -1,6 +1,7 @@
-# cohort-server
+# Cohort-server
 
-## environment setup
+## Getting started
+### environment setup
 - install node 6.12.3
   - we recommend that you use [nvm](https://github.com/nvm-sh/nvm) to manage your node installed versions
   - use nvm to make node 6.12.3 the active version
@@ -8,16 +9,17 @@
 - clone repo from github
 
 ### database setup
+- ensure postgresql is running as a service (`pg_ctl -D /usr/local/var/postgres start`, or if you installed with Homebrew, `brew services start postgresql`)
 - `npm install`
 - `npm install -g knex`
 - `createdb cohort`
 - `createdb cohort_test`
 - `createuser cohort_admin`
-- from src/knex: `knex migrate:latest`
+- from `src/knex` : `knex migrate:latest`
 - `knex seed:run`
 
 ### admin site setup
-- from public/admin:
+- from `public/admin`:
 - `yarn install`
 - `yarn run dev`
 
@@ -34,3 +36,6 @@
 
 ### starting the server
 - `node lib/cohort-server.js`
+
+### using VS Code for development
+This repo includes a workspace for Visual Studio Code. The workspace is set up with launch and build scripts.
