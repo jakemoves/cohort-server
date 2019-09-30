@@ -5,7 +5,7 @@
   "author": "Jacob Niedzwiecki",
   "license": "MIT",
   "dependencies": {
-    "bootstrap": "^4.2.1",
+    "bootstrap": "^4.3.1",
     "howler": "^2.1.1",
     "jquery": "^3.3.1",
     "js-cookie": "^2.2.0",
