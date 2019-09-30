@@ -36,6 +36,18 @@
 
 ### starting the server
 - `node lib/cohort-server.js`
+- you should see:
+```
+preparing notification service using 'development' environment
+starting cohort server...
+   environment: development
+   http server started on port 3000
+   websocket server started
+event midway is now open
+event fluxdelux is now open
+   cohort session started
+   mailer service started
+```
 
 ### using VS Code for development
 This repo includes a workspace for Visual Studio Code. The workspace is set up with launch and build scripts.
