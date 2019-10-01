@@ -1,3 +1,6 @@
+// Copyright Jacob Niedzwiecki, 2019
+// Released under the MIT License (see /LICENSE)
+
 const webSocket = require('ws')
 const mailerService = require('./services/mailerService')
 const app = require('./cohort-app')
@@ -26,7 +29,8 @@ start = async () => {
 	const webSocketServer = await require('./cohort-websockets')({
 		app: app,
 		server: server,
-		path: '/sockets'
+		path: '/sockets',
+		keepaliveIntervalDuration: 25000
 	})
 
 	/*

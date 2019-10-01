@@ -1,3 +1,6 @@
+// Copyright Jacob Niedzwiecki, 2019
+// Released under the MIT License (see /LICENSE)
+
 const CHDevice = require('../models/CHDevice')
 const devicesTable = require('../knex/queries/device-queries')
 

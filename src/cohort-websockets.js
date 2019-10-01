@@ -1,3 +1,6 @@
+// Copyright Jacob Niedzwiecki, 2019
+// Released under the MIT License (see /LICENSE)
+
 const webSocket = require('ws')
 // const CHDevice = require('./models/CHDevice')
 
@@ -6,8 +9,13 @@ module.exports = (options) => {
   return new Promise( resolve => {
     let webSocketServer = new webSocket.Server({server: options.server, path: options.path, clientTracking: true})
     
+    // this adjustability is here for testing only. using short (5000 ms) values in production will cause problems with clients on cellular connections.
+    if(options.keepaliveIntervalDuration === undefined) {
+      options.keepaliveIntervalDuration = 25000
+    }
+
     const keepaliveInterval = setInterval(function ping(){
-      // console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
+      console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
 
       webSocketServer.clients.forEach( (socket) => {
         if(socket.isAlive === false){
@@ -20,7 +28,7 @@ module.exports = (options) => {
           socket.ping(noop)
         }
       })
-    }, 25000)
+    }, options.keepaliveIntervalDuration)
 
     webSocketServer.on('listening', () => {
       console.log('   websocket server started')

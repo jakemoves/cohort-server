@@ -1,3 +1,6 @@
+// Copyright Jacob Niedzwiecki, 2019
+// Released under the MIT License (see /LICENSE)
+
 const _flatten = require('lodash/flatten')
 const _uniqBy = require('lodash/uniqBy')
 
