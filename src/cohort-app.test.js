@@ -224,7 +224,6 @@ describe('Basic startup', () => {
     console.log(res4.body)
     expect(res4.status).toEqual(200)
 
-
     const eventsDevicesTable = knex('events_devices')
 
     const eventDeviceRelations = await eventsDevicesTable
@@ -235,7 +234,7 @@ describe('Basic startup', () => {
     expect(eventDeviceRelations.length).toEqual(1)
     expect(eventDeviceRelations[0].occasion_id).toEqual(1)
 
-    // now check in to event 
+    // now check in to event again
     const res5 = await request(app)
       .patch('/api/v1/events/' + eventId + '/check-in')
       .send({ guid: "1234567" })

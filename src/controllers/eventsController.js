@@ -195,15 +195,21 @@ exports.events_checkIn = (req, res) => {
           })
         } else if(existingEventDeviceRelations.length == 1){
           // this device is already checked into this event...
-          // is the occasion different?
-          if(eventDeviceRelation.occasion_id == existingEventDeviceRelations[0].occasion_id){
-            if(eventDeviceRelation.occasion_id === undefined){
-              console.log("device id:" + existingEventDeviceRelations[0].device_id + " is already checked into event:" + eventDeviceRelation.event_id)
-            } else {
-              console.log("device id:" + existingEventDeviceRelations[0].device_id + " is already checked into event:" + eventDeviceRelation.event_id + " and occasion " + eventDeviceRelation.occasion_id)
-            }
+         
+          // is there an occasion specified?
+          if(eventDeviceRelation.occasion_id === undefined){
+            console.log("device id:" + existingEventDeviceRelations[0].device_id + " is already checked into event:" + eventDeviceRelation.event_id)
             res.sendStatus(200)
-          } else {
+          }
+
+          // is the occasion the same as the current occasion?
+          else if(eventDeviceRelation.occasion_id == existingEventDeviceRelations[0].occasion_id){
+            console.log("device id:" + existingEventDeviceRelations[0].device_id + " is already checked into event:" + eventDeviceRelation.event_id + " and occasion " + eventDeviceRelation.occasion_id)
+            res.sendStatus(200)
+          } 
+          
+          // it's a different occasion
+          else {
             // update the existing relation
             const relationId = existingEventDeviceRelations[0].id
             return knex('events_devices')
@@ -215,6 +221,9 @@ exports.events_checkIn = (req, res) => {
             })
             .catch( error => {
               console.log(error)
+              res.status(500)
+              res.write(error)
+              res.send()
             })
           }
         } else {
