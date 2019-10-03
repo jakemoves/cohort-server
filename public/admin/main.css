@@ -207,8 +207,8 @@ body.state-playing-episode {
 
 .cue-controls input[type=range].cue-controls__cue-controls-go {
   -webkit-appearance: none;
-  width: 100%;
-  margin: 1rem 0; }
+  width: 90%;
+  margin: 1rem 5%; }
 
 .cue-controls input[type=range].cue-controls__cue-controls-go:focus {
   outline: none; }
