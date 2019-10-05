@@ -1,3 +1,6 @@
+// Copyright Jacob Niedzwiecki, 2019
+// Released under the MIT License (see /LICENSE)
+
 const request = require('supertest')
 const uuid = require('uuid/v4')
 const knex = require('./knex/knex')
@@ -973,14 +976,17 @@ test('initial handshake: error -- event not found', async(done) => {
     })
   })
 
-  // FYI this test takes ~15-20 seconds to complete because it tests the keepalive function
+  // FYI this test takes a while to complete because it tests the keepalive function. Setting the keepalive interval on the server to a lower value is tempting but cellular connections don't like short intervals.
   test('destroying socket: happy path', async (done) => { 
-    jest.setTimeout(20000)
+
+    keepaliveIntervalDuration = 5000
+    jest.setTimeout(keepaliveIntervalDuration * 4)
+
     const eventId = 3
     const guid = "1234567"
 
     const webSocketServer = await require('./cohort-websockets')({
-      app: app, server: server, path: '/sockets'
+      app: app, server: server, path: '/sockets', keepaliveIntervalDuration: keepaliveIntervalDuration
     })
     expect(webSocketServer).toBeDefined()
 
@@ -1004,9 +1010,9 @@ test('initial handshake: error -- event not found', async(done) => {
         setTimeout( () => {
           expect(webSocketServer.clients.size).toEqual(0)
           done()
-        }, 10000)
+        }, keepaliveIntervalDuration * 2.4)
 
-      }, 7000)
+      }, keepaliveIntervalDuration * 1.2)
     })
   })
 

@@ -1,3 +1,6 @@
+// Copyright Jacob Niedzwiecki, 2019
+// Released under the MIT License (see /LICENSE)
+
 const knex = require('../knex/knex.js')
 const WebSocket = require('ws')
 const fetch = require('node-fetch')

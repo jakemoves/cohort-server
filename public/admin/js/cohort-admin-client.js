@@ -663,7 +663,7 @@ window.deleteCohortOccasion = ($event) => {
 window.onBroadcast = ($event) => {
   $event.preventDefault()
   const messageText = document.getElementById('broadcast-message').value
-  validateCohortMessage(messageText)
+  const cohortMessage = validateCohortMessage(messageText)
   broadcast(cohortMessage)
 }
 

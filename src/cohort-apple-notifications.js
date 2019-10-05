@@ -1,3 +1,6 @@
+// Copyright Jacob Niedzwiecki, 2019
+// Released under the MIT License (see /LICENSE)
+
 const apn = require('apn')
 
 function start(){
