@@ -1,4 +1,4 @@
-# Cohort-server
+# Cohort Server
 
 ## Getting started
 ### environment setup
