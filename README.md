@@ -19,9 +19,13 @@
 - `knex seed:run`
 
 ### admin site setup
-- from `public/admin`:
+
+Getting started:
 - `yarn install`
-- `yarn run dev`
+- `yarn run dev` starts up the site locally at [localhost:5000](http://localhost:5000)
+
+Building for production:
+From `/admin-site` : `yarn run build && mv public/* ../public/admin-v2`
 
 ### tests setup
 - `npm install -g jest`
