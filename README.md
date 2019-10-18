@@ -15,17 +15,19 @@
 - `createdb cohort`
 - `createdb cohort_test`
 - `createuser cohort_admin`
-- from `src/knex` : `knex migrate:latest`
-- `knex seed:run`
+- from `src/knex` : `npx knex migrate:latest`
+- from `src/knex` : `npx knex seed:run`
 
 ### admin site setup
 
 Getting started:
 - `yarn install`
-- `yarn run dev` starts up the site locally at [localhost:5000](http://localhost:5000)
+- `yarn run dev` starts up the site locally at [localhost:5000](http://localhost:5000) using a hot-refresh dev server
 
 Building for production:
-From `/admin-site` : `yarn run build && mv public/* ../public/admin-v2`
+- from `/admin-site` : `yarn run build && cp public/* ../public/admin-v2` 
+- if you have a cohort server running locally, the admin site is served at [localhost:3000/admin-v2](http://localhost:3000/admin-v2/)
+
 
 ### tests setup
 - `npm install -g jest`
