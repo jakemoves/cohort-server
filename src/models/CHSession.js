@@ -17,13 +17,13 @@ class CHSession {
   }
 
   async init() {
-    let dbActiveEvents = await eventsTable.getAllActiveWithDevices()
+    let dbOpenEvents = await eventsTable.getAll()
     
-    let activeEvents = dbActiveEvents.map( dbEvent => {
+    let openEvents = dbOpenEvents.map( dbEvent => {
       return CHEvent.fromDatabaseRow(dbEvent)
     })
 
-    activeEvents.forEach( event => {
+    openEvents.forEach( event => {
       this.addListenersForEvent(event)
       event.open()
     })

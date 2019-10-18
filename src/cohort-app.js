@@ -13,7 +13,8 @@ const knex = require('./knex/knex.js')
 // configure express
 const app = express()
 const jsonParser = bodyParser.json()
-const routes = require('./routes.js')
+const v1Routes = require('./routes-v1.js')
+const v2routes = require('./routes-v2.js')
 app.use(bodyParser.json())
 
 app.use( (req, res, next) => {
@@ -23,7 +24,8 @@ app.use( (req, res, next) => {
   next()
 })
 
-app.use('/api/v1', routes)
+app.use('/api/v1', v1routes)
+app.use('/api/v2', v2routes)
 
 let staticPath = path.join(__dirname, '../public') // because we run the app from /lib
 app.use(express.static(staticPath))

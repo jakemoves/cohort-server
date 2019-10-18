@@ -53,7 +53,7 @@ beforeAll( () => {
 
 describe('Basic startup', () => {
   test('the app inits', async () => {
-    const res = await request(app).get('/api/v1')
+    const res = await request(app).get('/api/v2')
     expect(res.status).toEqual(200)
     expect(res.text).toEqual('Cohort rocks')
   })
@@ -65,669 +65,469 @@ describe('Basic startup', () => {
  */
 
  describe('Event routes', () => {
-  test('GET /events', async () => {
-    const res = await request(app).get('/api/v1/events')
-    expect(res.status).toEqual(200)
-    expect(res.body).toHaveLength(5)
+  // test('GET /events', async () => {
+  //   const res = await request(app).get('/api/v1/events')
+  //   expect(res.status).toEqual(200)
+  //   expect(res.body).toHaveLength(5)
 
-    expect(res.body[0]).toHaveProperty('label')
-    expect(res.body[0].label).toEqual('pimohtēwak')
+  //   expect(res.body[0]).toHaveProperty('label')
+  //   expect(res.body[0].label).toEqual('pimohtēwak')
 
-    expect(res.body[1]).toHaveProperty('label')
-    expect(res.body[1].label).toEqual('lot_x')
+  //   expect(res.body[1]).toHaveProperty('label')
+  //   expect(res.body[1].label).toEqual('lot_x')
 
-    expect(res.body[3]).toHaveProperty('state')
-    expect(res.body[3].state).toEqual('open')
-  })
+  //   expect(res.body[3]).toHaveProperty('state')
+  //   expect(res.body[3].state).toEqual('open')
+  // })
 
-  test('GET /events/:id', async () => {
-    const res = await request(app).get('/api/v1/events/1')
-    expect(res.status).toEqual(200)
+  // test('GET /events/:id', async () => {
+  //   const res = await request(app).get('/api/v1/events/1')
+  //   expect(res.status).toEqual(200)
 
-    expect(res.body).toHaveProperty('id')
-    expect(res.body.id).toEqual(1)
-    expect(res.body).toHaveProperty('label')
-    expect(res.body.label).toEqual('pimohtēwak')
-    expect(res.body).toHaveProperty('state')
-    expect(res.body.state).toEqual('closed')
-  })
+  //   expect(res.body).toHaveProperty('id')
+  //   expect(res.body.id).toEqual(1)
+  //   expect(res.body).toHaveProperty('label')
+  //   expect(res.body.label).toEqual('pimohtēwak')
+  //   expect(res.body).toHaveProperty('state')
+  //   expect(res.body.state).toEqual('closed')
+  // })
 
-  test('GET /events/:id : error: event not found', async () => {
-    const res = await request(app).get('/api/v1/events/99')
-    expect(res.status).toEqual(404)
+  // test('GET /events/:id : error: event not found', async () => {
+  //   const res = await request(app).get('/api/v1/events/99')
+  //   expect(res.status).toEqual(404)
 
-    expect(res.text).toEqual("Error: event with id:99 not found")
-  })
+  //   expect(res.text).toEqual("Error: event with id:99 not found")
+  // })
 
-  test('POST /events', async () =>{
-    const res = await request(app)
-      .post('/api/v1/events')
-      .send({ label: 'new event' })
+  // test('POST /events', async () =>{
+  //   const res = await request(app)
+  //     .post('/api/v1/events')
+  //     .send({ label: 'new event' })
 
-    expect(res.status).toEqual(201)
-    expect(res.header.location).toEqual('/api/v1/events/6')
-    expect(res.body).toHaveProperty('id')
-    expect(res.body.id).toEqual(6)
-    expect(res.body.label).toEqual('new event')
-    expect(res.body.state).toEqual('closed')
-  })
+  //   expect(res.status).toEqual(201)
+  //   expect(res.header.location).toEqual('/api/v1/events/6')
+  //   expect(res.body).toHaveProperty('id')
+  //   expect(res.body.id).toEqual(6)
+  //   expect(res.body.label).toEqual('new event')
+  //   expect(res.body.state).toEqual('closed')
+  // })
 
-  test('DELETE /events/:id', async () => {
-    const res = await request(app)
-      .delete('/api/v1/events/2')
-    expect(res.status).toEqual(204)
+  // test('DELETE /events/:id', async () => {
+  //   const res = await request(app)
+  //     .delete('/api/v1/events/2')
+  //   expect(res.status).toEqual(204)
 
-    const res2 = await request(app).get('/api/v1/events/2')
-    expect(res2.status).toEqual(404)
-  })
+  //   const res2 = await request(app).get('/api/v1/events/2')
+  //   expect(res2.status).toEqual(404)
+  // })
 
-  test('DELETE /events/:id -- error: open event cannot be deleted', async () =>{
-    const res = await request(app)
-      .delete('/api/v1/events/4')
-    expect(res.status).toEqual(403)
+  // test('DELETE /events/:id -- error: open event cannot be deleted', async () =>{
+  //   const res = await request(app)
+  //     .delete('/api/v1/events/4')
+  //   expect(res.status).toEqual(403)
 
-    const res2 = await request(app).get('/api/v1/events/4')
-    expect(res2.status).toEqual(200)
-  })
+  //   const res2 = await request(app).get('/api/v1/events/4')
+  //   expect(res2.status).toEqual(200)
+  // })
 
-  test('GET /events/:eventId/devices', async () => {
-    const res = await request(app)
-      .get('/api/v1/events/3/devices')
+  // // should always have occasion
+  // // test('GET /events/:eventId/devices', async () => {
+  // //   const res = await request(app)
+  // //     .get('/api/v1/events/3/devices')
 
-    expect(res.status).toEqual(200)
-    expect(res.body).toHaveLength(3)
-  })
+  // //   expect(res.status).toEqual(200)
+  // //   expect(res.body).toHaveLength(3)
+  // // })
 
-  test('GET /events/:eventId/occasions/:occasionId/devices', async () => {
-    const res = await request(app)
-      .get('/api/v1/events/4/occasions/1/devices')
+  // test('GET /events/:eventId/occasions/:occasionId/devices', async () => {
+  //   const res = await request(app)
+  //     .get('/api/v1/events/4/occasions/1/devices')
 
-    expect(res.status).toEqual(200)
-    expect(res.body).toHaveLength(1)
-  })
+  //   expect(res.status).toEqual(200)
+  //   expect(res.body).toHaveLength(1)
+  // })
 
-  // happy path
-  test('PATCH /events/:eventId/check-in', async () => {
-    const res1 = await request(app).get('/api/v1/events/1/devices')
-    expect(res1.status).toEqual(200)
-    const deviceCount = res1.body.length
+  // // happy path
+  // test('PATCH /events/:eventId/occasions/:occasionId/check-in', async () => {
+  //   const getDevicesEndpoint = '/api/v1/events/4/occasions/1/devices'
+  //   const res1 = await request(app).get(getDevicesEndpoint)
+  //   expect(res1.status).toEqual(200)
+  //   const deviceCount = res1.body.length
 
-    // this device already exists in the DB
-    // in a full flow, we would create the device at POST /devices first
-    // yeah it's a bit much
-    const res2 = await request(app)
-      .patch('/api/v1/events/1/check-in')
-      .send({ guid: "1234567" })
+  //   // this device already exists in the DB
+  //   // in a full flow, we would create the device at POST /devices first
+  //   // yeah it's a bit much
+  //   const res2 = await request(app)
+  //     .patch('/api/v1/events/4/occasions/1/check-in')
+  //     .send({ guid: "1234567" })
 
-    expect(res2.status).toEqual(200)
-    expect(res2.body).toHaveProperty('id')
-    expect(res2.body.id).toEqual(1)
+  //   console.log(res2.body)
+  //   expect(res2.status).toEqual(200)
 
-    const res3 = await request(app).get('/api/v1/events/1/devices')
-    expect(res3.body).toHaveLength(deviceCount+1)
-  })
+  //   const eventsTable = require('./knex/queries/event-queries')
+  //   let devices = await eventsTable.getDevicesForEventOccasion(4,1)
+  //   // expect(devices.length).toEqual(2)
+    
+  //   // expect(res2.body).toHaveProperty('id')
+  //   // expect(res2.body.id).toEqual(1)
+
+  //   const res3 = await request(app).get(getDevicesEndpoint)
+  //   expect(res3.body).toHaveLength(deviceCount+1)
+  // })
+
+  // test('PATCH /events/:eventId/check-in => occasion check-in -- error: device is already checked in', async () => {
+  //   const eventId = 4
+  //   const deviceId = 1
+  //   const occasionId = 1
+
+  //   const res1 = await request(app).get('/api/v1/events/' + eventId + '/devices')
+  //   expect(res1.status).toEqual(200)
+  //   const deviceCount = res1.body.length
+  //   // check into event
+    
+  //   const res2 = await request(app)
+  //     .patch('/api/v1/events/' + eventId + '/check-in')
+  //     .send({ guid: "1234567" }) // this device already exists in the DB
+  //   expect(res2.status).toEqual(200)
+  //   expect(res2.body).toHaveProperty('id')
+  //   expect(res2.body.id).toEqual(4)
+
+  //   // verify event check-in
+  //   const getDevicesEndpoint = '/api/v1/events/' + eventId + '/devices'
+  //   const res3 = await request(app).get(getDevicesEndpoint)
+  //   expect(res3.status).toEqual(200)
+  //   const deviceCountAfterEventCheckin = res3.body.length
+  //   expect(deviceCountAfterEventCheckin).toEqual(deviceCount + 1)
+
+  //   // now check into occasion
+  //   const res4 = await request(app)
+  //     .patch('/api/v1/events/' + eventId + '/occasions/' + occasionId + '/check-in')
+  //     .send({ guid: "1234567" })
+
+  //   console.log(res4.body)
+  //   expect(res4.status).toEqual(200)
+
+  //   const eventsDevicesTable = knex('events_devices')
+
+  //   const eventDeviceRelations = await eventsDevicesTable
+  //     .where('event_id', eventId)
+  //     .where('device_id', deviceId)
+    
+  //   console.log(eventDeviceRelations)
+  //   expect(eventDeviceRelations.length).toEqual(1)
+  //   expect(eventDeviceRelations[0].occasion_id).toEqual(1)
+
+  //   // now check in to event again
+  //   const res5 = await request(app)
+  //     .patch('/api/v1/events/' + eventId + '/check-in')
+  //     .send({ guid: "1234567" })
+
+  //   console.log(res5.body)
+  //   expect(res5.status).toEqual(200)
+  // })
+
+  // // happy path for checking into an open event
+
+
+  // test('PATCH /events/:id/check-in -- error: device guid not found', async () => {
+  //   const guid = "foo"
+  //   const res = await request(app)
+  //     .patch('/api/v1/events/1/check-in')
+  //     .send({ guid: guid })
+
+  //   expect(res.status).toEqual(404)
+  //   expect(res.text).toEqual("Error: no device found with guid:foo")
+  // })  
   
-  // happy path for checking into a specific occasion of an event
-  test('PATCH /events/:eventId/occasions/:occasionId/check-in', async () => {
-    const getDevicesEndpoint = '/api/v1/events/4/occasions/1/devices'
-    const res1 = await request(app).get(getDevicesEndpoint)
-    expect(res1.status).toEqual(200)
-    const deviceCount = res1.body.length
+  // test('PATCH /events/:id/check-in -- error: no guid included in request', async () => {
+  //   const res = await request(app)
+  //     .patch('/api/v1/events/1/check-in')
+  //     .send({ foo: "bar" })
 
-    // this device already exists in the DB
-    // in a full flow, we would create the device at POST /devices first
-    // yeah it's a bit much
-    const res2 = await request(app)
-      .patch('/api/v1/events/4/occasions/1/check-in')
-      .send({ guid: "1234567" })
+  //   expect(res.status).toEqual(400)
+  //   expect(res.text).toEqual("Error: request must include a device guid")
+  // })
 
-    console.log(res2.body)
-    expect(res2.status).toEqual(200)
+  // // should always have occasion
+  // test('PATCH /events/:id/check-in -- error: invalid event id', async () => {
+  //   const res = await request(app)
+  //     .patch('/api/v1/events/99/check-in')
+  //     .send({ guid: "1234567" })
 
-    const eventsTable = require('./knex/queries/event-queries')
-    let devices = await eventsTable.getDevicesForEventOccasion(4,1)
-    // expect(devices.length).toEqual(2)
+  //   expect(res.status).toEqual(404)
+  //   expect(res.text).toEqual("Error: no event found with id:99")
+  // })
+
+  // test('PATCH /events/:id/open', async () => {
+  //   let consoleOutput = "";
+  //   storeLog = inputs => (consoleOutput += inputs)
+
+  //   console["log"] = jest.fn(storeLog)
+  //   expect(app.get("cohort").events.length).toEqual(2)
+  //   const res = await request(app)
+  //     .patch('/api/v1/events/2/open')
     
-    // expect(res2.body).toHaveProperty('id')
-    // expect(res2.body.id).toEqual(1)
+  //   expect(res.status).toEqual(200)
+  //   expect(res.body.state).toEqual('open')
+  //   expect(app.get("cohort").events.length).toEqual(3)
+  //   expect(consoleOutput).toEqual("event lot_x is now open")
+  // })
 
-    const res3 = await request(app).get(getDevicesEndpoint)
-    expect(res3.body).toHaveLength(deviceCount+1)
-  })
-
-  test('PATCH /events/:eventId/check-in => occasion check-in -- error: device is already checked in', async () => {
-    const eventId = 4
-    const deviceId = 1
-    const occasionId = 1
-
-    const res1 = await request(app).get('/api/v1/events/' + eventId + '/devices')
-    expect(res1.status).toEqual(200)
-    const deviceCount = res1.body.length
-    // check into event
+  // test('PATCH /events/:id/close', async () => {
+  //   expect(app.get("cohort").events.length).toEqual(2)
+  //   const res = await request(app)
+  //     .patch('/api/v1/events/3/close')
     
-    const res2 = await request(app)
-      .patch('/api/v1/events/' + eventId + '/check-in')
-      .send({ guid: "1234567" }) // this device already exists in the DB
-    expect(res2.status).toEqual(200)
-    expect(res2.body).toHaveProperty('id')
-    expect(res2.body.id).toEqual(4)
+  //   expect(res.status).toEqual(200)
+  //   expect(res.body.state).toEqual('closed')
+  //   expect(app.get("cohort").events.length).toEqual(1)
+  // })
 
-    // verify event check-in
-    const getDevicesEndpoint = '/api/v1/events/' + eventId + '/devices'
-    const res3 = await request(app).get(getDevicesEndpoint)
-    expect(res3.status).toEqual(200)
-    const deviceCountAfterEventCheckin = res3.body.length
-    expect(deviceCountAfterEventCheckin).toEqual(deviceCount + 1)
+  // test('PATCH /events/:id/open and /close', async () => {
+  //   let consoleOutput = "";
+  //   storeLog = inputs => (consoleOutput += inputs)
 
-    // now check into occasion
-    const res4 = await request(app)
-      .patch('/api/v1/events/' + eventId + '/occasions/' + occasionId + '/check-in')
-      .send({ guid: "1234567" })
-
-    console.log(res4.body)
-    expect(res4.status).toEqual(200)
-
-    const eventsDevicesTable = knex('events_devices')
-
-    const eventDeviceRelations = await eventsDevicesTable
-      .where('event_id', eventId)
-      .where('device_id', deviceId)
+  //   console["log"] = jest.fn(storeLog)
+  //   expect(app.get("cohort").events.length).toEqual(2)
+  //   const res1 = await request(app)
+  //     .patch('/api/v1/events/2/open')
     
-    console.log(eventDeviceRelations)
-    expect(eventDeviceRelations.length).toEqual(1)
-    expect(eventDeviceRelations[0].occasion_id).toEqual(1)
+  //   expect(res1.status).toEqual(200)
+  //   expect(res1.body.state).toEqual('open')
+  //   expect(app.get("cohort").events.length).toEqual(3)
+  //   expect(consoleOutput).toEqual("event lot_x is now open")
 
-    // now check in to event again
-    const res5 = await request(app)
-      .patch('/api/v1/events/' + eventId + '/check-in')
-      .send({ guid: "1234567" })
+  //   // next close it
 
-    console.log(res5.body)
-    expect(res5.status).toEqual(200)
-  })
-
-  // happy path for checking into an open event
-  test('PATCH /events/:id/check-in (to open event)', async () => {
-    let eventId = 3
-
-    // in db
-    const res1 = await request(app).get('/api/v1/events/' + eventId +'/devices')
-    expect(res1.status).toEqual(200)
-    dbDeviceCount = res1.body.length
-
-    // in memory
-    let event = app.get("cohort").events.find( event => event.id == eventId)
-    let deviceCount = event.devices.length
-
-    expect(dbDeviceCount).toEqual(deviceCount)
-
-    const res = await request(app)
-      .patch('/api/v1/events/3/check-in')
-      .send({ guid: "sifubar" }) // already exists in db
-
-    expect(res.status).toEqual(200)
-
-    // in memory
-    expect(event.devices).toHaveLength(deviceCount + 1)
-
-    // in db
-    const res3 = await request(app).get('/api/v1/events/' + eventId +
-   '/devices')
-    expect(res3.body).toHaveLength(deviceCount+1)
-  })
-
-  test('PATCH /events/:id/check-in -- error: device guid not found', async () => {
-    const guid = "foo"
-    const res = await request(app)
-      .patch('/api/v1/events/1/check-in')
-      .send({ guid: guid })
-
-    expect(res.status).toEqual(404)
-    expect(res.text).toEqual("Error: no device found with guid:foo")
-  })  
-  
-  test('PATCH /events/:id/check-in -- error: no guid included in request', async () => {
-    const res = await request(app)
-      .patch('/api/v1/events/1/check-in')
-      .send({ foo: "bar" })
-
-    expect(res.status).toEqual(400)
-    expect(res.text).toEqual("Error: request must include a device guid")
-  })
-
-  test('PATCH /events/:id/check-in -- error: invalid event id', async () => {
-    const res = await request(app)
-      .patch('/api/v1/events/99/check-in')
-      .send({ guid: "1234567" })
-
-    expect(res.status).toEqual(404)
-    expect(res.text).toEqual("Error: no event found with id:99")
-  })
-
-  test('PATCH /events/:id/open', async () => {
-    let consoleOutput = "";
-    storeLog = inputs => (consoleOutput += inputs)
-
-    console["log"] = jest.fn(storeLog)
-    expect(app.get("cohort").events.length).toEqual(2)
-    const res = await request(app)
-      .patch('/api/v1/events/2/open')
+  //   expect(app.get("cohort").events.length).toEqual(3)
+  //   const res2 = await request(app)
+  //     .patch('/api/v1/events/2/close')
     
-    expect(res.status).toEqual(200)
-    expect(res.body.state).toEqual('open')
-    expect(app.get("cohort").events.length).toEqual(3)
-    expect(consoleOutput).toEqual("event lot_x is now open")
-  })
+  //   expect(res2.status).toEqual(200)
+  //   expect(res2.body.state).toEqual('closed')
+  //   expect(app.get("cohort").events.length).toEqual(2)
+  //   expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closed")
 
-  test('PATCH /events/:id/close', async () => {
-    expect(app.get("cohort").events.length).toEqual(2)
-    const res = await request(app)
-      .patch('/api/v1/events/3/close')
+  //   // now re-open it
+  //   const res3 = await request(app)
+  //     .patch('/api/v1/events/2/open')
     
-    expect(res.status).toEqual(200)
-    expect(res.body.state).toEqual('closed')
-    expect(app.get("cohort").events.length).toEqual(1)
-  })
+  //   expect(res3.status).toEqual(200)
+  //   expect(res3.body.state).toEqual('open')
+  //   expect(app.get("cohort").events.length).toEqual(3)
+  //   expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closedevent lot_x is now open")
 
-  test('PATCH /events/:id/open and /close', async () => {
-    let consoleOutput = "";
-    storeLog = inputs => (consoleOutput += inputs)
-
-    console["log"] = jest.fn(storeLog)
-    expect(app.get("cohort").events.length).toEqual(2)
-    const res1 = await request(app)
-      .patch('/api/v1/events/2/open')
+  //   // now close it once more
+  //   const res4 = await request(app)
+  //     .patch('/api/v1/events/2/close')
     
-    expect(res1.status).toEqual(200)
-    expect(res1.body.state).toEqual('open')
-    expect(app.get("cohort").events.length).toEqual(3)
-    expect(consoleOutput).toEqual("event lot_x is now open")
+  //   expect(res4.status).toEqual(200)
+  //   expect(res4.body.state).toEqual('closed')
+  //   expect(app.get("cohort").events.length).toEqual(2)
+  //   expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closedevent lot_x is now openevent lot_x is now closed")
+  // })
 
-    // next close it
+  // // should always have occasion
+  // test('POST /events/:id/broadcast: error -- no devices connected', async () => {
+  //   const cohortMessage = {
+  //     targetTags: ["all"],
+	//     mediaDomain: "sound",
+	//     cueNumber: 1,
+	//     cueAction: "play"
+  //   }
 
-    expect(app.get("cohort").events.length).toEqual(3)
-    const res2 = await request(app)
-      .patch('/api/v1/events/2/close')
-    
-    expect(res2.status).toEqual(200)
-    expect(res2.body.state).toEqual('closed')
-    expect(app.get("cohort").events.length).toEqual(2)
-    expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closed")
+  //   const res = await request(app)
+  //     .post('/api/v1/events/3/broadcast')
+  //     .send(cohortMessage)
 
-    // now re-open it
-    const res3 = await request(app)
-      .patch('/api/v1/events/2/open')
-    
-    expect(res3.status).toEqual(200)
-    expect(res3.body.state).toEqual('open')
-    expect(app.get("cohort").events.length).toEqual(3)
-    expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closedevent lot_x is now open")
+  //   expect(res.status).toEqual(403)
+  //   expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
+  // })
 
-    // now close it once more
-    const res4 = await request(app)
-      .patch('/api/v1/events/2/close')
-    
-    expect(res4.status).toEqual(200)
-    expect(res4.body.state).toEqual('closed')
-    expect(app.get("cohort").events.length).toEqual(2)
-    expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closedevent lot_x is now openevent lot_x is now closed")
-  })
+  // test('POST /events/:eventId/occasions/:occasionId/broadcast-push-notification', async () => {
+  //   const eventsTable = require('./knex/queries/event-queries')
+  //   getDevicesForEventOccasion(4, 1).then( devices => {
+  //     console.log(devices)
+  //     expect(devices.length).toEqual(1)
+  //   })
+  // })
 
-  test('PATCH /events/:id/open -- with device tags', async () => {
-    const payload = { tags: [ 'blue', 'red' ]}
-    const res = await request(app)
-      .patch('/api/v1/devices/1/set-tags')
-      .send(payload)
-    expect(res.status).toEqual(200)
-    expect(res.body.tags).toEqual(['blue', 'red'])
+  // test('POST /events/:eventId/occasions', async () => {
+  //   const payload = { 
+  //     "doorsOpenDateTime": "2019-02-09T16:00:00-05:00",
+  //     "endDateTime": "2019-02-09T18:00:00-05:00",
+  //     "locationCity": "Cupertino",
+  //     "locationAddress": "One Infinite Loop",
+  //     "locationLabel": "Apple Park",
+  //     "startDateTime": "2019-02-09T15:30:00-05:00"
+  //   }
 
-    let consoleOutput = "";
-    storeLog = inputs => (consoleOutput += inputs)
+  //   const res = await request(app)
+  //     .post('/api/v1/events/2/occasions')
+  //     .send(payload)
 
-    console["log"] = jest.fn(storeLog)
-    expect(app.get("cohort").events.length).toEqual(2)
-    const res1 = await request(app)
-      .patch('/api/v1/events/2/open')
-    
-    expect(res1.status).toEqual(200)
-    expect(res1.body.state).toEqual('open')
-    expect(app.get("cohort").events.length).toEqual(3)
-    expect(consoleOutput).toEqual("event lot_x is now open")
+  //   expect(res.status).toEqual(201)
+  //   expect(res.body.event_id).toEqual("2")
+  //   expect(res.body.id).toBeDefined()
+  //   expect(res.body.locationCity).toEqual("Cupertino")
+  // })
 
-    // next close it
+  // test('GET /events/:eventId/occasions/:occasionId/upcoming', async () => {
+  //   const yesterdaysDate = moment().subtract(1, 'days').format("YYYY-MM-DD")
+  //   const todaysDate = moment().format("YYYY-MM-DD")
 
-    expect(app.get("cohort").events.length).toEqual(3)
-    const res2 = await request(app)
-      .patch('/api/v1/events/2/close')
-    
-    expect(res2.status).toEqual(200)
-    expect(res2.body.state).toEqual('closed')
-    expect(app.get("cohort").events.length).toEqual(2)
-    expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closed")
+  //   const payload = { 
+  //     "doorsOpenDateTime": todaysDate + "T16:00:00-05:00",
+  //     "endDateTime": todaysDate + "T18:00:00-05:00",
+  //     "locationCity": "Cupertino",
+  //     "locationAddress": "One Infinite Loop",
+  //     "locationLabel": "Apple Park",
+  //     "startDateTime": todaysDate + "T15:30:00-05:00"
+  //   }
 
-    // now re-open it
-    const res3 = await request(app)
-      .patch('/api/v1/events/2/open')
-    
-    expect(res3.status).toEqual(200)
-    expect(res3.body.state).toEqual('open')
-    expect(app.get("cohort").events.length).toEqual(3)
-    expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closedevent lot_x is now open")
+  //   const res1 = await request(app)
+  //     .post('/api/v1/events/2/occasions')
+  //     .send(payload)
 
-    // now close it once more
-    const res4 = await request(app)
-      .patch('/api/v1/events/2/close')
-    
-    expect(res4.status).toEqual(200)
-    expect(res4.body.state).toEqual('closed')
-    expect(app.get("cohort").events.length).toEqual(2)
-    expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closedevent lot_x is now openevent lot_x is now closed")
-  })
+  //   expect(res1.status).toEqual(201)
+  //   expect(res1.body.event_id).toEqual("2")
+  //   expect(res1.body.id).toBeDefined()
+  //   expect(res1.body.locationCity).toEqual("Cupertino")
 
-  test('POST /events/:id/broadcast: error -- no devices connected', async () => {
-    const cohortMessage = {
-      targetTags: ["all"],
-	    mediaDomain: "sound",
-	    cueNumber: 1,
-	    cueAction: "play"
-    }
+  //   const payload2 = { 
+  //     "doorsOpenDateTime": yesterdaysDate + "T16:00:00-05:00",
+  //     "endDateTime": yesterdaysDate + "T18:00:00-05:00",
+  //     "locationCity": "Cupertino",
+  //     "locationAddress": "One Infinite Loop",
+  //     "locationLabel": "Apple Park",
+  //     "startDateTime": yesterdaysDate + "T15:30:00-05:00"
+  //   }
 
-    const res = await request(app)
-      .post('/api/v1/events/3/broadcast')
-      .send(cohortMessage)
+  //   const res2 = await request(app)
+  //     .post('/api/v1/events/2/occasions')
+  //     .send(payload2)
 
-    expect(res.status).toEqual(403)
-    expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
-  })
+  //   expect(res2.status).toEqual(201)
+  //   expect(res2.body.event_id).toEqual("2")
+  //   expect(res2.body.id).toBeDefined()
+  //   expect(res2.body.locationCity).toEqual("Cupertino")
 
-  // push notifications
-  // limited test! only verifying which devices will have n10ns attempted
-  test('POST /events/:id/broadcast-push-notification', async () =>{
-    const eventsTable = require('./knex/queries/event-queries')
-    getDevicesForEvent(4).then( devices => {
-      expect(devices.length).toEqual(2)
-    })
-  })
+  //   const res3 = await request(app)
+  //     .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
 
-  test('POST /events/:eventId/occasions/:occasionId/broadcast-push-notification', async () => {
-    const eventsTable = require('./knex/queries/event-queries')
-    getDevicesForEventOccasion(4, 1).then( devices => {
-      console.log(devices)
-      expect(devices.length).toEqual(1)
-    })
-  })
+  //   expect(res3.status).toEqual(200)
+  //   expect(res3.body).toHaveLength(1)
+  //   expect(res3.body[0].locationLabel).toEqual("Apple Park")
+  //   expect(res3.body[0].locationCity).toEqual("Cupertino")
 
-  test('POST /events/:eventId/occasions', async () => {
-    const payload = { 
-      "doorsOpenDateTime": "2019-02-09T16:00:00-05:00",
-      "endDateTime": "2019-02-09T18:00:00-05:00",
-      "locationCity": "Cupertino",
-      "locationAddress": "One Infinite Loop",
-      "locationLabel": "Apple Park",
-      "startDateTime": "2019-02-09T15:30:00-05:00"
-    }
+  // })
 
-    const res = await request(app)
-      .post('/api/v1/events/2/occasions')
-      .send(payload)
+  // test('GET /events/:eventId/occasions/:occasionId/upcoming -- edge case: event late in day', async () => {
+  //   const todaysDate = moment().format("YYYY-MM-DD")
 
-    expect(res.status).toEqual(201)
-    expect(res.body.event_id).toEqual("2")
-    expect(res.body.id).toBeDefined()
-    expect(res.body.locationCity).toEqual("Cupertino")
-  })
+  //   const payload = { 
+  //     "doorsOpenDateTime": todaysDate + "T22:50:00-05:00",
+  //     "endDateTime": todaysDate + "T23:50:00-05:00",
+  //     "locationCity": "Cupertino",
+  //     "locationAddress": "One Infinite Loop",
+  //     "locationLabel": "Apple Park",
+  //     "startDateTime": todaysDate + "T23:00:00-05:00"
+  //   }
 
-  test('GET /events/:eventId/occasions/:occasionId/upcoming', async () => {
-    const yesterdaysDate = moment().subtract(1, 'days').format("YYYY-MM-DD")
-    const todaysDate = moment().format("YYYY-MM-DD")
+  //   const res1 = await request(app)
+  //     .post('/api/v1/events/2/occasions')
+  //     .send(payload)
 
-    const payload = { 
-      "doorsOpenDateTime": todaysDate + "T16:00:00-05:00",
-      "endDateTime": todaysDate + "T18:00:00-05:00",
-      "locationCity": "Cupertino",
-      "locationAddress": "One Infinite Loop",
-      "locationLabel": "Apple Park",
-      "startDateTime": todaysDate + "T15:30:00-05:00"
-    }
+  //   expect(res1.status).toEqual(201)
+  //   expect(res1.body.event_id).toEqual("2")
+  //   expect(res1.body.id).toBeDefined()
+  //   expect(res1.body.locationCity).toEqual("Cupertino")
 
-    const res1 = await request(app)
-      .post('/api/v1/events/2/occasions')
-      .send(payload)
+  //   const res2 = await request(app)
+  //     .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
 
-    expect(res1.status).toEqual(201)
-    expect(res1.body.event_id).toEqual("2")
-    expect(res1.body.id).toBeDefined()
-    expect(res1.body.locationCity).toEqual("Cupertino")
+  //   expect(res2.status).toEqual(200)
+  //   expect(res2.body).toHaveLength(1)
+  //   expect(res2.body[0].locationLabel).toEqual("Apple Park")
+  //   expect(res2.body[0].locationCity).toEqual("Cupertino")
+  // })
 
-    const payload2 = { 
-      "doorsOpenDateTime": yesterdaysDate + "T16:00:00-05:00",
-      "endDateTime": yesterdaysDate + "T18:00:00-05:00",
-      "locationCity": "Cupertino",
-      "locationAddress": "One Infinite Loop",
-      "locationLabel": "Apple Park",
-      "startDateTime": yesterdaysDate + "T15:30:00-05:00"
-    }
+  // test('GET /events/:eventId/occasions/:occasionId/upcoming -- edge case: event early in day', async () => {
+  //   const todaysDate = moment().format("YYYY-MM-DD")
 
-    const res2 = await request(app)
-      .post('/api/v1/events/2/occasions')
-      .send(payload2)
+  //   const payload = { 
+  //     "doorsOpenDateTime": todaysDate + "T00:50:00-05:00",
+  //     "endDateTime": todaysDate + "T02:00:00-05:00",
+  //     "locationCity": "Cupertino",
+  //     "locationAddress": "One Infinite Loop",
+  //     "locationLabel": "Apple Park",
+  //     "startDateTime": todaysDate + "T01:00:00-05:00"
+  //   }
 
-    expect(res2.status).toEqual(201)
-    expect(res2.body.event_id).toEqual("2")
-    expect(res2.body.id).toBeDefined()
-    expect(res2.body.locationCity).toEqual("Cupertino")
+  //   const res1 = await request(app)
+  //     .post('/api/v1/events/2/occasions')
+  //     .send(payload)
 
-    const res3 = await request(app)
-      .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
+  //   expect(res1.status).toEqual(201)
+  //   expect(res1.body.event_id).toEqual("2")
+  //   expect(res1.body.id).toBeDefined()
+  //   expect(res1.body.locationCity).toEqual("Cupertino")
 
-    expect(res3.status).toEqual(200)
-    expect(res3.body).toHaveLength(1)
-    expect(res3.body[0].locationLabel).toEqual("Apple Park")
-    expect(res3.body[0].locationCity).toEqual("Cupertino")
+  //   const res2 = await request(app)
+  //     .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
 
-  })
-
-  test('GET /events/:eventId/occasions/:occasionId/upcoming -- edge case: event late in day', async () => {
-    const todaysDate = moment().format("YYYY-MM-DD")
-
-    const payload = { 
-      "doorsOpenDateTime": todaysDate + "T22:50:00-05:00",
-      "endDateTime": todaysDate + "T23:50:00-05:00",
-      "locationCity": "Cupertino",
-      "locationAddress": "One Infinite Loop",
-      "locationLabel": "Apple Park",
-      "startDateTime": todaysDate + "T23:00:00-05:00"
-    }
-
-    const res1 = await request(app)
-      .post('/api/v1/events/2/occasions')
-      .send(payload)
-
-    expect(res1.status).toEqual(201)
-    expect(res1.body.event_id).toEqual("2")
-    expect(res1.body.id).toBeDefined()
-    expect(res1.body.locationCity).toEqual("Cupertino")
-
-    const res2 = await request(app)
-      .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
-
-    expect(res2.status).toEqual(200)
-    expect(res2.body).toHaveLength(1)
-    expect(res2.body[0].locationLabel).toEqual("Apple Park")
-    expect(res2.body[0].locationCity).toEqual("Cupertino")
-  })
-
-  test('GET /events/:eventId/occasions/:occasionId/upcoming -- edge case: event early in day', async () => {
-    const todaysDate = moment().format("YYYY-MM-DD")
-
-    const payload = { 
-      "doorsOpenDateTime": todaysDate + "T00:50:00-05:00",
-      "endDateTime": todaysDate + "T02:00:00-05:00",
-      "locationCity": "Cupertino",
-      "locationAddress": "One Infinite Loop",
-      "locationLabel": "Apple Park",
-      "startDateTime": todaysDate + "T01:00:00-05:00"
-    }
-
-    const res1 = await request(app)
-      .post('/api/v1/events/2/occasions')
-      .send(payload)
-
-    expect(res1.status).toEqual(201)
-    expect(res1.body.event_id).toEqual("2")
-    expect(res1.body.id).toBeDefined()
-    expect(res1.body.locationCity).toEqual("Cupertino")
-
-    const res2 = await request(app)
-      .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
-
-    expect(res2.status).toEqual(200)
-    expect(res2.body).toHaveLength(1)
-    expect(res2.body[0].locationLabel).toEqual("Apple Park")
-    expect(res2.body[0].locationCity).toEqual("Cupertino")
-  })
+  //   expect(res2.status).toEqual(200)
+  //   expect(res2.body).toHaveLength(1)
+  //   expect(res2.body[0].locationLabel).toEqual("Apple Park")
+  //   expect(res2.body[0].locationCity).toEqual("Cupertino")
+  // })
 })
 
 
-/*
- *    DEVICE & NOTIFICATION ROUTES
- */
+// DEVICE ROUTES
+// defunct
 
-describe('Device routes', () => {
+  // test('devices/:id/registerForNotifications : happy path', async () => {
+  //   const guid = uuid()
+  //   const interimResponse = await createDevice(guid)
 
-  test('GET /devices', async () => {
-    const res = await request(app).get('/api/v1/devices')
-
-    expect(res.status).toEqual(200)
-    expect(res.body).toHaveLength(4)
-    expect(res.body[2]).toHaveProperty('guid')
-    expect(res.body[2].guid).toEqual('54321')
-  })
-
-  test('GET /devices/:id', async () => {
-    const res = await request(app).get('/api/v1/devices/1')
-
-    expect(res.status).toEqual(200)
-    expect(res.body.guid).toEqual('1234567')
-  })
-
-  test('GET /devices/:id -- error: device not found', async () => {
-    const res = await request(app).get('/api/v1/devices/5')
-
-    expect(res.status).toEqual(404)
-    expect(res.text).toEqual('Error: no device found with id:5')
-  })
-
-  test('POST /devices', async () => {
-    const res0 = await request(app).get('/api/v1/devices')
-    const deviceCount = res0.body.length
-
-    const res = await createDevice(12345678)
+  //   const payload = { token: 'abcde12345' }
+  //   const deviceId = interimResponse.body.id
     
-    expect(res.status).toEqual(201)
-    expect(res.header.location).toEqual('/api/v1/devices/' + (deviceCount + 1))
-    expect(res.body.guid).toEqual('12345678')
-
-    const res1 = await request(app)
-      .get('/api/v1/devices/' + res.body.id)
-
-    expect(res1.status).toEqual(200)
-    expect(res1.body.guid).toEqual('12345678')
-  })
-
-  test('POST /devices with tags', async () => {
-    const res0 = await request(app).get('/api/v1/devices')
-    const deviceCount = res0.body.length
-
-    const res1 = await createDevice(123456789, ['blue', 'red'])
-    expect(res1.status).toEqual(201)
-    expect(res1.header.location).toEqual('/api/v1/devices/' + (deviceCount + 1))
-    expect(res1.body.guid).toEqual('123456789')
-    expect(res1.body.tags).toEqual(['blue', 'red'])
-  })
-
-  test('GET /devices -- filter by tag', async () => {
-    const res1 = await createDevice(123456789, ['blue', 'red'])
-    expect(res1.status).toEqual(201)
-
-    const res2 = await createDevice(1234567890, ['blue'])
-    expect(res2.status).toEqual(201)
-
-
-    const res3 = await createDevice(12345678900, ['red'])
-    expect(res3.status).toEqual(201)
-    
-    const res4 = await request(app).get('/api/v1/devices?tag=blue')
-    expect(res4.body).toHaveLength(2)
-  })
-
-  test('POST /devices -- error: device already exists', async () => {
-    const res0 = await request(app).get('/api/v1/devices')
-    const deviceCount = res0.body.length
-
-    const res = await createDevice(12345678)
-    
-    expect(res.status).toEqual(201)
-    expect(res.header.location).toEqual('/api/v1/devices/' + (deviceCount + 1)) 
-    expect(res.body.guid).toEqual('12345678')
-
-    const res1 = await createDevice(12345678)
-    expect(res1.status).toEqual(200)
-  })
-
-  test('POST /devices -- error: no guid', async () => {
-    const res = await createDevice(null)
-    
-    expect(res.status).toEqual(400)
-  })
-
-  test('POST /devices -- error: empty guid', async () => {
-    const res = await createDevice("")
-    
-    expect(res.status).toEqual(400)
-  })
-
-  test('devices/:id/registerForNotifications : happy path', async () => {
-    const guid = uuid()
-    const interimResponse = await createDevice(guid)
-
-    const payload = { token: 'abcde12345' }
-    const deviceId = interimResponse.body.id
-    
-    const res = await request(app)
-      .patch('/api/v1/devices/' + deviceId + '/register-for-notifications')
-      .send(payload)
-    expect(res.status).toEqual(200)
-    expect(res.body.apnsDeviceToken).toEqual('abcde12345')
-  })
+  //   const res = await request(app)
+  //     .patch('/api/v1/devices/' + deviceId + '/register-for-notifications')
+  //     .send(payload)
+  //   expect(res.status).toEqual(200)
+  //   expect(res.body.apnsDeviceToken).toEqual('abcde12345')
+  // })
   
   // add test for id not found
 
-  test('devices/register-for-notifications : error: missing token', async () => {
-    const payload = { 'blep': '012345678901234567890123456789012345'}
-    const res = await request(app)
-      .patch('/api/v1/devices/1/register-for-notifications')
-      .send(payload)
-    expect(res.status).toEqual(400)
-    expect(res.text).toEqual("Error: Request must include a 'token' object")
-  })
+  // test('devices/register-for-notifications : error: missing token', async () => {
+  //   const payload = { 'blep': '012345678901234567890123456789012345'}
+  //   const res = await request(app)
+  //     .patch('/api/v1/devices/1/register-for-notifications')
+  //     .send(payload)
+  //   expect(res.status).toEqual(400)
+  //   expect(res.text).toEqual("Error: Request must include a 'token' object")
+  // })
 
-  test('devices/set-tags', async () => {
-    const payload = { tags: [ 'blue', 'red' ]}
-    const res = await request(app)
-      .patch('/api/v1/devices/1/set-tags')
-      .send(payload)
-    expect(res.status).toEqual(200)
-    expect(res.body.tags).toEqual(['blue', 'red'])
+  // MOVES TO EVENT OR OCCASION
+  // test('devices/set-tags', async () => {
+  //   const payload = { tags: [ 'blue', 'red' ]}
+  //   const res = await request(app)
+  //     .patch('/api/v1/devices/1/set-tags')
+  //     .send(payload)
+  //   expect(res.status).toEqual(200)
+  //   expect(res.body.tags).toEqual(['blue', 'red'])
 
-    const payload1 = { tags: [ 'purple' ]}
-    const res1 = await request(app)
-      .patch('/api/v1/devices/1/set-tags')
-      .send(payload1)
-    expect(res1.status).toEqual(200)
-    expect(res1.body.tags).toEqual(['purple'])
-  })
-})
+  //   const payload1 = { tags: [ 'purple' ]}
+  //   const res1 = await request(app)
+  //     .patch('/api/v1/devices/1/set-tags')
+  //     .send(payload1)
+  //   expect(res1.status).toEqual(200)
+  //   expect(res1.body.tags).toEqual(['purple'])
+  // })
 
 
 /*

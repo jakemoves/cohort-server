@@ -2,7 +2,6 @@
 // Released under the MIT License (see /LICENSE)
 
 const knex = require('../knex.js')
-const CHDevice = require('../../models/CHDevice')
 
 Events = () => {
   return knex('events')
@@ -14,15 +13,8 @@ getAll = () => {
   return Events().select()
 }
 
-getAllActiveWithDevices = () => {
-  return Events()
-    .whereNot('state', 'closed')
-    .map( event => {
-      return getDevicesForEvent(event.id).then( devices => {
-        event.devices = devices
-        return event
-      })
-    })
+getAllOpen = () => {
+  return Events().whereNot('state', 'closed')
 }
 
 getOneByID = (eventId) => {
@@ -33,17 +25,6 @@ getOneByID = (eventId) => {
     } else {
       return null
     }
-  })
-}
-
-getOneByIDWithDevices = (eventId) => {
-  return Events().where('id', parseInt(eventId))
-  .then( events => {
-    event = events[0]
-    return getDevicesForEvent(event.id).then( devices => {
-      event.devices = devices
-      return event
-    })
   })
 }
 
@@ -62,37 +43,6 @@ deleteOne = (eventId) => {
 
 checkIn = (eventId, deviceId) => {
   // defined inline in eventsController.js
-}
-
-getDevicesForEvent = (eventId) => {
-  return Events()
-    .where('events.id', parseInt(eventId))
-    .join('events_devices', 'events.id', 'events_devices.event_id')
-    .join('devices', 'devices.id', 'events_devices.device_id' )
-    .select(
-      'device_id as id',
-      'guid', 
-      'apnsDeviceToken', 
-      'isAdmin',
-      'tags'
-    )
-}
-
-// DRY this up
-getDevicesForEventOccasion = (eventId, occasionId) => {
-  return Events()
-    .where('events.id', parseInt(eventId))
-    .join('events_devices', 'events.id', 'events_devices.event_id')
-    .join('devices', 'devices.id', 'events_devices.device_id' )
-    .whereNotNull('occasion_id')
-    .where('occasion_id', parseInt(occasionId))
-    .select(
-      'device_id as id',
-      'guid', 
-      'apnsDeviceToken', 
-      'isAdmin',
-      'tags'
-    )
 }
 
 open = (eventId) => {
@@ -115,21 +65,12 @@ close = (eventId) => {
     })
 }
 
-checkOutAllDevices = (eventId) => {
-  return knex('events_devices')
-  .where('event_id', parseInt(eventId))
-  .del()
-}
-
 module.exports = { 
   getAll: getAll,
-  getAllActiveWithDevices: getAllActiveWithDevices,
+  getAllOpen: getAllOpen,
   getOneByID: getOneByID,
-  getOneByIDWithDevices: getOneByIDWithDevices,
   addOne: addOne,
   deleteOne: deleteOne,
-  getDevicesForEvent: getDevicesForEvent,
-  getDevicesForEventOccasion: getDevicesForEventOccasion,
   open: open,
   close: close
 }

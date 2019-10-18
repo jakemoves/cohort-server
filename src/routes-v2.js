@@ -5,7 +5,6 @@ const express = require('express')
 const router = express.Router()
 
 const eventsController = require('./controllers/eventsController')
-const devicesController = require('./controllers/devicesController')
 const occasionsController = require('./controllers/occasionsController')
 const demoController = require('./controllers/demoController')
 const servicesController = require('./controllers/servicesController')
@@ -33,18 +32,6 @@ router.post('/events/:eventId/broadcast-push-notification', eventsController.eve
 
 router.get('/events/:eventId/last-cohort-message', eventsController.events_lastCohortMessage)
 router.get('/events/:id/lotx-ar-tweaks', eventsController.events_getLotXARTweaks)
-
-/*
- *   devices
- */ 
-
-router.get('/devices', devicesController.devices)
-router.get('/devices/:id', devicesController.devices_id)
-
-router.post('/devices', devicesController.devices_create)
-
-router.patch('/devices/:id/register-for-notifications', devicesController.devices_registerForNotifications)
-router.patch('/devices/:id/set-tags', devicesController.devices_setTags)
 
 /*
  *   occasions
