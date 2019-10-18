@@ -40,6 +40,6 @@
     "test": "jest"
   },
   "engines": {
-    "node": "6.12.3"
+    "node": "8.16.0"
   }
 }

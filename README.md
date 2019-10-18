@@ -2,9 +2,9 @@
 
 ## Getting started
 ### environment setup
-- install node 6.12.3
+- install node 8.16.0
   - we recommend that you use [nvm](https://github.com/nvm-sh/nvm) to manage your node installed versions
-  - use nvm to make node 6.12.3 the active version
+  - use nvm to make node 8.16.0 the active version
 - install postgresql ([best instructions](https://gist.github.com/ibraheem4/ce5ccd3e4d7a65589ce84f2a3b7c23a3))
 - clone repo from github
 
