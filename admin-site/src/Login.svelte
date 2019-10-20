@@ -5,12 +5,15 @@
 </svelte:head>
 
  <script>
-    export let click = false;
+    export let authentication = false;
 
     function verifyPassword(){
       // verifying password logic may go here
-      click = true;
-      document.getElementById("eventsList").style.visibility="visible";
+      var passwordCheck = document.getElementById('password').value;
+      if (passwordCheck == "5555"){
+        authentication = true;
+        document.getElementById("eventsList").style.visibility="visible";
+      }
     }
 
 </script> 
