@@ -1,21 +1,10 @@
-<style>
-
-button{
-      font:inherit;
-      padding:0.15rem, 0.5rem;
-      background: #8d094bdc;
-      border: 1px solid #8d094bdc;
-      color: white;
-      cursor:pointer; 
-  }
-  button:hover,
-  button:active{
-      box-shadow: 1px 1px 6px rgba(0,0,0,0.26);
-  }
-
-</style>
+<svelte:head>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</svelte:head>
 
 
-<button on:click>
+<button type="button" class="btn-warning" on:click>
 <slot />
 </button>

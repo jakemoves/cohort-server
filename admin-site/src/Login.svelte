@@ -5,7 +5,13 @@
 </svelte:head>
 
  <script>
-  
+    export let click = false;
+
+    function verifyPassword(){
+      // verifying password logic may go here
+      click = true;
+      document.getElementById("eventsList").style.visibility="visible";
+    }
 
 </script> 
 
@@ -266,20 +272,25 @@
 
 
 </style>
-<section>
-<div class="wrapper fadeInDown">
-  <div id="formContent">
-      <form>
-      		<input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
-      		<input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
-      		<input type="submit" class="fadeIn fourth" value="Log In">
-    	</form>
+{#if !click}
+  <section>
+  <div class="wrapper fadeInDown">
+    <div id="formContent">
+        <form>
+            <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
+            <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
+            <input type="submit" class="fadeIn fourth" value="Log In" on:click={verifyPassword}>
+        </form>
 
-    <!-- Remind Passowrd -->
-    	<div id="formFooter">
-      		<a class="underlineHover" href="#">Forgot Password?</a>
-    	</div>
-    
+      <!-- Remind Passowrd -->
+        <!-- <div id="formFooter">
+            <a class="underlineHover" href="#">Forgot Password?</a>
+        </div> -->
+      
+    </div>
   </div>
-</div>
-</section>
+  </section>
+{/if}
+
+
+

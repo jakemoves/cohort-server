@@ -1,29 +1,37 @@
+<!-- This the component for the Event buttons -->
+<svelte:head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</svelte:head>
+
 <script>
-    import Button from "./button.svelte";
     export let eventTitle;
 </script>
-
-
 
 <style>
   div{
       margin: 1rem;
       box-shadow: 0px 2px 8px rgba(0,0,0,0.26);
-      padding: 1rem;
-      border-radius: 5px;
+      padding: 0.1rem;
+      border-radius: 1px;
       background-color: white;
   }
 
   h1{
-      font-size:1.25rem;
+      font-size:3 rem;
       margin: 0,25rem 0;
-      color: #4b4b4b;
+      color: white;
   }
 </style>
 
 
 <div>
 <!-- Event button used to populate event list-->
-    <h1>{eventTitle}</h1>
+    
+    <button type="button" class= 'btn-warning btn-block' >
+        <h1>{eventTitle}</h1> 
+    </button>
+   
 
 </div>

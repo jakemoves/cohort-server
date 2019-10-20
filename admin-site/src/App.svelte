@@ -1,5 +1,5 @@
 <script>
-	import FormContent from './Login.svelte';
+	import Login from './Login.svelte';
 	import Event from './Events.svelte';
 	import Button from "./button.svelte";
 
@@ -17,6 +17,7 @@
 		events = events.concat(newEvent);
 	}
 
+
 </script>
 
 <style>
@@ -28,32 +29,39 @@
 	label, input, textarea{
 		width:100%;
 	}
+
+	#eventsList{
+		visibility: hidden;
+	}
 	
 </style>
 
-<section>
-	<FormContent />
+<section id = "login">
+	<Login />
 	
 </section>
 
-<section>
-{#if events.length === 0}
-	<p>No events have been added yet</p>
-	{:else}
-	{#each events as event}
-		<Event 
-			eventTitle={event.title}
-			
-		/>
-	{/each}
-{/if}
-</section>
+
+<div id = "eventsList">
+	<section>
+	{#if events.length === 0}
+		<p>No events have been added yet</p>
+		{:else}
+		{#each events as event}
+			<Event 
+				eventTitle={event.title}
+				
+			/>
+		{/each}
+	{/if}
+	</section>
 
 
-<section>
-	<div>
-		<label for="title">Event Name</label> 
-		<input type="text" id="title" value={title} on:input={setTitle}>  
-	</div>
-	<Button on:click={createEvent}>Create Event</Button>
-</section>
+	<section>
+		<div>
+			<label for="title">Event Name</label> 
+			<input type="text" id="title" value={title} on:input={setTitle}>  
+		</div>
+		<Button on:click={createEvent}>Create Event</Button>
+	</section>
+</div>
