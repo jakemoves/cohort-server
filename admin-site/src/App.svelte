@@ -1,10 +1,13 @@
 <script>
 	import Login from './Login.svelte';
 	import Event from './Events.svelte';
-	import Button from "./button.svelte";
+	
 
 	let title = '';
-	let events =[];
+	const SoundCue = {
+		title: "Sound Cue",
+	}
+	let events =[SoundCue];
 
 	function setTitle(event){
 		title = event.target.value;
@@ -19,15 +22,6 @@
 </script>
 
 <style>
-	section{
-		width:30rem;
-		margin:auto;
-	}
-
-	label, input, textarea{
-		width:100%;
-	}
-
 	#eventsList{
 		visibility: hidden;
 	}
@@ -35,6 +29,7 @@
 </style>
 
 <!-- Display login first, and then logic to switch to #eventslist is in Login.svelte -->
+<!-- Keeping this as a component cause it will likely need switching out -->
 <section id = "login">
 	<Login />
 
@@ -47,9 +42,12 @@
 			<p>No events have been added yet</p>
 			{:else}
 			{#each events as event}
-				<Event 
+				<!-- <Event 
 					eventTitle={event.title}
-				/>
+				/> -->
+				<button type="button" class= 'btn-primary btn-block' >
+        			<h1>{event.title}</h1> 
+    			</button>
 			{/each}
 		{/if}
 	</section>
@@ -61,6 +59,19 @@
 			<label for="title">Event Name</label> 
 			<input type="text" id="title" value={title} on:input={setTitle}>  
 		</div>
-		<Button on:click={createEvent}>Create New Event</Button>
+		<button class = "btn-primary" on:click={createEvent}>Create New Event</button>
 	</section>
 </div>
+
+<!-- <div id = "openEvent">
+	<section>
+		<form class = "form-inline">
+
+			
+
+		
+		</form>
+	
+	</section>
+
+</div> -->

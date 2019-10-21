@@ -1,9 +1,4 @@
 <!-- Login component with a simple password verification -->
-<svelte:head>
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-</svelte:head>
 
  <script>
     export let authenticated = false;
@@ -20,33 +15,6 @@
 </script> 
 
 <style>
-  html {
-    background-color: #56baed;
-  }
-
-  body {
-    font-family: "Poppins", sans-serif;
-    height: 100vh;
-  }
-
-  a {
-    color: #92badd;
-    display:inline-block;
-    text-decoration: none;
-    font-weight: 400;
-  }
-
-  h2 {
-    text-align: center;
-    font-size: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-    display:inline-block;
-    margin: 40px 8px 10px 8px; 
-    color: #cccccc;
-  }
-
-
 
   /* STRUCTURE */
 
@@ -72,28 +40,6 @@
     -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
     box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
     text-align: center;
-  }
-
-  #formFooter {
-    background-color: #f6f6f6;
-    border-top: 1px solid #dce8f1;
-    padding: 25px;
-    text-align: center;
-    -webkit-border-radius: 0 0 10px 10px;
-    border-radius: 0 0 10px 10px;
-  }
-
-
-
-  /* TABS */
-
-  h2.inactive {
-    color: #cccccc;
-  }
-
-  h2.active {
-    color: #0d0d0d;
-    border-bottom: 2px solid #5fbae9;
   }
 
 
@@ -163,8 +109,6 @@
   input[type=text]:placeholder {
     color: #cccccc;
   }
-
-
 
   /* ANIMATIONS */
 
