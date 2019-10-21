@@ -63,15 +63,22 @@
 	</section>
 </div>
 
-<!-- <div id = "openEvent">
+<div id = "openEvent">
 	<section>
-		<form class = "form-inline">
-
+		<div class="container">
+			<div class ="row">
+				<div class="col-md-3">
+					<button type="button" class="btn btn-outline-primary">Back to Event List</button>
+				</div>
+			</div>
+			<div class ="row">
+				<div class="col text-center">
+					<h1> Sound Cue </h1>
+				</div>
+			</div>
 			
-
-		
-		</form>
+		</div>
 	
 	</section>
 
-</div> -->
+</div>
