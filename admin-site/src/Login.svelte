@@ -1,3 +1,4 @@
+<!-- Login component with a simple password verification -->
 <svelte:head>
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -5,13 +6,13 @@
 </svelte:head>
 
  <script>
-    export let authentication = false;
+    export let authenticated = false;
 
     function verifyPassword(){
-      // verifying password logic may go here
+      // verifying password logic 
       var passwordCheck = document.getElementById('password').value;
       if (passwordCheck == "5555"){
-        authentication = true;
+        authenticated = true;
         document.getElementById("eventsList").style.visibility="visible";
       }
     }
@@ -275,23 +276,24 @@
 
 
 </style>
-{#if !click}
-  <section>
-  <div class="wrapper fadeInDown">
-    <div id="formContent">
-        <form>
-            <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
-            <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
-            <input type="submit" class="fadeIn fourth" value="Log In" on:click={verifyPassword}>
-        </form>
 
-      <!-- Remind Passowrd -->
-        <!-- <div id="formFooter">
-            <a class="underlineHover" href="#">Forgot Password?</a>
-        </div> -->
-      
+{#if !authenticated}
+  <section>
+    <div class="wrapper fadeInDown">
+      <div id="formContent">
+          <form>
+              <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
+              <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
+              <input type="submit" class="fadeIn fourth" value="Log In" on:click={verifyPassword}>
+          </form>
+
+        <!-- Remind Password if we need it -->
+          <!-- <div id="formFooter">
+              <a class="underlineHover" href="#">Forgot Password?</a>
+          </div> -->
+        
+      </div>
     </div>
-  </div>
   </section>
 {/if}
 

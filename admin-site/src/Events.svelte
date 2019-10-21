@@ -7,6 +7,7 @@
 
 <script>
     export let eventTitle;
+    
 </script>
 
 <style>
@@ -19,7 +20,7 @@
   }
 
   h1{
-      font-size:3 rem;
+      font-size:2rem;
       margin: 0,25rem 0;
       color: white;
   }
@@ -28,10 +29,8 @@
 
 <div>
 <!-- Event button used to populate event list-->
-    
     <button type="button" class= 'btn-warning btn-block' >
         <h1>{eventTitle}</h1> 
     </button>
    
-
 </div>
