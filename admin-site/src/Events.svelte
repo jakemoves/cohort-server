@@ -10,11 +10,7 @@
 </script>
 
 <style>
-  h1{
-      font-size:2rem;
-      margin: 0,25rem 0;
-      color: white;
-  }
+ 
 </style>
 
 
