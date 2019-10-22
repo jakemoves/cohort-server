@@ -1,7 +1,7 @@
 <script>
 	import Login from './Login.svelte';
 	import Event from './Events.svelte';
-	
+	import Slider from './Slider.svelte';
 
 	let title = '';
 	const SoundCue = {
@@ -64,21 +64,61 @@
 </div>
 
 <div id = "openEvent">
-	<section>
-		<div class="container">
-			<div class ="row">
-				<div class="col-md-3">
-					<button type="button" class="btn btn-outline-primary">Back to Event List</button>
-				</div>
-			</div>
-			<div class ="row">
-				<div class="col text-center">
-					<h1> Sound Cue </h1>
-				</div>
-			</div>
-			
-		</div>
-	
-	</section>
+	<!-- <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"> -->
+  		<div class="modal-dialog modal-lg">
+    		<div class="modal-content">
+				<div class="modal-header">
+        			<h5 class="modal-title">Sound Cue</h5>
+        				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          					<span aria-hidden="true">&times;</span>
+        				</button>
+      			</div>
+				<div class="modal-body">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-md-12">
+								<button type="button" class="btn btn-danger btn-block">Close Event</button>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<button type="button" class="btn btn-primary btn-block"><u>Show QR Code</u></button>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<label for="cueDetails"><h5>Cue Details</h5></label>
+								<p id="cueDetails">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ipsum nunc aliquet bibendum enim facilisis gravida neque convallis. Egestas congue quisque egestas diam in. Sed viverra ipsum nunc aliquet. Facilisi morbi tempus iaculis urna id volutpat lacus laoreet non. In pellentesque massa placerat duis. Nisl purus in mollis nunc sed id semper. Mi in nulla posuere sollicitudin aliquam ultrices sagittis orci a. Sit amet est placerat in egestas erat imperdiet. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. At auctor urna nunc id cursus. Nulla posuere sollicitudin aliquam ultrices. Neque volutpat ac tincidunt vitae semper quis lectus. A cras semper auctor neque. Odio eu feugiat pretium nibh ipsum. Malesuada proin libero nunc consequat. Vitae congue mauris rhoncus aenean vel.
+								</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<button type="button" class="btn btn-primary btn-block">
+									<span class="glyphicon glyphicon-chevron-left"></span>
+									Previous
+								</button>
+							</div>
+							<div class="col-md-6">
+								<button type="button" class="btn btn-info btn-block">
+									<span class="glyphicon glyphicon-chevron-right"></span>
+									Next
+								</button>
+							</div>
+						</div>
 
+						
+                			<Slider/>
+              			
+
+        			
+					</div>
+      			</div>
+
+    		</div>
+  		</div>
+	<!-- </div> -->
+		
+		
+	
 </div>
