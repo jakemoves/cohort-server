@@ -46,10 +46,6 @@
 	
 	let events =[LotX];
 
-	function consol(){
-		console.log(events[0].EventName);
-	}
-consol();
 	function setTitle(event){
 		title = event.target.value;
 	}
@@ -187,6 +183,7 @@ consol();
 		</div>
 	</div>
 
+<!-- Not yet ready to self populate if more events are added -->
 	<div id = "closeEvent">
 		<div class="modal-dialog modal-lg">
     		<div class="modal-content">
