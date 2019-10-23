@@ -3,14 +3,53 @@
 	import Event from './Events.svelte';
 	import Slider from './Slider.svelte';
 
-	let title = '';
 
+	const LotX =  {
+       "EventName": "LotX",
+       "EventDetails": "Two performances of Heidi Strauss' LotX",
+       "EventQrCode": "./QrCodes/Event1.png",
+       "OccasionDates": [ 
+			"October 20th, 2019",
+        	"October 21st, 2019"
+       ],
+    	"cue1":{
+             "cueName": "Star Wars Sound Go",
+             "cueDetails": "Cue Star Wars theme when the Jedi enter stage left",
+             "mediaDomain": 0,
+             "cueNumber": 1,
+             "cueAction": 0,
+             "targetTags": [
+                "all"
+             ]
+          },
+          "cue2":{
+             "cueName": "Star Wars Sound Stop",
+             "cueDetails": "Stop Star Wars theme when the Jedi exits stage right",
+             "mediaDomain": 0,
+             "cueNumber": 1,
+             "cueAction": 3,
+             "targetTags": [
+                "all"
+			 ]
+		  }  
+    };
+	
+	
+	
+	
+	let title = '';
+	
+	
 	const SoundCue = {
 		title: "Lotx - October 24th, 2019",
 	}
 	
-	let events =[SoundCue];
+	let events =[LotX];
 
+	function consol(){
+		console.log(events[0].EventName);
+	}
+consol();
 	function setTitle(event){
 		title = event.target.value;
 	}
@@ -49,9 +88,13 @@
 				<!-- <Event 
 					eventTitle={event.title}
 				/> -->
+				{#if event.OccasionDates.length > 0}
+					{#each event.OccasionDates as occasion}
 				<button type="button" class= 'btn btn-primary btn-block' >
-        			<h3>{event.title}</h3> 
+        			<h3>{event.EventName} - {occasion}</h3> 
     			</button>
+					{/each}
+				{/if}
 			{/each}
 		{/if}
 	</section>
@@ -67,12 +110,13 @@
 	</section>
 </div>
 
+<!-- Not yet ready to self populate if more events are added -->
 <div id = "openEvent">
 	<!-- <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"> -->
   		<div class="modal-dialog modal-lg">
     		<div class="modal-content">
 				<div class="modal-header">
-        			<h5 class="modal-title">{events[0].title}</h5>
+        			<h5 class="modal-title">{events[0].EventName} - {events[0].cue1.cueName}</h5>
         				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
           					<span aria-hidden="true">&times;</span>
         				</button>
@@ -93,7 +137,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<label for="cueDetails"><h5>Cue Details</h5></label>
-								<p id="cueDetails">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ipsum nunc aliquet bibendum enim facilisis gravida neque convallis. Egestas congue quisque egestas diam in. Sed viverra ipsum nunc aliquet. Facilisi morbi tempus iaculis urna id volutpat lacus laoreet non. In pellentesque massa placerat duis. Nisl purus in mollis nunc sed id semper. Mi in nulla posuere sollicitudin aliquam ultrices sagittis orci a. Sit amet est placerat in egestas erat imperdiet. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. At auctor urna nunc id cursus. Nulla posuere sollicitudin aliquam ultrices. Neque volutpat ac tincidunt vitae semper quis lectus. A cras semper auctor neque. Odio eu feugiat pretium nibh ipsum. Malesuada proin libero nunc consequat. Vitae congue mauris rhoncus aenean vel.
+								<p id="cueDetails">{LotX.cue1.cueDetails}
 								</p>
 							</div>
 						</div>
@@ -133,8 +177,8 @@
 				<div class="modal-body">
 					<div class="container-fluid">
 						<div class="row">
-							<div class="col-md-12">
-								<img src="./QrCodes/Event1.png" class="img-fluid" alt="QR Code for {events[0].title}">
+							<div class="col-md-12 text-center">
+								<img src="QrCodes/Event1.png " class="img-fluid" alt="QR Code for {events[0].EventName}">
 							</div>
 						</div>
 					</div>
@@ -147,15 +191,15 @@
 		<div class="modal-dialog modal-lg">
     		<div class="modal-content">
 				<div class="modal-header">
-        			<h5 class="modal-title">{events[0].title}</h5>
+        			<h5 class="modal-title">{events[0].EventName}</h5>
       			</div>
 
 				<div class="modal-body">
 					<div class="container-fluid">
 						<div class="row">
 							<div class="col-md-12">
-								<label for="OccasionDetails"><h4>Occasion Details</h4></label>
-								<p id="OccasionDetails">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ipsum nunc aliquet bibendum enim facilisis gravida neque convallis. Egestas congue quisque egestas diam in. Sed viverra ipsum nunc aliquet. Facilisi morbi tempus iaculis urna id volutpat lacus laoreet non. In pellentesque massa placerat duis. Nisl purus in mollis nunc sed id semper. Mi in nulla posuere sollicitudin aliquam ultrices sagittis orci a. Sit amet est placerat in egestas erat imperdiet. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. At auctor urna nunc id cursus. Nulla posuere sollicitudin aliquam ultrices. Neque volutpat ac tincidunt vitae semper quis lectus. A cras semper auctor neque. Odio eu feugiat pretium nibh ipsum. Malesuada proin libero nunc consequat. Vitae congue mauris rhoncus aenean vel.
+								<label for="OccasionDetails"><h4>Event Details</h4></label>
+								<p id="OccasionDetails"> {events[0].EventDetails}
 								</p>
 							</div>
 						</div>
