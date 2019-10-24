@@ -8,7 +8,7 @@
       var passwordCheck = document.getElementById('password').value;
       if (passwordCheck == "5555"){
         authenticated = true;
-        document.getElementById("eventsList").style.visibility="visible";
+        document.getElementById("eventsList").style.display="block";
       }
     }
 
