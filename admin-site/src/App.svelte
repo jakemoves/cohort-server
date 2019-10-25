@@ -136,14 +136,14 @@
 </script>
 
 <style>
-	#eventsList, #closeEvent, #occasionList, #openEvent, #QRcode, #confirmDelete, #confirmEndOccasion {
+	#eventsList, #closeEvent,#openEvent, #occasionList, #QRcode, #confirmDelete, #confirmEndOccasion {
 		display: none;
 	}
 	
 	
 </style>
 
-<!-- Display login first, and then logic to switch to #eventslist is in Login.svelte -->
+
 <!-- Keeping this as a component cause it will likely need switching out -->
 <section id = "login">
 	<Login />
@@ -167,13 +167,13 @@
 					{/each}
 		{/if}
 <!-- event creation -->
-	<hr>
+		<hr>
 		<div>
 			<label for="title">New Event Name</label> 
 			<input type="text" id="title" value={label} on:input={setTitle}>  
 		</div>
 		<button class = "btn btn-primary" on:click={createEvent}>Create New Event</button>
-	</section>
+</section>
 
 
 <div id = "occasionList">
@@ -199,85 +199,82 @@
 
 
 <div id = "openEvent">
-	<!-- <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"> -->
-  		<div class="modal-dialog modal-lg">
-    		<div class="modal-content">
-				<div class="modal-header">
-        			<h5 class="modal-title"> {focusedEvent.label} - {focusedOccasion.startDateTime}</h5>
-      			</div>
+	<div class="container-fluid">
+			<div class="row">
+				<h5> {focusedEvent.label} - {focusedOccasion.startDateTime}</h5>
+			</div>
 
-				<div class="modal-body">
-					<div class="container-fluid">
-						<div class="row">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-primary btn-block" value = "openEvent" on:click={backToOccasionList}>Back To Occasion List</button>
-							</div>
-						</div>
-						<hr>
-						<div class="row">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-danger btn-block" on:click={confirmEnd}>End Occasion</button>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-primary btn-block" value="openEvent" on:click={showQR}><u>Show QR Code</u></button>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<label for="cueDetails"><h5>Cue Details</h5></label>
-								<p id="cueDetails">
-								</p>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-6">
-								<button type="button" class="btn btn-info btn-block">
-									<span class="glyphicon glyphicon-chevron-left"></span>
-									Previous
-								</button>
-							</div>
-							<div class="col-md-6">
-								<button type="button" class="btn btn-info btn-block">
-									<span class="glyphicon glyphicon-chevron-right"></span>
-									Next
-								</button>
-							</div>
-						</div> 
-
-                		<Slider/>
-              		</div>
-					  <!-- end of body -->
-      			</div>
-				<!-- end of content -->
-    		</div>
-
-  		</div>			
-	</div>
-
-	
-
-	<div id = "QRcode">
-		<div class="modal-dialog modal-lg">
-    		<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close" value= "QRcode" on:click={backToOccasionList}>
-          				<span aria-hidden="true">&times;</span>
-        			</button>
+			<div class="row">
+				<div class="col-md-12">
+					<button type="button" class="btn btn-primary btn-block" value = "openEvent" on:click={backToOccasionList}>Back To Occasion List</button>
 				</div>
-				<div class="modal-body">
-					<div class="container-fluid">
-						<div class="row">
-							<div class="col-md-12 text-center">
-								<img src="QrCodes/Event1.png " class="img-fluid" alt="QR Code for">
-							</div>
+			</div>
+			<hr>
+
+			<div class="row">
+				<div class="col-md-12">
+					<button type="button" class="btn btn-danger btn-block" on:click={confirmEnd}>End Occasion</button>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<button type="button" class="btn btn-primary btn-block" value="openEvent" on:click={showQR}><u>Show QR Code</u></button>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<label for="cueDetails"><h5>Cue Details</h5></label>
+					<ul id="cueDetails">
+						<li>focusedOccasion.</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6">
+					<button type="button" class="btn btn-info btn-block">
+						<span class="glyphicon glyphicon-chevron-left"></span>
+						Previous
+					</button>
+				</div>
+				<div class="col-md-6">
+					<button type="button" class="btn btn-info btn-block">
+						<span class="glyphicon glyphicon-chevron-right"></span>
+						Next
+					</button>
+				</div>
+			</div> 
+
+			<div class="row">
+				<div class="col-md-12">
+					<Slider/>
+				</div>
+			</div>
+	</div>
+</div>
+
+<div id = "QRcode">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" value= "QRcode" on:click={backToOccasionList}>
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<img src="QrCodes/Event1.png " class="img-fluid" alt="QR Code for">
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
 
 <div id = "closeEvent">
 	<div class="container-fluid">
@@ -316,9 +313,9 @@
 	</div>
 </div>
 
-
+<!-- //modals show/hide not working, so removed below so they can act as a static document 
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div> -->
 <div id ="confirmDelete">
-
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -336,11 +333,9 @@
       </div>
     </div>
   </div>
-
 </div>
 
 <div id ="confirmEndOccasion">
-
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">

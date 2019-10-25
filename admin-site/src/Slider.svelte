@@ -5,7 +5,7 @@ label{
 /* Slider CSS */
 #cue-control-go {
   -webkit-appearance: none;
-  width: 90%;
+  width: 30%;
   margin: 1rem 5%;
 padding: 0; }
 
@@ -102,7 +102,8 @@ padding: 0; }
 
     
     </style>
-   <div >
+
+   <div class="text-center">
         <label for="cue-control-go">Drag slider to the right to cue</label>
         <input class="cue-controls__cue-controls-go" type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event) v-bind:disabled="selectedOccasion == null">
     </div>
