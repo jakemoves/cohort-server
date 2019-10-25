@@ -124,9 +124,9 @@
 		// deletion code goes here
 		document.getElementById("confirmDelete").style.display = "none";
 		document.getElementById("eventsList").style.display = "block";
-		// successfully removes occasion from object but that's not updated in occasions list for some reason
+		//removes occasion from object and from list
 		focusedEvent.occasions.splice(indexInOccasions,1);
-
+		document.getElementById(focusedOccasionID).remove();
 
 	}
 	function endOccasion(){
@@ -165,11 +165,9 @@
 			cueState += 1;
 		} else if(direction == "previous" && cueState > 1){
 			cueState -= 1;
-		}else {
+		} else {
 			cueState = 1;
-		}
-
-		
+		}	
 	}
 
 /////for new event generation
@@ -236,7 +234,7 @@
 					{#each events as event}
 							{#if event.id == focusedEventID && event.occasions != null && event.occasions.length > 0}
 								{#each event.occasions as occasion}	
-									<button type="button" class= 'btn btn-primary btn-block' value = {occasion.id} on:click={occasionButton}>
+									<button type="button" id={occasion.id} class= 'btn btn-primary btn-block' value = {occasion.id} on:click={occasionButton}>
 										<h3>{event.label} - Occasion # {occasion.id} </h3>
 											
 									</button>
