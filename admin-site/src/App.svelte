@@ -66,7 +66,7 @@
 					"targetTags": ["all"]
 					}
 				]
-			}];
+			},];
 
 //for new event creation parameters
 	let label = '';
@@ -129,9 +129,9 @@
 		document.getElementById(focusedOccasionID).remove();
 
 	}
-	function endOccasion(){
-		// end occasion code goes here
-		document.getElementById("confirmEndOccasion").style.display = "none";
+	function backToEvents(){
+		let id =this.value;
+		document.getElementById(id).style.display = "none";
 		document.getElementById("eventsList").style.display = "block";
 	}
 	function cancelEnd(){
@@ -227,6 +227,8 @@
 <div id = "occasionList">
 	<section>
 	<h1>Occasions</h1>
+	<hr>
+	<button type="button" class="btn btn-primary" value ="occasionList" on:click={backToEvents}>Back To Events List</button>
 	<hr>
 		{#if events.length === 0}
 			<p>No events have been added yet</p>
@@ -411,7 +413,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" on:click={cancelEnd}>Cancel</button>
-        <button type="button" class="btn btn-primary" on:click = {endOccasion}>End Occasion</button>
+        <button type="button" class="btn btn-primary" value="confirmEndOccasion" on:click = {backToEvents}>End Occasion</button>
       </div>
     </div>
   </div>
