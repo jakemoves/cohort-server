@@ -203,7 +203,7 @@
 <!-- #eventsList allows a list of events to be built and shown -->
 
 <section id = "eventsList">
-	<h1>Events</h1>
+	<h1 class="text-center">Events</h1>
 	<hr>
 		{#if events.length === 0}
 			<p>No events have been added yet</p>
@@ -226,7 +226,7 @@
 <!-- //occasions list populated by looping through events of "focused" event ID -->
 <div id = "occasionList">
 	<section>
-	<h1>Occasions</h1>
+	<h1 class="text-center">Occasions</h1>
 	<hr>
 	<button type="button" class="btn btn-primary" value ="occasionList" on:click={backToEvents}>Back To Events List</button>
 	<hr>
@@ -255,11 +255,11 @@
 				<h5> {focusedEvent.label} - {formattedStartTime}</h5>
 			</div>
 
-			<div class="row">
-				<div class="col-md-12">
-					<button type="button" class="btn btn-primary btn-block" value = "openEvent" on:click={backToOccasionList}>Back To Occasion List</button>
-				</div>
-			</div>
+			<!-- <div class="row">
+				<div class="col-md-3"> -->
+					<button type="button" class="btn btn-primary" value = "openEvent" on:click={backToOccasionList}>Back To Occasion List</button>
+				<!-- </div>
+			</div> -->
 			<hr>
 
 			<div class="row">
@@ -295,14 +295,14 @@
 			<div class="row">
 				<div class="col-md-6">
 					<button type="button" class="btn btn-info btn-block" value="previous" on:click={changeCueState}>
-						<span class="glyphicon glyphicon-chevron-left"></span>
+						<span class="fas fa-angle-left"></span>
 						Previous
 					</button>
 				</div>
 				<div class="col-md-6">
 					<button type="button" class="btn btn-info btn-block" value="next" on:click={changeCueState}>
-						<span class="glyphicon glyphicon-chevron-right"></span>
 						Next
+						<span class="fas fa-angle-right"></span>
 					</button>
 				</div>
 			</div> 
