@@ -72,6 +72,54 @@
 		
 	}
 
+	function openOccasionButton(){
+		document.getElementById("closeEvent").style.display = "none";
+		document.getElementById("openEvent").style.display = "block";
+	}
+
+	function confirmOccasionDelete(){
+		document.getElementById("closeEvent").style.display = "none";
+		document.getElementById("confirmDelete").style.display = "block";
+	}
+	function cancelDelete(){
+		document.getElementById("confirmDelete").style.display = "none";
+		document.getElementById("closeEvent").style.display = "block";
+	}
+
+	function deleteOccasion(){
+		// deletion code goes here
+		document.getElementById("confirmDelete").style.display = "none";
+		document.getElementById("eventsList").style.display = "block";
+	}
+	function endOccasion(){
+		// end occasion code goes here
+		document.getElementById("confirmEndOccasion").style.display = "none";
+		document.getElementById("eventsList").style.display = "block";
+	}
+	function cancelEnd(){
+		
+		document.getElementById("confirmEndOccasion").style.display = "none";
+		document.getElementById("openEvent").style.display = "block";
+	}
+	function confirmEnd(){
+		
+		document.getElementById("openEvent").style.display = "none";
+		document.getElementById("confirmEndOccasion").style.display = "block";
+	}
+
+	function backToOccasionList() {
+		let id = this.value;
+		document.getElementById(id).style.display = "none";
+		document.getElementById("occasionList").style.display = "block";
+		
+	}
+	function showQR(){
+		let id = this.value;
+		document.getElementById(id).style.display = "none";
+		document.getElementById("QRcode").style.display = "block";
+
+	}
+
 /////for new event generation
 	function setTitle(event){
 		label = event.target.value;
@@ -88,21 +136,10 @@
 </script>
 
 <style>
-	#eventsList{
+	#eventsList, #closeEvent, #occasionList, #openEvent, #QRcode, #confirmDelete, #confirmEndOccasion {
 		display: none;
 	}
-	#occasionList{
-		display: none;
-	}
-	#closeEvent{
-		display: none;
-	}
-	#openEvent{
-		display: none;
-	}
-	#QRcode{
-		display: none;
-	}
+	
 	
 </style>
 
@@ -160,28 +197,31 @@
 </div>
 
 
-<!-- Not yet ready to self populate if more events are added -->
+
 <div id = "openEvent">
 	<!-- <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"> -->
   		<div class="modal-dialog modal-lg">
     		<div class="modal-content">
 				<div class="modal-header">
-        			<h5 class="modal-title"> blank</h5>
-        				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          					<span aria-hidden="true">&times;</span>
-        				</button>
+        			<h5 class="modal-title"> {focusedEvent.label} - {focusedOccasion.startDateTime}</h5>
       			</div>
 
 				<div class="modal-body">
 					<div class="container-fluid">
 						<div class="row">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-danger btn-block">Close Event</button>
+								<button type="button" class="btn btn-primary btn-block" value = "openEvent" on:click={backToOccasionList}>Back To Occasion List</button>
+							</div>
+						</div>
+						<hr>
+						<div class="row">
+							<div class="col-md-12">
+								<button type="button" class="btn btn-danger btn-block" on:click={confirmEnd}>End Occasion</button>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-md-12">
-								<button type="button" class="btn btn-primary btn-block"><u>Show QR Code</u></button>
+								<button type="button" class="btn btn-primary btn-block" value="openEvent" on:click={showQR}><u>Show QR Code</u></button>
 							</div>
 						</div>
 						<div class="row">
@@ -216,11 +256,13 @@
   		</div>			
 	</div>
 
+	
+
 	<div id = "QRcode">
 		<div class="modal-dialog modal-lg">
     		<div class="modal-content">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" value= "QRcode" on:click={backToOccasionList}>
           				<span aria-hidden="true">&times;</span>
         			</button>
 				</div>
@@ -228,7 +270,7 @@
 					<div class="container-fluid">
 						<div class="row">
 							<div class="col-md-12 text-center">
-								<img src="QrCodes/Event1.png " class="img-fluid" alt="QR Code for {events[0].label}">
+								<img src="QrCodes/Event1.png " class="img-fluid" alt="QR Code for">
 							</div>
 						</div>
 					</div>
@@ -237,46 +279,84 @@
 		</div>
 	</div>
 
-<!-- Not yet ready to self populate if more events are added -->
-	<div id = "closeEvent">
-		<div class="modal-dialog modal-lg">
-    		<div class="modal-content">
-				<div class="modal-header">
+<div id = "closeEvent">
+	<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
         			<h5 class="modal-title">{focusedEvent.label} - {focusedOccasion.startDateTime}.</h5>
-      			</div>
-
-				<div class="modal-body">
-					<div class="container-fluid">
-						<div class="row">
-							<div class="col-md-12">
-								<label for="OccasionDetails"><h4>Occasion Details</h4></label>
-								<ul id="OccasionDetails">
-									<li>Start Date : {focusedOccasion.startDateTime}</li>
-									<li>End Date : {focusedOccasion.endDateTime}</li>
-									<li>Location Label: {focusedOccasion.locationLabel} </li>
-									<li>Location Address: {focusedOccasion.locationAddress} </li>
-									<li>Location City: {focusedOccasion.locationCity} </li>
-								</ul> 	
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-danger btn-block">Delete Occasion</button>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-success btn-block">Open Occasion</button>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<button type="button" class="btn btn-primary btn-block">Get QR Code</button>
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
-		</div>
-
+			<div class="row">
+				<div class="col-md-12">
+					<label for="OccasionDetails"><h4>Occasion Details</h4></label>
+					<ul id="OccasionDetails">
+						<li>Start Date : {focusedOccasion.startDateTime}</li>
+						<li>End Date : {focusedOccasion.endDateTime}</li>
+						<li>Location Label: {focusedOccasion.locationLabel} </li>
+						<li>Location Address: {focusedOccasion.locationAddress} </li>
+						<li>Location City: {focusedOccasion.locationCity} </li>
+					</ul> 	
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<button type="button" class="btn btn-danger btn-block" on:click={confirmOccasionDelete}>Delete Occasion</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<button type="button" class="btn btn-success btn-block" on:click={openOccasionButton}>Open Occasion</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<button type="button" class="btn btn-primary btn-block" value ="closeEvent" on:click={showQR}>Get QR Code</button>
+				</div>
+			</div>
 	</div>
+</div>
+
+
+<div id ="confirmDelete">
+
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteOccasionConfirmation">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete {focusedEvent.label} - {focusedOccasion.startDateTime} ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" on:click={cancelDelete}>Cancel</button>
+        <button type="button" class="btn btn-primary" on:click = {deleteOccasion}>Delete Occasion</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id ="confirmEndOccasion">
+
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteOccasionConfirmation">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to end {focusedEvent.label} - {focusedOccasion.startDateTime} ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" on:click={cancelEnd}>Cancel</button>
+        <button type="button" class="btn btn-primary" on:click = {endOccasion}>End Occasion</button>
+      </div>
+    </div>
+  </div>
+
+</div>
