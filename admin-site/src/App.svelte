@@ -1,7 +1,9 @@
 <script>
 	import Login from './Login.svelte';
 	import Slider from './Slider.svelte';
+	import moment from 'moment';
 
+	
 	let events =[{
 					"id": 1,
 					"label": "LOT X",
@@ -47,6 +49,9 @@
 	let focusedOccasionID="0";
 	let focusedEvent="0";
 	let focusedOccasion="0";
+//holdformatted time
+	let formattedStartTime = "";
+	let formattedEndTime = "";
 //only works if id numbers are set in order (currently starting from 1)
 	let indexInEvents;
 	let indexInOccasions;
@@ -56,6 +61,7 @@
 		document.getElementById("eventsList").style.display = "none";
 		document.getElementById("occasionList").style.display = "block";
 		focusedEventID = this.value;
+		//first event must have id of 1 and then ++
 		indexInEvents = focusedEventID - 1;
 		focusedEvent = events[indexInEvents];
 		
@@ -66,12 +72,13 @@
 		focusedOccasionID= this.value;
 		document.getElementById("occasionList").style.display = "none";
 		document.getElementById("closeEvent").style.display = "block";
-		
+		//first occasion must have id of 1 and then ++
 		indexInOccasions = focusedOccasionID - 1;
 		focusedOccasion = focusedEvent.occasions[indexInOccasions];
-		
+		formattedStartTime = moment(focusedOccasion.startDateTime).add(1, 'day').format('LLL');
+		formattedEndTime = moment(focusedOccasion.endDateTime).add(1, 'day').format('LLL');
 	}
-
+//these are navigation buttons..not very elegant and partly due to modals not working
 	function openOccasionButton(){
 		document.getElementById("closeEvent").style.display = "none";
 		document.getElementById("openEvent").style.display = "block";
@@ -125,12 +132,12 @@
 		label = event.target.value;
 	}
 
+//whichever parameters we want to be able to build for new events from the site would go below
 	function createEvent(){
 		let newEvent = [{
 				label:label
 			}];
 		events = events.concat(newEvent);
-		console.log(events);
 	}
 ////////
 </script>
@@ -159,15 +166,13 @@
 			<p>No events have been added yet</p>
 			{:else}
 					{#each events as event}
-					
 						<button type="button" class= 'btn btn-primary btn-block' value = {event.id} on:click={eventButton} >
 							<h3>{event.label}</h3>	
 						</button>
-					
 					{/each}
 		{/if}
-<!-- event creation -->
 		<hr>
+		<!-- event creation -->
 		<div>
 			<label for="title">New Event Name</label> 
 			<input type="text" id="title" value={label} on:input={setTitle}>  
@@ -175,7 +180,7 @@
 		<button class = "btn btn-primary" on:click={createEvent}>Create New Event</button>
 </section>
 
-
+<!-- //occasions list populated by looping through events of "focused" event ID -->
 <div id = "occasionList">
 	<section>
 	<h1>Occasions</h1>
@@ -187,7 +192,8 @@
 							{#if event.id == focusedEventID && event.occasions != null}
 								{#each event.occasions as occasion}	
 									<button type="button" class= 'btn btn-primary btn-block' value = {occasion.id} on:click={occasionButton}>
-										<h3>{event.label} - {occasion.startDateTime}</h3>	
+										<h3>{event.label} - Occasion # {occasion.id} </h3>
+											
 									</button>
 								{/each}
 							{/if}
@@ -201,7 +207,7 @@
 <div id = "openEvent">
 	<div class="container-fluid">
 			<div class="row">
-				<h5> {focusedEvent.label} - {focusedOccasion.startDateTime}</h5>
+				<h5> {focusedEvent.label} - {formattedStartTime}</h5>
 			</div>
 
 			<div class="row">
@@ -227,7 +233,7 @@
 				<div class="col-md-12">
 					<label for="cueDetails"><h5>Cue Details</h5></label>
 					<ul id="cueDetails">
-						<li>focusedOccasion.</li>
+						<li></li>
 					</ul>
 				</div>
 			</div>
@@ -280,15 +286,19 @@
 	<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-12">
-        			<h5 class="modal-title">{focusedEvent.label} - {focusedOccasion.startDateTime}.</h5>
+        			<h5 class="modal-title">{focusedEvent.label} - {formattedStartTime}.</h5>
 				</div>
+			</div>
+			<div class="row">
+				<button type='button' class="btn btn-primary" value="closeEvent" on:click={backToOccasionList}>Back To Occasions List</button>
+			
 			</div>
 			<div class="row">
 				<div class="col-md-12">
 					<label for="OccasionDetails"><h4>Occasion Details</h4></label>
 					<ul id="OccasionDetails">
-						<li>Start Date : {focusedOccasion.startDateTime}</li>
-						<li>End Date : {focusedOccasion.endDateTime}</li>
+						<li>Start Date : {formattedStartTime}</li>
+						<li>End Date : {formattedEndTime}</li>
 						<li>Location Label: {focusedOccasion.locationLabel} </li>
 						<li>Location Address: {focusedOccasion.locationAddress} </li>
 						<li>Location City: {focusedOccasion.locationCity} </li>
