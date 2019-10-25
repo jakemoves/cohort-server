@@ -29,12 +29,39 @@
 							"tags": ["blue", "1984"]
 							}
 						]
+					},
+					{
+						"id": 2,
+						"event_id": 1,
+						"state": "closed", // can be open or closed; closed events cannot be joined
+						"startDateTime": "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
+						"doorsOpenDateTime": "2019-05-23T16:30:00.000Z",
+						"endDateTime": "2019-05-29T03:50:00.000Z",
+						"locationLabel": "Show #5",
+						"locationAddress": "125 Emerson Ave, Toronto ON, M6H 3S7",
+						"locationCity": "Toronto",
+						"publicURL": "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
+						"devices": [
+							{
+							"id": 1,
+							"guid": "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
+							"apnsDeviceToken": null, // not used for now -- this is for push notifications
+							"isAdmin": true, // here for now -- the admin site will connect to an occasion as a device
+							"tags": ["blue", "1984"]
+							}
+						]
 					}
 				],
 				"cues": [
 					{
 					"mediaDomain": 0, // enum: audio, video, text, light, haptic
 					"cueNumber": 1,
+					"cueAction": 0, // enum: play/on, pause, restart, stop/off
+					"targetTags": ["all"]
+					},
+					{
+					"mediaDomain": 0, // enum: audio, video, text, light, haptic
+					"cueNumber": 2,
 					"cueAction": 0, // enum: play/on, pause, restart, stop/off
 					"targetTags": ["all"]
 					}
@@ -44,10 +71,11 @@
 //for new event creation parameters
 	let label = '';
 
+	let cueState = 1;
 //Holds event ID in order to display occasions for that event
 	let focusedEventID="0";
 	let focusedOccasionID="0";
-	let focusedEvent="0";
+	let focusedEvent=events[0];
 	let focusedOccasion="0";
 //holdformatted time
 	let formattedStartTime = "";
@@ -64,9 +92,8 @@
 		//first event must have id of 1 and then ++
 		indexInEvents = focusedEventID - 1;
 		focusedEvent = events[indexInEvents];
-		
-
 	}
+
 
 	function occasionButton(){
 		focusedOccasionID= this.value;
@@ -97,6 +124,10 @@
 		// deletion code goes here
 		document.getElementById("confirmDelete").style.display = "none";
 		document.getElementById("eventsList").style.display = "block";
+		// successfully removes occasion from object but that's not updated in occasions list for some reason
+		focusedEvent.occasions.splice(indexInOccasions,1);
+
+
 	}
 	function endOccasion(){
 		// end occasion code goes here
@@ -125,6 +156,20 @@
 		document.getElementById(id).style.display = "none";
 		document.getElementById("QRcode").style.display = "block";
 
+	}
+
+//this changes which cue details are shown
+	function changeCueState(){
+		let direction = this.value;
+		if(direction == "next" && cueState <= focusedEvent.cues.length-1){
+			cueState += 1;
+		} else if(direction == "previous" && cueState > 1){
+			cueState -= 1;
+		}else {
+			cueState = 1;
+		}
+
+		
 	}
 
 /////for new event generation
@@ -189,7 +234,7 @@
 			<p>No events have been added yet</p>
 			{:else}
 					{#each events as event}
-							{#if event.id == focusedEventID && event.occasions != null}
+							{#if event.id == focusedEventID && event.occasions != null && event.occasions.length > 0}
 								{#each event.occasions as occasion}	
 									<button type="button" class= 'btn btn-primary btn-block' value = {occasion.id} on:click={occasionButton}>
 										<h3>{event.label} - Occasion # {occasion.id} </h3>
@@ -231,22 +276,31 @@
 
 			<div class="row">
 				<div class="col-md-12">
-					<label for="cueDetails"><h5>Cue Details</h5></label>
-					<ul id="cueDetails">
-						<li></li>
-					</ul>
+					<h5>Cue Details</h5>
+					{#if focusedEvent != "undefined"}
+						{#each focusedEvent.cues as cue }
+							{#if cue.cueNumber == cueState}
+								<div id = "{cue.cueNumber}">
+									<ul>Media Domain: {cue.mediaDomain}</ul>
+									<ul>Cue Number: {cue.cueNumber}</ul>
+									<ul>Cue Action: {cue.cueAction}</ul>
+								</div>
+							{/if}
+						{/each}
+					{/if}
+					
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-6">
-					<button type="button" class="btn btn-info btn-block">
+					<button type="button" class="btn btn-info btn-block" value="previous" on:click={changeCueState}>
 						<span class="glyphicon glyphicon-chevron-left"></span>
 						Previous
 					</button>
 				</div>
 				<div class="col-md-6">
-					<button type="button" class="btn btn-info btn-block">
+					<button type="button" class="btn btn-info btn-block" value="next" on:click={changeCueState}>
 						<span class="glyphicon glyphicon-chevron-right"></span>
 						Next
 					</button>
@@ -335,7 +389,7 @@
         </button>
       </div>
       <div class="modal-body">
-        Are you sure you want to delete {focusedEvent.label} - {focusedOccasion.startDateTime} ?
+        Are you sure you want to delete {focusedEvent.label} - {formattedStartTime} ?
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" on:click={cancelDelete}>Cancel</button>
@@ -355,7 +409,7 @@
         </button>
       </div>
       <div class="modal-body">
-        Are you sure you want to end {focusedEvent.label} - {focusedOccasion.startDateTime} ?
+        Are you sure you want to end {focusedEvent.label} - {formattedStartTime} ?
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" on:click={cancelEnd}>Cancel</button>

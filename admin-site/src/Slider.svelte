@@ -1,3 +1,17 @@
+
+<script>
+
+window.onCueSliderInput = (event) => {
+  const value = event.target.value
+  console.log(value)
+  if(value == 100){
+
+  }
+};
+
+</script>
+
+
 <style>
 label{
     margin: 1rem;
