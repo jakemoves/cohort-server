@@ -66,7 +66,7 @@
 					"targetTags": ["all"]
 					}
 				]
-			}];
+			},];
 
 //for new event creation parameters
 	let label = '';
@@ -124,14 +124,14 @@
 		// deletion code goes here
 		document.getElementById("confirmDelete").style.display = "none";
 		document.getElementById("eventsList").style.display = "block";
-		// successfully removes occasion from object but that's not updated in occasions list for some reason
+		//removes occasion from object and from list
 		focusedEvent.occasions.splice(indexInOccasions,1);
-
+		document.getElementById(focusedOccasionID).remove();
 
 	}
-	function endOccasion(){
-		// end occasion code goes here
-		document.getElementById("confirmEndOccasion").style.display = "none";
+	function backToEvents(){
+		let id =this.value;
+		document.getElementById(id).style.display = "none";
 		document.getElementById("eventsList").style.display = "block";
 	}
 	function cancelEnd(){
@@ -165,11 +165,9 @@
 			cueState += 1;
 		} else if(direction == "previous" && cueState > 1){
 			cueState -= 1;
-		}else {
+		} else {
 			cueState = 1;
-		}
-
-		
+		}	
 	}
 
 /////for new event generation
@@ -205,7 +203,7 @@
 <!-- #eventsList allows a list of events to be built and shown -->
 
 <section id = "eventsList">
-	<h1>Events</h1>
+	<h1 class="text-center">Events</h1>
 	<hr>
 		{#if events.length === 0}
 			<p>No events have been added yet</p>
@@ -228,7 +226,9 @@
 <!-- //occasions list populated by looping through events of "focused" event ID -->
 <div id = "occasionList">
 	<section>
-	<h1>Occasions</h1>
+	<h1 class="text-center">Occasions</h1>
+	<hr>
+	<button type="button" class="btn btn-primary" value ="occasionList" on:click={backToEvents}>Back To Events List</button>
 	<hr>
 		{#if events.length === 0}
 			<p>No events have been added yet</p>
@@ -236,7 +236,7 @@
 					{#each events as event}
 							{#if event.id == focusedEventID && event.occasions != null && event.occasions.length > 0}
 								{#each event.occasions as occasion}	
-									<button type="button" class= 'btn btn-primary btn-block' value = {occasion.id} on:click={occasionButton}>
+									<button type="button" id={occasion.id} class= 'btn btn-primary btn-block' value = {occasion.id} on:click={occasionButton}>
 										<h3>{event.label} - Occasion # {occasion.id} </h3>
 											
 									</button>
@@ -255,11 +255,11 @@
 				<h5> {focusedEvent.label} - {formattedStartTime}</h5>
 			</div>
 
-			<div class="row">
-				<div class="col-md-12">
-					<button type="button" class="btn btn-primary btn-block" value = "openEvent" on:click={backToOccasionList}>Back To Occasion List</button>
-				</div>
-			</div>
+			<!-- <div class="row">
+				<div class="col-md-3"> -->
+					<button type="button" class="btn btn-primary" value = "openEvent" on:click={backToOccasionList}>Back To Occasion List</button>
+				<!-- </div>
+			</div> -->
 			<hr>
 
 			<div class="row">
@@ -295,14 +295,14 @@
 			<div class="row">
 				<div class="col-md-6">
 					<button type="button" class="btn btn-info btn-block" value="previous" on:click={changeCueState}>
-						<span class="glyphicon glyphicon-chevron-left"></span>
+						<span class="fas fa-angle-left"></span>
 						Previous
 					</button>
 				</div>
 				<div class="col-md-6">
 					<button type="button" class="btn btn-info btn-block" value="next" on:click={changeCueState}>
-						<span class="glyphicon glyphicon-chevron-right"></span>
 						Next
+						<span class="fas fa-angle-right"></span>
 					</button>
 				</div>
 			</div> 
@@ -413,7 +413,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" on:click={cancelEnd}>Cancel</button>
-        <button type="button" class="btn btn-primary" on:click = {endOccasion}>End Occasion</button>
+        <button type="button" class="btn btn-primary" value="confirmEndOccasion" on:click = {backToEvents}>End Occasion</button>
       </div>
     </div>
   </div>

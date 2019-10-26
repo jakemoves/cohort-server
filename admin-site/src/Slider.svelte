@@ -19,7 +19,7 @@ label{
 /* Slider CSS */
 #cue-control-go {
   -webkit-appearance: none;
-  width: 30%;
+  width: 40%;
   margin: 1rem 5%;
 padding: 0; }
 

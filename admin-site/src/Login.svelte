@@ -32,7 +32,7 @@
 
                 <div class="modal-body mx-3">
                   <div class="md-form mb-2">
-                    <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
+                    <input type="text" id="login" class="fadeIn second" name="login" placeholder="username">
                   </div>
                   <div class="md-form mb-2">
                     <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
