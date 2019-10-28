@@ -17,7 +17,7 @@
       <div class="container">
         <div class="motto">
           <h1 class="title">Cohort</h1>
-          <h3 class="description">Cohort is a code framework that helps artists and activitists use smartphones to run interesting events for groups of people. The project is administered by <a alt="link to adelheid dance project's website" href="http://www.adelheid.ca/">adelheid dance projects.</a></h3>
+          <h3 class="description">Cohort is a code framework that helps artists & activitists use smartphones to run interesting events for groups of people. The project is administered by <a alt="link to adelheid dance project's website" href="http://www.adelheid.ca/">adelheid dance projects.</a></h3>
           <br />
 		  
         </div>
