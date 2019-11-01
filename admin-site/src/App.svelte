@@ -388,9 +388,31 @@
           {#each focusedEvent.cues as cue}
             {#if cue.cueNumber == cueState}
               <div id={cue.cueNumber}>
-                <ul>Media Domain: {cue.mediaDomain}</ul>
+                <ul>Media Domain:
+					{#if cue.mediaDomain == 0}
+					  Sound
+					{:else if cue.mediaDomain == 1}
+					  Video
+					{:else if cue.mediaDomain == 2}
+					  Text
+					{:else if cue.mediaDomain == 3}
+					  Light 
+					{:else if cue.mediaDomain == 4}
+					  Haptic
+					{/if}					  
+					  </ul>
                 <ul>Cue Number: {cue.cueNumber}</ul>
-                <ul>Cue Action: {cue.cueAction}</ul>
+                <ul>Cue Action:
+				  {#if cue.cueAction == 0}
+				    Play (or 'on')
+				  {:else if cue.cueAction == 1}
+				    Pause
+				  {:else if cue.cueAction == 2}
+				    Restart
+				  {:else if cue.cueAction == 3}
+				    Stop (or 'off')
+				  {/if}
+				 </ul>
               </div>
             {/if}
           {/each}
