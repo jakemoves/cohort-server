@@ -427,27 +427,25 @@
       </div>
     </div>
 
-    <div class="row justify-content-between">
-      <div class="col-4 col-md-3">
+    <div class="row">
+      <!-- <div class="col-4 col-md-3"> -->
+      <div class="col-12 d-flex justify-content-between">
         <button
           type="button"
-          class="btn btn-info btn-block"
+          class="btn btn-info"
           value="previous"
-          on:click={changeCueState}>
-          <span class="fas fa-angle-left" />
-          Previous
-        </button>
-      </div>
-      <div class="col-4 col-md-3">
+          on:click={changeCueState}><span class="fas fa-angle-left"/>&nbsp;Previous</button>
+      <!-- </div> -->
+      <!-- <div class="col-4 col-md-3"> -->
         <button
           type="button"
-          class="btn btn-info btn-block"
+          class="btn btn-info"
           value="next"
           on:click={changeCueState}>
-          Next
-          <span class="fas fa-angle-right" />
+          Next<span class="fas fa-angle-right" />
         </button>
       </div>
+      <!-- </div> -->
     </div>
 
     <div class="row mt-3">
