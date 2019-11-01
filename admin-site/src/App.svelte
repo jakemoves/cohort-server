@@ -136,6 +136,7 @@
     document.getElementById("confirmDelete").style.display = "none";
     document.getElementById("eventsList").style.display = "block";
     //removes occasion from object and from list
+    // Jake TODO: review store & one-way data flow
     focusedEvent.occasions.splice(indexInOccasions, 1);
     document.getElementById(focusedOccasionID).remove();
   }
@@ -216,8 +217,16 @@
     padding-left: 0;
   }
 
-  button{
+  button {
 	  margin-bottom:0.5rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  button > h3, button > p {
+    margin-bottom: 0;
   }
 
 </style>
@@ -243,21 +252,18 @@
       <p>No events have been added yet</p>
     {:else}
       {#each events as event}
-        <div class="row">
-		  <div class="col text-center mt-2">
-		      <h3>{event.label}:</h3>
-		  </div>
+        <div class="row mt-2">
+          <div class="col text-center">
+            <h3>{event.label}:</h3>
+          </div>
           <div class="col">
             <button
-			  alt="click here for {event.label} occasion list"
+        alt="click here for {event.label} occasion list"
               type="button"
               class="btn btn-outline-primary btn-block"
               value={event.id}
               on:click={eventButton}>
-              <h3 class="">
-			  	Occasions
-				<span style="font-size: 1.2rem" class="fas fa-angle-right" />
-			  </h3>
+              <p>Occasions&nbsp;<span style="font-size: 1.2rem" class="fas fa-angle-right" /></p>
             </button>
           </div>
         </div>
@@ -288,22 +294,17 @@
 <div id="occasionList">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-4">
+      <div class="col-12">
         <button
-		  alt="back to events list"
+		      alt="back to events list"
           type="button"
-          class="btn btn-outline-primary"
+          class="btn btn-outline-primary float-left mr-2"
           value="occasionList"
           on:click={backToEvents}>
-		  <span class="fa fa-angle-double-left" />
+		  <!-- <span class="fa fa-angle-double-left" /> -->
           Back
         </button>
-      </div>
-      <div class="col-12 col-md-4 text-center">
         <h1>Occasions</h1>
-      </div>
-	  <div class="col-4 text-center">
-        
       </div>
     </div>
 
@@ -426,27 +427,25 @@
       </div>
     </div>
 
-    <div class="row justify-content-between">
-      <div class="col-4 col-md-3">
+    <div class="row">
+      <!-- <div class="col-4 col-md-3"> -->
+      <div class="col-12 d-flex justify-content-between">
         <button
           type="button"
-          class="btn btn-info btn-block"
+          class="btn btn-info"
           value="previous"
-          on:click={changeCueState}>
-          <span class="fas fa-angle-left" />
-          Previous
-        </button>
-      </div>
-      <div class="col-4 col-md-3">
+          on:click={changeCueState}><span class="fas fa-angle-left"/>&nbsp;Previous</button>
+      <!-- </div> -->
+      <!-- <div class="col-4 col-md-3"> -->
         <button
           type="button"
-          class="btn btn-info btn-block"
+          class="btn btn-info"
           value="next"
           on:click={changeCueState}>
-          Next
-          <span class="fas fa-angle-right" />
+          Next<span class="fas fa-angle-right" />
         </button>
       </div>
+      <!-- </div> -->
     </div>
 
     <div class="row mt-3">
