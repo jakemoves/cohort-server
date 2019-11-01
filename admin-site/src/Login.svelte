@@ -24,7 +24,7 @@
   <div class="container-fluid">
     <form id="formContent">
       <div class="row"> 
-        <div class= "col-md-12 text-center">  
+        <div class= "col-md-12 text-center mt-4 mb-2">  
           <h4>Welcome Administrator</h4>
         </div>
       </div>
