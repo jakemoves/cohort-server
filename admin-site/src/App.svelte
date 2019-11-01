@@ -190,61 +190,102 @@
 		display: none;
 	}
 	
-	
+	.list-item{
+		margin-bottom: 0.4rem;
+	}
+	#createEventInput{
+		padding-left:0;
+	}
 </style>
 
 
 <!-- Keeping this as a component cause it will likely need switching out -->
-<section id = "login">
+<div id = "login">
 	<Login />
 
-</section>
+</div>
 
 <!-- #eventsList allows a list of events to be built and shown -->
 
-<section id = "eventsList">
-	<h1 class="text-center">Events</h1>
-	<hr>
-		{#if events.length === 0}
-			<p>No events have been added yet</p>
-			{:else}
-					{#each events as event}
-						<button type="button" class= 'btn btn-primary btn-block' value = {event.id} on:click={eventButton} >
-							<h3>{event.label}</h3>	
-						</button>
-					{/each}
-		{/if}
-		<hr>
-		<!-- event creation -->
-		<div>
-			<label for="title">New Event Name</label> 
-			<input type="text" id="title" value={label} on:input={setTitle}>  
+<div id = "eventsList">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<h1>Events</h1>
+			</div>
 		</div>
-		<button class = "btn btn-primary" on:click={createEvent}>Create New Event</button>
-</section>
+	<hr>
+	
+	{#if events.length === 0}
+		<p>No events have been added yet</p>
+		{:else}
+			{#each events as event}
+			<div class="row list-item">
+				<div class="col-md-12">
+					<button type="button" class= 'btn btn-primary btn-block' value = {event.id} on:click={eventButton} >
+						<h3>{event.label}</h3>	
+					</button>
+				</div>
+			</div>
+			{/each}
+	{/if}
+		
+	<hr>
+
+		<!-- event creation -->
+		<form>
+		<div class="form-group row">
+			<label class="col-sm-4 col-md-2 col-form-label text-center" style="padding-right:0" for="title"> New Event Name</label> 
+			<div class="col-sm-12 col-md-3" id="createEventInput">
+				<input type="text" id="title" class="form-control" value={label} on:input={setTitle}>
+			</div>
+			<div class="col-md-3">
+				<button class = "btn btn-primary" on:click={createEvent}>Create New Event</button>
+			</div>
+		</div>
+		
+  			
+	
+			
+		</form>
+ 
+
+	</div>
+</div>
 
 <!-- //occasions list populated by looping through events of "focused" event ID -->
 <div id = "occasionList">
-	<section>
-	<h1 class="text-center">Occasions</h1>
-	<hr>
-	<button type="button" class="btn btn-primary" value ="occasionList" on:click={backToEvents}>Back To Events List</button>
-	<hr>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-3">
+				<button type="button" class="btn btn-primary" value ="occasionList" on:click={backToEvents}>Back To Events List</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<h1>Occasions</h1>
+			</div>
+		</div>
+		
+		<hr>
 		{#if events.length === 0}
-			<p>No events have been added yet</p>
+			<p>No occasions for this event yet</p>
 			{:else}
 					{#each events as event}
 							{#if event.id == focusedEventID && event.occasions != null && event.occasions.length > 0}
 								{#each event.occasions as occasion}	
+								<div class="row list-item">
+									<div class="col-md-12">
 									<button type="button" id={occasion.id} class= 'btn btn-primary btn-block' value = {occasion.id} on:click={occasionButton}>
 										<h3>{event.label} - Occasion # {occasion.id} </h3>
-											
 									</button>
+									</div>
+								</div>
 								{/each}
 							{/if}
 					{/each}
 		{/if}
-	</section>
+	</div>
 </div>
 
 
@@ -252,23 +293,24 @@
 <div id = "openEvent">
 	<div class="container-fluid">
 			<div class="row">
-				<h5> {focusedEvent.label} - {formattedStartTime}</h5>
-			</div>
-
-			<!-- <div class="row">
-				<div class="col-md-3"> -->
+				<div class="col-md-3">
 					<button type="button" class="btn btn-primary" value = "openEvent" on:click={backToOccasionList}>Back To Occasion List</button>
-				<!-- </div>
-			</div> -->
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<h5> {focusedEvent.label} - {formattedStartTime}</h5>
+				</div>
+			</div>
 			<hr>
 
-			<div class="row">
+			<div class="row list-item">
 				<div class="col-md-12">
 					<button type="button" class="btn btn-danger btn-block" on:click={confirmEnd}>End Occasion</button>
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="row list-item">
 				<div class="col-md-12">
 					<button type="button" class="btn btn-primary btn-block" value="openEvent" on:click={showQR}><u>Show QR Code</u></button>
 				</div>
@@ -339,13 +381,12 @@
 <div id = "closeEvent">
 	<div class="container-fluid">
 			<div class="row">
-				<div class="col-md-12">
-        			<h5 class="modal-title">{focusedEvent.label} - {formattedStartTime}.</h5>
-				</div>
+				<button type='button' class="btn btn-primary" value="closeEvent" on:click={backToOccasionList}>Back To Occasions List</button>
 			</div>
 			<div class="row">
-				<button type='button' class="btn btn-primary" value="closeEvent" on:click={backToOccasionList}>Back To Occasions List</button>
-			
+				<div class="col-md-12 text-center">
+        			<h5 class="modal-title">{focusedEvent.label} - {formattedStartTime}.</h5>
+				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-12">
@@ -359,17 +400,17 @@
 					</ul> 	
 				</div>
 			</div>
-			<div class="row">
+			<div class="row list-item">
 				<div class="col-md-12">
 					<button type="button" class="btn btn-danger btn-block" on:click={confirmOccasionDelete}>Delete Occasion</button>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row list-item">
 				<div class="col-md-12">
 					<button type="button" class="btn btn-success btn-block" on:click={openOccasionButton}>Open Occasion</button>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row list-item">
 				<div class="col-md-12">
 					<button type="button" class="btn btn-primary btn-block" value ="closeEvent" on:click={showQR}>Get QR Code</button>
 				</div>
