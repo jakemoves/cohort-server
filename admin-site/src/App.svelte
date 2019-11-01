@@ -34,9 +34,9 @@
           id: 2,
           event_id: 1,
           state: "closed", // can be open or closed; closed events cannot be joined
-          startDateTime: "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
-          doorsOpenDateTime: "2019-05-23T16:30:00.000Z",
-          endDateTime: "2019-05-29T03:50:00.000Z",
+          startDateTime: "2019-06-28T17:00:00.000Z", // stored in UTC, browser does conversion
+          doorsOpenDateTime: "2019-06-28T16:30:00.000Z",
+          endDateTime: "2019-07-10T03:50:00.000Z",
           locationLabel: "Show #5",
           locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
           locationCity: "Toronto",
@@ -78,9 +78,12 @@
   let focusedOccasionID = "0";
   let focusedEvent = events[0];
   let focusedOccasion = "0";
-  //holdformatted time
+  //hold formatted time
   let formattedStartTime = "";
   let formattedEndTime = "";
+  let formattedEndTimeFull ="";
+  let formattedStartTimeFull ="";
+  let formattedTime ="";
   //only works if id numbers are set in order (currently starting from 1)
   let indexInEvents;
   let indexInOccasions;
@@ -98,30 +101,34 @@
   function occasionButton() {
     focusedOccasionID = this.value;
     document.getElementById("occasionList").style.display = "none";
-    document.getElementById("closeEvent").style.display = "block";
+    document.getElementById("closeOccasion").style.display = "block";
     //first occasion must have id of 1 and then ++
     indexInOccasions = focusedOccasionID - 1;
     focusedOccasion = focusedEvent.occasions[indexInOccasions];
-    formattedStartTime = moment(focusedOccasion.startDateTime)
-      .add(1, "day")
+	formattedStartTimeFull = moment(focusedOccasion.startDateTime)
+	  .add(1, "day")
       .format("LLL");
+    formattedEndTimeFull = moment(focusedOccasion.endDateTime)
+      .add(1, "day")
+	  .format("LLL");
+	formattedStartTime = moment(focusedOccasion.startDateTime)
+      .format("LL");
     formattedEndTime = moment(focusedOccasion.endDateTime)
-      .add(1, "day")
-      .format("LLL");
+      .format("LL");
   }
   //these are navigation buttons..not very elegant and partly due to modals not working
   function openOccasionButton() {
-    document.getElementById("closeEvent").style.display = "none";
-    document.getElementById("openEvent").style.display = "block";
+    document.getElementById("closeOccasion").style.display = "none";
+    document.getElementById("openOccasion").style.display = "block";
   }
 
   function confirmOccasionDelete() {
-    document.getElementById("closeEvent").style.display = "none";
+    document.getElementById("closeOccasion").style.display = "none";
     document.getElementById("confirmDelete").style.display = "block";
   }
   function cancelDelete() {
     document.getElementById("confirmDelete").style.display = "none";
-    document.getElementById("closeEvent").style.display = "block";
+    document.getElementById("closeOccasion").style.display = "block";
   }
 
   function deleteOccasion() {
@@ -139,10 +146,10 @@
   }
   function cancelEnd() {
     document.getElementById("confirmEndOccasion").style.display = "none";
-    document.getElementById("openEvent").style.display = "block";
+    document.getElementById("openOccasion").style.display = "block";
   }
   function confirmEnd() {
-    document.getElementById("openEvent").style.display = "none";
+    document.getElementById("openOccasion").style.display = "none";
     document.getElementById("confirmEndOccasion").style.display = "block";
   }
 
@@ -184,12 +191,20 @@
     events = events.concat(newEvent);
   }
   ////////
+ 
+  function changeTime(date){
+	  formattedTime = moment(date).format("LL");
+	  console.log(formattedTime);
+  };
+
+
+  
 </script>
 
 <style>
   #eventsList,
-  #closeEvent,
-  #openEvent,
+  #closeOccasion,
+  #openOccasion,
   #occasionList,
   #QRcode,
   #confirmDelete,
@@ -199,6 +214,10 @@
 
   #createEventInput {
     padding-left: 0;
+  }
+
+  #getQR {
+	  margin-top: 10rem;
   }
 </style>
 
@@ -234,7 +253,10 @@
               class="btn btn-outline-primary btn-block"
               value={event.id}
               on:click={eventButton}>
-              <h3 class="m-0">Details</h3>
+              <h3 class="">
+			  	Occasions
+				<span style="font-size: 1.2rem" class="fas fa-angle-right" />
+			  </h3>
             </button>
           </div>
         </div>
@@ -269,7 +291,7 @@
         <button
 		  alt="back to events list"
           type="button"
-          class="btn btn-primary"
+          class="btn btn-outline-primary"
           value="occasionList"
           on:click={backToEvents}>
 		  <span class="fa fa-angle-double-left" />
@@ -290,15 +312,20 @@
       {#each events as event}
         {#if event.id == focusedEventID && event.occasions != null && event.occasions.length > 0}
           {#each event.occasions as occasion}
+		  <!-- this doesn't quite work, for some reason all buttons get populated with last date -->
+			<div style="display:none">{changeTime(occasion.startDateTime)}</div>
             <div class="row mb-1">
-              <div class="col-md-12">
+			  <div class="col">
+			 
                 <button
+				  alt="click here for details"
                   type="button"
                   id={occasion.id}
-                  class="btn btn-primary btn-block"
+                  class="btn btn-outline-primary btn-block"
                   value={occasion.id}
                   on:click={occasionButton}>
-                  <h3 class="m-0">{event.label} - Occasion # {occasion.id}</h3>
+				    <h3 class="m-0">{event.label} - Occasion # {occasion.id}</h3>
+				 	<h5>{occasion.locationCity} - {formattedTime}</h5>	
                 </button>
               </div>
             </div>
@@ -309,15 +336,15 @@
   </div>
 </div>
 
-<div id="openEvent">
+<div id="openOccasion">
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-3">
         <button
 		  alt="back to occasions list"
           type="button"
-          class="btn btn-primary"
-          value="openEvent"
+          class="btn btn-outline-primary"
+          value="openOccasion"
           on:click={backToOccasionList}>
 		  <span class="fa fa-angle-double-left" />
           Back
@@ -335,7 +362,7 @@
       <div class="col-md-12">
         <button
           type="button"
-          class="btn btn-danger btn-block"
+          class="btn btn-outline-danger btn-block"
           on:click={confirmEnd}>
           End Occasion
         </button>
@@ -346,8 +373,8 @@
       <div class="col-md-12">
         <button
           type="button"
-          class="btn btn-primary btn-block"
-          value="openEvent"
+          class="btn btn-outline-primary btn-block"
+          value="openOccasion"
           on:click={showQR}>
           <u>Show QR Code</u>
         </button>
@@ -372,8 +399,8 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-md-6">
+    <div class="row justify-content-between">
+      <div class="col-4 col-md-3">
         <button
           type="button"
           class="btn btn-info btn-block"
@@ -383,7 +410,7 @@
           Previous
         </button>
       </div>
-      <div class="col-md-6">
+      <div class="col-4 col-md-3">
         <button
           type="button"
           class="btn btn-info btn-block"
@@ -395,7 +422,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-3">
       <div class="col-md-12">
         <Slider />
       </div>
@@ -433,15 +460,15 @@
   </div>
 </div>
 
-<div id="closeEvent">
+<div id="closeOccasion">
   <div class="container-fluid">
     <div class="row">
 	  <div class="col-md-3">
 	    <button
 			alt="back to Occasions list"
 			type="button"
-			class="btn btn-primary"
-			value="closeEvent"
+			class="btn btn-outline-primary"
+			value="closeOccasion"
 			on:click={backToOccasionList}>
 			<span class="fa fa-angle-double-left" />
 			Back
@@ -461,42 +488,43 @@
           <h4>Occasion Details</h4>
         </label>
         <ul id="OccasionDetails">
-          <li>Start Date : {formattedStartTime}</li>
-          <li>End Date : {formattedEndTime}</li>
+          <li>Start Date : {formattedStartTimeFull}</li>
+          <li>End Date : {formattedEndTimeFull}</li>
           <li>Location Label: {focusedOccasion.locationLabel}</li>
           <li>Location Address: {focusedOccasion.locationAddress}</li>
           <li>Location City: {focusedOccasion.locationCity}</li>
+		  <hr>
+		  <li>
+			<button
+				alt="link to QR Code"
+				type="button"
+				class="btn btn-link"
+				value="closeOccasion"
+				on:click={showQR}>
+				Get QR Code
+        	</button>
+		  </li>
+		  <hr>
         </ul>
       </div>
     </div>
-    <div class="row mb-1">
+	<div class="row mb-3">
       <div class="col-md-12">
         <button
           type="button"
-          class="btn btn-danger btn-block"
-          on:click={confirmOccasionDelete}>
-          Delete Occasion
-        </button>
-      </div>
-    </div>
-    <div class="row mb-1">
-      <div class="col-md-12">
-        <button
-          type="button"
-          class="btn btn-success btn-block"
+          class="btn btn-outline-success btn-block"
           on:click={openOccasionButton}>
           Open Occasion
         </button>
       </div>
     </div>
-    <div class="row mb-1">
+    <div class="row mb-3">
       <div class="col-md-12">
         <button
           type="button"
-          class="btn btn-primary btn-block"
-          value="closeEvent"
-          on:click={showQR}>
-          Get QR Code
+          class="btn btn-outline-danger btn-block"
+          on:click={confirmOccasionDelete}>
+          Delete Occasion
         </button>
       </div>
     </div>
@@ -510,7 +538,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="deleteOccasionConfirmation">
-          Confirmation
+          Delete Occasion
         </h5>
         <button
           type="button"
@@ -525,10 +553,10 @@
         ?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" on:click={cancelDelete}>
+        <button type="button" class="btn btn-outline-secondary" on:click={cancelDelete}>
           Cancel
         </button>
-        <button type="button" class="btn btn-primary" on:click={deleteOccasion}>
+        <button type="button" class="btn btn-outline-danger" on:click={deleteOccasion}>
           Delete Occasion
         </button>
       </div>
@@ -541,27 +569,23 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="deleteOccasionConfirmation">
-          Confirmation
+          End Occasion
         </h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
       </div>
       <div class="modal-body">
         Are you sure you want to end {focusedEvent.label} - {formattedStartTime}
         ?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" on:click={cancelEnd}>
+        <button 
+		  type="button" 
+		  class="btn btn-outline-secondary" 
+		  on:click={cancelEnd}>
           Cancel
         </button>
         <button
           type="button"
-          class="btn btn-primary"
+          class="btn btn-outline-danger"
           value="confirmEndOccasion"
           on:click={backToEvents}>
           End Occasion
