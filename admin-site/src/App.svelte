@@ -223,14 +223,18 @@
       <p>No events have been added yet</p>
     {:else}
       {#each events as event}
-        <div class="row mb-1">
-          <div class="col-md-12">
+        <div class="row">
+		  <div class="col text-center mt-2">
+		      <h3>{event.label}:</h3>
+		  </div>
+          <div class="col">
             <button
+			  alt="click here for details about {event.label}"
               type="button"
-              class="btn btn-primary btn-block"
+              class="btn btn-outline-primary btn-block"
               value={event.id}
               on:click={eventButton}>
-              <h3 class="m-0">{event.label}</h3>
+              <h3 class="m-0">Details</h3>
             </button>
           </div>
         </div>
