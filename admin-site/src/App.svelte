@@ -62,7 +62,7 @@
         {
           mediaDomain: 0, // enum: audio, video, text, light, haptic
           cueNumber: 2,
-          cueAction: 0, // enum: play/on, pause, restart, stop/off
+          cueAction: 3, // enum: play/on, pause, restart, stop/off
           targetTags: ["all"]
         }
       ]
@@ -216,9 +216,10 @@
     padding-left: 0;
   }
 
-  #getQR {
-	  margin-top: 10rem;
+  button{
+	  margin-bottom:0.5rem;
   }
+
 </style>
 
 <!-- Keeping this as a component cause it will likely need switching out -->
@@ -248,7 +249,7 @@
 		  </div>
           <div class="col">
             <button
-			  alt="click here for details about {event.label}"
+			  alt="click here for {event.label} occasion list"
               type="button"
               class="btn btn-outline-primary btn-block"
               value={event.id}
@@ -287,7 +288,7 @@
 <div id="occasionList">
   <div class="container-fluid">
     <div class="row">
-      <div class="col">
+      <div class="col-4">
         <button
 		  alt="back to events list"
           type="button"
@@ -298,10 +299,11 @@
           Back
         </button>
       </div>
-    </div>
-    <div class="row">
-      <div class="col text-center">
+      <div class="col-12 col-md-4 text-center">
         <h1>Occasions</h1>
+      </div>
+	  <div class="col-4 text-center">
+        
       </div>
     </div>
 
@@ -314,7 +316,7 @@
           {#each event.occasions as occasion}
 		  <!-- this doesn't quite work, for some reason all buttons get populated with last date -->
 			<div style="display:none">{changeTime(occasion.startDateTime)}</div>
-            <div class="row mb-1">
+            <div class="row">
 			  <div class="col">
 			 
                 <button
@@ -339,7 +341,7 @@
 <div id="openOccasion">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-4">
         <button
 		  alt="back to occasions list"
           type="button"
@@ -350,15 +352,18 @@
           Back
         </button>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12 text-center">
-        <h5>{focusedEvent.label} - {formattedStartTime}</h5>
+    <!-- </div>
+    <div class="row"> -->
+      <div class="col-12 col-md-4 text-center">
+        <h3>{focusedEvent.label} - {formattedStartTime}</h3>
+      </div>
+	  <div class="col-4 text-center">
+        
       </div>
     </div>
     <hr />
 
-    <div class="row mb-1">
+    <div class="row ">
       <div class="col-md-12">
         <button
           type="button"
@@ -369,7 +374,7 @@
       </div>
     </div>
 
-    <div class="row mb-1">
+    <div class="row">
       <div class="col-md-12">
         <button
           type="button"
@@ -485,7 +490,7 @@
 <div id="closeOccasion">
   <div class="container-fluid">
     <div class="row">
-	  <div class="col-md-3">
+	  <div class="col-4 col-md-4">
 	    <button
 			alt="back to Occasions list"
 			type="button"
@@ -496,12 +501,15 @@
 			Back
 	    </button>
 	  </div>
-	</div>
-    <div class="row">
-      <div class="col-md-12 text-center">
-        <h5 class="modal-title">
+	<!-- </div>
+    <div class="row"> -->
+      <div class="col-12 col-md-4 text-center">
+        <h3>
           {focusedEvent.label} - {formattedStartTime}.
-        </h5>
+        </h3>
+      </div>
+	  <div class="col-4 text-center">
+        
       </div>
     </div>
     <div class="row">
@@ -530,7 +538,7 @@
         </ul>
       </div>
     </div>
-	<div class="row mb-3">
+	<div class="row">
       <div class="col-md-12">
         <button
           type="button"
@@ -540,7 +548,7 @@
         </button>
       </div>
     </div>
-    <div class="row mb-3">
+    <div class="row">
       <div class="col-md-12">
         <button
           type="button"

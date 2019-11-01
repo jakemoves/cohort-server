@@ -21,7 +21,7 @@
 
 {#if !authenticated}
 <!-- kept this as a modal-dialog class because it contains things more tightly --> 
-  <div class="container-fluid">
+  <div class="container">
     <form id="formContent">
       <div class="row"> 
         <div class= "col-md-12 text-center mt-4 mb-2">  
