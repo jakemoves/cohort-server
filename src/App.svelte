@@ -4,6 +4,25 @@
 
 </script>
 
+<style>
+	.text-info{
+	  color: #265c00;
+		
+	}
+
+	.btn-danger{
+	  color:#da2b0b;
+	}
+
+	.card-blog{
+	  background-color: #fffefe;
+	}
+	.card-category{
+	  color: #265c00;
+	}
+
+</style>
+
 
 <body class="landing-page sidebar-collapse">
   <div class="page-header" data-parallax="true" style="background-image: url('imgs/back.jpg');">
@@ -41,7 +60,7 @@
 						<img alt= "image from lot x" class="img img-raised" src="imgs/lotx.jpg">
 					</div>
 					<div class="card-body">
-						<h4 class="card-category text-info">LOT X</h4>
+						<h4 class="card-category">LOT X</h4>
 						<p class="card-description">
 						An indoor+outdoor full-length contemporary dance work by adelheid dance projects
 						<br>
