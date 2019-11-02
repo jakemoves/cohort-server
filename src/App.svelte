@@ -91,7 +91,7 @@
            <div class="col-md-2">
 				<div class="card card-blog">
 					<div class="card-image">
-						<img alt= "image from flux delux" class="img img-raised" src="imgs/flux.jpeg">
+						<img alt= "image from flux delux" class="img img-raised" src="imgs/flux.jpg">
 					</div>
 					<div class="card-body">
 						<h4 class="card-category text-info">Flux Delux</h4>
