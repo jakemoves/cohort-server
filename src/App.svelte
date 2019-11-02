@@ -36,7 +36,7 @@
       <div class="container">
         <div class="motto">
           <h1 class="title">Cohort</h1>
-          <h3 class="description">Cohort is a code framework that helps artists & activitists use smartphones to run interesting events for groups of people. The project is administered by <a alt="link to adelheid dance project's website" href="http://www.adelheid.ca/">adelheid dance projects.</a></h3>
+          <h3 class="description">Cohort is a code framework that helps artists and activitists use smartphones to run interesting events for groups of people. The project is administered by <a alt="link to adelheid dance project's website" href="http://www.adelheid.ca/">adelheid dance projects.</a></h3>
           <br />
 		  
         </div>
@@ -186,9 +186,9 @@
                      <!-- we can have a write up here -->
                     </p>
                     <div class="card-footer pull-left">
-                      <a href="https://twitter.com/jakemoves" class="btn btn-just-icon btn-link btn-twitter"><i class="fab fa-twitter"></i></a>
+                      <!-- <a href="https://twitter.com/jakemoves" class="btn btn-just-icon btn-link btn-twitter"><i class="fab fa-twitter"></i></a>
                       <a href="#Jacob" class="btn btn-just-icon btn-link btn-facebook"><i class="fab fa-facebook"></i></a>
-                      <a href="#Jacob" class="btn btn-just-icon btn-link btn-google"><i class="fab fa-google-plus"></i></a>
+                      <a href="#Jacob" class="btn btn-just-icon btn-link btn-google"><i class="fab fa-google-plus"></i></a> -->
                     </div>
                   </div>
                 </div>
@@ -213,9 +213,9 @@
                       <!-- we can have a write up here -->
                     </p>
                     <div class="card-footer pull-left">
-                      <a href="#Nabeel" class="btn btn-just-icon btn-link btn-linkedin"><i class="fab fa-linkedin"></i></a>
+                      <!-- <a href="#Nabeel" class="btn btn-just-icon btn-link btn-linkedin"><i class="fab fa-linkedin"></i></a>
                       <a href="#Nabeel" class="btn btn-just-icon btn-link btn-dribbble"><i class="fab fa-dribbble"></i></a>
-                      <a href="#Nabeel" class="btn btn-just-icon btn-link btn-pinterest"><i class="fab fa-pinterest"></i></a>
+                      <a href="#Nabeel" class="btn btn-just-icon btn-link btn-pinterest"><i class="fab fa-pinterest"></i></a> -->
                     </div>
                   </div>
                 </div>
@@ -240,9 +240,9 @@
                       <!-- I love you like Kanye loves Kanye. Don't be scared of the truth. Kanye loves himself like Kanye loves Kanye. -->
                     </p>
                     <div class="card-footer pull-left">
-                      <a href="#Luke" class="btn btn-just-icon btn-link btn-youtube"><i class="fab fa-youtube"></i></a>
+                      <!-- <a href="#Luke" class="btn btn-just-icon btn-link btn-youtube"><i class="fab fa-youtube"></i></a>
                       <a href="#Luke" class="btn btn-just-icon btn-link btn-twitter"><i class="fab fa-twitter"></i></a>
-                      <a href="#Luke" class="btn btn-just-icon btn-link btn-instagram"><i class="fab fa-instagram"></i></a>
+                      <a href="#Luke" class="btn btn-just-icon btn-link btn-instagram"><i class="fab fa-instagram"></i></a> -->
                     </div>
                   </div>
                 </div>
@@ -267,9 +267,9 @@
                       <!-- It is literally true that you can succeed best and quickest by helping others to succeed because they care about. -->
                     </p>
                     <div class="card-footer pull-left">
-                      <a href="#Amanda" class="btn btn-just-icon btn-link btn-linkedin"><i class="fab fa-linkedin"></i></a>
+                      <!-- <a href="#Amanda" class="btn btn-just-icon btn-link btn-linkedin"><i class="fab fa-linkedin"></i></a>
                       <a href="#Amanda" class="btn btn-just-icon btn-link btn-instagram"><i class="fab fa-instagram"></i></a>
-                      <a href="#Amanda" class="btn btn-just-icon btn-link btn-dribbble"><i class="fab fa-dribbble"></i></a>
+                      <a href="#Amanda" class="btn btn-just-icon btn-link btn-dribbble"><i class="fab fa-dribbble"></i></a> -->
                     </div>
                   </div>
                 </div>
