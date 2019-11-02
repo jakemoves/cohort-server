@@ -19,14 +19,14 @@ class CHSession {
   async init() {
     let dbOpenEvents = await eventsTable.getAll()
     
-    let openEvents = dbOpenEvents.map( dbEvent => {
-      return CHEvent.fromDatabaseRow(dbEvent)
-    })
+    // let openEvents = dbOpenEvents.map( dbEvent => {
+    //   return CHEvent.fromDatabaseRow(dbEvent)
+    // })
 
-    openEvents.forEach( event => {
-      this.addListenersForEvent(event)
-      event.open()
-    })
+    // openEvents.forEach( event => {
+    //   this.addListenersForEvent(event)
+    //   event.open()
+    // })
     
     return Promise.resolve()
   }
@@ -39,33 +39,33 @@ class CHSession {
     })
   }
 
-  addListenersForEvent(event){
-    event.on('transition', data => {
-      if(data.toState == 'closed'){
-        // remove the event from the session
-        let eventIndex = this.events.findIndex(
-          matchingEvent => matchingEvent.id == event.id
-        )
-        if(eventIndex !== undefined){
-          this.events.splice(eventIndex, 1)
-        } else {
-          throw new Error("Closed event was not present in session!")
-        }
-      }
-      if(data.toState == 'open'){
-        this.events.push(event)
-      }
-    })
-  }
+  // addListenersForEvent(event){
+  //   event.on('transition', data => {
+  //     if(data.toState == 'closed'){
+  //       // remove the event from the session
+  //       let eventIndex = this.events.findIndex(
+  //         matchingEvent => matchingEvent.id == event.id
+  //       )
+  //       if(eventIndex !== undefined){
+  //         this.events.splice(eventIndex, 1)
+  //       } else {
+  //         throw new Error("Closed event was not present in session!")
+  //       }
+  //     }
+  //     if(data.toState == 'open'){
+  //       this.events.push(event)
+  //     }
+  //   })
+  // }
   
   // returns a flat array of all devices checked into active events
-  allDevices(){
-    let nestedDevices = this.events
-    .map( event => event.devices)
-    let flatDevices = _flatten(nestedDevices)
-    let uniqueDevices = _uniqBy(flatDevices, 'id')
-    return uniqueDevices
-  }
+  // allDevices(){
+  //   let nestedDevices = this.events
+  //   .map( event => event.devices)
+  //   let flatDevices = _flatten(nestedDevices)
+  //   let uniqueDevices = _uniqBy(flatDevices, 'id')
+  //   return uniqueDevices
+  // }
 } 
 
 module.exports = CHSession

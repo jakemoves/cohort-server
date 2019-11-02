@@ -13,7 +13,7 @@ const knex = require('./knex/knex.js')
 // configure express
 const app = express()
 const jsonParser = bodyParser.json()
-const v1Routes = require('./routes-v1.js')
+const v1routes = require('./routes-v1.js')
 const v2routes = require('./routes-v2.js')
 app.use(bodyParser.json())
 

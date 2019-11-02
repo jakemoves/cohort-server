@@ -8,8 +8,21 @@ const apn = require('apn')
 
 const eventsTable = require('../knex/queries/event-queries')
 const cohortMessagesTable = require('../knex/queries/cohort-message-queries')
-const CHDevice = require('../models/CHDevice')
+// const CHDevice = require('../models/CHDevice')
 const CHEvent = require('../models/CHEvent')
+
+handleError = (httpStatusCode, error, res) => {
+  console.log(res)
+  console.log(error)
+
+  if(error.message !== undefined){
+    error = error.message
+  }
+
+  res.status(httpStatusCode)
+  res.write(error)
+  res.send()
+}
 
 exports.events = (req, res) => {
   eventsTable.getAll()
@@ -17,10 +30,7 @@ exports.events = (req, res) => {
     res.status(200).json(events)
   })
   .catch( error => {
-    console.log(error)
-    res.status(500)
-    res.write(error)
-    res.send()
+    handleError(500, error, res)
   })
 }
 
@@ -30,204 +40,191 @@ exports.events_id = (req, res) => {
     if(event){
       res.status(200).json(event)
     } else {
-      res.status(404)
-      res.write("Error: event with id:" + req.params.id + " not found")
-      res.send()
+      handleError(404, "Error: event with id:" + req.params.id + " not found", res)
     }
   })
   .catch( error => {
-    console.log(error)
-    res.status(500)
-    res.write(error)
-    res.send()
+    handleError(500, error, res)
   })
 }
 
 exports.events_create = (req, res) => {
-  if(req.body.label != null && typeof req.body.null != undefined && req.body.label != ""){
-    let newEvent = { label: req.body.label, state: 'closed' }
-    eventsTable.addOne(newEvent)
-    .then( eventIDs => {
-      return eventsTable.getOneByID(eventIDs[0])
-      .then( event => {
-        res.status(201)
-        res.location('/api/v1/events/' + event.id)
-        res.json(event)
-      })
-    })
-    .catch( error => {
-      console.log(error)
-      res.status(500)
-      res.write(error.message)
-      res.send()
-    })
-  } else {
-    res.status(500)
-    res.write("Error: request must include an event label (e.g., title of a show)")
-    res.send()
+  if(req.body.label == null || req.body.label === undefined || req.body.label == ""){
+    handleError(500, "Error: request must include an event label (e.g., title of a show)", res)
+    return
   }
+    
+  eventsTable.addOne({ label: req.body.label })
+  .then( event => {
+    res.status(201)
+    res.location('/api/v2/events/' + event.id)
+    res.json(event)
+  })
+  .catch( error => {
+    handleError(500, error, res)
+  })
 }
 
 exports.events_delete = (req, res) => {
-  if(req.app.get("cohort").events.length > 0 &&
-    req.app.get("cohort").events.find( event => event.id == req.params.id) !== undefined){
-    res.status(403)
-    res.write("Error: this event must be closed before it can be deleted")
-    res.send()
-  } else {
+  // keeping this for rewriting -- it will need to check for open occasions on an event
+
+  // if(req.app.get("cohort").events.length > 0 &&
+  //   req.app.get("cohort").events.find( event => event.id == req.params.id) !== undefined){
+  //   res.status(403)
+  //   res.write("Error: this event must be closed before it can be deleted")
+  //   res.send()
+  // } else {
+    
     return eventsTable.deleteOne(req.params.id)
     .then( (deletedIds) => {
       if(deletedIds.length == 1) {
         res.sendStatus(204)
       } else {
-        res.sendStatus(404)
+        handleError(404, "Error: more than one event was deleted?!", res)
       }
     })
     .catch( error => {
-      console.log(error)
-      res.status(500)
-      res.write(error.message)
-      res.send()
+      handleError(500, error, res)
     })  
-  }
+  // }
 }
 
-exports.events_checkIn = (req, res) => {
-  //  req has mandatory params: eventId, occasionId
+// exports.events_checkIn = (req, res) => {
+//   //  req has mandatory params: eventId, occasionId
 
-  //  req has optional POST fields:
-  //    apnsDeviceToken (string, generated on iOS devices for push notifications)
-  //    tags (array of strings, used to segment / group devices)
-  //
+//   //  req has optional POST fields:
+//   //    apnsDeviceToken (string, generated on iOS devices for push notifications)
+//   //    tags (array of strings, used to segment / group devices)
+//   //
     
-  // if the event is open, we need to add the device to it in memory
-  let event = req.app.get("cohort").events.find( event => event.id == req.params.eventId)
-  if( event !== undefined ){
-    // verify event is open, return error if not
+//   // if the event is open, we need to add the device to it in memory
+//   let event = req.app.get("cohort").events.find( event => event.id == req.params.eventId)
+//   if( event !== undefined ){
+//     // verify event is open, return error if not
 
-    // make sure the occasion is processed and tracked?
-    if(req.params.occasionId != null && req.params.occasionId !== undefined){
-      var occasion_id = parseInt(req.params.occasionId)
-    }
+//     // make sure the occasion is processed and tracked?
+//     if(req.params.occasionId != null && req.params.occasionId !== undefined){
+//       var occasion_id = parseInt(req.params.occasionId)
+//     }
 
-    // check if this device already exists in memory in this event
+//     // check if this device already exists in memory in this event
 
-    //yes it's in memory
-      // send a response
+//     //yes it's in memory
+//       // send a response
     
-    // no it's not
-      // do the check-in
-        // create device here in memory from request
-        // check in
-      // send a response
+//     // no it's not
+//       // do the check-in
+//         // create device here in memory from request
+//         // check in
+//       // send a response
 
     
-  } else {
-    // event does not exist
-    // send error
-  }
-}
+//   } else {
+//     // event does not exist
+//     // send error
+//   }
+// }
 
-exports.events_open = (req, res) => {
-  eventsTable.getOneByIDWithDevices(req.params.id)
-  .then( dbEvent => {
-    // update db
-    eventsTable.open(req.params.id)
-    .then( dbOpenedEvent => { // dbOpenedEvent does not have devices along with it
-      if(req.app.get('cohort').events.find( event => event.id == dbOpenedEvent.id) === undefined){
-        let event =  CHEvent.fromDatabaseRow(dbEvent)
-        req.app.get('cohort').addListenersForEvent(event)
-        event.open()
-        // need to add listeners here for device add/remove... and then figure out how to DRY that up (repeated in app.js)
-      } else {
-        console.log("Error: failed to open event, inconsistency between db and memory")
-      }
+// exports.events_open = (req, res) => {
+//   eventsTable.getOneByIDWithDevices(req.params.id)
+//   .then( dbEvent => {
+//     // update db
+//     eventsTable.open(req.params.id)
+//     .then( dbOpenedEvent => { // dbOpenedEvent does not have devices along with it
+//       if(req.app.get('cohort').events.find( event => event.id == dbOpenedEvent.id) === undefined){
+//         let event =  CHEvent.fromDatabaseRow(dbEvent)
+//         req.app.get('cohort').addListenersForEvent(event)
+//         event.open()
+//         // need to add listeners here for device add/remove... and then figure out how to DRY that up (repeated in app.js)
+//       } else {
+//         console.log("Error: failed to open event, inconsistency between db and memory")
+//       }
 
-      res.status(200)
-      res.json(dbOpenedEvent)
-      res.send()
-    })
-    .catch( error => {
-      console.log(error)
-    })
-  })
-}
+//       res.status(200)
+//       res.json(dbOpenedEvent)
+//       res.send()
+//     })
+//     .catch( error => {
+//       console.log(error)
+//     })
+//   })
+// }
 
-exports.events_close = (req, res) => {
-  let event = req.app.get('cohort').events.find( event => event.id == req.params.id)
-  if( event !== undefined ){ 
-    event.close()
-  }
-  // update db
-  eventsTable.close(req.params.id)
-  .then( event => {
-    res.status(200)
-    res.json(event)
-    res.send()
-  })
-}
+// exports.events_close = (req, res) => {
+//   let event = req.app.get('cohort').events.find( event => event.id == req.params.id)
+//   if( event !== undefined ){ 
+//     event.close()
+//   }
+//   // update db
+//   eventsTable.close(req.params.id)
+//   .then( event => {
+//     res.status(200)
+//     res.json(event)
+//     res.send()
+//   })
+// }
 
-exports.events_devices = (req, res) => {
-  // should always have occasionId as well
-  // is event open?
-    // send devices from memory
-  // else
-    // send error
-}
+// exports.events_devices = (req, res) => {
+//   // should always have occasionId as well
+//   // is event open?
+//     // send devices from memory
+//   // else
+//     // send error
+// }
 
-exports.events_broadcast = (req, res) => {
-  let event =  req.app.get("cohort").events
-  .find( event => event.id == req.params.id)
+// exports.events_broadcast = (req, res) => {
+//   let event =  req.app.get("cohort").events
+//   .find( event => event.id == req.params.id)
 
-  let connectedSockets = event.devices
-    .filter( device => device.isConnected())
-    .map( device => device.socket)
+//   let connectedSockets = event.devices
+//     .filter( device => device.isConnected())
+//     .map( device => device.socket)
 
-  if(connectedSockets.length < 1){
-    res.status(403)
-    res.write("Warning: No devices are connected via WebSockets, broadcast was not sent")
-    res.send()
-		return
-  } else {
-    console.log("connectedSockets: " + connectedSockets.length)
-  }
+//   if(connectedSockets.length < 1){
+//     res.status(403)
+//     res.write("Warning: No devices are connected via WebSockets, broadcast was not sent")
+//     res.send()
+// 		return
+//   } else {
+//     console.log("connectedSockets: " + connectedSockets.length)
+//   }
 
-  // per https://github.com/websockets/ws/issues/617#issuecomment-393396339
-	let data = Buffer.from(JSON.stringify(req.body)) // no binary
-	let frames = WebSocket.Sender.frame(data, {
-		fin: true,
-		rsv1: false,
-		opcode: 1,
-		mask: false,
-		readOnly: false
-	})
+//   // per https://github.com/websockets/ws/issues/617#issuecomment-393396339
+// 	let data = Buffer.from(JSON.stringify(req.body)) // no binary
+// 	let frames = WebSocket.Sender.frame(data, {
+// 		fin: true,
+// 		rsv1: false,
+// 		opcode: 1,
+// 		mask: false,
+// 		readOnly: false
+// 	})
 
-	let sends = connectedSockets.map( (socket) => {
+// 	let sends = connectedSockets.map( (socket) => {
 
-		// skip this client if it's not open
-		if(socket.readyState != WebSocket.OPEN) {
-			console.log("skipped a socket due to readyState")
-			return Promise.resolve()
-		}
+// 		// skip this client if it's not open
+// 		if(socket.readyState != WebSocket.OPEN) {
+// 			console.log("skipped a socket due to readyState")
+// 			return Promise.resolve()
+// 		}
 
-		return new Promise( (fulfill, reject) => {
-			socket._sender.sendFrame(frames, (error) => {
-				if(error){
-					// catch async socket write errors
-					console.log(error)
-					return reject(error)
-				}
-				fulfill()
-			})
-		})
-	})
+// 		return new Promise( (fulfill, reject) => {
+// 			socket._sender.sendFrame(frames, (error) => {
+// 				if(error){
+// 					// catch async socket write errors
+// 					console.log(error)
+// 					return reject(error)
+// 				}
+// 				fulfill()
+// 			})
+// 		})
+// 	})
 
-	Promise.all(sends).then(() => {
-		res.status(200)
-		res.write('Successfully broadcast to ' + connectedSockets.length + ' clients')
-		res.send()
-	})
-}
+// 	Promise.all(sends).then(() => {
+// 		res.status(200)
+// 		res.write('Successfully broadcast to ' + connectedSockets.length + ' clients')
+// 		res.send()
+// 	})
+// }
 
 // exports.events_broadcast_push_notification = (req, res) => {
 //   if(req.params.eventId == null || req.params.eventId === undefined){
@@ -448,53 +445,53 @@ exports.events_broadcast = (req, res) => {
 // 	}
 // }
 
-exports.events_lastCohortMessage = (req, res) => {
-  if(req.query.tag === undefined){
-    cohortMessagesTable.getLatestByEvent(req.params.eventId)
-    .then( msg => {
-      if(msg !== undefined && msg != null){
-        res.status(200).json(msg)
-      } else {
-        res.sendStatus(404)
-      }
-    })
-    .catch( error => {
-      console.log(error)
-      res.status(500)
-      res.write(error)
-      res.send()
-    })
-  } else {
-    cohortMessagesTable.getLatestByEventForTag(req.params.eventId, req.query.tag)
-    .then( msg => {
-      if(msg !== undefined && msg != null){
-        res.status(200).json(msg)
-      } else {
-        res.sendStatus(404)
-      }
-    })
-    .catch( error => {
-      console.log(error)
-      res.status(500)
-      res.write(error)
-      res.send()
-    })
-  }
-}
+// exports.events_lastCohortMessage = (req, res) => {
+//   if(req.query.tag === undefined){
+//     cohortMessagesTable.getLatestByEvent(req.params.eventId)
+//     .then( msg => {
+//       if(msg !== undefined && msg != null){
+//         res.status(200).json(msg)
+//       } else {
+//         res.sendStatus(404)
+//       }
+//     })
+//     .catch( error => {
+//       console.log(error)
+//       res.status(500)
+//       res.write(error)
+//       res.send()
+//     })
+//   } else {
+//     cohortMessagesTable.getLatestByEventForTag(req.params.eventId, req.query.tag)
+//     .then( msg => {
+//       if(msg !== undefined && msg != null){
+//         res.status(200).json(msg)
+//       } else {
+//         res.sendStatus(404)
+//       }
+//     })
+//     .catch( error => {
+//       console.log(error)
+//       res.status(500)
+//       res.write(error)
+//       res.send()
+//     })
+//   }
+// }
 
 // SUPER HACKY
-exports.events_getLotXARTweaks = (req, res) => {
-  if(req.params.id == 2){
-    res.status(200)
-  const tweaks = {
-      "scale": [20.012526, 11.866646],
-      "position" :[0.0635, 2.2667, 0.0]
-    }
-    res.json(tweaks)
-  } else {
-    res.sendStatus(404)
-  }
-}
+// exports.events_getLotXARTweaks = (req, res) => {
+//   if(req.params.id == 2){
+//     res.status(200)
+//   const tweaks = {
+//       "scale": [20.012526, 11.866646],
+//       "position" :[0.0635, 2.2667, 0.0]
+//     }
+//     res.json(tweaks)
+//   } else {
+//     res.sendStatus(404)
+//   }
+// }
 
 
 // for later

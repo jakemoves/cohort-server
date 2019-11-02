@@ -5,11 +5,11 @@ exports.seed = function(knex, Promise) {
   .then(function () {
     // Inserts events entries
     return knex('events').insert([
-      {label: 'pimohtēwak', state: 'closed'},
-      {label: 'lot_x', state: 'closed'},
-      {label: 'midway', state: 'open' },
-      {label: 'fluxdelux', state: 'open' },
-      {label: 'café sarajevo', state: 'closed'}
+      {label: 'pimohtēwak'},
+      {label: 'lot_x'},
+      {label: 'midway'},
+      {label: 'fluxdelux'},
+      {label: 'café sarajevo'}
     ])
     .then( () => {
       // add occasions to events
@@ -17,6 +17,8 @@ exports.seed = function(knex, Promise) {
         return knex('occasions').insert([
           { 
             event_id: 4,
+            label: 'Show 1',
+            state: 'closed',
             doorsOpenDateTime: '2019-04-01 13:30:00+05:00',
             startDateTime: '2019-04-01 14:00:00+05:00',
             endDateTime: '2019-04-01 15:30:00+05:00',
@@ -26,6 +28,8 @@ exports.seed = function(knex, Promise) {
           },{
             // overnight occasion
             event_id: 4,
+            label: 'Show 2',
+            state: 'closed',
             doorsOpenDateTime: '2019-05-31 09:30:00+05:00',
             startDateTime: '2019-05-31 11:00:00+05:00',
             endDateTime: '2019-06-01 17:00:00+05:00',
@@ -33,8 +37,9 @@ exports.seed = function(knex, Promise) {
             locationAddress: '400 Jarvis St',
             locationCity: 'Toronto'
           },{ 
-            // for lot_x 
             event_id: 2,
+            label: 'Rehearsal',
+            state: 'closed',
             doorsOpenDateTime: '2019-06-01 13:30:00+05:00',
             startDateTime: '2019-06-01 14:00:00+05:00',
             endDateTime: '2019-06-01 15:30:00+05:00',
@@ -43,6 +48,8 @@ exports.seed = function(knex, Promise) {
             locationCity: 'Toronto'
           },{ 
             event_id: 2,
+            label: 'Show 1',
+            state: 'closed',
             doorsOpenDateTime: '2019-06-02 13:30:00+05:00',
             startDateTime: '2019-06-02 14:00:00+05:00',
             endDateTime: '2019-06-02 15:30:00+05:00',
@@ -51,6 +58,8 @@ exports.seed = function(knex, Promise) {
             locationCity: 'Toronto'
           },{ 
             event_id: 2,
+            label: 'Show 2',
+            state: 'closed',
             doorsOpenDateTime: '2019-06-03 13:30:00+05:00',
             startDateTime: '2019-06-03 14:00:00+05:00',
             endDateTime: '2019-06-03 15:30:00+05:00',

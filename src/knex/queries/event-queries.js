@@ -13,10 +13,6 @@ getAll = () => {
   return Events().select()
 }
 
-getAllOpen = () => {
-  return Events().whereNot('state', 'closed')
-}
-
 getOneByID = (eventId) => {
   return Events().where('id', parseInt(eventId))
   .then( events => {
@@ -32,6 +28,15 @@ addOne = (event) => {
   return Events()
     .insert(event)
     .returning('id')
+    .then(eventIDs => {
+      if(eventIDs.length == 1){
+        return Events().where('id', parseInt(eventIDs[0])).then( events => {
+          return events[0]
+        })
+      } else {
+        return null
+      }
+    })
 }
 
 deleteOne = (eventId) => {
@@ -41,36 +46,31 @@ deleteOne = (eventId) => {
     .returning('id')
 }
 
-checkIn = (eventId, deviceId) => {
-  // defined inline in eventsController.js
-}
+// open = (eventId) => {
+//   return Events()
+//     .where('events.id', parseInt(eventId))
+//     .update({'state': 'open'})
+//     .returning('id')
+//     .then( id => {
+//       return Events().where('events.id', parseInt(id)).then( events => events[0])
+//     })
+// }
 
-open = (eventId) => {
-  return Events()
-    .where('events.id', parseInt(eventId))
-    .update({'state': 'open'})
-    .returning('id')
-    .then( id => {
-      return Events().where('events.id', parseInt(id)).then( events => events[0])
-    })
-}
-
-close = (eventId) => {
-  return Events()
-    .where('events.id', parseInt(eventId))
-    .update({'state': 'closed'})
-    .returning('id')
-    .then( id => {
-      return Events().where('events.id', parseInt(id)).then( events => events[0])
-    })
-}
+// close = (eventId) => {
+//   return Events()
+//     .where('events.id', parseInt(eventId))
+//     .update({'state': 'closed'})
+//     .returning('id')
+//     .then( id => {
+//       return Events().where('events.id', parseInt(id)).then( events => events[0])
+//     })
+// }
 
 module.exports = { 
   getAll: getAll,
-  getAllOpen: getAllOpen,
   getOneByID: getOneByID,
   addOne: addOne,
-  deleteOne: deleteOne,
-  open: open,
-  close: close
+  deleteOne: deleteOne
+  // open: open,
+  // close: close
 }
