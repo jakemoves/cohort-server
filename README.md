@@ -2,9 +2,9 @@
 
 ## Getting started
 ### environment setup
-- install node 6.12.3
+- install node 8.16.0
   - we recommend that you use [nvm](https://github.com/nvm-sh/nvm) to manage your node installed versions
-  - use nvm to make node 6.12.3 the active version
+  - use nvm to make node 8.16.0 the active version
 - install postgresql ([best instructions](https://gist.github.com/ibraheem4/ce5ccd3e4d7a65589ce84f2a3b7c23a3))
 - clone repo from github
 
@@ -15,13 +15,19 @@
 - `createdb cohort`
 - `createdb cohort_test`
 - `createuser cohort_admin`
-- from `src/knex` : `knex migrate:latest`
-- `knex seed:run`
+- from `src/knex` : `npx knex migrate:latest`
+- from `src/knex` : `npx knex seed:run`
 
 ### admin site setup
-- from `public/admin`:
+
+Getting started:
 - `yarn install`
-- `yarn run dev`
+- `yarn run dev` starts up the site locally at [localhost:5000](http://localhost:5000) using a hot-refresh dev server
+
+Building for production:
+- from `/admin-site` : `yarn run build && cp public/* ../public/admin-v2` 
+- if you have a cohort server running locally, the admin site is served at [localhost:3000/admin-v2](http://localhost:3000/admin-v2/)
+
 
 ### tests setup
 - `npm install -g jest`
