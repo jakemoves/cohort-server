@@ -86,16 +86,31 @@ describe('Basic startup', () => {
 
     expect(res.body[1]).toHaveProperty('label')
     expect(res.body[1].label).toEqual('lot_x')
+
+    expect(res.body[3]).toHaveProperty('occasions')
+    expect(res.body[3].occasions).toHaveLength(2)
+    expect(res.body[3].occasions[0]).toHaveProperty('label')
+    expect(res.body[3].occasions[0].label).toEqual('Show 1')
+
   })
 
   test('GET /events/:id', async () => {
-    const res = await request(app).get('/api/v2/events/1')
-    expect(res.status).toEqual(200)
+    // event that doesn't have any occasions
+    const res1 = await request(app).get('/api/v2/events/1')
+    expect(res1.status).toEqual(200)
 
-    expect(res.body).toHaveProperty('id')
-    expect(res.body.id).toEqual(1)
-    expect(res.body).toHaveProperty('label')
-    expect(res.body.label).toEqual('pimohtēwak')
+    expect(res1.body).toHaveProperty('id')
+    expect(res1.body.id).toEqual(1)
+    expect(res1.body).toHaveProperty('label')
+    expect(res1.body.label).toEqual('pimohtēwak')
+
+    //event that has occasions
+    const res2 = await request(app).get('/api/v2/events/2')
+    expect(res2.status).toEqual(200)
+
+    expect(res2.body).toHaveProperty('occasions')
+    expect(res2.body.occasions).toHaveLength(3)
+    expect(res2.body.occasions[0].state).toEqual('closed')
   })
 
   test('GET /events/:id : error: event not found', async () => {
@@ -488,7 +503,57 @@ describe('Basic startup', () => {
   // })
 })
 
+/*
+ *    OCCASION ROUTES
+ */
 
+describe('Occasion routes', () => {
+  test('POST /occasions -- error: eventId not included', async () => {
+    const res = await request(app)
+      .post('/api/v2/occasions')
+      .send({ 
+        label: 'new occasion'
+      })
+
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual('Error: request must include an existing event id (as "eventId" property)')
+  })
+
+  test('POST /occasions -- error: event for occasion does not exist', async () => {
+    const res = await request(app)
+      .post('/api/v2/occasions')
+      .send({ 
+        label: 'new occasion', 
+        eventId: 99 
+      })
+
+    expect(res.status).toEqual(404)
+    expect(res.text).toEqual('Error: event with id:99 not found. To create an occasion, you must include an eventId property corresponding to an existing event.')
+  })
+
+  test('POST /occasions -- happy path', async () => {
+    const res = await request(app)
+      .post('/api/v2/occasions')
+      .send({ 
+        label: 'new occasion', 
+        eventId: 1
+      })
+
+    expect(res.status).toEqual(201)
+    expect(res.header.location).toEqual('/api/v2/occasions/6')
+    expect(res.body).toHaveProperty('id')
+    expect(res.body.id).toEqual(6)
+    expect(res.body.label).toEqual('new occasion')
+  })
+})
+
+//     expect(res.status).toEqual(201)
+//     expect(res.header.location).toEqual('/api/v2/events/6')
+//     expect(res.body).toHaveProperty('id')
+//     expect(res.body.id).toEqual(6)
+//     expect(res.body.label).toEqual('new event')
+//   })
+// })
 // DEVICE ROUTES
 // defunct
 

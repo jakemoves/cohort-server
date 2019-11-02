@@ -8,49 +8,64 @@ Occasions = () => {
 }
 
 // queries
-getOneByID = (occasionId) => {
-  return Occasions().where('id', parseInt(occasionId))
-  .then( occasions => {
-    if(occasions.length == 1){
-      return occasions[0]
-    } else {
-      return null
-    }
-  })
-}
-
-getAllForEvent = (eventId) => {
-  return Occasions().where('event_id', parseInt(eventId))
-}
-
-getAll = () => {
-  return Occasions()
-}
 
 addOne = (occasion) => {
+  occasion.event_id = occasion.eventId
+  delete occasion.eventId
+
   return Occasions()
     .insert(occasion)
     .returning('id')
+    .then(occasionIDs => {
+      if(occasionIDs.length == 1){
+        return Occasions().where('id', parseInt(occasionIDs[0])).then( occasions => {
+          return occasions[0]
+        })
+      } else {
+        return null
+      }
+    })
 }
 
-deleteOne = (occasionId) => {
-  return Occasions()
-    .where('id', parseInt(occasionId))
-    .del()
-    .returning('id')
-}
+// getOneByID = (occasionId) => {
+//   return Occasions().where('id', parseInt(occasionId))
+//   .then( occasions => {
+//     if(occasions.length == 1){
+//       return occasions[0]
+//     } else {
+//       return null
+//     }
+//   })
+// }
 
-getOccasionsOnOrAfterDate = (eventId, dateString /* '1984-04-01', ie ISO8601 'YYYY-MM-DD' part only*/ ) => {
-  return Occasions()
-    .where('event_id', eventId)
-    .andWhere(knex.raw("date_trunc('day', \"startDateTime\") >= '" + dateString + "';"))
-}
+// getAllForEvent = (eventId) => {
+//   return Occasions().where('event_id', parseInt(eventId))
+// }
+
+// getAll = () => {
+//   return Occasions()
+// }
+
+
+
+// deleteOne = (occasionId) => {
+//   return Occasions()
+//     .where('id', parseInt(occasionId))
+//     .del()
+//     .returning('id')
+// }
+
+// getOccasionsOnOrAfterDate = (eventId, dateString /* '1984-04-01', ie ISO8601 'YYYY-MM-DD' part only*/ ) => {
+//   return Occasions()
+//     .where('event_id', eventId)
+//     .andWhere(knex.raw("date_trunc('day', \"startDateTime\") >= '" + dateString + "';"))
+// }
 
 module.exports = {
-  getOneByID: getOneByID,
-  getAllForEvent: getAllForEvent,
-  getAll: getAll,
-  addOne: addOne,
-  deleteOne: deleteOne,
-  getOccasionsOnOrAfterDate: getOccasionsOnOrAfterDate
+  addOne: addOne
+  // getOneByID: getOneByID,
+  // getAllForEvent: getAllForEvent,
+  // getAll: getAll,
+  // deleteOne: deleteOne,
+  // getOccasionsOnOrAfterDate: getOccasionsOnOrAfterDate
 }

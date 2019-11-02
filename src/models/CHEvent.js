@@ -6,8 +6,6 @@ const CHOccasion = require('./CHOccasion')
 class CHEvent {
   id
   label
-  occasions = []
-  cues = new Map()
 
   constructor(id, label){
     this.id = id

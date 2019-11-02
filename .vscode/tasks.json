@@ -20,18 +20,6 @@
       },
       "isBackground": true,
       "problemMatcher": []
-    },
-    {
-      "label": "build-admin",
-      "type": "npm",
-      "script": "dev",
-      "path": "public/admin/",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "isBackground": true,
-      "problemMatcher": []
     }
   ]
 }

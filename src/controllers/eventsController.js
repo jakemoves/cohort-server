@@ -30,6 +30,7 @@ exports.events = (req, res) => {
     res.status(200).json(events)
   })
   .catch( error => {
+    
     handleError(500, error, res)
   })
 }

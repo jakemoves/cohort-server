@@ -9,19 +9,35 @@ Events = () => {
 
 // queries
 
-getAll = () => {
-  return Events().select()
+getAll = async () => {
+  let events = await Events().select()
+  
+  for(event of events){
+    event.occasions = await occasionsForEvent(event.id)
+  }
+  
+  return events
 }
 
-getOneByID = (eventId) => {
-  return Events().where('id', parseInt(eventId))
-  .then( events => {
-    if(events.length == 1){
-      return events[0]
-    } else {
-      return null
-    }
-  })
+occasionsForEvent = (eventId) => {
+  return Events()
+    .join('occasions', 'events.id', '=', 'occasions.event_id')
+    .where('event_id', parseInt(eventId))
+}
+
+getOneByID = async eventId => {
+  let events = await Events().where('id', parseInt(eventId))
+  let event
+
+  if(events.length == 1){
+    event = events[0]
+  } else {
+    return null
+  }
+
+  event.occasions = await occasionsForEvent(event.id)
+
+  return event 
 }
 
 addOne = (event) => {

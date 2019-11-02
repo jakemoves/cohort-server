@@ -1,29 +1,17 @@
 exports.up = function(knex, Promise) {
   return knex.schema.dropTable('events_devices').then( () => {
-    return knex.schema.dropTable('devices').then( () => {
-
-      knex.schema.createTable('events_occasions', table =>{
-        table.integer('event_id')
-          .references('events.id')
-          .notNullable()
-          .onDelete('CASCADE')
-        table.integer('occasion_id')
-          .references('occasions.id')
-          .onDelete('CASCADE')
-        table.unique(['event_id', 'occasion_id'])
-      })
-    })
+    return knex.schema.dropTable('devices')
   })
 };
 
 exports.down = function(knex, Promise) {
   return knex.schema.createTable('devices', (table) => {
-      table.increments('id').primary().notNullable()
-      table.string('guid').notNullable()
-      table.string('apnsDeviceToken')
-      table.boolean('isAdmin').notNullable()
-      table.timestamps(false, true)
-      table.json('tags')
+    table.increments('id').primary().notNullable()
+    table.string('guid').notNullable()
+    table.string('apnsDeviceToken')
+    table.boolean('isAdmin').notNullable()
+    table.timestamps(false, true)
+    table.json('tags')
   }).then( () => {
     return knex.schema.createTable('events_devices', table => {
       table.increments('id').primary().notNullable()

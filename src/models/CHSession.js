@@ -17,7 +17,7 @@ class CHSession {
   }
 
   async init() {
-    let dbOpenEvents = await eventsTable.getAll()
+    // let dbEvents = await eventsTable.getAll()
     
     // let openEvents = dbOpenEvents.map( dbEvent => {
     //   return CHEvent.fromDatabaseRow(dbEvent)
