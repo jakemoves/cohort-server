@@ -567,7 +567,7 @@ describe('Occasion routes', () => {
 
       return occasions.length
     }
-    
+
     let occasionsCount = await numberOfOccasions()
 
     const res1 = await request(app)
@@ -578,6 +578,14 @@ describe('Occasion routes', () => {
     // verify that the number of occasions has gone down by one
     let newOccasionsCount = await(numberOfOccasions())
     expect(newOccasionsCount).toEqual(occasionsCount - 1)
+  })
+
+  test('PATCH /occasions/:id/open', async () =>{
+    const res = await request(app).patch('/api/v2/occasions/2/open')
+
+    expect(res.status).toEqual(200)
+    expect(res.body.id).toEqual(2)
+    expect(res.body.state).toEqual('open')
   })
 })
 

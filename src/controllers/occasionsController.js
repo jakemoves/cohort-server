@@ -36,6 +36,8 @@ exports.occasions_create = async (req, res) => {
   }
   
   let occasion = req.body
+
+  // this smells, a little -- should we be creating the occasion in memory using the class and then storing it?
   occasion.state = "closed"
   
   occasionsTable.addOne(occasion).then( occasion => {
