@@ -545,6 +545,40 @@ describe('Occasion routes', () => {
     expect(res.body.id).toEqual(6)
     expect(res.body.label).toEqual('new occasion')
   })
+
+  test('DELETE /occasions -- error: occasion not found', async () => {
+    const res = await request(app)
+      .delete('/api/v2/occasions/99')
+
+    expect(res.status).toEqual(404)
+  })
+
+  test('DELETE /occasions -- happy path', async () => {
+    numberOfOccasions = async () => {
+      const res = await request(app).get('/api/v2/events')
+      expect(res.status).toEqual(200)
+      
+      let occasions = []
+      for(event of res.body){
+        if(event.occasions){
+          occasions.push(...event.occasions)
+        }
+      }
+
+      return occasions.length
+    }
+    
+    let occasionsCount = await numberOfOccasions()
+
+    const res1 = await request(app)
+      .delete('/api/v2/occasions/1')
+
+    expect(res1.status).toEqual(204)
+
+    // verify that the number of occasions has gone down by one
+    let newOccasionsCount = await(numberOfOccasions())
+    expect(newOccasionsCount).toEqual(occasionsCount - 1)
+  })
 })
 
 

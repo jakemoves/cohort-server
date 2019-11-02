@@ -27,6 +27,13 @@ addOne = (occasion) => {
     })
 }
 
+deleteOne = (occasionId) => {
+  return Occasions()
+    .where('id', parseInt(occasionId))
+    .del()
+    .returning('id')
+}
+
 // getOneByID = (occasionId) => {
 //   return Occasions().where('id', parseInt(occasionId))
 //   .then( occasions => {
@@ -48,12 +55,7 @@ addOne = (occasion) => {
 
 
 
-// deleteOne = (occasionId) => {
-//   return Occasions()
-//     .where('id', parseInt(occasionId))
-//     .del()
-//     .returning('id')
-// }
+
 
 // getOccasionsOnOrAfterDate = (eventId, dateString /* '1984-04-01', ie ISO8601 'YYYY-MM-DD' part only*/ ) => {
 //   return Occasions()
@@ -62,10 +64,10 @@ addOne = (occasion) => {
 // }
 
 module.exports = {
-  addOne: addOne
+  addOne: addOne,
+  deleteOne: deleteOne
   // getOneByID: getOneByID,
   // getAllForEvent: getAllForEvent,
   // getAll: getAll,
-  // deleteOne: deleteOne,
   // getOccasionsOnOrAfterDate: getOccasionsOnOrAfterDate
 }

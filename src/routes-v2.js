@@ -27,9 +27,10 @@ router.delete('/events/:id', eventsController.events_delete)
  */
 
 router.post('/occasions', occasionsController.occasions_create)
+router.delete('/occasions/:id', occasionsController.occasions_delete)
 // router.post('/events/:id/occasions', occasionsController.occasions_create)
 // router.get('/occasions', occasionsController.occasions)
-// router.delete('/occasions/:id', occasionsController.occasions_delete)
+// 
 
 // router.patch('/events/:eventId/check-in', eventsController.events_checkIn) // eventId rather than id to disambiguate when the user checks in to a specific occasion (see that route listed under occasions) 
 // router.get('/events/:eventId/devices', eventsController.events_devices)

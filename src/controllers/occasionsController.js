@@ -49,6 +49,20 @@ exports.occasions_create = async (req, res) => {
   })
 }
 
+exports.occasions_delete = (req, res) => {
+  return occasionsTable.deleteOne(req.params.id)
+  .then( deletedIds => {
+    if(deletedIds.length == 1) {
+      res.sendStatus(204)
+    } else {
+      res.sendStatus(404)
+    }
+  })
+  .catch( error => {
+    handleError(500, error, res)
+  })  
+}
+
 // exports.occasionsForEvent = ( req, res ) => {
 //   let eventId = req.params.id
 
@@ -73,22 +87,7 @@ exports.occasions_create = async (req, res) => {
 //   })
 // }
 
-// exports.occasions_delete = (req, res) => {
-//   return occasionsTable.deleteOne(req.params.id)
-//   .then( (deletedIds) => {
-//     if(deletedIds.length == 1) {
-//       res.sendStatus(204)
-//     } else {
-//       res.sendStatus(404)
-//     }
-//   })
-//   .catch( error => {
-//     console.log(error)
-//     res.status(500)
-//     res.write(error.message)
-//     res.send()
-//   })  
-// }
+
 
 // exports.event_occasions_upcoming = (req, res) => {
 //   if(!req.query.onOrAfterDate){
