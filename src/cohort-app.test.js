@@ -547,13 +547,7 @@ describe('Occasion routes', () => {
   })
 })
 
-//     expect(res.status).toEqual(201)
-//     expect(res.header.location).toEqual('/api/v2/events/6')
-//     expect(res.body).toHaveProperty('id')
-//     expect(res.body.id).toEqual(6)
-//     expect(res.body.label).toEqual('new event')
-//   })
-// })
+
 // DEVICE ROUTES
 // defunct
 
