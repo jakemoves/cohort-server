@@ -14,7 +14,7 @@ module.exports = (options) => {
     }
 
     const keepaliveInterval = setInterval(function ping(){
-      console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
+      // console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
 
       webSocketServer.clients.forEach( (socket) => {
         if(socket.isAlive === false){
