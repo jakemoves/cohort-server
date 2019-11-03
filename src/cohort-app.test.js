@@ -13,19 +13,19 @@ var app
 process.env.NODE_ENV = 'test'
 
 beforeEach( async () => {
-  console.log('global beforeEach()')
+  // console.log('global beforeEach()')
   await knex.migrate.rollback()
   await knex.migrate.latest()
   await knex.seed.run()
 
   app = require('./cohort-app')
   await CHSession.initAndSetOnApp(app).then( () => {
-    console.log("starting cohort session")
+    // console.log("starting cohort session")
   })
 })
 
 afterEach( async () => {
-  console.log('global afterEach()')
+  // console.log('global afterEach()')
   await knex.migrate.rollback()
   // per issue #12, we should actually tear down the app/server here
   app.set('cohort', null)

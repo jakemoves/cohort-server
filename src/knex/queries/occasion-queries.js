@@ -34,6 +34,10 @@ deleteOne = (occasionId) => {
     .returning('id')
 }
 
+getAllOpen = () => {
+  return Occasions().where('state', 'open')
+}
+
 // getOneByID = (occasionId) => {
 //   return Occasions().where('id', parseInt(occasionId))
 //   .then( occasions => {
@@ -49,9 +53,7 @@ deleteOne = (occasionId) => {
 //   return Occasions().where('event_id', parseInt(eventId))
 // }
 
-// getAll = () => {
-//   return Occasions()
-// }
+
 
 
 
@@ -65,7 +67,8 @@ deleteOne = (occasionId) => {
 
 module.exports = {
   addOne: addOne,
-  deleteOne: deleteOne
+  deleteOne: deleteOne,
+  getAllOpen: getAllOpen
   // getOneByID: getOneByID,
   // getAllForEvent: getAllForEvent,
   // getAll: getAll,

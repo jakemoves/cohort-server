@@ -39,7 +39,7 @@ exports.seed = function(knex, Promise) {
           },{ 
             event_id: 2,
             label: 'Rehearsal',
-            state: 'closed',
+            state: 'open',
             doorsOpenDateTime: '2019-06-01 13:30:00+05:00',
             startDateTime: '2019-06-01 14:00:00+05:00',
             endDateTime: '2019-06-01 15:30:00+05:00',

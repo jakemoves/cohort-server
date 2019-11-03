@@ -4,29 +4,30 @@
 const _flatten = require('lodash/flatten')
 const _uniqBy = require('lodash/uniqBy')
 
-const eventsTable = require('../knex/queries/event-queries')
-const CHEvent = require('./CHEvent')
+const occasionsTable = require('../knex/queries/occasion-queries')
+const CHOccasion = require('./CHOccasion')
 
 class CHSession {
-  events
+  openOccasions
   errors // used for testing
 
   constructor(){
-    this.events = []
+    this.openOccasions = []
     this.errors = []
   }
 
   async init() {
-    // let dbEvents = await eventsTable.getAll()
-    
-    // let openEvents = dbOpenEvents.map( dbEvent => {
-    //   return CHEvent.fromDatabaseRow(dbEvent)
-    // })
+    let openOccasionsInDB = await occasionsTable.getAllOpen()
 
-    // openEvents.forEach( event => {
-    //   this.addListenersForEvent(event)
-    //   event.open()
-    // })
+    let openOccasions = openOccasionsInDB.map( dbOccasion => {
+      return CHOccasion.fromDatabaseRow(dbOccasion)
+    })
+
+    openOccasions.forEach( occasion => {
+      this.addListenersForOccasion(occasion)
+      occasion.open()
+      // the event listener handles adding opened occasions to this.openOccasions
+    })
     
     return Promise.resolve()
   }
@@ -39,24 +40,24 @@ class CHSession {
     })
   }
 
-  // addListenersForEvent(event){
-  //   event.on('transition', data => {
-  //     if(data.toState == 'closed'){
-  //       // remove the event from the session
-  //       let eventIndex = this.events.findIndex(
-  //         matchingEvent => matchingEvent.id == event.id
-  //       )
-  //       if(eventIndex !== undefined){
-  //         this.events.splice(eventIndex, 1)
-  //       } else {
-  //         throw new Error("Closed event was not present in session!")
-  //       }
-  //     }
-  //     if(data.toState == 'open'){
-  //       this.events.push(event)
-  //     }
-  //   })
-  // }
+  addListenersForOccasion(occasion){
+    occasion.on('transition', data => {
+      if(data.toState == 'closed'){
+        // remove the occasion from the session
+        let occasionIndex = this.openOccasions.findIndex(
+          matchingOccasion => matchingOccasion.id == occasion.id
+        )
+        if(occasionIndex !== undefined){
+          this.openOccasions.splice(eventIndex, 1)
+        } else {
+          throw new Error("Closed event was not present in session!")
+        }
+      }
+      if(data.toState == 'opened'){
+        this.openOccasions.push(occasion)
+      }
+    })
+  }
   
   // returns a flat array of all devices checked into active events
   // allDevices(){

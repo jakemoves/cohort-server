@@ -28,6 +28,8 @@ router.delete('/events/:id', eventsController.events_delete)
 
 router.post('/occasions', occasionsController.occasions_create)
 router.delete('/occasions/:id', occasionsController.occasions_delete)
+router.patch('/occasions/:id/open', occasionsController.occasions_open)
+
 // router.post('/events/:id/occasions', occasionsController.occasions_create)
 // router.get('/occasions', occasionsController.occasions)
 // 

@@ -65,6 +65,10 @@ exports.occasions_delete = (req, res) => {
   })  
 }
 
+exports.occasions_open = (req, res) => {
+  
+}
+
 // exports.occasionsForEvent = ( req, res ) => {
 //   let eventId = req.params.id
 
