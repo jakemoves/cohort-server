@@ -3773,10 +3773,10 @@ fieldset[disabled] .btn-warning.active {
 .btn-warning .caret {
   border-top-color: #FFFFFF;
 }
-
+/* ///EDIT BUTTON DANGER COLOUR */
 .btn-danger {
-  background-color: #f5593d;
-  border-color: #f5593d;
+  background-color: #da2b0b;
+  border-color: #da2b0b;
   color: #FFFFFF;
   opacity: 1;
   filter: alpha(opacity=100);
@@ -3833,7 +3833,7 @@ fieldset[disabled] .btn-danger.active {
 }
 
 .btn-danger.btn-link {
-  color: #f5593d;
+  color: #da2b0b;
 }
 
 .btn-danger.btn-link:hover,
@@ -3852,6 +3852,9 @@ fieldset[disabled] .btn-danger.active {
 
 .btn-danger .caret {
   border-top-color: #FFFFFF;
+}
+.btn-danger{
+  color:#da2b0b;
 }
 
 .btn-neutral {
@@ -9164,6 +9167,11 @@ video {
 .card.card-blog .btn {
   margin: 0 auto;
 }
+/* /////EDIT */
+.card-blog{
+  background-color: #fffefe;
+  
+}
 
 .card .author {
   display: inline-block;
@@ -9214,9 +9222,10 @@ video {
   margin-top: -1px;
   opacity: .6;
 }
-
+/* ////eDIT */
 .card .card-category {
-  color: #9A9A9A;
+  /* color: #9A9A9A; */
+  color:  #265c00;
 }
 
 .card .category-social .fa {
