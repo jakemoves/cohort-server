@@ -2,72 +2,86 @@
   import Login from "./Login.svelte";
   import Slider from "./Slider.svelte";
   import moment from "moment";
+  import { onMount } from 'svelte';
 
-  let events = [
-    {
-      id: 1,
-      label: "LOT X",
-      //"heroImage": URL-TO-IMG, // optional
-      occasions: [
-        {
-          id: 1,
-          event_id: 1,
-          state: "closed", // can be open or closed; closed events cannot be joined
-          startDateTime: "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
-          doorsOpenDateTime: "2019-05-23T16:30:00.000Z",
-          endDateTime: "2019-05-29T03:50:00.000Z",
-          locationLabel: "Show #5",
-          locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
-          locationCity: "Toronto",
-          publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
-          devices: [
-            {
-              id: 1,
-              guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
-              apnsDeviceToken: null, // not used for now -- this is for push notifications
-              isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
-              tags: ["blue", "1984"]
-            }
-          ]
-        },
-        {
-          id: 2,
-          event_id: 1,
-          state: "closed", // can be open or closed; closed events cannot be joined
-          startDateTime: "2019-06-28T17:00:00.000Z", // stored in UTC, browser does conversion
-          doorsOpenDateTime: "2019-06-28T16:30:00.000Z",
-          endDateTime: "2019-07-10T03:50:00.000Z",
-          locationLabel: "Show #5",
-          locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
-          locationCity: "Toronto",
-          publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
-          devices: [
-            {
-              id: 1,
-              guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
-              apnsDeviceToken: null, // not used for now -- this is for push notifications
-              isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
-              tags: ["blue", "1984"]
-            }
-          ]
-        }
-      ],
-      cues: [
-        {
-          mediaDomain: 0, // enum: audio, video, text, light, haptic
-          cueNumber: 1,
-          cueAction: 0, // enum: play/on, pause, restart, stop/off
-          targetTags: ["all"]
-        },
-        {
-          mediaDomain: 0, // enum: audio, video, text, light, haptic
-          cueNumber: 2,
-          cueAction: 3, // enum: play/on, pause, restart, stop/off
-          targetTags: ["all"]
-        }
-      ]
-    }
-  ];
+  let events = []
+  let gotEvents = false
+
+  onMount( async () => {
+    let response = await fetch("http://localhost:3000/api/v2/events",{
+      method: 'GET'
+    })
+
+    events = await response.json()
+    gotEvents = true
+    focusedEvent = events[0]
+  })
+
+  // let events = [
+  //   {
+  //     id: 1,
+  //     label: "LOT X",
+  //     //"heroImage": URL-TO-IMG, // optional
+  //     occasions: [
+  //       {
+  //         id: 1,
+  //         event_id: 1,
+  //         state: "closed", // can be open or closed; closed events cannot be joined
+  //         startDateTime: "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
+  //         doorsOpenDateTime: "2019-05-23T16:30:00.000Z",
+  //         endDateTime: "2019-05-29T03:50:00.000Z",
+  //         locationLabel: "Show #5",
+  //         locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
+  //         locationCity: "Toronto",
+  //         publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
+  //         devices: [
+  //           {
+  //             id: 1,
+  //             guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
+  //             apnsDeviceToken: null, // not used for now -- this is for push notifications
+  //             isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
+  //             tags: ["blue", "1984"]
+  //           }
+  //         ]
+  //       },
+  //       {
+  //         id: 2,
+  //         event_id: 1,
+  //         state: "closed", // can be open or closed; closed events cannot be joined
+  //         startDateTime: "2019-06-28T17:00:00.000Z", // stored in UTC, browser does conversion
+  //         doorsOpenDateTime: "2019-06-28T16:30:00.000Z",
+  //         endDateTime: "2019-07-10T03:50:00.000Z",
+  //         locationLabel: "Show #5",
+  //         locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
+  //         locationCity: "Toronto",
+  //         publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
+  //         devices: [
+  //           {
+  //             id: 1,
+  //             guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
+  //             apnsDeviceToken: null, // not used for now -- this is for push notifications
+  //             isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
+  //             tags: ["blue", "1984"]
+  //           }
+  //         ]
+  //       }
+  //     ],
+  //     cues: [
+  //       {
+  //         mediaDomain: 0, // enum: audio, video, text, light, haptic
+  //         cueNumber: 1,
+  //         cueAction: 0, // enum: play/on, pause, restart, stop/off
+  //         targetTags: ["all"]
+  //       },
+  //       {
+  //         mediaDomain: 0, // enum: audio, video, text, light, haptic
+  //         cueNumber: 2,
+  //         cueAction: 3, // enum: play/on, pause, restart, stop/off
+  //         targetTags: ["all"]
+  //       }
+  //     ]
+  //   }
+  // ];
 
   //for new event creation parameters
   let label = "";
@@ -76,7 +90,7 @@
   //Holds event ID in order to display occasions for that event
   let focusedEventID = "0";
   let focusedOccasionID = "0";
-  let focusedEvent = events[0];
+  let focusedEvent;
   let focusedOccasion = "0";
   //hold formatted time
   let formattedStartTime = "";
@@ -97,7 +111,7 @@
     indexInEvents = focusedEventID - 1;
     focusedEvent = events[indexInEvents];
   }
-
+  
   function occasionButton() {
     focusedOccasionID = this.value;
     document.getElementById("occasionList").style.display = "none";
@@ -355,9 +369,11 @@
       </div>
     <!-- </div>
     <div class="row"> -->
-      <div class="col-12 col-md-4 text-center">
-        <h3>{focusedEvent.label} - {formattedStartTime}</h3>
-      </div>
+      {#if gotEvents == true}
+        <div class="col-12 col-md-4 text-center">
+          <h3>{focusedEvent.label} - {formattedStartTime}</h3>
+        </div>
+      {/if}
 	  <div class="col-4 text-center">
         
       </div>
@@ -390,7 +406,8 @@
     <div class="row">
       <div class="col-md-12">
         <h5>Cue Details</h5>
-        {#if focusedEvent != 'undefined'}
+        <p>{focusedEvent}</p>
+        {#if focusedEvent != null && focusedEvent !== undefined}
           {#each focusedEvent.cues as cue}
             {#if cue.cueNumber == cueState}
               <div id={cue.cueNumber}>
@@ -502,11 +519,14 @@
 	  </div>
 	<!-- </div>
     <div class="row"> -->
-      <div class="col-12 col-md-4 text-center">
-        <h3>
-          {focusedEvent.label} - {formattedStartTime}.
-        </h3>
-      </div>
+
+      {#if gotEvents == true}
+        <div class="col-12 col-md-4 text-center">
+          <h3>
+            {focusedEvent.label} - {formattedStartTime}.
+          </h3>
+        </div>
+      {/if}
 	  <div class="col-4 text-center">
         
       </div>
@@ -577,6 +597,8 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+
+      {#if gotEvents == true}
       <div class="modal-body">
         Are you sure you want to delete {focusedEvent.label} - {formattedStartTime}
         ?
@@ -589,6 +611,7 @@
           Delete Occasion
         </button>
       </div>
+      {/if}
     </div>
   </div>
 </div>
@@ -601,6 +624,8 @@
           End Occasion
         </h5>
       </div>
+
+      {#if gotEvents == true}
       <div class="modal-body">
         Are you sure you want to end {focusedEvent.label} - {formattedStartTime}
         ?
@@ -620,6 +645,7 @@
           End Occasion
         </button>
       </div>
+      {/if}
     </div>
   </div>
 

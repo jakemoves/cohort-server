@@ -14,6 +14,7 @@ getAll = async () => {
   
   for(event of events){
     event.occasions = await occasionsForEvent(event.id)
+    event.cues = []
   }
   
   return events
