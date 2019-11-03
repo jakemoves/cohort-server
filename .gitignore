@@ -3,6 +3,11 @@
 /public/main.js
 /public/main.css
 /public/main.css.map
+/public/admin-v2
+
+/admin-site/.DS_Store
+/admin-site/node_modules
+/admin-site/public/bundle.*
 
 # .vscode/
 /lib

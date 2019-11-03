@@ -1,0 +1,125 @@
+
+//example json, 
+
+
+/events?fullDepth=true deep request
+
+[{
+	"id": 1,
+  "label": "LOT X",
+  "heroImage": URL-TO-IMG, // optional
+	"occasions": [
+		{
+    	"id": 3,
+    	"event_id": 1,
+      "state": "closed", // can be open or closed; closed events cannot be joined
+    	"startDateTime": "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
+    	"doorsOpenDateTime": "2019-05-23T16:30:00.000Z",
+    	"endDateTime": "2019-05-29T03:50:00.000Z",
+    	"locationLabel": "Show #5",
+    	"locationAddress": "125 Emerson Ave, Toronto ON, M6H 3S7",
+    	"locationCity": "Toronto",
+      "publicUR": "https://cohort.rocks/api/v2/events/1/occasions/3" // for making QR code to join the event
+      "devices": [
+      	{
+          "id": 1,
+          "guid": "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
+          "apnsDeviceToken": null, // not used for now -- this is for push notifications
+          "isAdmin": true, // here for now -- the admin site will connect to an occasion as a device
+          "tags": ["blue", "1984"]
+        }
+      ]
+  	}
+  ],
+  "cues": [
+  	{
+  		"mediaDomain": 0, // enum: audio, video, text, light, haptic
+      "cueNumber": 1,
+      "cueAction": 0, // enum: play/on, pause, restart, stop/off
+      "targetTags": ["all"]
+    }
+  ]
+}]
+
+
+/events - shallow request
+[{
+	"id": 1,
+  "label": "LOT X",
+  "heroImage": URL-TO-IMG, // optional
+	"occasions": [
+		3, 5, 6
+  ],
+  "cues": [
+  	{
+  		"mediaDomain": 0, // enum: audio, video, text, light, haptic
+      "cueNumber": 1,
+      "cueAction": 0, // enum: play/on, pause, restart, stop/off
+      "targetTags": ["all"]
+      // on the client side, 
+    }
+  ]
+}]
+
+
+/events/1/occasions // all occasions for a given event
+[
+  {
+    "id": 3,
+    "event_id": 1,
+    "state": "closed", // can be open or closed; closed events cannot be joined
+    "startDateTime": "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
+    "doorsOpenDateTime": "2019-05-23T16:30:00.000Z",
+    "endDateTime": "2019-05-29T03:50:00.000Z",
+    "locationLabel": "Show #5",
+    "locationAddress": "125 Emerson Ave, Toronto ON, M6H 3S7",
+    "locationCity": "Toronto",
+    "devices": [
+      {
+        "id": 1,
+        "guid": "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
+        "apnsDeviceToken": null, // not used for now -- this is for push notifications
+        "isAdmin": true, // here for now -- the admin site will connect to an occasion as a device
+        "tags": ["blue", "1984"]
+      }
+    ]
+  },
+  ... 5, 6
+]
+
+
+/occasions/3
+{
+  "id": 3,
+  "event_id": 1,
+  "state": "closed" // can be open or closed; closed events cannot be joined
+  "startDateTime": "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
+  "doorsOpenDateTime": "2019-05-23T16:30:00.000Z",
+  "endDateTime": "2019-05-29T03:50:00.000Z",
+  "locationLabel": "Show #5",
+  "locationAddress": "125 Emerson Ave, Toronto ON, M6H 3S7",
+  "locationCity": "Toronto",
+  "devices": [
+    {
+      "id": 1,
+      "guid": "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
+      "apnsDeviceToken": null, // not used for now -- this is for push notifications
+      "isAdmin": true, // here for now -- the admin site will connect to an occasion as a device
+      "tags": ["blue", "1984"]
+    }
+  ]
+}
+
+
+
+
+
+
+
+// sound cue on client
+{
+	filename: "somesoundfile.mp3", // in unity, this is an AudioClip obect
+  cueNumber: 1, // float
+  accessibleAlternative: "gentle music"
+}
+
