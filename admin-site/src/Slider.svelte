@@ -5,7 +5,7 @@ window.onCueSliderInput = (event) => {
   const value = event.target.value
   console.log(value)
   if(value == 100){
-
+// user dragged slider all the way across — emit 'activated' event
   }
 };
 
@@ -118,6 +118,6 @@ padding: 0; }
     </style>
 
    <div class="text-center">
-        <label for="cue-control-go">Drag slider to the right to cue</label>
+        <label for="cue-control-go">Drag slider to the right to fire cue</label>
         <input class="cue-controls__cue-controls-go" type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event) v-bind:disabled="selectedOccasion == null">
     </div>
