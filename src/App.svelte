@@ -179,7 +179,7 @@
                   </div>
                 </div>
                 <div class="col-md-7">
-                  <div class="card-body text-left">
+                  <div class="card-body text-sm-center text-md-left">
                     <h4 class="card-title">Jacob Niedzwiecki</h4>
                     <h6 class="card-category">Lead Developer</h6>
                     <p class="card-description">
@@ -206,7 +206,7 @@
                   </div>
                 </div>
                 <div class="col-md-7">
-                  <div class="card-body text-left">
+                  <div class="card-body text-sm-center text-md-left">
                     <h4 class="card-title">Nabeel Kassam</h4>
                     <h6 class="card-category">Producer/Project Manager</h6>
                     <p class="card-description">
@@ -233,7 +233,7 @@
                   </div>
                 </div>
                 <div class="col-md-7">
-                  <div class="card-body text-left">
+                  <div class="card-body text-sm-center text-md-left">
                     <h4 class="card-title">Luke Garwood</h4>
                     <h6 class="card-category">Assitant Developer</h6>
                     <p class="card-description">
@@ -260,7 +260,7 @@
                   </div>
                 </div>
                 <div class="col-md-7">
-                  <div class="card-body text-left">
+                  <div class="card-body text-sm-center text-md-left">
                     <h4 class="card-title">Amanda Baker</h4>
                     <h6 class="card-category">Quality Assurance</h6>
                     <p class="card-description">
