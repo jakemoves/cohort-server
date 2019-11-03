@@ -2,7 +2,6 @@
 // Released under the MIT License (see /LICENSE)
 
 const knex = require('../knex.js')
-const CHDevice = require('../../models/CHDevice')
 
 Events = () => {
   return knex('events')
@@ -10,47 +9,50 @@ Events = () => {
 
 // queries
 
-getAll = () => {
-  return Events().select()
+getAll = async () => {
+  let events = await Events().select()
+  
+  for(event of events){
+    event.occasions = await occasionsForEvent(event.id)
+  }
+  
+  return events
 }
 
-getAllActiveWithDevices = () => {
+occasionsForEvent = (eventId) => {
   return Events()
-    .whereNot('state', 'closed')
-    .map( event => {
-      return getDevicesForEvent(event.id).then( devices => {
-        event.devices = devices
-        return event
-      })
-    })
+    .join('occasions', 'events.id', '=', 'occasions.event_id')
+    .where('event_id', parseInt(eventId))
 }
 
-getOneByID = (eventId) => {
-  return Events().where('id', parseInt(eventId))
-  .then( events => {
-    if(events.length == 1){
-      return events[0]
-    } else {
-      return null
-    }
-  })
-}
+getOneByID = async eventId => {
+  let events = await Events().where('id', parseInt(eventId))
+  let event
 
-getOneByIDWithDevices = (eventId) => {
-  return Events().where('id', parseInt(eventId))
-  .then( events => {
+  if(events.length == 1){
     event = events[0]
-    return getDevicesForEvent(event.id).then( devices => {
-      event.devices = devices
-      return event
-    })
-  })
+  } else {
+    return null
+  }
+
+  event.occasions = await occasionsForEvent(event.id)
+
+  return event 
 }
 
 addOne = (event) => {
   return Events()
     .insert(event)
     .returning('id')
+    .then(eventIDs => {
+      if(eventIDs.length == 1){
+        return Events().where('id', parseInt(eventIDs[0])).then( events => {
+          return events[0]
+        })
+      } else {
+        return null
+      }
+    })
 }
 
 deleteOne = (eventId) => {
@@ -60,76 +62,31 @@ deleteOne = (eventId) => {
     .returning('id')
 }
 
-checkIn = (eventId, deviceId) => {
-  // defined inline in eventsController.js
-}
+// open = (eventId) => {
+//   return Events()
+//     .where('events.id', parseInt(eventId))
+//     .update({'state': 'open'})
+//     .returning('id')
+//     .then( id => {
+//       return Events().where('events.id', parseInt(id)).then( events => events[0])
+//     })
+// }
 
-getDevicesForEvent = (eventId) => {
-  return Events()
-    .where('events.id', parseInt(eventId))
-    .join('events_devices', 'events.id', 'events_devices.event_id')
-    .join('devices', 'devices.id', 'events_devices.device_id' )
-    .select(
-      'device_id as id',
-      'guid', 
-      'apnsDeviceToken', 
-      'isAdmin',
-      'tags'
-    )
-}
-
-// DRY this up
-getDevicesForEventOccasion = (eventId, occasionId) => {
-  return Events()
-    .where('events.id', parseInt(eventId))
-    .join('events_devices', 'events.id', 'events_devices.event_id')
-    .join('devices', 'devices.id', 'events_devices.device_id' )
-    .whereNotNull('occasion_id')
-    .where('occasion_id', parseInt(occasionId))
-    .select(
-      'device_id as id',
-      'guid', 
-      'apnsDeviceToken', 
-      'isAdmin',
-      'tags'
-    )
-}
-
-open = (eventId) => {
-  return Events()
-    .where('events.id', parseInt(eventId))
-    .update({'state': 'open'})
-    .returning('id')
-    .then( id => {
-      return Events().where('events.id', parseInt(id)).then( events => events[0])
-    })
-}
-
-close = (eventId) => {
-  return Events()
-    .where('events.id', parseInt(eventId))
-    .update({'state': 'closed'})
-    .returning('id')
-    .then( id => {
-      return Events().where('events.id', parseInt(id)).then( events => events[0])
-    })
-}
-
-checkOutAllDevices = (eventId) => {
-  return knex('events_devices')
-  .where('event_id', parseInt(eventId))
-  .del()
-}
+// close = (eventId) => {
+//   return Events()
+//     .where('events.id', parseInt(eventId))
+//     .update({'state': 'closed'})
+//     .returning('id')
+//     .then( id => {
+//       return Events().where('events.id', parseInt(id)).then( events => events[0])
+//     })
+// }
 
 module.exports = { 
   getAll: getAll,
-  getAllActiveWithDevices: getAllActiveWithDevices,
   getOneByID: getOneByID,
-  getOneByIDWithDevices: getOneByIDWithDevices,
   addOne: addOne,
-  deleteOne: deleteOne,
-  getDevicesForEvent: getDevicesForEvent,
-  getDevicesForEventOccasion: getDevicesForEventOccasion,
-  open: open,
-  close: close
+  deleteOne: deleteOne
+  // open: open,
+  // close: close
 }

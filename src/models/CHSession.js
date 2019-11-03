@@ -4,28 +4,29 @@
 const _flatten = require('lodash/flatten')
 const _uniqBy = require('lodash/uniqBy')
 
-const eventsTable = require('../knex/queries/event-queries')
-const CHEvent = require('./CHEvent')
+const occasionsTable = require('../knex/queries/occasion-queries')
+const CHOccasion = require('./CHOccasion')
 
 class CHSession {
-  events
+  openOccasions
   errors // used for testing
 
   constructor(){
-    this.events = []
+    this.openOccasions = []
     this.errors = []
   }
 
   async init() {
-    let dbActiveEvents = await eventsTable.getAllActiveWithDevices()
-    
-    let activeEvents = dbActiveEvents.map( dbEvent => {
-      return CHEvent.fromDatabaseRow(dbEvent)
+    let openOccasionsInDB = await occasionsTable.getAllOpen()
+
+    let openOccasions = openOccasionsInDB.map( dbOccasion => {
+      return CHOccasion.fromDatabaseRow(dbOccasion)
     })
 
-    activeEvents.forEach( event => {
-      this.addListenersForEvent(event)
-      event.open()
+    openOccasions.forEach( occasion => {
+      this.addListenersForOccasion(occasion)
+      occasion.open()
+      // the event listener handles adding opened occasions to this.openOccasions
     })
     
     return Promise.resolve()
@@ -39,33 +40,33 @@ class CHSession {
     })
   }
 
-  addListenersForEvent(event){
-    event.on('transition', data => {
+  addListenersForOccasion(occasion){
+    occasion.on('transition', data => {
       if(data.toState == 'closed'){
-        // remove the event from the session
-        let eventIndex = this.events.findIndex(
-          matchingEvent => matchingEvent.id == event.id
+        // remove the occasion from the session
+        let occasionIndex = this.openOccasions.findIndex(
+          matchingOccasion => matchingOccasion.id == occasion.id
         )
-        if(eventIndex !== undefined){
-          this.events.splice(eventIndex, 1)
+        if(occasionIndex !== undefined){
+          this.openOccasions.splice(occasionIndex, 1)
         } else {
           throw new Error("Closed event was not present in session!")
         }
       }
-      if(data.toState == 'open'){
-        this.events.push(event)
+      if(data.toState == 'opened'){
+        this.openOccasions.push(occasion)
       }
     })
   }
   
   // returns a flat array of all devices checked into active events
-  allDevices(){
-    let nestedDevices = this.events
-    .map( event => event.devices)
-    let flatDevices = _flatten(nestedDevices)
-    let uniqueDevices = _uniqBy(flatDevices, 'id')
-    return uniqueDevices
-  }
+  // allDevices(){
+  //   let nestedDevices = this.events
+  //   .map( event => event.devices)
+  //   let flatDevices = _flatten(nestedDevices)
+  //   let uniqueDevices = _uniqBy(flatDevices, 'id')
+  //   return uniqueDevices
+  // }
 } 
 
 module.exports = CHSession

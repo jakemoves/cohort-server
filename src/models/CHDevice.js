@@ -24,22 +24,6 @@ class CHDevice {
 			this.socket.isAlive /* used by keepalive function */ && this.socket.readyState == 1)
 	}
 
-	static fromDatabaseRow(dbDevice){
-		let tags 
-		if(dbDevice.tags === undefined){
-			tags = new Set([])
-		} else {
-			let tagsArray
-			if(Array.isArray(dbDevice.tags)){
-				tagsArray = dbDevice.tags
-			} else {
-				tagsArray = JSON.parse(dbDevice.tags)
-			}
-			tags = new Set(tagsArray)
-		}
-		return new CHDevice(dbDevice.id, dbDevice.guid, dbDevice.isAdmin, tags, dbDevice.apnsDeviceToken)
-	}
-
 	deviceState(){
 		let socketIsOpen
 		if(this.socket == null || this.socket.readyState !== 1){

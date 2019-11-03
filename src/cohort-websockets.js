@@ -2,7 +2,6 @@
 // Released under the MIT License (see /LICENSE)
 
 const webSocket = require('ws')
-// const CHDevice = require('./models/CHDevice')
 
 module.exports = (options) => {
 
@@ -15,7 +14,7 @@ module.exports = (options) => {
     }
 
     const keepaliveInterval = setInterval(function ping(){
-      console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
+      // console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
 
       webSocketServer.clients.forEach( (socket) => {
         if(socket.isAlive === false){
@@ -57,10 +56,11 @@ module.exports = (options) => {
            socket.cohortDeviceGUID == null){
           
           if(msg.guid == null || msg.guid === undefined ||
-             msg.eventId == null || msg.eventId === undefined){
+             msg.eventId == null || msg.eventId === undefined ||
+             msg.occasionId == null || msg.occasionId === undefined ){
           
-            console.log("Error: first message from client must include fields 'guid' and 'eventId'")
-            socket.close(4003, "First message from client must include fields 'guid' and 'eventId'")
+            console.log("Error: first message from client must include fields 'guid', 'eventId', and 'occasionId'")
+            socket.close(4003, "Error: first message from client must include fields 'guid', 'eventId', and 'occasionId")
             return
           }
           
@@ -77,7 +77,7 @@ module.exports = (options) => {
 
           if(device === undefined){
             console.log("Error: could not open WebSocket, device guid:" + msg.guid + " not found")
-            socket.close(4000, "Devices must be registered via HTTP before opening a WebSocket connection")
+            socket.close(4000, "Devices must check in via HTTP before opening a WebSocket connection")
             return 
           }
 
