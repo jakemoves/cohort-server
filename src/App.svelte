@@ -5,15 +5,9 @@
 </script>
 
 <style>
-	.text-info{
-	  color: #265c00;
-		
-	}
-
 	.btn-danger{
 	  color:#da2b0b;
 	}
-
 	.card-blog{
 	  background-color: #fffefe;
 	}
@@ -60,7 +54,7 @@
 						<img alt= "image from lot x" class="img img-raised" src="imgs/lotx.jpg">
 					</div>
 					<div class="card-body">
-						<h4 class="card-category">LOT X</h4>
+						<h4 class="card-category  " id="lot">LOT X</h4>
 						<p class="card-description">
 						An indoor+outdoor full-length contemporary dance work by adelheid dance projects
 						<br>
@@ -78,7 +72,7 @@
 						<img alt= "image from cafe sarajevo" class="img img-raised" src="imgs/cafe.png">
 					</div>
 					<div class="card-body">
-						<h4 class="card-category text-info">Café Sarajevo</h4>
+						<h4 class="card-category   ">Café Sarajevo</h4>
 						<p class="card-description">
 						An immersive, participatory theatre work created by bluemouth inc.
 						<br>
@@ -94,7 +88,7 @@
 						<img alt= "image from flux delux" class="img img-raised" src="imgs/flux.jpg">
 					</div>
 					<div class="card-body">
-						<h4 class="card-category text-info">Flux Delux</h4>
+						<h4 class="card-category  ">Flux Delux</h4>
 						<p class="card-description">
 						A fully-accessible live multiplayer dance game created by Peggy Baker Dance Projects.
 						<br>
@@ -110,7 +104,7 @@
 						<img alt= "image from overhear" class="img img-raised" src="imgs/overhear.jpg">
 					</div>
 					<div class="card-body">
-						<h4 class="card-category text-info">Overhear</h4>
+						<h4 class="card-category  ">Overhear</h4>
 						<p class="card-description">
 						A multi-city 'pod-play' where audiences hear real-life stories while being guided around a city. Created by It's Not a Box Theatre
 						<br>
@@ -125,7 +119,7 @@
 						<img alt= "image from Jacqueries" class="img img-raised" src="imgs/jacqueries.jpg">
 					</div>
 					<div class="card-body">
-						<h4 class="card-category text-info">Jacqueries</h4>
+						<h4 class="card-category ">Jacqueries</h4>
 						<p class="card-description">
 						A parkour-inspired immersive heist story created by Jacob Niedzwiecki.
 						<br>
