@@ -17,35 +17,32 @@
 <style>
 
 
-
 </style>
 
 {#if !authenticated}
-  
-     <div id="formContent">
-          <div class="modal-dialog" role="document">
-
-              <div class="modal-content">
-                <div class="modal-header text-center">
-                  <h4 class="modal-title w-100 font-weight-bold">Welcome Administrator</h4>
-                </div>
-
-                <div class="modal-body mx-3">
-                  <div class="md-form mb-2">
-                    <input type="text" id="login" class="fadeIn second" name="login" placeholder="username">
-                  </div>
-                  <div class="md-form mb-2">
-                    <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
-                  </div>
-                </div>
-                
-                <div class="modal-footer d-flex justify-content-center cl-md">
-                    <button type="button" class="btn btn-primary" on:click={verifyPassword}> Log In </button>
-                </div>
-              </div>
-
-          </div>    
+<!-- kept this as a modal-dialog class because it contains things more tightly --> 
+  <div class="container">
+    <form id="formContent">
+      <div class="row"> 
+        <div class= "col-md-12 text-center mt-4 mb-2">  
+          <h4>Welcome Administrator</h4>
+        </div>
       </div>
+
+      <div class="form-group">
+          <input type="text" id="login" class="form-control" name="login" placeholder="username"> 
+      </div>
+
+      <div class="form-group"> 
+        <input type="text" id="password" class="form-control" name="login" placeholder="password">     
+      </div>
+
+      <button type="button" class="btn btn-primary" on:click={verifyPassword}> Log In </button>
+                
+       
+    </form>
+  </div>
+
 {/if}
 
 
