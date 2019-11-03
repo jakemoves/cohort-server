@@ -6,6 +6,8 @@ const moment = require('moment')
 const occasionsTable = require('../knex/queries/occasion-queries')
 const eventsTable = require('../knex/queries/event-queries')
 
+const CHOccasion = require('../models/CHOccasion')
+
 handleError = (httpStatusCode, error, res) => {
   console.log(error)
 
@@ -44,7 +46,6 @@ exports.occasions_create = async (req, res) => {
     res.status(201)
     res.location('/api/v2/occasions/' + occasion.id)
     res.json(occasion)
-    return
   })
   .catch( error => {
     handleError(500, error, res)
@@ -65,7 +66,44 @@ exports.occasions_delete = (req, res) => {
   })  
 }
 
-exports.occasions_open = (req, res) => {
+exports.occasions_update = async (req, res) => {
+  let occasion = await occasionsTable.getOneByID(req.params.id)
+
+  if(occasion == null || occasion === undefined){
+    handleError(404, "Error: occasion with id:" + req.params.id + " not found", res)
+    return
+  }
+
+  if(req.body.state != null && req.body.state !== undefined){
+    if(!(req.body.state == 'opened' || req.body.state == 'closed')){
+      handleError(400, "Error: event state can only be set to 'opened' or 'closed'", res)
+      return
+    }
+
+    let updatedDbOccasion = await occasionsTable
+      .update(req.params.id, 'state', req.body.state)
+      .catch( error => {
+        handleError(500, error, res)
+      })
+
+    switch(updatedDbOccasion.state) {
+      case 'opened': {
+        let occasion = CHOccasion.fromDatabaseRow(updatedDbOccasion)
+        req.app.get('cohort').addListenersForOccasion(occasion)
+        occasion.open()
+        // add listeners here for device add/remove?
+        break }
+      case 'closed': {
+        let occasion = req.app.get('cohort').openOccasions
+          .find( occasion => occasion.id == updatedDbOccasion.id)
+        occasion.close()
+        break }
+      default: break
+    }
+    res.status(200).json(updatedDbOccasion) 
+    // doesn't return devices with the occasion, but that might not be relevant for open / close updates; a just-opened event shouldn't have any devices connected, and a just-closed one doesn't either
+  }
+  
   
 }
 

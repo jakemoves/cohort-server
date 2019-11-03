@@ -48,7 +48,7 @@ class CHSession {
           matchingOccasion => matchingOccasion.id == occasion.id
         )
         if(occasionIndex !== undefined){
-          this.openOccasions.splice(eventIndex, 1)
+          this.openOccasions.splice(occasionIndex, 1)
         } else {
           throw new Error("Closed event was not present in session!")
         }

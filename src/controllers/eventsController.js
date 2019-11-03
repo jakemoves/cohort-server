@@ -8,6 +8,7 @@ const apn = require('apn')
 
 const eventsTable = require('../knex/queries/event-queries')
 const cohortMessagesTable = require('../knex/queries/cohort-message-queries')
+
 // const CHDevice = require('../models/CHDevice')
 const CHEvent = require('../models/CHEvent')
 

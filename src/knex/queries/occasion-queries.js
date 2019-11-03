@@ -35,29 +35,33 @@ deleteOne = (occasionId) => {
 }
 
 getAllOpen = () => {
-  return Occasions().where('state', 'open')
+  return Occasions().where('state', 'opened')
 }
 
-// getOneByID = (occasionId) => {
-//   return Occasions().where('id', parseInt(occasionId))
-//   .then( occasions => {
-//     if(occasions.length == 1){
-//       return occasions[0]
-//     } else {
-//       return null
-//     }
-//   })
-// }
+getOneByID = (occasionId) => {
+  return Occasions().where('id', parseInt(occasionId))
+  .then( occasions => {
+    if(occasions.length == 1){
+      return occasions[0]
+    } else {
+      return null
+    }
+  })
+}
+
+update = (occasionId, columnName, newValue) => {
+  return Occasions()
+    .where('occasions.id', parseInt(occasionId))
+    .update(columnName, newValue)
+    .returning('id')
+    .then( id => {
+      return Occasions().where('occasions.id', parseInt(id)).then( occasions => occasions[0])
+    })
+}
 
 // getAllForEvent = (eventId) => {
 //   return Occasions().where('event_id', parseInt(eventId))
 // }
-
-
-
-
-
-
 
 // getOccasionsOnOrAfterDate = (eventId, dateString /* '1984-04-01', ie ISO8601 'YYYY-MM-DD' part only*/ ) => {
 //   return Occasions()
@@ -68,8 +72,9 @@ getAllOpen = () => {
 module.exports = {
   addOne: addOne,
   deleteOne: deleteOne,
-  getAllOpen: getAllOpen
-  // getOneByID: getOneByID,
+  getAllOpen: getAllOpen,
+  getOneByID: getOneByID,
+  update: update
   // getAllForEvent: getAllForEvent,
   // getAll: getAll,
   // getOccasionsOnOrAfterDate: getOccasionsOnOrAfterDate

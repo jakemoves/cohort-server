@@ -110,7 +110,7 @@ describe('Basic startup', () => {
 
     expect(res2.body).toHaveProperty('occasions')
     expect(res2.body.occasions).toHaveLength(3)
-    expect(res2.body.occasions[0].state).toEqual('closed')
+    expect(res2.body.occasions[0].state).toEqual('opened')
   })
 
   test('GET /events/:id : error: event not found', async () => {
@@ -580,12 +580,26 @@ describe('Occasion routes', () => {
     expect(newOccasionsCount).toEqual(occasionsCount - 1)
   })
 
-  test('PATCH /occasions/:id/open', async () =>{
-    const res = await request(app).patch('/api/v2/occasions/2/open')
+  test('PATCH /occasions/:id -- open occasion', async () =>{
+    const res = await request(app)
+      .patch('/api/v2/occasions/2')
+      .send({state: 'opened'})
 
     expect(res.status).toEqual(200)
     expect(res.body.id).toEqual(2)
-    expect(res.body.state).toEqual('open')
+    expect(res.body.state).toEqual('opened')
+    expect(app.get('cohort').openOccasions).toHaveLength(2)
+  })
+
+  test('PATCH /occasions/:id -- close occasion', async () =>{
+    const res = await request(app)
+      .patch('/api/v2/occasions/3')
+      .send({state: 'closed'})
+
+    expect(res.status).toEqual(200)
+    expect(res.body.id).toEqual(3)
+    expect(res.body.state).toEqual('closed')
+    expect(app.get('cohort').openOccasions).toHaveLength(0)
   })
 })
 

@@ -21,20 +21,19 @@ class CHOccasion extends machina.Fsm {
       initialState: 'uninitialized',
       states: {
         uninitialized: {
-          openOccasion: "opened"
+          openOccasion: 'opened'
         },
         opened: {
           _onEnter: function(){
-            // TODO get event label as well, lol
             console.log('occasion ' + this.label + ' (id:' + this.id + ') is now open')
           },
-          closeOccasion: "closed"
+          closeOccasion: 'closed'
         },
         closed: {
           _onEnter: function(){
             console.log('occasion ' + this.label + ' (id:' + this.id + ') is now closed')
           }, 
-          openEvent: "opened"
+          openEvent: 'opened'
         }
       },
 
@@ -43,7 +42,7 @@ class CHOccasion extends machina.Fsm {
         this.handle('openOccasion')
       },
       close: function() {
-        // once we're listening for device events, this should get refactored as a new state (openWithConnectedDevices)
+        // once we're listening for device events, should this get refactored as a new state (openWithConnectedDevices)?
         
         //socket logic goes here
         this.handle('closeOccasion')
