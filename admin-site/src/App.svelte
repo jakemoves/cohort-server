@@ -7,8 +7,11 @@
   let events = []
   let gotEvents = false
 
+  // TODO this needs to pickup an environment somehow (dev/staging/prod)
+  let serverURL = "http://staging.cohort.rocks/api/v2"
+
   onMount( async () => {
-    let response = await fetch("http://localhost:3000/api/v2/events",{
+    let response = await fetch(serverURL + "/events", {
       method: 'GET'
     })
 
