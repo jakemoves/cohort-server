@@ -91,7 +91,7 @@ var vm = new Vue({
       if(process.env.NODE_ENV == 'development'){
         return 'http://localhost:3000/api/v1'
       } else {
-        return 'https://staging.cohort.rocks/api/v1'
+        return 'https://cafesarajevo.cohort.rocks/api/v1'
       }
     },
     socketURL: function() {
