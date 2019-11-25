@@ -2828,12 +2828,12 @@ h1,
 
 h2,
 .h2 {
-  font-size: 2.8em;
+  font-size: 2.2em;
 }
 
 h3,
 .h3 {
-  font-size: 1.825em;
+  font-size: 2em;
   line-height: 1.4;
   margin: 20px 0 0px;
 }
@@ -15567,3 +15567,13 @@ License - nucleoapp.com/license/
 /* all icon font classes list here */
 
 /*# sourceMappingURL=kit-pro.css.map */
+
+/* ///EDIT */
+.custom-bigger-fontSize{
+   font-size: 1.45em;
+}
+
+.custom-slightly-bigger-fontSize{
+  font-size: 1.2em;
+
+}
