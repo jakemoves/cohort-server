@@ -553,6 +553,14 @@ describe('Occasion routes', () => {
     expect(res.status).toEqual(404)
   })
 
+  test('DELETE /occasions -- error: opened occasion cannot be deleted', async () => {
+    const res = await request(app)
+      .delete('/api/v2/occasions/3')
+
+      expect(res.status).toEqual(400)
+      expect(res.text).toEqual('Error: an opened occasion cannot be deleted. Close the occasion and try again.')
+  })
+
   test('DELETE /occasions -- happy path', async () => {
     numberOfOccasions = async () => {
       const res = await request(app).get('/api/v2/events')

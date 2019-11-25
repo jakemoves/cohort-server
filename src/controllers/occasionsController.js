@@ -52,7 +52,15 @@ exports.occasions_create = async (req, res) => {
   })
 }
 
-exports.occasions_delete = (req, res) => {
+exports.occasions_delete = async (req, res) => {
+  // verify the occasion is closed
+  let occasion = await occasionsTable.getOneByID(req.params.id)
+
+  if(occasion != null && occasion.state == 'opened'){
+    handleError(400, 'Error: an opened occasion cannot be deleted. Close the occasion and try again.', res)
+    return
+  }
+
   return occasionsTable.deleteOne(req.params.id)
   .then( deletedIds => {
     if(deletedIds.length == 1) {
