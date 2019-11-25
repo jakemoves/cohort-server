@@ -4001,8 +4001,8 @@ fieldset[disabled] .btn-outline-default.active {
 }
 
 .btn-outline-primary {
-  border-color: #51cbce;
-  color: #51cbce;
+  border-color:  #2113df;
+  color: #2113df;
   opacity: 1;
   filter: alpha(opacity=100);
 }
@@ -4015,9 +4015,9 @@ fieldset[disabled] .btn-outline-default.active {
 .btn-outline-primary:active:hover,
 .btn-outline-primary.active:focus,
 .show>.btn-outline-primary.dropdown-toggle {
-  background-color: #51cbce !important;
-  color: rgba(255, 255, 255, 0.8);
-  border-color: #51cbce !important;
+  background-color: #4539ec !important;
+  color: rgba(255, 255, 255, 1);
+  border-color: #4539ec !important;
 }
 
 .btn-outline-primary:hover .caret,
