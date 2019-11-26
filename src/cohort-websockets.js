@@ -3,10 +3,16 @@
 
 const webSocket = require('ws')
 
+const CHDevice = require('./models/CHDevice.js')
+
 module.exports = (options) => {
 
-  return new Promise( resolve => {
-    let webSocketServer = new webSocket.Server({server: options.server, path: options.path, clientTracking: true})
+  return new Promise( (resolve, reject) => {
+    console.log('  creating websocket server')
+    let webSocketServer = new webSocket.Server({server: options.server, path: options.path, clientTracking: true}, (err) => {
+      console.log(err)
+      reject(err)
+    })
     
     // this adjustability is here for testing only. using short (5000 ms) values in production will cause problems with clients on cellular connections.
     if(options.keepaliveIntervalDuration === undefined) {
@@ -56,54 +62,53 @@ module.exports = (options) => {
            socket.cohortDeviceGUID == null){
           
           if(msg.guid == null || msg.guid === undefined ||
-             msg.eventId == null || msg.eventId === undefined ||
              msg.occasionId == null || msg.occasionId === undefined ){
           
-            console.log("Error: first message from client must include fields 'guid', 'eventId', and 'occasionId'")
-            socket.close(4003, "Error: first message from client must include fields 'guid', 'eventId', and 'occasionId")
+            console.log("Error: first message from client must include fields 'guid' and 'occasionId'")
+            socket.close(4003, "Error: first message from client must include fields 'guid' and 'occasionId'")
             return
           }
           
-          let event = options.app.get('cohort').events
-            .find( event => event.id == msg.eventId)
-      
-          if(event === undefined){
-            console.log('Error: closing socket on handshake, no open event found with id:' + msg.eventId)
-            socket.close(4002, 'No open event found with id:' + msg.eventId)
-            return 
+          let occasion = options.app.get('cohort').openOccasions
+            .find( occasion => occasion.id == msg.occasionId)
+          
+          if(occasion === undefined){
+            console.log('Error: closing socket on handshake, no open occasion found with id:' + msg.occasionId)
+            socket.close(4002, 'Error: No open occasion found with id:' + msg.occasionId)
+            return
           }
 
-          let device = event.devices.find( device => device.guid == msg.guid)
+          // let device = occasion.devices.find( device => device.guid == msg.guid)
 
-          if(device === undefined){
-            console.log("Error: could not open WebSocket, device guid:" + msg.guid + " not found")
-            socket.close(4000, "Devices must check in via HTTP before opening a WebSocket connection")
-            return 
-          }
+          // if(device !== undefined){
+          //   console.log("Error: could not open WebSocket, device guid:" + msg.guid + " is already connected over WebSockets")
+          //   socket.close(4000, "Error: The device with guid:" + msg.guid + " is already connected over WebSockets")
+          //   return 
+          // }
 
           // happy path
-          console.log("completing initial handshake with device guid:" + device.guid)
-          
-          if(device.socket != null){
-            device.socket.isAlive = false
-            device.socket.close(4001, "Device opened a new socket")
-          }
+          console.log("completing initial handshake with device guid:" + msg.guid)
 
+          let device = new CHDevice(msg.guid, false)
           socket.cohortDeviceGUID = device.guid
-
           device.socket = socket
+
+          // if(device.socket != null){
+          //   device.socket.isAlive = false
+          //   device.socket.close(4001, "Device opened a new socket")
+          // }
           
           device.socket.send(JSON.stringify({ response: "success" }))
 
-          event.broadcastDeviceStates() // eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
+          // event.broadcastDeviceStates() // eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
         }
       })
 
       socket.on('close', (code, reason) => {
+        if(code == 4002){ return } // defined above in .open() as a failed handshake
+
         let device = options.app.get('cohort').allDevices()
           .find( device => socket.cohortDeviceGUID == device.guid)
-
-        if(code == 4002){ return } // defined above in .open() as a failed handshake
         
         if(device === undefined) {
           // throw new Error("closed socket did not have a cohortDeviceGUID property")
@@ -142,6 +147,11 @@ module.exports = (options) => {
     function keepalive() {
       console.log('keepalive called from pong for socket ' + this.cohortDeviceGUID)
       this.isAlive = true
+    }
+
+    // this is here because when running tests, webSocketServer.on('listening') doesn't fire
+    if(options.server.listening) {
+      resolve(webSocketServer)
     }
   })
 }

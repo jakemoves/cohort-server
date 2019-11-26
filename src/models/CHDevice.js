@@ -2,19 +2,17 @@
 // Released under the MIT License (see /LICENSE)
 
 class CHDevice {
-	id
-	isAdmin
 	guid
+	isAdmin
 	socket = null
 	tags
-	apnsDeviceToken // apple push notification service -- uses unique id generated on the device
+	// apnsDeviceToken // apple push notification service -- uses unique id generated on the device
 	
-	constructor(id, guid, isAdmin = false, tags = new Set([]), apnsDeviceToken = null){
-		this.id = id // database ID
+	constructor(guid, isAdmin = false, tags = new Set([]), /*apnsDeviceToken = null*/){
 		this.guid = guid // device unique ID
 		this.isAdmin = isAdmin
 		this.tags = tags
-		this.apnsDeviceToken = apnsDeviceToken
+		// this.apnsDeviceToken = apnsDeviceToken
 	}
 
 	isConnected(){
@@ -24,20 +22,20 @@ class CHDevice {
 			this.socket.isAlive /* used by keepalive function */ && this.socket.readyState == 1)
 	}
 
-	deviceState(){
-		let socketIsOpen
-		if(this.socket == null || this.socket.readyState !== 1){
-			socketIsOpen = false
-		} else if(this.socket.readyState == 1){
-			socketIsOpen = true
-		}
+	// deviceState(){
+	// 	let socketIsOpen
+	// 	if(this.socket == null || this.socket.readyState !== 1){
+	// 		socketIsOpen = false
+	// 	} else if(this.socket.readyState == 1){
+	// 		socketIsOpen = true
+	// 	}
 
-		return { 
-			guid: "" + this.guid, // coerce to string in case of numeric guid
-			socketOpen: socketIsOpen,
-			isAdmin: this.isAdmin
-		}
-	}
+	// 	return { 
+	// 		guid: "" + this.guid, // coerce to string in case of numeric guid
+	// 		socketOpen: socketIsOpen,
+	// 		isAdmin: this.isAdmin
+	// 	}
+	// }
 
 }
 

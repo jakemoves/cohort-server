@@ -4,8 +4,10 @@
 const request = require('supertest')
 const uuid = require('uuid/v4')
 const knex = require('./knex/knex')
-const ws = require('ws')
 const moment = require('moment')
+
+// for websocket tests only
+const ws = require('ws')
 
 const CHSession = require('./models/CHSession')
 
@@ -13,7 +15,7 @@ var app
 process.env.NODE_ENV = 'test'
 
 beforeEach( async () => {
-  // console.log('global beforeEach()')
+  console.log('global beforeEach()')
   await knex.migrate.rollback()
   await knex.migrate.latest()
   await knex.seed.run()
@@ -25,13 +27,14 @@ beforeEach( async () => {
 })
 
 afterEach( async () => {
-  // console.log('global afterEach()')
+  console.log('global afterEach()')
   await knex.migrate.rollback()
   // per issue #12, we should actually tear down the app/server here
   app.set('cohort', null)
 })
 
 afterAll( async () => {
+  console.log("global afterAll")
   await knex.destroy()
 })
 
@@ -612,79 +615,51 @@ describe('Occasion routes', () => {
 })
 
 
-// DEVICE ROUTES
-// defunct
 
-  // test('devices/:id/registerForNotifications : happy path', async () => {
-  //   const guid = uuid()
-  //   const interimResponse = await createDevice(guid)
 
-  //   const payload = { token: 'abcde12345' }
-  //   const deviceId = interimResponse.body.id
-    
-  //   const res = await request(app)
-  //     .patch('/api/v1/devices/' + deviceId + '/register-for-notifications')
-  //     .send(payload)
-  //   expect(res.status).toEqual(200)
-  //   expect(res.body.apnsDeviceToken).toEqual('abcde12345')
-  // })
   
-  // add test for id not found
 
-  // test('devices/register-for-notifications : error: missing token', async () => {
-  //   const payload = { 'blep': '012345678901234567890123456789012345'}
-  //   const res = await request(app)
-  //     .patch('/api/v1/devices/1/register-for-notifications')
-  //     .send(payload)
-  //   expect(res.status).toEqual(400)
-  //   expect(res.text).toEqual("Error: Request must include a 'token' object")
+
+
+
+  // test('new socket client can connect -- error: timeout for Cohort handshake', async (done) => {
+  //   const webSocketServer = require('./cohort-websockets')({
+  //     app: app, server: server, path: '/sockets'
+  //   })
+
+  //   expect(webSocketServer).toBeDefined()
+
+  //   const wsClient = new ws(socketURL)
+
+  //   wsClient.addEventListener('open', event => {
+  //     expect(webSocketServer.clients.size).toEqual(1)
+  //     wsClient.addEventListener('message', message => {
+  //       expect(message).toEqual('Cohort handshake failed, closing socket')
+  //       expect(webSocketServer.clients.size).toEqual(0)
+  //       done()
+  //     })
+  //   })
   // })
+})
 
-  // MOVES TO EVENT OR OCCASION
-  // test('devices/set-tags', async () => {
-  //   const payload = { tags: [ 'blue', 'red' ]}
-  //   const res = await request(app)
-  //     .patch('/api/v1/devices/1/set-tags')
-  //     .send(payload)
-  //   expect(res.status).toEqual(200)
-  //   expect(res.body.tags).toEqual(['blue', 'red'])
+//
 
-  //   const payload1 = { tags: [ 'purple' ]}
-  //   const res1 = await request(app)
-  //     .patch('/api/v1/devices/1/set-tags')
-  //     .send(payload1)
-  //   expect(res1.status).toEqual(200)
-  //   expect(res1.body.tags).toEqual(['purple'])
-  // })
+//   // test('new socket client can connect -- error: bad Cohort handshake', async (done) =>{
+//   //   const webSocketServer = require('./cohort-websockets')({
+//   //     app: app, server: server, path: '/sockets'
+//   //   })
 
+//   //   expect(webSocketServer).toBeDefined()
 
-/*
- *    WEBSOCKETS
- */
+//   //   const wsClient = new ws(socketURL)
 
-// describe('WebSockets', () => { 
-//   var server
-//   var socketURL
+//   //   wsClient.addEventListener('open', event => {
+//   //     // expect(webSocketServer.clients) to be 1 now
+//   //   })
+//   // })
 
-//   beforeEach( () => {
-//     console.log('websockets beforeEach()')
-//     socketURL = 'http://localhost:3000/sockets'
-
-//     // this is pretty much the same as cohort-server.js
-//     server = app.listen(3000, function(err){
-//       if(err) {
-//         throw err
-//       }
-    
-//       console.log('http server started on port 3000')
-//       console.log('environment: ' + process.env.NODE_ENV)
-//     })
-//   })
-
-//   afterEach( () => {
-//     console.log('websockets afterEach()')
-//     server.close()
-//   })
+//   // test bad JSON - throw error
+// })
 
 //   test('startup & new connection', async (done) => {
 //     expect(app.get("cohort").events[0].devices.length).toEqual(3)
@@ -1066,6 +1041,57 @@ describe('Occasion routes', () => {
 //     })
 //   })
 // })
+
+
+
+// DEVICE ROUTES
+// defunct
+
+  // test('devices/:id/registerForNotifications : happy path', async () => {
+  //   const guid = uuid()
+  //   const interimResponse = await createDevice(guid)
+
+  //   const payload = { token: 'abcde12345' }
+  //   const deviceId = interimResponse.body.id
+    
+  //   const res = await request(app)
+  //     .patch('/api/v1/devices/' + deviceId + '/register-for-notifications')
+  //     .send(payload)
+  //   expect(res.status).toEqual(200)
+  //   expect(res.body.apnsDeviceToken).toEqual('abcde12345')
+  // })
+  
+  // add test for id not found
+
+  // test('devices/register-for-notifications : error: missing token', async () => {
+  //   const payload = { 'blep': '012345678901234567890123456789012345'}
+  //   const res = await request(app)
+  //     .patch('/api/v1/devices/1/register-for-notifications')
+  //     .send(payload)
+  //   expect(res.status).toEqual(400)
+  //   expect(res.text).toEqual("Error: Request must include a 'token' object")
+  // })
+
+  // MOVES TO EVENT OR OCCASION
+  // test('devices/set-tags', async () => {
+  //   const payload = { tags: [ 'blue', 'red' ]}
+  //   const res = await request(app)
+  //     .patch('/api/v1/devices/1/set-tags')
+  //     .send(payload)
+  //   expect(res.status).toEqual(200)
+  //   expect(res.body.tags).toEqual(['blue', 'red'])
+
+  //   const payload1 = { tags: [ 'purple' ]}
+  //   const res1 = await request(app)
+  //     .patch('/api/v1/devices/1/set-tags')
+  //     .send(payload1)
+  //   expect(res1.status).toEqual(200)
+  //   expect(res1.body.tags).toEqual(['purple'])
+  // })
+
+  
+
+
 
 // partially written tests, keeping them around for useful bits
 

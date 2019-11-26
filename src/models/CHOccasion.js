@@ -12,7 +12,7 @@ class CHOccasion extends machina.Fsm {
   locationLabel
   locationAddress
   locationCity
-  // devices
+  devices
 
   constructor(id, label){
     // constructor options for FSM
@@ -52,6 +52,7 @@ class CHOccasion extends machina.Fsm {
     // constructor actions for CHOccasion
     this.id = id
     this.label = label
+    this.devices = []
   }
 
   static fromDatabaseRow(dbOccasion){
