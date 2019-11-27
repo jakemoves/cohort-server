@@ -111,9 +111,18 @@ exports.occasions_update = async (req, res) => {
     res.status(200).json(updatedDbOccasion) 
     // doesn't return devices with the occasion, but that might not be relevant for open / close updates; a just-opened event shouldn't have any devices connected, and a just-closed one doesn't either
   }
-  
-  
 }
+  
+exports.occasions_broadcast = async (req, res) => {
+  // broadcast logic must go in a service
+  // this is mocked for now
+  const mockedResponseBody = {
+    connectedDevices: 20,
+    cueReceivedBy: 20
+  }
+  res.status(200).json()
+}
+
 
 // exports.occasionsForEvent = ( req, res ) => {
 //   let eventId = req.params.id
