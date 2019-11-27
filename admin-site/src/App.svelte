@@ -4,88 +4,88 @@
   import moment from "moment";
   import { onMount } from 'svelte';
 
-  // let events = []
+  let events = []
   let gotEvents = false
 
   // // TODO this needs to pickup an environment somehow (dev/staging/prod)
   // // let serverURL = "http://staging.cohort.rocks/api/v2"
-  // let serverURL = "http://localhost:3000";
+  let serverURL = "http://localhost:3000/api/v2";
 
-  // onMount( async () => {
-  //   let response = await fetch(serverURL + "/events", {
-  //     method: 'GET'
-  //   })
+  onMount( async () => {
+    let response = await fetch(serverURL + "/events", {
+      method: 'GET'
+    })
 
-  //   events = await response.json()
-  //   gotEvents = true
-  //   focusedEvent = events[0]
-  // })
+    events = await response.json()
+    gotEvents = true
+    focusedEvent = events[0]
+  })
 
-  let events = [
-    {
-      id: 1,
-      label: "LOT X",
-      //"heroImage": URL-TO-IMG, // optional
-      occasions: [
-        {
-          id: 1,
-          event_id: 1,
-          state: "closed", // can be open or closed; closed events cannot be joined
-          startDateTime: "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
-          doorsOpenDateTime: "2019-05-23T16:30:00.000Z",
-          endDateTime: "2019-05-29T03:50:00.000Z",
-          locationLabel: "Show #5",
-          locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
-          locationCity: "Toronto",
-          publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
-          devices: [
-            {
-              id: 1,
-              guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
-              apnsDeviceToken: null, // not used for now -- this is for push notifications
-              isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
-              tags: ["blue", "1984"]
-            }
-          ]
-        },
-        {
-          id: 2,
-          event_id: 1,
-          state: "closed", // can be open or closed; closed events cannot be joined
-          startDateTime: "2019-06-28T17:00:00.000Z", // stored in UTC, browser does conversion
-          doorsOpenDateTime: "2019-06-28T16:30:00.000Z",
-          endDateTime: "2019-07-10T03:50:00.000Z",
-          locationLabel: "Show #5",
-          locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
-          locationCity: "Toronto",
-          publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
-          devices: [
-            {
-              id: 1,
-              guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
-              apnsDeviceToken: null, // not used for now -- this is for push notifications
-              isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
-              tags: ["blue", "1984"]
-            }
-          ]
-        }
-      ],
-      cues: [
-        {
-          mediaDomain: 0, // enum: audio, video, text, light, haptic
-          cueNumber: 1,
-          cueAction: 0, // enum: play/on, pause, restart, stop/off
-          targetTags: ["all"]
-        },
-        {
-          mediaDomain: 0, // enum: audio, video, text, light, haptic
-          cueNumber: 2,
-          cueAction: 3, // enum: play/on, pause, restart, stop/off
-          targetTags: ["all"]
-        }
-      ]
-    }
-  ];
+  // let events = [
+  //   {
+  //     id: 1,
+  //     label: "LOT X",
+  //     //"heroImage": URL-TO-IMG, // optional
+  //     occasions: [
+  //       {
+  //         id: 1,
+  //         event_id: 1,
+  //         state: "closed", // can be open or closed; closed events cannot be joined
+  //         startDateTime: "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
+  //         doorsOpenDateTime: "2019-05-23T16:30:00.000Z",
+  //         endDateTime: "2019-05-29T03:50:00.000Z",
+  //         locationLabel: "Show #5",
+  //         locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
+  //         locationCity: "Toronto",
+  //         publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
+  //         devices: [
+  //           {
+  //             id: 1,
+  //             guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
+  //             apnsDeviceToken: null, // not used for now -- this is for push notifications
+  //             isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
+  //             tags: ["blue", "1984"]
+  //           }
+  //         ]
+  //       },
+  //       {
+  //         id: 2,
+  //         event_id: 1,
+  //         state: "closed", // can be open or closed; closed events cannot be joined
+  //         startDateTime: "2019-06-28T17:00:00.000Z", // stored in UTC, browser does conversion
+  //         doorsOpenDateTime: "2019-06-28T16:30:00.000Z",
+  //         endDateTime: "2019-07-10T03:50:00.000Z",
+  //         locationLabel: "Show #5",
+  //         locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
+  //         locationCity: "Toronto",
+  //         publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
+  //         devices: [
+  //           {
+  //             id: 1,
+  //             guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
+  //             apnsDeviceToken: null, // not used for now -- this is for push notifications
+  //             isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
+  //             tags: ["blue", "1984"]
+  //           }
+  //         ]
+  //       }
+  //     ],
+  //     cues: [
+  //       {
+  //         mediaDomain: 0, // enum: audio, video, text, light, haptic
+  //         cueNumber: 1,
+  //         cueAction: 0, // enum: play/on, pause, restart, stop/off
+  //         targetTags: ["all"]
+  //       },
+  //       {
+  //         mediaDomain: 0, // enum: audio, video, text, light, haptic
+  //         cueNumber: 2,
+  //         cueAction: 3, // enum: play/on, pause, restart, stop/off
+  //         targetTags: ["all"]
+  //       }
+  //     ]
+  //   }
+  // ];
 
   //for new event creation parameters
   let label = "";
@@ -325,31 +325,35 @@
     </div>
 
     <hr />
-    {#if events.length === 0}
-      <p>No occasions for this event yet</p>
-    {:else}
-      {#each events as event}
-        {#if event.label == focusedEventLabel && event.occasions != null && event.occasions.length > 0}
-          {#each event.occasions as occasion}
-		  <!-- this doesn't quite work, for some reason all buttons get populated with last date -->
-            <div style="display:none">{changeTime(occasion.startDateTime)}</div>
-              <div class="row">
-                <div class="col">
-                  <button
-                    alt="click here for details"
-                    type="button"
-                    id={occasion.id}
-                    class="btn btn-outline-primary btn-block"
-                    value={occasion.id}
-                    on:click={occasionButton}>
-                    <h3 class="m-0">{event.label} - Occasion # {occasion.id}</h3>
-                    <h5>{occasion.locationCity} - {formattedTime}</h5>	
-                  </button>
+    {#if focusedEvent != undefined}
+      {#if focusedEvent.occasions.length === 0}
+        <p>No occasions for this event yet</p>
+      {:else}
+        {#each events as event}
+          {#if event.label == focusedEventLabel && event.occasions != null && event.occasions.length > 0}
+            {#each event.occasions as occasion}
+        <!-- this doesn't quite work, for some reason all buttons get populated with last date -->
+              <div style="display:none">{changeTime(occasion.startDateTime)}</div>
+                <div class="row">
+                  <div class="col">
+                    <button
+                      alt="click here for details"
+                      type="button"
+                      id={occasion.id}
+                      class="btn btn-outline-primary btn-block"
+                      value={occasion.id}
+                      on:click={occasionButton}>
+                      <h3 class="m-0">{event.label} - Occasion # {occasion.id}</h3>
+                      <h5>{occasion.locationCity} - {formattedTime}</h5>	
+                    </button>
+                  </div>
                 </div>
-              </div>
-          {/each}
-        {/if}
-      {/each}
+            {/each}
+
+          {/if}
+
+        {/each}
+      {/if}
     {/if}
   </div>
 </div>
