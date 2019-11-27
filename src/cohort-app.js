@@ -34,7 +34,7 @@ app.use(express.static(staticPath))
  *   Cohort
  */
 
-// cohort-server.js handles starting a Cohort session and making it available using app.get('cohort')
+// cohort-server.js handles starting a Cohort session and making it available using app.get('cohortSession')
 // this makes it possible to tear down state between tests
 
 /*

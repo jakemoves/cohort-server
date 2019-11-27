@@ -7,6 +7,7 @@ const occasionsTable = require('../knex/queries/occasion-queries')
 const eventsTable = require('../knex/queries/event-queries')
 
 const CHOccasion = require('../models/CHOccasion')
+const broadcastService = require('../services/broadcastService')
 
 handleError = (httpStatusCode, error, res) => {
   console.log(error)
@@ -97,12 +98,12 @@ exports.occasions_update = async (req, res) => {
     switch(updatedDbOccasion.state) {
       case 'opened': {
         let occasion = CHOccasion.fromDatabaseRow(updatedDbOccasion)
-        req.app.get('cohort').addListenersForOccasion(occasion)
+        req.app.get('cohortSession').addListenersForOccasion(occasion)
         occasion.open()
         // add listeners here for device add/remove?
         break }
       case 'closed': {
-        let occasion = req.app.get('cohort').openOccasions
+        let occasion = req.app.get('cohortSession').openOccasions
           .find( occasion => occasion.id == updatedDbOccasion.id)
         occasion.close()
         break }
@@ -116,11 +117,27 @@ exports.occasions_update = async (req, res) => {
 exports.occasions_broadcast = async (req, res) => {
   // broadcast logic must go in a service
   // this is mocked for now
-  const mockedResponseBody = {
-    connectedDevices: 20,
-    cueReceivedBy: 20
+  const occasionId = req.params.id
+
+  const occasion = req.app.get('cohortSession').openOccasions
+    .find( occasion => occasion.id == occasionId)
+
+  if(occasion === undefined){
+    handleError(404, 'Error: no open occasion found with id:' + occasionId, res)
+    return
   }
-  res.status(200).json()
+
+  const cue = req.body
+
+  const results = await broadcastService.broadcast(occasion, cue)
+    .catch( error => {
+      handleError(409, error, res)
+      return
+    })
+
+  console.log(results)
+
+  res.status(200).json(results)
 }
 
 

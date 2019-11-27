@@ -15,7 +15,7 @@ exports.prepare_demo = (req, res) => {
       console.log('opened event ' + req.params.id + ' for demo')
       response.json().then( dbEvent => {
 
-        let demoEvent = req.app.get('cohort').events.find( event => {
+        let demoEvent = req.app.get('cohortSession').events.find( event => {
           return (event.id == dbEvent.id && event.label == dbEvent.label)
         })
 

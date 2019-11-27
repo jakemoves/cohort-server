@@ -36,7 +36,7 @@ class CHSession {
     let cohortSession = new CHSession()
 
     return cohortSession.init().then( () => {
-      app.set("cohort", cohortSession)
+      app.set("cohortSession", cohortSession)
     })
   }
 

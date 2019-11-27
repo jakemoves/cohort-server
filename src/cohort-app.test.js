@@ -599,7 +599,7 @@ describe('Occasion routes', () => {
     expect(res.status).toEqual(200)
     expect(res.body.id).toEqual(2)
     expect(res.body.state).toEqual('opened')
-    expect(app.get('cohort').openOccasions).toHaveLength(2)
+    expect(app.get('cohortSession').openOccasions).toHaveLength(2)
   })
 
   test('PATCH /occasions/:id -- close occasion', async () =>{
@@ -610,7 +610,7 @@ describe('Occasion routes', () => {
     expect(res.status).toEqual(200)
     expect(res.body.id).toEqual(3)
     expect(res.body.state).toEqual('closed')
-    expect(app.get('cohort').openOccasions).toHaveLength(0)
+    expect(app.get('cohortSession').openOccasions).toHaveLength(0)
   })
 })
 
@@ -640,7 +640,7 @@ describe('Occasion routes', () => {
   //     })
   //   })
   // })
-})
+// })
 
 //
 
@@ -834,7 +834,7 @@ describe('Occasion routes', () => {
 
 //         wsClient.close()
 //         setTimeout( () => {
-//           expect(app.get('cohort').errors[0]).toEqual('Error: Could not find device for closed socket')
+//           expect(app.get('cohortSession').errors[0]).toEqual('Error: Could not find device for closed socket')
 //           done()
 //         }, 100)
 //       })
@@ -1098,7 +1098,7 @@ describe('Occasion routes', () => {
 //   test('websocket : multiple connections', async () => {
 //     expect.assertions(3)
 
-//     expect(app.get('cohort').devices).toHaveLength(0)
+//     expect(app.get('cohortSession').devices).toHaveLength(0)
     
 //     const webSocketServer = await require('./cohort-websockets')({ 
 //       app: app, server: server
@@ -1109,10 +1109,10 @@ describe('Occasion routes', () => {
 //     const guids = [ uuid(), uuid(), uuid(), uuid() ]
 
 //     guids.map( guid => new CHDevice(guid) ).forEach( device => {
-//       app.get('cohort').devices.push(device)
+//       app.get('cohortSession').devices.push(device)
 //     })
   
-//     expect(app.get('cohort').devices).toHaveLength(4)
+//     expect(app.get('cohortSession').devices).toHaveLength(4)
 
 //     let clients = []
 //     let connectionStatuses = []
@@ -1150,7 +1150,7 @@ describe('Occasion routes', () => {
 //     //     }
         
 //     //     Promise.all(connectionOpenPromises).then(() => {
-//     //       expect(app.get('cohort').devices).toHaveLength(4)
+//     //       expect(app.get('cohortSession').devices).toHaveLength(4)
 //     //       let connectedClients = clients.filter( (client) => {
 //     //         return client.readyState == WebSocket.OPEN
 //     //       })
@@ -1169,7 +1169,7 @@ describe('Occasion routes', () => {
 //   //       const wsClient = new webSocket('ws://localhost:3000')
         
 //   //       wsClient.addEventListener('open', (event) => {
-//   //         expect(app.get('cohort').devices).toHaveLength(1)
+//   //         expect(app.get('cohortSession').devices).toHaveLength(1)
 //   //         setTimeout(() => {
 //   //           expect(wsClient.readyState).toEqual(WebSocket.OPEN) // still open
 //   //           done()

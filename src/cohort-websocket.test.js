@@ -76,7 +76,26 @@ afterAll( async () => {
  */
 
 beforeAll( () => {
+  createClientAndConnect = (occasionId) => {
+    return new Promise( (resolve, reject) => {
+      const guid = uuid()
+
+      const wsClient = new ws(socketURL)
   
+      wsClient.addEventListener('message', message => {
+        const msg = JSON.parse(message.data)
+        if(msg.response == 'success'){
+          resolve(wsClient)
+        } else {
+          reject('Error: handshake failed')
+        }
+      }, {once: true})
+      
+      wsClient.addEventListener('open', event => {
+        wsClient.send(JSON.stringify({ guid: guid, occasionId: occasionId }))
+      })
+    })
+  }
 })
 
 /*
@@ -179,6 +198,20 @@ describe('WebSockets', () => {
     })
   })
 
+  test('initial handshake: error -- handshake not completed within time limit', (done) => {
+    expect.assertions(3)
+    const occasionId = 3
+
+    const wsClient = new ws(socketURL)
+
+    wsClient.addEventListener('close', error => {
+      expect(error.code).toEqual(4004)
+      expect(error.reason).toEqual("Error: cohort handshake not completed within time limit")
+      expect(webSocketServer.clients.size).toEqual(0)
+      done()
+    })
+  })
+
   // test('initial handshake: error -- device already connected', (done) => {
   //   const occasionId = 3
   //   const guid = uuid()
@@ -213,4 +246,85 @@ describe('WebSockets', () => {
       wsClient.send(JSON.stringify({ guid: guid, occasionId: occasionId }))
     })
   })
+})
+  
+/*
+ *    OCCASIONS & BROADCAST TESTS
+ */
+
+describe('Occasions & WebSocket broadcasts', () => {
+  test('POST occasions/:id/broadcast: error -- no open occasion matching id', async () => {
+    const occasionId = 4
+    const guid = uuid()
+
+    const res = await request(app)
+      .post('/api/v2/occasions/' + occasionId + '/broadcast')
+      .send({
+        "mediaDomain": 0,
+        "cueNumber": 1,
+        "cueAction": 0,
+        "targetTags": ["all"]
+      })
+    
+    expect(res.status).toEqual(404)
+    expect(res.text).toEqual('Error: no open occasion found with id:' + occasionId)
+  })
+
+  test('POST occasions/:id/broadcast: error -- no devices connected', async () => {
+    const occasionId = 3
+    const guid = uuid()
+
+    const res = await request(app)
+      .post('/api/v2/occasions/' + occasionId + '/broadcast')
+      .send({
+        "mediaDomain": 0,
+        "cueNumber": 1,
+        "cueAction": 0,
+        "targetTags": ["all"]
+      })
+    
+    expect(res.status).toEqual(409)
+    expect(res.text).toEqual('Error: no devices connected to receive broadcast')
+  })
+
+  test('POST occasions/:id/broadcast: happy path', async () => {
+    expect.assertions(3)
+    const occasionId = 3
+    const cue = { 
+      "mediaDomain": 0,
+      "cueNumber": 1,
+      "cueAction": 0,
+      "targetTags": ["all"]
+    }
+
+    let client = await createClientAndConnect(3)
+    expect(client).toBeDefined()
+
+    client.addEventListener('message', message => {
+      const msg = JSON.parse(message.data)
+      expect(msg).toEqual(cue)
+      client.close()
+    })
+
+    const res = await request(app)
+      .post('/api/v2/occasions/3/broadcast')
+      .send(cue)
+
+    expect(res.status).toEqual(200)
+  })
+
+
+    // const res = await request(app)
+    //   .post('/api/v2/occasions/' + occasionId + '/broadcast')
+    //   .send({
+    //     "mediaDomain": 0,
+    //     "cueNumber": 1,
+    //     "cueAction": 0,
+    //     "targetTags": ["all"]
+    //   })
+    
+    // expect(res.status).toEqual(200)
+    // expect(res.text).toEqual('Error: no devices connected to receive broadcast')
+
+  // close occasion, devices should receive code 1001
 })

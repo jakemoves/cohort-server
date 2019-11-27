@@ -1,7 +1,8 @@
 // Copyright Jacob Niedzwiecki, 2019
 // Released under the MIT License (see /LICENSE)
+const EventEmitter = require('events')
 
-class CHDevice {
+class CHDevice extends EventEmitter {
 	guid
 	isAdmin
 	socket = null
@@ -9,6 +10,8 @@ class CHDevice {
 	// apnsDeviceToken // apple push notification service -- uses unique id generated on the device
 	
 	constructor(guid, isAdmin = false, tags = new Set([]), /*apnsDeviceToken = null*/){
+		super()
+		
 		this.guid = guid // device unique ID
 		this.isAdmin = isAdmin
 		this.tags = tags

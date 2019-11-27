@@ -8,7 +8,7 @@ const CHDevice = require('./models/CHDevice.js')
 module.exports = (options) => {
 
   return new Promise( (resolve, reject) => {
-    console.log('  creating websocket server')
+    console.log('   creating websocket server')
     let webSocketServer = new webSocket.Server({server: options.server, path: options.path, clientTracking: true}, (err) => {
       console.log(err)
       reject(err)
@@ -45,6 +45,14 @@ module.exports = (options) => {
       socket.on('pong', keepalive)
 
       console.log('websocket server: new connection')
+
+      // if the socket hasn't completed a handshake within one second, we should close it
+      closeSocket = setTimeout(() => {
+        if(socket.cohortDeviceGUID == null || socket.cohortDeviceGUID === undefined ){
+          socket.close(4004, "Error: cohort handshake not completed within time limit")
+        }
+      }, 1000)
+
       socket.on('message', (message) => {
         let msg
 
@@ -69,7 +77,7 @@ module.exports = (options) => {
             return
           }
           
-          let occasion = options.app.get('cohort').openOccasions
+          let occasion = options.app.get('cohortSession').openOccasions
             .find( occasion => occasion.id == msg.occasionId)
           
           if(occasion === undefined){
@@ -93,6 +101,8 @@ module.exports = (options) => {
           socket.cohortDeviceGUID = device.guid
           device.socket = socket
 
+          occasion.addDevice(device)
+
           // if(device.socket != null){
           //   device.socket.isAlive = false
           //   device.socket.close(4001, "Device opened a new socket")
@@ -105,35 +115,36 @@ module.exports = (options) => {
       })
 
       socket.on('close', (code, reason) => {
-        if(code == 4002){ return } // defined above in .open() as a failed handshake
+        const failedHandshakeErrorCodes = new Set([4004, 4003, 4002])
+        if(failedHandshakeErrorCodes.has(code)){ return } // no further action necessary
 
-        let device = options.app.get('cohort').allDevices()
-          .find( device => socket.cohortDeviceGUID == device.guid)
+        // let device = options.app.get('cohortSession').allDevices()
+        //   .find( device => socket.cohortDeviceGUID == device.guid)
         
-        if(device === undefined) {
-          // throw new Error("closed socket did not have a cohortDeviceGUID property")
-          options.app.get('cohort').errors.push('Error: Could not find device for closed socket')
-          console.log('Error: Could not find device for closed socket')
-          return
-        }
+        // if(device === undefined) {
+        //   // throw new Error("closed socket did not have a cohortDeviceGUID property")
+        //   options.app.get('cohortSession').errors.push('Error: Could not find device for closed socket')
+        //   console.log('Error: Could not find device for closed socket')
+        //   return
+        // }
         
-        console.log('closing socket for device ' + device.guid)
-        device.socket = null
+        // console.log('closing socket for device ' + device.guid)
+        // device.socket = null
         
-        // send an update to events that this socket was connected to
-        const eventsWithDevice = options.app.get('cohort').events
-        .filter( event => {
-          if(event.devices.find( 
-            deviceOnEvent => device.guid == deviceOnEvent.guid
-          ) !== undefined){ 
-            // the device which closed its socket is checked in to this event
-            return event
-          }
-        })
+        // // send an update to events that this socket was connected to
+        // const eventsWithDevice = options.app.get('cohortSession').events
+        // .filter( event => {
+        //   if(event.devices.find( 
+        //     deviceOnEvent => device.guid == deviceOnEvent.guid
+        //   ) !== undefined){ 
+        //     // the device which closed its socket is checked in to this event
+        //     return event
+        //   }
+        // })
         
-        eventsWithDevice.forEach( event => {
-          event.broadcastDeviceStates() // eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
-        })
+        // eventsWithDevice.forEach( event => {
+        //   event.broadcastDeviceStates() // eventually this should get triggered by a deviceStatesDidChange event bubbled up from CHDevice... I think?
+        // })
       })
 
       socket.on('error', (error) => {
