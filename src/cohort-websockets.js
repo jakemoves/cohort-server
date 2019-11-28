@@ -99,7 +99,8 @@ module.exports = (options) => {
 
           let device = new CHDevice(msg.guid, false)
           socket.cohortDeviceGUID = device.guid
-          device.socket = socket
+
+          device.addSocket(socket)
 
           occasion.addDevice(device)
 
@@ -156,7 +157,7 @@ module.exports = (options) => {
     function noop() {}
     
     function keepalive() {
-      console.log('keepalive called from pong for socket ' + this.cohortDeviceGUID)
+      // console.log('keepalive called from pong for socket ' + this.cohortDeviceGUID)
       this.isAlive = true
     }
 

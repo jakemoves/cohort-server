@@ -11,7 +11,7 @@ class CHDevice extends EventEmitter {
 	
 	constructor(guid, isAdmin = false, tags = new Set([]), /*apnsDeviceToken = null*/){
 		super()
-		
+
 		this.guid = guid // device unique ID
 		this.isAdmin = isAdmin
 		this.tags = tags
@@ -23,6 +23,13 @@ class CHDevice extends EventEmitter {
 			this.socket != null && 
 			this.socket !== undefined && 
 			this.socket.isAlive /* used by keepalive function */ && this.socket.readyState == 1)
+	}
+
+	addSocket(socket){
+		this.socket = socket
+		socket.on('close', () => {
+			this.emit('socketClosed')
+		})
 	}
 
 	// deviceState(){

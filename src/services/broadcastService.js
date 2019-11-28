@@ -3,8 +3,11 @@
 
 const WebSocket = require('ws')
 
+/*
+  Takes a cohort occasion and a cue, and sends the cue to all devices.
+  Returns an array of device GUIDs with each marked as succeeded or failed (with error).
+*/
 exports.broadcast = (occasion, cue) => {
-
   let connectedSockets = occasion.devices
     .filter( device => device.isConnected())
     .map( device => device.socket)

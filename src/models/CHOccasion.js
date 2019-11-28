@@ -46,10 +46,9 @@ class CHOccasion extends machina.Fsm {
         },
         closed: {
           _onEnter: function(){
-            this.devices.foreach(device => {
-              device.socket.close(1001, 'Occasion is closing')
+            this.devices.forEach(device => {
+              device.socket.close(1001, 'Cohort occasion is closing')
             })
-            this.devices = []
             console.log('occasion ' + this.label + ' (id:' + this.id + ') is now closed')
           }, 
           openEvent: 'opened'

@@ -128,16 +128,14 @@ exports.occasions_broadcast = async (req, res) => {
   }
 
   const cue = req.body
-
-  const results = await broadcastService.broadcast(occasion, cue)
-    .catch( error => {
-      handleError(409, error, res)
-      return
-    })
-
-  console.log(results)
-
-  res.status(200).json(results)
+  
+  try {
+    const results = await broadcastService.broadcast(occasion, cue)
+    res.status(200).json(results)
+  } catch(error) {
+    handleError(409, error, res)
+    return
+  }
 }
 
 
