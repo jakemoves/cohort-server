@@ -2,8 +2,12 @@
 // Released under the MIT License (see /LICENSE)
 
 const webSocket = require('ws')
+
+const broadcastService = require('./services/broadcastService')
 const mailerService = require('./services/mailerService')
+
 const app = require('./cohort-app')
+
 const CHSession = require('./models/CHSession')
 
 console.log('starting cohort server...')
@@ -40,6 +44,9 @@ start = async () => {
 	await CHSession.initAndSetOnApp(app).then( () => {
 		console.log("   cohort session started")
 	}) 
+
+	// /* broadcast service init */
+	// await broadcastService.initService(app.get('cohortSession'), webSocketServer)
 
 	/* mail service init */
 	mailerService.initService()

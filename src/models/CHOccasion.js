@@ -12,7 +12,7 @@ class CHOccasion extends machina.Fsm {
   locationLabel
   locationAddress
   locationCity
-  // devices
+  devices
 
   constructor(id, label){
     // constructor options for FSM
@@ -27,10 +27,28 @@ class CHOccasion extends machina.Fsm {
           _onEnter: function(){
             console.log('occasion ' + this.label + ' (id:' + this.id + ') is now open')
           },
+          addDevice: function(device){
+
+            device.on('socketClosed', () => {
+              let deviceIndex = this.devices.findIndex(
+                matchingDevice => device.guid == matchingDevice.guid
+              )
+
+              if(deviceIndex !== undefined){
+                this.devices.splice(deviceIndex, 1)
+              } else {
+                throw new Error('Device with closed socket not found in occasion.devices')
+              }
+            })
+            this.devices.push(device)
+          },
           closeOccasion: 'closed'
         },
         closed: {
           _onEnter: function(){
+            this.devices.forEach(device => {
+              device.socket.close(1001, 'Cohort occasion is closing')
+            })
             console.log('occasion ' + this.label + ' (id:' + this.id + ') is now closed')
           }, 
           openEvent: 'opened'
@@ -52,10 +70,16 @@ class CHOccasion extends machina.Fsm {
     // constructor actions for CHOccasion
     this.id = id
     this.label = label
+    this.devices = []
   }
 
   static fromDatabaseRow(dbOccasion){
     return new CHOccasion(dbOccasion.id, dbOccasion.label)
+  }
+
+  addDevice(device){
+    
+    this.handle('addDevice', device)
   }
 }
 
