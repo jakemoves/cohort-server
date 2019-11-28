@@ -36,7 +36,7 @@ class CHSession {
     let cohortSession = new CHSession()
 
     return cohortSession.init().then( () => {
-      app.set("cohort", cohortSession)
+      app.set("cohortSession", cohortSession)
     })
   }
 
@@ -59,14 +59,14 @@ class CHSession {
     })
   }
   
-  // returns a flat array of all devices checked into active events
-  // allDevices(){
-  //   let nestedDevices = this.events
-  //   .map( event => event.devices)
-  //   let flatDevices = _flatten(nestedDevices)
-  //   let uniqueDevices = _uniqBy(flatDevices, 'id')
-  //   return uniqueDevices
-  // }
+  // returns a flat array of all devices checked into opened occasions
+  allDevices(){
+    const nestedDevices = this.openOccasions
+      .map( occasion => occasion.devices)
+    const flatDevices = _flatten(nestedDevices)
+    const uniqueDevices = _uniqBy(flatDevices, 'guid')
+    return uniqueDevices
+  }
 } 
 
 module.exports = CHSession

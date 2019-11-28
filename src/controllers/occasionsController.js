@@ -7,6 +7,7 @@ const occasionsTable = require('../knex/queries/occasion-queries')
 const eventsTable = require('../knex/queries/event-queries')
 
 const CHOccasion = require('../models/CHOccasion')
+const broadcastService = require('../services/broadcastService')
 
 handleError = (httpStatusCode, error, res) => {
   console.log(error)
@@ -52,7 +53,15 @@ exports.occasions_create = async (req, res) => {
   })
 }
 
-exports.occasions_delete = (req, res) => {
+exports.occasions_delete = async (req, res) => {
+  // verify the occasion is closed
+  let occasion = await occasionsTable.getOneByID(req.params.id)
+
+  if(occasion != null && occasion.state == 'opened'){
+    handleError(400, 'Error: an opened occasion cannot be deleted. Close the occasion and try again.', res)
+    return
+  }
+
   return occasionsTable.deleteOne(req.params.id)
   .then( deletedIds => {
     if(deletedIds.length == 1) {
@@ -89,12 +98,12 @@ exports.occasions_update = async (req, res) => {
     switch(updatedDbOccasion.state) {
       case 'opened': {
         let occasion = CHOccasion.fromDatabaseRow(updatedDbOccasion)
-        req.app.get('cohort').addListenersForOccasion(occasion)
+        req.app.get('cohortSession').addListenersForOccasion(occasion)
         occasion.open()
         // add listeners here for device add/remove?
         break }
       case 'closed': {
-        let occasion = req.app.get('cohort').openOccasions
+        let occasion = req.app.get('cohortSession').openOccasions
           .find( occasion => occasion.id == updatedDbOccasion.id)
         occasion.close()
         break }
@@ -103,9 +112,32 @@ exports.occasions_update = async (req, res) => {
     res.status(200).json(updatedDbOccasion) 
     // doesn't return devices with the occasion, but that might not be relevant for open / close updates; a just-opened event shouldn't have any devices connected, and a just-closed one doesn't either
   }
-  
-  
 }
+  
+exports.occasions_broadcast = async (req, res) => {
+  // broadcast logic must go in a service
+  // this is mocked for now
+  const occasionId = req.params.id
+
+  const occasion = req.app.get('cohortSession').openOccasions
+    .find( occasion => occasion.id == occasionId)
+
+  if(occasion === undefined){
+    handleError(404, 'Error: no open occasion found with id:' + occasionId, res)
+    return
+  }
+
+  const cue = req.body
+  
+  try {
+    const results = await broadcastService.broadcast(occasion, cue)
+    res.status(200).json(results)
+  } catch(error) {
+    handleError(409, error, res)
+    return
+  }
+}
+
 
 // exports.occasionsForEvent = ( req, res ) => {
 //   let eventId = req.params.id

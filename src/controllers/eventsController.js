@@ -133,9 +133,9 @@ exports.events_delete = (req, res) => {
 //     // update db
 //     eventsTable.open(req.params.id)
 //     .then( dbOpenedEvent => { // dbOpenedEvent does not have devices along with it
-//       if(req.app.get('cohort').events.find( event => event.id == dbOpenedEvent.id) === undefined){
+//       if(req.app.get('cohortSession').events.find( event => event.id == dbOpenedEvent.id) === undefined){
 //         let event =  CHEvent.fromDatabaseRow(dbEvent)
-//         req.app.get('cohort').addListenersForEvent(event)
+//         req.app.get('cohortSession').addListenersForEvent(event)
 //         event.open()
 //         // need to add listeners here for device add/remove... and then figure out how to DRY that up (repeated in app.js)
 //       } else {
@@ -153,7 +153,7 @@ exports.events_delete = (req, res) => {
 // }
 
 // exports.events_close = (req, res) => {
-//   let event = req.app.get('cohort').events.find( event => event.id == req.params.id)
+//   let event = req.app.get('cohortSession').events.find( event => event.id == req.params.id)
 //   if( event !== undefined ){ 
 //     event.close()
 //   }

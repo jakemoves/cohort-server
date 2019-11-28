@@ -4,8 +4,10 @@
 const request = require('supertest')
 const uuid = require('uuid/v4')
 const knex = require('./knex/knex')
-const ws = require('ws')
 const moment = require('moment')
+
+// for websocket tests only
+const ws = require('ws')
 
 const CHSession = require('./models/CHSession')
 
@@ -13,7 +15,7 @@ var app
 process.env.NODE_ENV = 'test'
 
 beforeEach( async () => {
-  // console.log('global beforeEach()')
+  console.log('global beforeEach()')
   await knex.migrate.rollback()
   await knex.migrate.latest()
   await knex.seed.run()
@@ -25,13 +27,14 @@ beforeEach( async () => {
 })
 
 afterEach( async () => {
-  // console.log('global afterEach()')
+  console.log('global afterEach()')
   await knex.migrate.rollback()
   // per issue #12, we should actually tear down the app/server here
   app.set('cohort', null)
 })
 
 afterAll( async () => {
+  console.log("global afterAll")
   await knex.destroy()
 })
 
@@ -553,6 +556,14 @@ describe('Occasion routes', () => {
     expect(res.status).toEqual(404)
   })
 
+  test('DELETE /occasions -- error: opened occasion cannot be deleted', async () => {
+    const res = await request(app)
+      .delete('/api/v2/occasions/3')
+
+      expect(res.status).toEqual(400)
+      expect(res.text).toEqual('Error: an opened occasion cannot be deleted. Close the occasion and try again.')
+  })
+
   test('DELETE /occasions -- happy path', async () => {
     numberOfOccasions = async () => {
       const res = await request(app).get('/api/v2/events')
@@ -588,7 +599,7 @@ describe('Occasion routes', () => {
     expect(res.status).toEqual(200)
     expect(res.body.id).toEqual(2)
     expect(res.body.state).toEqual('opened')
-    expect(app.get('cohort').openOccasions).toHaveLength(2)
+    expect(app.get('cohortSession').openOccasions).toHaveLength(2)
   })
 
   test('PATCH /occasions/:id -- close occasion', async () =>{
@@ -599,342 +610,16 @@ describe('Occasion routes', () => {
     expect(res.status).toEqual(200)
     expect(res.body.id).toEqual(3)
     expect(res.body.state).toEqual('closed')
-    expect(app.get('cohort').openOccasions).toHaveLength(0)
+    expect(app.get('cohortSession').openOccasions).toHaveLength(0)
   })
 })
 
 
-// DEVICE ROUTES
-// defunct
 
-  // test('devices/:id/registerForNotifications : happy path', async () => {
-  //   const guid = uuid()
-  //   const interimResponse = await createDevice(guid)
 
-  //   const payload = { token: 'abcde12345' }
-  //   const deviceId = interimResponse.body.id
-    
-  //   const res = await request(app)
-  //     .patch('/api/v1/devices/' + deviceId + '/register-for-notifications')
-  //     .send(payload)
-  //   expect(res.status).toEqual(200)
-  //   expect(res.body.apnsDeviceToken).toEqual('abcde12345')
-  // })
   
-  // add test for id not found
 
-  // test('devices/register-for-notifications : error: missing token', async () => {
-  //   const payload = { 'blep': '012345678901234567890123456789012345'}
-  //   const res = await request(app)
-  //     .patch('/api/v1/devices/1/register-for-notifications')
-  //     .send(payload)
-  //   expect(res.status).toEqual(400)
-  //   expect(res.text).toEqual("Error: Request must include a 'token' object")
-  // })
 
-  // MOVES TO EVENT OR OCCASION
-  // test('devices/set-tags', async () => {
-  //   const payload = { tags: [ 'blue', 'red' ]}
-  //   const res = await request(app)
-  //     .patch('/api/v1/devices/1/set-tags')
-  //     .send(payload)
-  //   expect(res.status).toEqual(200)
-  //   expect(res.body.tags).toEqual(['blue', 'red'])
-
-  //   const payload1 = { tags: [ 'purple' ]}
-  //   const res1 = await request(app)
-  //     .patch('/api/v1/devices/1/set-tags')
-  //     .send(payload1)
-  //   expect(res1.status).toEqual(200)
-  //   expect(res1.body.tags).toEqual(['purple'])
-  // })
-
-
-/*
- *    WEBSOCKETS
- */
-
-// describe('WebSockets', () => { 
-//   var server
-//   var socketURL
-
-//   beforeEach( () => {
-//     console.log('websockets beforeEach()')
-//     socketURL = 'http://localhost:3000/sockets'
-
-//     // this is pretty much the same as cohort-server.js
-//     server = app.listen(3000, function(err){
-//       if(err) {
-//         throw err
-//       }
-    
-//       console.log('http server started on port 3000')
-//       console.log('environment: ' + process.env.NODE_ENV)
-//     })
-//   })
-
-//   afterEach( () => {
-//     console.log('websockets afterEach()')
-//     server.close()
-//   })
-
-//   test('startup & new connection', async (done) => {
-//     expect(app.get("cohort").events[0].devices.length).toEqual(3)
-
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets'
-//     })
-
-//     expect(webSocketServer).toBeDefined()
-
-//     const wsClient = new ws(socketURL)
-
-//     wsClient.addEventListener('open', event => {
-//       expect(wsClient.readyState).toEqual(1)
-//       done()
-//     })
-//   })
-
-//   test('send message: error -- json parse error', async (done) => {
-//     expect.assertions(3)
-
-//     expect(app.get("cohort").events[0].devices.length).toEqual(3)
-
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets'
-//     })
-
-//     expect(webSocketServer).toBeDefined()
-
-//     const wsClient = new ws(socketURL)
-
-//     wsClient.addEventListener('open', event => {
-
-//       wsClient.addEventListener('message', message => {
-//         const msg = JSON.parse(message.data)
-//         expect(msg.error).toEqual("message is not valid JSON (Unexpected string in JSON at position 9)")
-//         done()
-//       })
-
-//       let badJSONString = '{\"blep:\" \"blop\"}'
-//       wsClient.send(badJSONString)
-//     })
-//   })
-
-// test('initial handshake: error -- no guid included', async(done) => {
-//     const eventId = 3
-
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets'
-//     })
-
-//     expect(webSocketServer).toBeDefined()
-
-//     const wsClient = new ws(socketURL)
-
-//     wsClient.addEventListener('open', event => {
-//       let guid = uuid()
-//       wsClient.send(JSON.stringify({ eventId: eventId }))
-//     })
-
-//     wsClient.addEventListener('close', error => {
-//       expect(error.code).toEqual(4003)
-//       expect(error.reason).toEqual("First message from client must include fields 'guid' and 'eventId'")
-//       done()
-//     })
-//   })
-
-// test('initial handshake: error -- event not found', async(done) => {
-//     const eventId = 100
-
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets'
-//     })
-
-//     expect(webSocketServer).toBeDefined()
-
-//     const wsClient = new ws(socketURL)
-
-//     wsClient.addEventListener('open', event => {
-//       let guid = uuid()
-//       wsClient.send(JSON.stringify({ guid: guid, eventId: eventId }))
-//     })
-
-//     wsClient.addEventListener('close', error => {
-//       expect(error.code).toEqual(4002)
-//       expect(error.reason).toEqual('No open event found with id:' + eventId)
-//       done()
-//     })
-//   })
-
-//   test('initial handshake: error -- device not checked in to event', async(done) => {
-//     const eventId = 3
-
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets'
-//     })
-
-//     expect(webSocketServer).toBeDefined()
-
-//     const wsClient = new ws(socketURL)
-
-//     wsClient.addEventListener('open', event => {
-//       let guid = uuid()
-//       wsClient.send(JSON.stringify({ guid: guid, eventId: eventId }))
-//     })
-
-//     wsClient.addEventListener('close', error => {
-//       expect(error.code).toEqual(4000)
-//       expect(error.reason).toEqual("Devices must be registered via HTTP before opening a WebSocket connection")
-//       done()
-//     })
-//   })
-
-//   test('initial handshake: happy path', async (done) => {
-//     const eventId = 3
-
-//     /* 
-//        this device is already created and checked in 
-//        in a full flow, we would:
-//      - POST /devices with {guid: 'whatever'} to create the device
-//      - PATCH /events/3/check-in with {guid: 'whatever'} to check in
-
-//        yeah it's a bit much
-//      */
-//     const guid = "1234567"
-
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets'
-//     })
-
-//     expect(webSocketServer).toBeDefined()
-
-//     const wsClient = new ws(socketURL)
-
-//     wsClient.addEventListener('open', event => {
-//       wsClient.addEventListener('message', message => {
-//         const msg = JSON.parse(message.data)
-//         expect(msg.response).toEqual("success")
-//         done()
-//       })
-
-//       wsClient.send(JSON.stringify({ guid: guid, eventId: 3 }))
-//     })
-//   })
-
-//   test('closing socket: error -- socket has no cohortDeviceGUID property', async (done) => {
-
-//     const eventId = 3
-//     const guid = "1234567"
-
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets'
-//     })
-//     expect(webSocketServer).toBeDefined()
-
-//     const wsClient = new ws(socketURL)
-
-//     wsClient.addEventListener('open', event => {
-//       wsClient.addEventListener('message', message => {
-//         const msg = JSON.parse(message.data)
-//         expect(msg.response).toEqual("success")
-
-//         let event = app.get("cohort").events.find( event => event.id == eventId)
-//         expect(event).toBeDefined()
-
-//         let device = event.devices.find( device => device.guid == guid)
-//         expect(device).toBeDefined()  
-//         expect(device.socket.cohortDeviceGUID).toEqual(guid)
-        
-//         delete device.socket.cohortDeviceGUID
-//         expect(device.socket.cohortDeviceGUID).toBeUndefined()
-
-//         wsClient.close()
-//         setTimeout( () => {
-//           expect(app.get('cohort').errors[0]).toEqual('Error: Could not find device for closed socket')
-//           done()
-//         }, 100)
-//       })
-
-//       wsClient.send(JSON.stringify({ guid: guid, eventId: 3 }))
-//     })
-//   })
-
-//   test('closing socket (explicitly): happy path', async (done) => {
-
-//     const eventId = 3
-//     const guid = "1234567"
-
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets'
-//     })
-//     expect(webSocketServer).toBeDefined()
-
-//     const wsClient = new ws(socketURL)
-
-//     wsClient.addEventListener('open', event => {
-//       wsClient.addEventListener('message', message => {
-//         const msg = JSON.parse(message.data)
-//         expect(msg.response).toEqual("success")
-
-//         wsClient.close()
-//         setTimeout( () => {
-//           expect(wsClient.readyState).toEqual(3)
-          
-//           let event = app.get("cohort").events.find( event => event.id == eventId)
-//           expect(event).toBeDefined()
-
-//           let device = event.devices.find( device => device.guid == guid)
-//           expect(device).toBeDefined()  
-//           expect(device.socket).toBeNull()
-
-//           done()
-//         }, 50)
-//       })
-
-//       wsClient.send(JSON.stringify({ guid: guid, eventId: 3 }))
-//     })
-//   })
-
-//   // FYI this test takes a while to complete because it tests the keepalive function. Setting the keepalive interval on the server to a lower value is tempting but cellular connections don't like short intervals.
-//   test('destroying socket: happy path', async (done) => { 
-
-//     keepaliveIntervalDuration = 5000
-//     jest.setTimeout(keepaliveIntervalDuration * 4)
-
-//     const eventId = 3
-//     const guid = "1234567"
-
-//     const webSocketServer = await require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets', keepaliveIntervalDuration: keepaliveIntervalDuration
-//     })
-//     expect(webSocketServer).toBeDefined()
-
-//     let wsClient = new ws(socketURL)
-
-//     wsClient.addEventListener('open', event => {
-//       wsClient.addEventListener('message', message => {
-//         const msg = JSON.parse(message.data)
-//         expect(msg.response).toEqual("success")
-//         expect(webSocketServer.clients.size).toEqual(1)
-//       })
-
-//       wsClient.send(JSON.stringify({ guid: guid, eventId: eventId }))
-
-//       setTimeout( () => {
-//         console.log('simulating a nonresponsive client')
-//         wsClient._receiver._events.ping = () => { 
-//           console.log('client got ping but is pretending to be dead')
-//         }
-
-//         setTimeout( () => {
-//           expect(webSocketServer.clients.size).toEqual(0)
-//           done()
-//         }, keepaliveIntervalDuration * 2.4)
-
-//       }, keepaliveIntervalDuration * 1.2)
-//     })
-//   })
 
 //   test('admin device gets broadcasts when device state changes', async (done) => {
 //     const eventId = 3
@@ -993,159 +678,56 @@ describe('Occasion routes', () => {
 //     })
 //   })
 
-//   // test that admin devices (2) get status for the correct event...
 
-//   // test that event close shuts down active sockets nicely
 
-//   test('broadcast: happy path', async (done) => {
-//     const cohortMessage = {
-//       targetTags: ["all"],
-// 	    mediaDomain: "sound",
-// 	    cueNumber: 1,
-// 	    cueAction: "play"
-//     }
+// DEVICE ROUTES
+// defunct
 
-//     const eventId = 3
-//     const guid1 = "54321" 
-//     const guid2 = "1234567"
+  // test('devices/:id/registerForNotifications : happy path', async () => {
+  //   const guid = uuid()
+  //   const interimResponse = await createDevice(guid)
 
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets'
-//     })
-//     expect(webSocketServer).toBeDefined()
-
-//     const client1 = new ws(socketURL)
-
-//     var broadcastsReceived = 0
-
-//     client1.addEventListener('open', () => {
-//       client1.send(JSON.stringify({ guid: guid1, eventId: eventId }))
-
-//       client1.addEventListener('message', message => {
-//         const msg = JSON.parse(message.data)
-//         if(msg.mediaDomain !== undefined && msg.mediaDomain == 'sound'){
-//           broadcastsReceived++
-//         }
-//       })
-
-//       const client2 = new ws(socketURL)
-      
-//       client2.addEventListener('open', () => {
-//         client2.send(JSON.stringify({ guid: guid2, eventId: eventId }))
-        
-//         client2.addEventListener('message', message => {
-//           const msg = JSON.parse(message.data)
-//           if(msg.mediaDomain !== undefined && msg.mediaDomain == 'sound'){
-//             broadcastsReceived++
-//           }
-//         })
-
-//         setTimeout( async () => {
-//           setTimeout( () => {
-//             expect(broadcastsReceived).toEqual(2)
-//             done()
-//           }, 500)
+  //   const payload = { token: 'abcde12345' }
+  //   const deviceId = interimResponse.body.id
     
-//           const res = await request(server)
-//             .post('/api/v1/events/3/broadcast')
-//             .send(cohortMessage)
-    
-//           expect(res.status).toEqual(200)
-//           expect(res.text).toEqual("Successfully broadcast to 2 clients")
-//         }, 500)
-
-//       })
-//     })
-//   })
-// })
-
-// partially written tests, keeping them around for useful bits
-
-//   test('websocket : multiple connections', async () => {
-//     expect.assertions(3)
-
-//     expect(app.get('cohort').devices).toHaveLength(0)
-    
-//     const webSocketServer = await require('./cohort-websockets')({ 
-//       app: app, server: server
-//     })
-
-//     expect(webSocketServer).toBeDefined()
-
-//     const guids = [ uuid(), uuid(), uuid(), uuid() ]
-
-//     guids.map( guid => new CHDevice(guid) ).forEach( device => {
-//       app.get('cohort').devices.push(device)
-//     })
+  //   const res = await request(app)
+  //     .patch('/api/v1/devices/' + deviceId + '/register-for-notifications')
+  //     .send(payload)
+  //   expect(res.status).toEqual(200)
+  //   expect(res.body.apnsDeviceToken).toEqual('abcde12345')
+  // })
   
-//     expect(app.get('cohort').devices).toHaveLength(4)
+  // add test for id not found
 
-//     let clients = []
-//     let connectionStatuses = []
+  // test('devices/register-for-notifications : error: missing token', async () => {
+  //   const payload = { 'blep': '012345678901234567890123456789012345'}
+  //   const res = await request(app)
+  //     .patch('/api/v1/devices/1/register-for-notifications')
+  //     .send(payload)
+  //   expect(res.status).toEqual(400)
+  //   expect(res.text).toEqual("Error: Request must include a 'token' object")
+  // })
 
-//     guids.forEach( guid => {
-//       const wsClient = new WebSocket('ws://localhost:3000')
-//       let isOpen = new Promise( resolve => {
-//         wsClient.addEventListener('open', event => {
-//           wsClient.send(JSON.stringify({ guid: guid }))
-//         })
+  // MOVES TO EVENT OR OCCASION
+  // test('devices/set-tags', async () => {
+  //   const payload = { tags: [ 'blue', 'red' ]}
+  //   const res = await request(app)
+  //     .patch('/api/v1/devices/1/set-tags')
+  //     .send(payload)
+  //   expect(res.status).toEqual(200)
+  //   expect(res.body.tags).toEqual(['blue', 'red'])
 
-//         // pick up here
-//       })
-//       clients.push(wsClient)
-//       connectionStatuses.push(promise)
-//     })
-//   })
+  //   const payload1 = { tags: [ 'purple' ]}
+  //   const res1 = await request(app)
+  //     .patch('/api/v1/devices/1/set-tags')
+  //     .send(payload1)
+  //   expect(res1.status).toEqual(200)
+  //   expect(res1.body.tags).toEqual(['purple'])
+  // })
 
-
-//     // const webSocketServer = require('./cohort-websockets')({
-//     //   app: app, 
-//     //   server: server,
-//     //   callback: () => {
-//     //     let clients = []
-//     //     let connectionOpenPromises = []
-//     //     for(i = 0; i < 4; i++){
-//     //       const wsClient = new webSocket('ws://localhost:3000')
-//     //       let promise = new Promise( (resolve) => {
-//     //         wsClient.addEventListener('open', (event) => {
-//     //           resolve()
-//     //         })
-//     //       })
-//     //       clients.push(wsClient)
-//     //       connectionOpenPromises.push(promise)
-//     //     }
-        
-//     //     Promise.all(connectionOpenPromises).then(() => {
-//     //       expect(app.get('cohort').devices).toHaveLength(4)
-//     //       let connectedClients = clients.filter( (client) => {
-//     //         return client.readyState == WebSocket.OPEN
-//     //       })
-//     //       expect(connectedClients).toHaveLength(4)
-//     //       done()
-//     //     })
-//     //   }
-//     // })
-
-
-//   // test('websocket: keepalive for one minute', (done) => {
-//   //   const webSocketServer = require('./cohort-websockets')({
-//   //     app: app, 
-//   //     server: server,
-//   //     callback: () => {
-//   //       const wsClient = new webSocket('ws://localhost:3000')
-        
-//   //       wsClient.addEventListener('open', (event) => {
-//   //         expect(app.get('cohort').devices).toHaveLength(1)
-//   //         setTimeout(() => {
-//   //           expect(wsClient.readyState).toEqual(WebSocket.OPEN) // still open
-//   //           done()
-//   //         }, 60000)
-//   //       })
-//   //     }
-//   //   })
-//   // }, 70000)
-// })
   
+
+
 //   test('broadcast/push-notification : happy path (one device)', async () => {
 //     // create a device
 //     const guid = uuid()

@@ -1,20 +1,21 @@
 // Copyright Jacob Niedzwiecki, 2019
 // Released under the MIT License (see /LICENSE)
+const EventEmitter = require('events')
 
-class CHDevice {
-	id
-	isAdmin
+class CHDevice extends EventEmitter {
 	guid
+	isAdmin
 	socket = null
 	tags
-	apnsDeviceToken // apple push notification service -- uses unique id generated on the device
+	// apnsDeviceToken // apple push notification service -- uses unique id generated on the device
 	
-	constructor(id, guid, isAdmin = false, tags = new Set([]), apnsDeviceToken = null){
-		this.id = id // database ID
+	constructor(guid, isAdmin = false, tags = new Set([]), /*apnsDeviceToken = null*/){
+		super()
+
 		this.guid = guid // device unique ID
 		this.isAdmin = isAdmin
 		this.tags = tags
-		this.apnsDeviceToken = apnsDeviceToken
+		// this.apnsDeviceToken = apnsDeviceToken
 	}
 
 	isConnected(){
@@ -24,20 +25,27 @@ class CHDevice {
 			this.socket.isAlive /* used by keepalive function */ && this.socket.readyState == 1)
 	}
 
-	deviceState(){
-		let socketIsOpen
-		if(this.socket == null || this.socket.readyState !== 1){
-			socketIsOpen = false
-		} else if(this.socket.readyState == 1){
-			socketIsOpen = true
-		}
-
-		return { 
-			guid: "" + this.guid, // coerce to string in case of numeric guid
-			socketOpen: socketIsOpen,
-			isAdmin: this.isAdmin
-		}
+	addSocket(socket){
+		this.socket = socket
+		socket.on('close', () => {
+			this.emit('socketClosed')
+		})
 	}
+
+	// deviceState(){
+	// 	let socketIsOpen
+	// 	if(this.socket == null || this.socket.readyState !== 1){
+	// 		socketIsOpen = false
+	// 	} else if(this.socket.readyState == 1){
+	// 		socketIsOpen = true
+	// 	}
+
+	// 	return { 
+	// 		guid: "" + this.guid, // coerce to string in case of numeric guid
+	// 		socketOpen: socketIsOpen,
+	// 		isAdmin: this.isAdmin
+	// 	}
+	// }
 
 }
 
