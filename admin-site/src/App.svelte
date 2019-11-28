@@ -3,6 +3,7 @@
   import Slider from "./Slider.svelte";
   import moment from "moment";
   import { onMount } from 'svelte';
+  import { createEventDispatcher } from "svelte";
 
   let events = []
   let gotEvents = false
@@ -208,12 +209,11 @@
     events = events.concat(newEvent);
   }
   ////////
- 
-  function changeTime(date){
-	  formattedTime = moment(date).format("LL");
-	  console.log(formattedTime);
-  };
-
+  
+  // function changeTime(date){
+  //   formattedTime = moment(date).format("LL");
+	//   console.log(formattedTime);
+  // };
 
   
 </script>
@@ -331,9 +331,7 @@
       {:else}
         {#each events as event}
           {#if event.label == focusedEventLabel && event.occasions != null && event.occasions.length > 0}
-            {#each event.occasions as occasion}
-        <!-- this doesn't quite work, for some reason all buttons get populated with last date -->
-              <div style="display:none">{changeTime(occasion.startDateTime)}</div>
+            {#each event.occasions as occasion (occasion.id)}
                 <div class="row">
                   <div class="col">
                     <button
@@ -344,7 +342,7 @@
                       value={occasion.id}
                       on:click={occasionButton}>
                       <h3 class="m-0">{event.label} - Occasion # {occasion.id}</h3>
-                      <h5>{occasion.locationCity} - {formattedTime}</h5>	
+                      <h5>{occasion.locationCity} - {moment(occasion.startDateTime).format("LL")}</h5>	
                     </button>
                   </div>
                 </div>
