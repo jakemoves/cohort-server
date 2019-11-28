@@ -8,6 +8,8 @@ const eventsTable = require('../knex/queries/event-queries')
 
 const CHOccasion = require('../models/CHOccasion')
 const broadcastService = require('../services/broadcastService')
+const qrcodeService = require('../services/qrcodeService')
+// const QRCode = require('qrcode')
 
 handleError = (httpStatusCode, error, res) => {
   console.log(error)
@@ -134,6 +136,27 @@ exports.occasions_broadcast = async (req, res) => {
     res.status(200).json(results)
   } catch(error) {
     handleError(409, error, res)
+    return
+  }
+}
+
+exports.occasions_qrcode = async (req, res) => {
+  const occasionId = req.params.id
+  let occasion = await occasionsTable.getOneByID(occasionId)
+
+  if(occasion == null || occasion === undefined){
+    handleError(404, "Error: occasion with id:" + occasionId + " not found", res)
+    return
+  }
+
+  const baseURL = req.hostname
+  const qrcodeURL = req.protocol + '://' + baseURL + '/api/v2/occasions/' + occasionId + '/join'
+
+  try {
+    const qrcode = await qrcodeService.getQRCode(qrcodeURL)
+    res.status(200).send(qrcode)
+  } catch(error){
+    handleError(500, error, res)
     return
   }
 }
