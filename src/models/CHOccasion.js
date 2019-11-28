@@ -78,7 +78,6 @@ class CHOccasion extends machina.Fsm {
   }
 
   addDevice(device){
-    
     this.handle('addDevice', device)
   }
 }

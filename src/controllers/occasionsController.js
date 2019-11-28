@@ -138,6 +138,13 @@ exports.occasions_broadcast = async (req, res) => {
   }
 }
 
+exports.occasions_qrcode = async (req, res) => {
+  let occasionId = req.params.id
+  let baseURL = req.hostname
+  console.log(baseURL)
+  res.sendStatus(200)
+}
+
 
 // exports.occasionsForEvent = ( req, res ) => {
 //   let eventId = req.params.id
