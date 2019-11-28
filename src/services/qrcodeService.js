@@ -3,8 +3,6 @@
 
 const QRCode = require('qrcode')
 
-exports.getQrcode = (url) => {
-  return QRCode.toData(url).then( qrCode => {
-    console.log(qrCode)
-  })
+exports.getQRCode = (url) => {
+  return QRCode.toString(url, { type: 'svg' })
 }
