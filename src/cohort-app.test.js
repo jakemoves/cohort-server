@@ -107,6 +107,13 @@ describe('Basic startup', () => {
     expect(res1.body).toHaveProperty('label')
     expect(res1.body.label).toEqual('pimohtēwak')
 
+    expect(res1.body.episodes).toBeDefined()
+    expect(res1.body.episodes).toHaveLength(1)
+    expect(res1.body.episodes[0].label).toEqual('pimohtēwak')
+    expect(res1.body.episodes[0].episodeNumber).toEqual(0)
+    expect(res1.body.episodes[0].cues).toBeDefined()
+    expect(res1.body.episodes[0].cues).toHaveLength(0)
+
     //event that has occasions
     const res2 = await request(app).get('/api/v2/events/2')
     expect(res2.status).toEqual(200)
@@ -114,16 +121,23 @@ describe('Basic startup', () => {
     expect(res2.body).toHaveProperty('occasions')
     expect(res2.body.occasions).toHaveLength(3)
     expect(res2.body.occasions[0].state).toEqual('opened')
+
+    expect(res2.body.episodes).toBeDefined()
+    expect(res2.body.episodes).toHaveLength(1)
+    expect(res2.body.episodes[0].label).toEqual('lot_x')
+    expect(res2.body.episodes[0].episodeNumber).toEqual(0)
+    expect(res2.body.episodes[0].cues).toBeDefined()
+    expect(res2.body.episodes[0].cues).toHaveLength(1)
   })
 
-  test('GET /events/:id : error: event not found', async () => {
+  test('GET /events/:id -- error: event not found', async () => {
     const res = await request(app).get('/api/v2/events/99')
     expect(res.status).toEqual(404)
 
     expect(res.text).toEqual("Error: event with id:99 not found")
   })
 
-  test('POST /events', async () =>{
+  test('POST /events -- happy path (no episodes provided)', async () =>{
     const res = await request(app)
       .post('/api/v2/events')
       .send({ label: 'new event' })
@@ -133,6 +147,46 @@ describe('Basic startup', () => {
     expect(res.body).toHaveProperty('id')
     expect(res.body.id).toEqual(6)
     expect(res.body.label).toEqual('new event')
+    expect(res.body.episodes).toBeDefined()
+    expect(res.body.episodes).toHaveLength(1)
+    expect(res.body.episodes[0].label).toEqual('new event')
+    expect(res.body.episodes[0].episodeNumber).toEqual(0)
+    expect(res.body.episodes[0].cues).toBeDefined()
+    expect(res.body.episodes[0].cues).toHaveLength(0)
+  })
+
+  test('POST /events -- happy path (with episodes)', async () => {
+    const res = await request(app)
+      .post('/api/v2/events')
+      .send({ label: 'new event', episodes: [{
+          episodeNumber: 1,
+          label: 'episode 1',
+          cues: [{ 
+            "mediaDomain": 0,
+            "cueNumber": 1,
+            "cueAction": 0,
+            "targetTags": ["all"]
+          }]
+        }] 
+      })
+
+    expect(res.status).toEqual(201)
+    expect(res.header.location).toEqual('/api/v2/events/6')
+    expect(res.body).toHaveProperty('id')
+    expect(res.body.id).toEqual(6)
+    expect(res.body.label).toEqual('new event')
+    expect(res.body.episodes).toBeDefined()
+    expect(res.body.episodes).toHaveLength(1)
+    expect(res.body.episodes[0].label).toEqual('episode 1')
+    expect(res.body.episodes[0].episodeNumber).toEqual(1)
+    expect(res.body.episodes[0].cues).toBeDefined()
+    expect(res.body.episodes[0].cues).toHaveLength(1)
+    expect(res.body.episodes[0].cues[0]).toEqual({ 
+      "mediaDomain": 0,
+      "cueNumber": 1,
+      "cueAction": 0,
+      "targetTags": ["all"]
+    })
   })
 
   test('DELETE /events/:id', async () => {

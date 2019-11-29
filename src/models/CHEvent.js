@@ -2,18 +2,29 @@
 // Released under the MIT License (see /LICENSE)
 
 const CHOccasion = require('./CHOccasion')
+const CHEpisode = require('./CHEpisode')
 
 class CHEvent {
   id
   label
+  episodes
 
-  constructor(id, label){
+  constructor(id, label, episodes = []){
     this.id = id
     this.label = label
+    
+    if(episodes.length = 0){
+      // all events have at least one episode by default
+      // this is so that simple events can ignore 'episodes' as a concept while more complex events can make use of episodes to organize their content
+      const defaultEpisode = new CHEpisode(0, this.label) // 0 indicates this is a default episode
+      this.episodes.push(defaultEpisode)
+    } else {
+      this.episodes = episodes
+    }
   }
 
   static fromDatabaseRow(dbEvent){
-    let event = new CHEvent(dbEvent.id, dbEvent.label)
+    let event = new CHEvent(dbEvent.id, dbEvent.label, dbEvent.episodes)
     return event
   }
 }

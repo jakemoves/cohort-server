@@ -11,6 +11,7 @@ const cohortMessagesTable = require('../knex/queries/cohort-message-queries')
 
 // const CHDevice = require('../models/CHDevice')
 const CHEvent = require('../models/CHEvent')
+const CHEpisode = require('../models/CHEpisode')
 
 handleError = (httpStatusCode, error, res) => {
   console.log(res)
@@ -55,8 +56,21 @@ exports.events_create = (req, res) => {
     handleError(500, "Error: request must include an event label (e.g., title of a show)", res)
     return
   }
-    
-  eventsTable.addOne({ label: req.body.label })
+  
+  // it would seem logical to create a CHEvent in JS and then stash it in the database, to avoid duplicated this code, but the event ID is set by the database, so... *shrugs*
+  let episodes
+  if(req.body.episodes != null && req.body.episodes !== undefined){
+    episodes = req.body.episodes
+  } else {
+    // all events have at least one default episode
+    const defaultEpisode = new CHEpisode(0, req.body.label) 
+    // 0 indicates this is the default episode
+    episodes = [ defaultEpisode ] 
+  }
+
+  const eventDetails = { label: req.body.label, episodes: episodes }
+
+  eventsTable.addOne(eventDetails)
   .then( event => {
     res.status(201)
     res.location('/api/v2/events/' + event.id)

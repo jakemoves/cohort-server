@@ -4,12 +4,32 @@ exports.seed = function(knex, Promise) {
   return knex.raw('TRUNCATE TABLE events RESTART IDENTITY CASCADE')
   .then(function () {
     // Inserts events entries
+    defaultEpisodeAsJSON = (eventLabel, defaultCues) => {
+      let cues
+      if(defaultCues){
+        cues = [{ 
+          "mediaDomain": 0,
+          "cueNumber": 1,
+          "cueAction": 0,
+          "targetTags": ["all"]          
+        }]
+      } else {
+        cues = []
+      }
+
+      return JSON.stringify([{
+        episodeNumber: 0,
+        label: eventLabel,
+        cues: cues
+      }])
+    }
+
     return knex('events').insert([
-      {label: 'pimohtēwak'},
-      {label: 'lot_x'},
-      {label: 'midway'},
-      {label: 'fluxdelux'},
-      {label: 'café sarajevo'}
+      {label: 'pimohtēwak', episodes: defaultEpisodeAsJSON('pimohtēwak')},
+      {label: 'lot_x', episodes: defaultEpisodeAsJSON('lot_x', true)},
+      {label: 'midway', episodes: defaultEpisodeAsJSON('midway')},
+      {label: 'fluxdelux', episodes: defaultEpisodeAsJSON('fluxdelux')},
+      {label: 'café sarajevo', episodes: defaultEpisodeAsJSON('café sarajevo')}
     ])
     .then( () => {
       // add occasions to events

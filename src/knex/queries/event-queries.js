@@ -14,7 +14,6 @@ getAll = async () => {
   
   for(event of events){
     event.occasions = await occasionsForEvent(event.id)
-    event.cues = []
   }
   
   return events
@@ -42,6 +41,8 @@ getOneByID = async eventId => {
 }
 
 addOne = (event) => {
+  event.episodes = JSON.stringify(event.episodes)
+
   return Events()
     .insert(event)
     .returning('id')
