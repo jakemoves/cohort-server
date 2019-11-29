@@ -20,6 +20,7 @@ window.onCueSliderInput = (event) => {
             }
           })
           .then( response => {
+            console.log(response.status); 
             if(response.status == 200){
               response.json().then( details => {
                 console.log(details)

@@ -290,10 +290,10 @@
     {:else}
       {#each events as event}
         <div class="row mt-2">
-          <div class="col text-center">
+          <div class="col-6 text-center">
             <h3>{event.label}:</h3>
           </div>
-          <div class="col">
+          <div class="col-6">
             <button
               alt="click here for {event.label} occasion list"
               type="button"
