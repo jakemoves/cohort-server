@@ -122,6 +122,7 @@
     focusedOccasionID = this.value;
     indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
     focusedOccasion = focusedEvent.occasions[indexInOccasions];
+
 	  formattedStartTimeFull = moment(focusedOccasion.startDateTime)
 	    .add(1, "day")
       .format("LLL");
@@ -178,6 +179,25 @@
   }
   function showQR() {
     let id = this.value;
+    //grab QR code for that occasion and update
+    //  let QrResponse = async () => { 
+    //   await fetch(serverURL + "/" + focusedOccasion + "/" + focusedOccasionID + "/qrcode", {
+    //   method: 'GET'
+    //   });
+    //   let qrcode = await QrResponse.text()
+    //   let qrContainer = document.getElementById("QRcodeContainer")
+    //   qrContainer.innerHTML = qrcode
+    // };
+
+    let QrResponse = async () => { 
+      await fetch(serverURL + "/occasions/3/qrcode", {
+      method: 'GET'
+      });
+      let qrcode = await QrResponse.text()
+      let qrContainer = document.getElementById("QRcodeContainer")
+      qrContainer.innerHTML = qrcode
+    };
+
     document.getElementById(id).style.display = "none";
     document.getElementById("QRcode").style.display = "block";
   }
@@ -495,10 +515,10 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12 text-center">
-              <img
-                src="QrCodes/Event1.png "
-                class="img-fluid"
-                alt="QR Code for" />
+              <div id = "QRcodeContainer">
+                <!-- QR code populated here -->
+
+              </div>
             </div>
           </div>
         </div>
