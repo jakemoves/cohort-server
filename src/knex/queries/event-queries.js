@@ -64,31 +64,18 @@ deleteOne = (eventId) => {
     .returning('id')
 }
 
-// open = (eventId) => {
-//   return Events()
-//     .where('events.id', parseInt(eventId))
-//     .update({'state': 'open'})
-//     .returning('id')
-//     .then( id => {
-//       return Events().where('events.id', parseInt(id)).then( events => events[0])
-//     })
-// }
+updateEpisodesForEvent = (eventId, episodes) => {
+  episodes = JSON.stringify(episodes)
 
-// close = (eventId) => {
-//   return Events()
-//     .where('events.id', parseInt(eventId))
-//     .update({'state': 'closed'})
-//     .returning('id')
-//     .then( id => {
-//       return Events().where('events.id', parseInt(id)).then( events => events[0])
-//     })
-// }
+  return Events()
+    .where('id', parseInt(eventId))
+    .update('episodes', episodes)
+}
 
 module.exports = { 
   getAll: getAll,
   getOneByID: getOneByID,
   addOne: addOne,
-  deleteOne: deleteOne
-  // open: open,
-  // close: close
+  deleteOne: deleteOne,
+  updateEpisodesForEvent: updateEpisodesForEvent
 }

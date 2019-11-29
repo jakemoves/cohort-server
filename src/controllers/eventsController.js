@@ -5,6 +5,7 @@ const knex = require('../knex/knex.js')
 const WebSocket = require('ws')
 const fetch = require('node-fetch')
 const apn = require('apn')
+const _uniq = require('lodash/uniq')
 
 const eventsTable = require('../knex/queries/event-queries')
 const cohortMessagesTable = require('../knex/queries/cohort-message-queries')
@@ -57,7 +58,7 @@ exports.events_create = (req, res) => {
     return
   }
   
-  // it would seem logical to create a CHEvent in JS and then stash it in the database, to avoid duplicated this code, but the event ID is set by the database, so... *shrugs*
+  // it would seem logical to create a CHEvent in JS and then stash it in the database, to avoid duplicating this code below from CHEvent, but the event ID is set by the database, so... *shrugs*
   let episodes
   if(req.body.episodes != null && req.body.episodes !== undefined){
     episodes = req.body.episodes
@@ -82,16 +83,7 @@ exports.events_create = (req, res) => {
 }
 
 exports.events_delete = (req, res) => {
-  // keeping this for rewriting -- it will need to check for open occasions on an event
-
-  // if(req.app.get("cohort").events.length > 0 &&
-  //   req.app.get("cohort").events.find( event => event.id == req.params.id) !== undefined){
-  //   res.status(403)
-  //   res.write("Error: this event must be closed before it can be deleted")
-  //   res.send()
-  // } else {
-    
-    return eventsTable.deleteOne(req.params.id)
+  return eventsTable.deleteOne(req.params.id)
     .then( (deletedIds) => {
       if(deletedIds.length == 1) {
         res.sendStatus(204)
@@ -102,7 +94,55 @@ exports.events_delete = (req, res) => {
     .catch( error => {
       handleError(500, error, res)
     })  
-  // }
+}
+
+exports.events_update_episodes = async (req, res) => {
+  const event = await eventsTable.getOneByID(req.params.id)
+    .catch( error => {
+      handleError(500, error, res)
+      return
+    })
+
+  if(!event){
+    handleError(404, "Error: event with id:" + req.params.id + " not found", res)
+    return
+  }
+
+  const episodes = req.body
+  
+  if(episodes == null || episodes === undefined){
+    handleError(400, "Error: you must provide an array of episodes", res)
+    return
+  }
+
+  if(episodes.length === undefined){
+    handleError(400, "Error: you must provide an array of episodes", res)
+    return
+  }
+
+  // there's got to be a better way to do this (not even exhaustive) validation!
+  let episodesPassValidation = episodes.map( episode => {
+      if(episode.episodeNumber == null || episode.episodeNumber === undefined ||
+        episode.label == null || episode.label === undefined ||
+        episode.cues == null || episode.cues === undefined || episode.cues.length === undefined){
+          return false
+      } else { return true }
+    })
+  episodesPassValidation = _uniq(episodesPassValidation)
+
+  if(episodesPassValidation.includes(false)){
+    handleError(400, "Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.", res)
+    return
+  }
+
+  eventsTable.updateEpisodesForEvent(event.id, episodes)
+  .then( event => {
+    res.sendStatus(200)
+  })
+  .catch( error => {
+    handleError(500, error, res)
+    return
+  })
 }
 
 // exports.events_checkIn = (req, res) => {

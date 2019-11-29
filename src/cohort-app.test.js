@@ -198,6 +198,96 @@ describe('Basic startup', () => {
     expect(res2.status).toEqual(404)
   })
 
+  test('PATCH /events/:id/episodes -- error: event not found', async () => {
+    const res = await request(app)
+      .patch('/api/v2/events/99/episodes')
+      .send([{
+        episodeNumber: 1,
+        label: 'Act 1',
+        cues: []
+      }])
+
+    expect(res.status).toEqual(404)
+    expect(res.text).toEqual("Error: event with id:99 not found")
+  })
+
+  test('PATCH /events/:id/episodes -- error: empty payload', async () => {
+    const res = await request(app)
+      .patch('/api/v2/events/3/episodes')
+      .send()
+
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual("Error: you must provide an array of episodes")
+  })
+
+  test('PATCH /events/:id/episodes -- error: non-array payload format', async () => {
+    const res = await request(app)
+      .patch('/api/v2/events/3/episodes')
+      .send({
+        episodeNumber: 1,
+        label: 'Act 1',
+        cues: []
+      })
+
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual("Error: you must provide an array of episodes")
+  })
+
+  test('PATCH /events/:id/episodes -- error: episodes missing fields', async () => {
+    const res = await request(app)
+      .patch('/api/v2/events/3/episodes')
+      .send([{
+        episodeNumber: 1,
+        label: 'Act 1',
+        cues: 5
+      }])
+
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
+
+    const res1 = await request(app)
+      .patch('/api/v2/events/3/episodes')
+      .send([{
+        episodeNumber: 1,
+        cues: []
+      }])
+
+    expect(res1.status).toEqual(400)
+    expect(res1.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
+
+    const res2 = await request(app)
+      .patch('/api/v2/events/3/episodes')
+      .send([{
+        label: 'Act 1',
+        cues: []
+      }])
+
+    expect(res2.status).toEqual(400)
+    expect(res2.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
+
+    const res3 = await request(app)
+      .patch('/api/v2/events/3/episodes')
+      .send([{
+        episodeNumber: 1,
+        label: 'Act 1'
+      }])
+
+    expect(res3.status).toEqual(400)
+    expect(res3.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
+  })
+
+  test('PATCH /events/:id/episodes -- happy path', async () => {
+    const res = await request(app)
+      .patch('/api/v2/events/3/episodes')
+      .send([{
+        episodeNumber: 1,
+        label: 'Act 1',
+        cues: []
+      }])
+
+    expect(res.status).toEqual(200)
+  })
+
   // test('DELETE /events/:id -- error: open event cannot be deleted', async () =>{
   //   const res = await request(app)
   //     .delete('/api/v1/events/4')
