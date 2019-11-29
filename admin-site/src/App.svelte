@@ -190,13 +190,14 @@
     // };
 
     let QrResponse = async () => { 
-      await fetch(serverURL + "/occasions/3/qrcode", {
+      let response = await fetch(serverURL + "/occasions/3/qrcode", {
       method: 'GET'
       });
-      let qrcode = await QrResponse.text()
+      let qrcode = await response.text()
       let qrContainer = document.getElementById("QRcodeContainer")
       qrContainer.innerHTML = qrcode
     };
+    QrResponse();
 
     document.getElementById(id).style.display = "none";
     document.getElementById("QRcode").style.display = "block";
@@ -278,7 +279,7 @@
 <div id="eventsList">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-12 text-center mt-2">
+      <div class="col-md-12 text-center mt-4">
         <h1>Events</h1>
       </div>
     </div>
@@ -330,17 +331,21 @@
 <div id="occasionList">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-12">
+      <div class="col-12 mt-2">
         <button
 		      alt="back to events list"
           type="button"
           class="btn btn-outline-primary float-left mr-2"
           value="occasionList"
           on:click={backToEvents}>
-		  <!-- <span class="fa fa-angle-double-left" /> -->
+		  <span class="fa fa-angle-left" />
           Back
         </button>
-        <h1>Occasions</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 text-center">
+        <h3>Occasions</h3>
       </div>
     </div>
 
@@ -379,14 +384,14 @@
 <div id="openOccasion">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-4">
+      <div class="col-4 mt-2">
         <button
 		  alt="back to occasions list"
           type="button"
           class="btn btn-outline-primary"
           value="openOccasion"
           on:click={backToOccasionList}>
-		  <span class="fa fa-angle-double-left" />
+		  <span class="fa fa-angle-left" />
           Back
         </button>
       </div>
@@ -530,14 +535,14 @@
 <div id="closeOccasion">
   <div class="container-fluid">
     <div class="row">
-	  <div class="col-4 col-md-4">
+	  <div class="col-4 col-md-4 mt-2">
 	    <button
 			alt="back to Occasions list"
 			type="button"
 			class="btn btn-outline-primary"
 			value="closeOccasion"
 			on:click={backToOccasionList}>
-			<span class="fa fa-angle-double-left" />
+			<span class="fa fa-angle-left" />
 			Back
 	    </button>
 	  </div>

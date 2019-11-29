@@ -19,11 +19,10 @@ window.onCueSliderInput = (event) => {
               "targetTags": ["all"]
             }
           })
-          
           .then( response => {
             if(response.status == 200){
-              response.text().then( text => {
-                console.log(text)
+              response.json().then( details => {
+                console.log(details)
                 // vm.errorOnGo = false
                 event.target.disabled = false
                 event.target.value = 0
@@ -31,8 +30,8 @@ window.onCueSliderInput = (event) => {
                 event.target.classList.remove('cue-sent-response-pending')
               })
             } else {
-              response.json().then( body => {
-                console.log('error on request: ' + body.error)
+              response.text().then( errorMessage => {
+                console.log('error on request: ' + errorMessage)
                 // vm.errorOnGo = true
                 // vm.goResults = body.error
                 event.target.disabled = false
