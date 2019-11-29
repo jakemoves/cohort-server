@@ -266,6 +266,10 @@
     margin-bottom: 0;
   }
 
+  .form-control{
+    font-size:0.8rem;
+  }
+
 </style>
 
 <!-- Keeping this as a component cause it will likely need switching out -->
@@ -430,6 +434,14 @@
         </button>
       </div>
     </div>
+{#if gotEvents == true }
+  {#if focusedEvent.cues.length == 0}
+    <div class="row">
+      <div class="col-md-12">
+       <p>Sorry, no cues for this event can be found. We're cue-less.  </p>
+      </div>
+    </div>
+  {:else}
 
     <div class="row">
       <div class="col-md-12">
@@ -472,6 +484,8 @@
 
       </div>
     </div>
+   
+
 
     <div class="row">
       <!-- <div class="col-4 col-md-3"> -->
@@ -488,7 +502,7 @@
           class="btn btn-info"
           value="next"
           on:click={changeCueState}>
-          Next<span class="fas fa-angle-right" />
+         &nbsp;&nbsp;Next&nbsp;<span class="fas fa-angle-right" /> &nbsp;&nbsp;
         </button>
       </div>
       <!-- </div> -->
@@ -499,6 +513,8 @@
         <Slider />
       </div>
     </div>
+     {/if}
+  {/if} 
   </div>
 </div>
 
@@ -535,31 +551,30 @@
 <div id="closeOccasion">
   <div class="container-fluid">
     <div class="row">
-	  <div class="col-4 col-md-4 mt-2">
-	    <button
-			alt="back to Occasions list"
-			type="button"
-			class="btn btn-outline-primary"
-			value="closeOccasion"
-			on:click={backToOccasionList}>
-			<span class="fa fa-angle-left" />
-			Back
-	    </button>
-	  </div>
-	<!-- </div>
-    <div class="row"> -->
-
-      {#if gotEvents == true}
-        <div class="col-12 col-md-4 text-center">
-          <h3>
-            {focusedEvent.label} - {formattedStartTime}.
-          </h3>
-        </div>
-      {/if}
-	  <div class="col-4 text-center">
-        
+      <div class="col-4 col-md-4 mt-2">
+        <button
+        alt="back to Occasions list"
+        type="button"
+        class="btn btn-outline-primary"
+        value="closeOccasion"
+        on:click={backToOccasionList}>
+        <span class="fa fa-angle-left" />
+        Back
+        </button>
       </div>
+    <!-- </div>
+      <div class="row"> -->
+
+        {#if gotEvents == true}
+          <div class="col-12 col-md-4 text-center">
+            <h3>
+              {focusedEvent.label} - {formattedStartTime}.
+            </h3>
+          </div>
+        
+        {/if}
     </div>
+    <hr>
     <div class="row">
       <div class="col-md-12">
         <label for="OccasionDetails">
