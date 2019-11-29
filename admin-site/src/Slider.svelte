@@ -1,11 +1,53 @@
 
 <script>
-
+let requestURL = "http://localhost:3000/api/v2/occasions/3/broadcast"
 window.onCueSliderInput = (event) => {
-  const value = event.target.value
-  console.log(value)
-  if(value == 100){
+  const SliderValue = event.target.value
+  if( SliderValue == 100){  
 // user dragged slider all the way across — emit 'activated' event
+  try {
+      fetch(requestURL, {
+            method: 'POST',
+            //for local testing//
+            mode: 'no-cors',
+            // //
+            headers: { 'Content-Type': 'application/json'},
+            body: { 
+              "mediaDomain": 0,
+              "cueNumber": 1,
+              "cueAction": 0,
+              "targetTags": ["all"]
+            }
+          })
+          
+          .then( response => {
+            if(response.status == 200){
+              response.text().then( text => {
+                console.log(text)
+                // vm.errorOnGo = false
+                event.target.disabled = false
+                event.target.value = 0
+                event.target.classList.add('cue-sent-response-success')
+                event.target.classList.remove('cue-sent-response-pending')
+              })
+            } else {
+              response.json().then( body => {
+                console.log('error on request: ' + body.error)
+                // vm.errorOnGo = true
+                // vm.goResults = body.error
+                event.target.disabled = false
+                event.target.value = 0
+                event.target.classList.add('cue-sent-response-error')
+                event.target.classList.remove('cue-sent-response-pending')
+              })
+            }
+          }).catch( error => {
+            console.log("Error on push notification broadcast!")
+          })
+    } catch (e) {
+      console.log(e.message)
+      // vm.errorOnGo = true
+      } 
   }
 };
 

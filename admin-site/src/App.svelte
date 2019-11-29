@@ -279,7 +279,7 @@
               class="btn btn-outline-primary btn-block"
               value={event.label}
               on:click={eventButton}>
-              <p>Occasions&nbsp;<span style="font-size: 1.2rem" class="fas fa-angle-right" /></p>
+              <p>Occasions&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>
             </button>
           </div>
         </div>
@@ -412,20 +412,21 @@
         <p>{focusedEvent}</p>
         {#if focusedEvent != null && focusedEvent !== undefined}
           {#each focusedEvent.cues as cue}
+           
             {#if cue.cueNumber == cueState}
               <div id={cue.cueNumber}>
                 <ul>Media Domain:
-					{#if cue.mediaDomain == 0}
-					  Sound
-					{:else if cue.mediaDomain == 1}
-					  Video
-					{:else if cue.mediaDomain == 2}
-					  Text
-					{:else if cue.mediaDomain == 3}
-					  Light 
-					{:else if cue.mediaDomain == 4}
-					  Haptic
-					{/if}					  
+              {#if cue.mediaDomain == 0}
+                Sound
+              {:else if cue.mediaDomain == 1}
+                Video
+              {:else if cue.mediaDomain == 2}
+                Text
+              {:else if cue.mediaDomain == 3}
+                Light 
+              {:else if cue.mediaDomain == 4}
+                Haptic
+              {/if}					  
 					  </ul>
                 <ul>Cue Number: {cue.cueNumber}</ul>
                 <ul>Cue Action:
