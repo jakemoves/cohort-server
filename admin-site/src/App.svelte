@@ -177,6 +177,14 @@
     document.getElementById(id).style.display = "none";
     document.getElementById("occasionList").style.display = "block";
   }
+
+  function backToCloseOccasion() {
+    let id = this.value;
+    document.getElementById(id).style.display = "none";
+    document.getElementById("closeOccasion").style.display = "block";
+  }
+
+  
   function showQR() {
     let id = this.value;
     //grab QR code for that occasion and update
@@ -394,22 +402,22 @@
           type="button"
           class="btn btn-outline-primary"
           value="openOccasion"
-          on:click={backToOccasionList}>
+          on:click={backToCloseOccasion}>
 		  <span class="fa fa-angle-left" />
           Back
         </button>
       </div>
-    <!-- </div>
-    <div class="row"> -->
+    </div>
+    <!-- </div> -->
+    
       {#if gotEvents == true}
-        <div class="col-12 col-md-4 text-center">
+      <div class="row">
+        <div class="col-12 text-center">
           <h3>{focusedEvent.label} - {formattedStartTime}</h3>
         </div>
-      {/if}
-	  <div class="col-4 text-center">
-        
       </div>
-    </div>
+      {/if}
+   
     <hr />
 
     <div class="row ">
@@ -562,11 +570,11 @@
         Back
         </button>
       </div>
-    <!-- </div>
-      <div class="row"> -->
+    </div>
+      <div class="row">
 
         {#if gotEvents == true}
-          <div class="col-12 col-md-4 text-center">
+          <div class="col-12 text-center">
             <h3>
               {focusedEvent.label} - {formattedStartTime}.
             </h3>
