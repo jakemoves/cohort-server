@@ -21,6 +21,7 @@ router.get('/events', eventsController.events)
 router.get('/events/:id', eventsController.events_id)
 router.post('/events', eventsController.events_create)
 router.delete('/events/:id', eventsController.events_delete)
+router.patch('/events/:id/episodes', eventsController.events_update_episodes)
 
 /*
  *   occasions
