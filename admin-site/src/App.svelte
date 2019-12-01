@@ -18,6 +18,7 @@
     })
 
     events = await response.json()
+    console.log(events)
     gotEvents = true
     focusedEvent = events[0]
   })
@@ -124,10 +125,8 @@
     focusedOccasion = focusedEvent.occasions[indexInOccasions];
 
 	  formattedStartTimeFull = moment(focusedOccasion.startDateTime)
-	    .add(1, "day")
       .format("LLL");
     formattedEndTimeFull = moment(focusedOccasion.endDateTime)
-      .add(1, "day")
 	    .format("LLL");
 	  formattedStartTime = moment(focusedOccasion.startDateTime)
       .format("LL");
@@ -188,17 +187,9 @@
   function showQR() {
     let id = this.value;
     //grab QR code for that occasion and update
-    //  let QrResponse = async () => { 
-    //   await fetch(serverURL + "/" + focusedOccasion + "/" + focusedOccasionID + "/qrcode", {
-    //   method: 'GET'
-    //   });
-    //   let qrcode = await QrResponse.text()
-    //   let qrContainer = document.getElementById("QRcodeContainer")
-    //   qrContainer.innerHTML = qrcode
-    // };
-
+    // for testing "/occasions/3/qrcode"
     let QrResponse = async () => { 
-      let response = await fetch(serverURL + "/occasions/3/qrcode", {
+      let response = await fetch(serverURL + "/occasions/" + focusedOccasionID + "/qrcode", {
       method: 'GET'
       });
       let qrcode = await response.text()
@@ -214,7 +205,7 @@
   //this changes which cue details are shown
   function changeCueState() {
     let direction = this.value;
-    if (direction == "next" && cueState <= focusedEvent.cues.length - 1) {
+    if (direction == "next" && cueState <= focusedEvent.episodes[0].cues.length - 1) {
       cueState += 1;
     } else if (direction == "previous" && cueState > 1) {
       cueState -= 1;
@@ -237,12 +228,7 @@
     ];
     events = events.concat(newEvent);
   }
-  ////////
   
-  // function changeTime(date){
-  //   formattedTime = moment(date).format("LL");
-	//   console.log(formattedTime);
-  // };
 
   
 </script>
@@ -378,8 +364,8 @@
                       class="btn btn-outline-primary btn-block"
                       value={occasion.id}
                       on:click={occasionButton}>
-                      <h3 class="m-0">{event.label} - Occasion # {occasion.id}</h3>
-                      <h5>{occasion.locationCity} - {moment(occasion.startDateTime).format("LL")}</h5>	
+                      <h3 class="m-0">{event.label}  - {occasion.label} </h3>
+                      <h5>{occasion.locationCity} - {moment(occasion.startDateTime).format("LL")} - id:{occasion.id}</h5>	
                     </button>
                   </div>
                 </div>
@@ -443,7 +429,7 @@
       </div>
     </div>
 {#if gotEvents == true }
-  {#if focusedEvent.cues.length == 0}
+  {#if focusedEvent.episodes[0].cues.length == 0}
     <div class="row">
       <div class="col-md-12">
        <p>Sorry, no cues for this event can be found. We're cue-less.  </p>
@@ -454,9 +440,9 @@
     <div class="row">
       <div class="col-md-12">
         <h5>Cue Details</h5>
-        <p>{focusedEvent}</p>
+        
         {#if focusedEvent != null && focusedEvent !== undefined}
-          {#each focusedEvent.cues as cue}
+          {#each focusedEvent.episodes[0].cues as cue}
            
             {#if cue.cueNumber == cueState}
               <div id={cue.cueNumber}>
