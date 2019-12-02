@@ -1,17 +1,24 @@
+
 <script>
   import Login from "./Login.svelte";
-  import Slider from "./Slider.svelte";
+  // import Slider from "./Slider.svelte";
   import moment from "moment";
   import { onMount } from 'svelte';
   import { createEventDispatcher } from "svelte";
 
+
+  
+
   let events = []
-  let gotEvents = false
+  let gotEvents = false;
 
   // // TODO this needs to pickup an environment somehow (dev/staging/prod)
   // // let serverURL = "http://staging.cohort.rocks/api/v2"
   let serverURL = "http://localhost:3000/api/v2";
 
+  let requestURL = "http://localhost:3000/api/v2/occasions/3/broadcast"
+
+//grabbing events info from the server
   onMount( async () => {
     let response = await fetch(serverURL + "/events", {
       method: 'GET'
@@ -23,71 +30,126 @@
     focusedEvent = events[0]
   })
 
-  // let events = [
-  //   {
-  //     id: 1,
-  //     label: "LOT X",
-  //     //"heroImage": URL-TO-IMG, // optional
-  //     occasions: [
-  //       {
-  //         id: 1,
-  //         event_id: 1,
-  //         state: "closed", // can be open or closed; closed events cannot be joined
-  //         startDateTime: "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
-  //         doorsOpenDateTime: "2019-05-23T16:30:00.000Z",
-  //         endDateTime: "2019-05-29T03:50:00.000Z",
-  //         locationLabel: "Show #5",
-  //         locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
-  //         locationCity: "Toronto",
-  //         publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
-  //         devices: [
-  //           {
-  //             id: 1,
-  //             guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
-  //             apnsDeviceToken: null, // not used for now -- this is for push notifications
-  //             isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
-  //             tags: ["blue", "1984"]
-  //           }
-  //         ]
-  //       },
-  //       {
-  //         id: 2,
-  //         event_id: 1,
-  //         state: "closed", // can be open or closed; closed events cannot be joined
-  //         startDateTime: "2019-06-28T17:00:00.000Z", // stored in UTC, browser does conversion
-  //         doorsOpenDateTime: "2019-06-28T16:30:00.000Z",
-  //         endDateTime: "2019-07-10T03:50:00.000Z",
-  //         locationLabel: "Show #5",
-  //         locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
-  //         locationCity: "Toronto",
-  //         publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
-  //         devices: [
-  //           {
-  //             id: 1,
-  //             guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
-  //             apnsDeviceToken: null, // not used for now -- this is for push notifications
-  //             isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
-  //             tags: ["blue", "1984"]
-  //           }
-  //         ]
-  //       }
-  //     ],
-  //     cues: [
-  //       {
-  //         mediaDomain: 0, // enum: audio, video, text, light, haptic
-  //         cueNumber: 1,
-  //         cueAction: 0, // enum: play/on, pause, restart, stop/off
-  //         targetTags: ["all"]
-  //       },
-  //       {
-  //         mediaDomain: 0, // enum: audio, video, text, light, haptic
-  //         cueNumber: 2,
-  //         cueAction: 3, // enum: play/on, pause, restart, stop/off
-  //         targetTags: ["all"]
-  //       }
-  //     ]
-  //   }
-  // ];
+  window.onCueSliderInput = (event) => {
+  const SliderValue = event.target.value
+  if( SliderValue == 100){  
+// user dragged slider all the way across — emit 'activated' event
+  try {
+      fetch(requestURL, {
+            method: 'POST',
+            //for local testing//
+            mode: 'no-cors',
+            // //
+            headers: { 'Content-Type': 'application/json'},
+            body: { 
+              "mediaDomain": sliderCue.mediaDomain,
+              "cueNumber": sliderCue.cueNumber,
+              "cueAction": sliderCue.cueAction,
+              "targetTags": sliderCue.targetTags
+            }
+          })
+          .then( response => {
+            console.log(sliderCue.cueNumber);
+            console.log(response.status); 
+            if(response.status == 200){
+              response.json().then( details => {
+                console.log(details)
+                // vm.errorOnGo = false
+                event.target.disabled = false
+                event.target.value = 0
+                event.target.classList.add('cue-sent-response-success')
+                event.target.classList.remove('cue-sent-response-pending')
+              })
+            } else {
+              response.text().then( errorMessage => {
+                console.log('error on request: ' + errorMessage)
+                // vm.errorOnGo = true
+                // vm.goResults = body.error
+                event.target.disabled = false
+                event.target.value = 0
+                event.target.classList.add('cue-sent-response-error')
+                event.target.classList.remove('cue-sent-response-pending')
+              })
+            }
+          }).catch( error => {
+            console.log("Error on push notification broadcast!")
+          })
+    } catch (e) {
+      console.log(e.message)
+      // vm.errorOnGo = true
+      } 
+  }
+};
+
+//for testing
+//   let events = [
+//     {
+//       id: 2,
+//       label: "LOT X",
+//       //"heroImage": URL-TO-IMG, // optional
+//       occasions: [
+//         {
+//           id: 1,
+//           event_id: 1,
+//           state: "closed", // can be open or closed; closed events cannot be joined
+//           startDateTime: "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
+//           doorsOpenDateTime: "2019-05-23T16:30:00.000Z",
+//           endDateTime: "2019-05-29T03:50:00.000Z",
+//           locationLabel: "Show #5",
+//           locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
+//           locationCity: "Toronto",
+//           publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
+//           devices: [
+//             {
+//               id: 1,
+//               guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
+//               apnsDeviceToken: null, // not used for now -- this is for push notifications
+//               isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
+//               tags: ["blue", "1984"]
+//             }
+//           ]
+//         },
+//         {
+//           id: 2,
+//           event_id: 1,
+//           state: "closed", // can be open or closed; closed events cannot be joined
+//           startDateTime: "2019-06-28T17:00:00.000Z", // stored in UTC, browser does conversion
+//           doorsOpenDateTime: "2019-06-28T16:30:00.000Z",
+//           endDateTime: "2019-07-10T03:50:00.000Z",
+//           locationLabel: "Show #5",
+//           locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
+//           locationCity: "Toronto",
+//           publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
+//           devices: [
+//             {
+//               id: 1,
+//               guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
+//               apnsDeviceToken: null, // not used for now -- this is for push notifications
+//               isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
+//               tags: ["blue", "1984"]
+//             }
+//           ]
+//         }
+//       ],
+//       episodes:[
+//         {
+//           cues: [
+//             {
+//           mediaDomain: 0, // enum: audio, video, text, light, haptic
+//           cueNumber: 1,
+//           cueAction: 0, // enum: play/on, pause, restart, stop/off
+//           targetTags: ["all"]
+//         },
+//         {
+//           mediaDomain: 0, // enum: audio, video, text, light, haptic
+//           cueNumber: 2,
+//           cueAction: 3, // enum: play/on, pause, restart, stop/off
+//           targetTags: ["all"]
+//         }
+//       ]
+//     }]
+//   }
+// ];
 
   //for new event creation parameters
   let label = "";
@@ -108,6 +170,8 @@
   let indexInEvents;
   let indexInOccasions;
 
+  let sliderCue;
+
   // when an event button is hit only open occasions for that event
   function eventButton() {
     document.getElementById("eventsList").style.display = "none";
@@ -115,6 +179,10 @@
     focusedEventLabel = this.value;
     indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
     focusedEvent = events[indexInEvents];
+
+     
+    //set up slider cue to hold cues in first index (0)
+     sliderCue = focusedEvent.episodes[0].cues[0]
   }
   
   function occasionButton() {
@@ -212,6 +280,10 @@
     } else {
       cueState = 1;
     }
+
+    //update broadcast message 
+    sliderCue = focusedEvent.episodes[0].cues[cueState-1];
+    
   }
 
   /////for new event generation
@@ -228,9 +300,8 @@
     ];
     events = events.concat(newEvent);
   }
-  
 
-  
+
 </script>
 
 <style>
@@ -264,6 +335,110 @@
     font-size:0.8rem;
   }
 
+
+/* Slider style */
+label{
+    margin: 1rem;
+}
+/* Slider CSS */
+#cue-control-go {
+  -webkit-appearance: none;
+  width: 40%;
+  margin: 1rem 5%;
+padding: 0; }
+
+#cue-control-go:focus {
+  outline: none; }
+
+#cue-control-go::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 50px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 50px;
+  border: 0px solid #010101; }
+
+#cue-control-go .cue-sent-response-pending::-webkit-slider-runnable-track {
+  background: #5fa36f; }
+
+#cue-control-go .cue-sent-response-success::-webkit-slider-runnable-track {
+  background: #28a745; }
+
+#cue-control-go .cue-sent-response-error::-webkit-slider-runnable-track {
+  background: #dc3545; }
+
+#cue-control-go:disabled::-webkit-slider-runnable-track {
+  background: #6C8CA8; }
+
+#cue-control-go::-webkit-slider-thumb {
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border: 1px solid #000000;
+  height: 50px;
+  width: 75px;
+  border-radius: 50px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: 0px; }
+
+#cue-control-go:focus::-webkit-slider-runnable-track {
+  background: #367ebd; }
+
+#cue-control-go::-moz-range-track {
+  width: 100%;
+  height: 50px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 0px;
+  border: 0px solid #010101; }
+
+#cue-control-go::-moz-range-thumb {
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border: 1px solid #000000;
+  height: 50px;
+  width: 75px;
+  border-radius: 50px;
+  background: #ffffff;
+  cursor: pointer; }
+
+#cue-control-go::-ms-track {
+  width: 100%;
+  height: 50px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent; }
+
+#cue-control-go::-ms-fill-lower {
+  background: #2a6495;
+  border: 0px solid #010101;
+  border-radius: 0px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; }
+
+#cue-control-go::-ms-fill-upper {
+  background: #3071a9;
+  border: 0px solid #010101;
+  border-radius: 0px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; }
+
+#cue-control-go::-ms-thumb {
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border: 1px solid #000000;
+  width: 75px;
+  border-radius: 50px;
+  background: #ffffff;
+  cursor: pointer;
+  height: 50px; }
+
+#cue-control-go:focus::-ms-fill-lower {
+  background: #3071a9; }
+
+#cue-control-go:focus::-ms-fill-upper {
+  background: #367ebd; }
+
+  /* end of Slider style */
 </style>
 
 <!-- Keeping this as a component cause it will likely need switching out -->
@@ -445,7 +620,8 @@
           {#each focusedEvent.episodes[0].cues as cue}
            
             {#if cue.cueNumber == cueState}
-              <div id={cue.cueNumber}>
+            
+              <div id={cue.cueNumber} >
                 <ul>Media Domain:
               {#if cue.mediaDomain == 0}
                 Sound
@@ -504,7 +680,10 @@
 
     <div class="row mt-3">
       <div class="col-md-12">
-        <Slider />
+         <div class="text-center">
+        <label for="cue-control-go">Drag slider to the right to fire cue</label>
+        <input class="cue-controls__cue-controls-go" type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event) v-bind:disabled="selectedOccasion == null">
+    </div>
       </div>
     </div>
      {/if}

@@ -1,4 +1,3 @@
-
 <script>
 let requestURL = "http://localhost:3000/api/v2/occasions/3/broadcast"
 window.onCueSliderInput = (event) => {
@@ -13,10 +12,10 @@ window.onCueSliderInput = (event) => {
             // //
             headers: { 'Content-Type': 'application/json'},
             body: { 
-              "mediaDomain": 0,
-              "cueNumber": 1,
-              "cueAction": 0,
-              "targetTags": ["all"]
+              "mediaDomain": _mediaDomain,
+              "cueNumber": _cueNumber,
+              "cueAction": _cueAction,
+              "targetTags": _targetTags
             }
           })
           .then( response => {
@@ -50,6 +49,7 @@ window.onCueSliderInput = (event) => {
       } 
   }
 };
+
 
 </script>
 
