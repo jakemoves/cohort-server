@@ -34,7 +34,7 @@ Building for production:
 - `jest app`
 
 ### building the server
-- `npx babel src --out-dir lib -w --source-maps --ignore 'src/**/*.test.js'`
+- `npm build`
 
 ### obtaining secret key files
 - ask project lead for APN key and dot-env files
