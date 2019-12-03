@@ -21,15 +21,16 @@
   let requestURL = serverURL + "/occasions/3/broadcast"
 
 //grabbing events info from the server
-  onMount( async () => {
+  let GetEvents = async () => {
     let response = await fetch(serverURL + "/events", {
       method: 'GET'
     })
 
     events = await response.json()
     gotEvents = true
+    console.log(serverURL)
     focusedEvent = events[0]
-  })
+  }
 
   window.onCueSliderInput = (event) => {
   const SliderValue = event.target.value
@@ -310,7 +311,7 @@
         authenticated = true;
         document.getElementById("eventsList").style.display="block";
         
-        
+        GetEvents();
       }
     }
 </script>
@@ -478,7 +479,7 @@ padding: 0; }
         <label for="urlSelect">Select Dev Mode</label>
         <select bind:value={serverURL} size= "1" class="form-control" id="urlSelect" name="selector">
           <option value="http://localhost:3000/api/v2">Development</option>
-          <option value="https://staging.cohort.rocks/">Production</option>
+          <option value="https://staging.cohort.rocks/api/v2">Production</option>
         </select>
       </div>
 
