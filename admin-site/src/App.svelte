@@ -176,6 +176,9 @@
 //password check on login
   let authenticated = false;
 
+//to show/hide dev Tools.
+  let devElement = false;
+
   // when an event button is hit only open occasions for that event
   function eventButton() {
     document.getElementById("eventsList").style.display = "none";
@@ -314,6 +317,17 @@
         GetEvents();
       }
     }
+    
+    function HideShowDev() {
+     let devTools = document.getElementById('devTools');
+
+        if(devTools.style.visibility == "visible"){
+          devTools.style.visibility = "hidden";
+        } else {
+          devTools.style.visibility = "visible"
+        }
+    }
+  
 </script>
 
 <style>
@@ -325,6 +339,10 @@
   #confirmDelete,
   #confirmEndOccasion {
     display: none;
+  }
+  #devTools{
+    visibility: hidden;
+
   }
 
   #createEventInput {
@@ -474,15 +492,19 @@ padding: 0; }
       </div>
 
       <button type="button" class="btn btn-primary" on:click={verifyPassword}> Log In </button>
-                
-      <div class="form-group">
+
+      <div class="form-group mt-5">
+        <button type="button" class="btn btn-light btn-outline-dark btn-sm mt-4" on:click={HideShowDev}> Show/Hide Developer Tools </button>
+       </div>    
+     
+      <div class="form-group" id = "devTools">
         <label for="urlSelect">Select Dev Mode</label>
         <select bind:value={serverURL} size= "1" class="form-control" id="urlSelect" name="selector">
-          <option value="http://localhost:3000/api/v2">Development</option>
           <option value="https://staging.cohort.rocks/api/v2">Production</option>
+          <option value="http://localhost:3000/api/v2">Development</option>
         </select>
       </div>
-
+      
     </form>
   </div>
   {/if}
@@ -500,7 +522,7 @@ padding: 0; }
     <hr />
 
     {#if events.length === 0}
-      <p>No events have been added yet</p>
+      <p> That's uneventful. Sorry, no events have been added yet</p>
     {:else}
       {#each events as event}
         <div class="row mt-2">
@@ -523,7 +545,7 @@ padding: 0; }
 
     <hr />
     <!-- event creation -->
-    <div class="input-group mb-auto">
+    <!-- <div class="input-group mb-auto">
       <input
         type="text"
         id="title"
@@ -536,7 +558,7 @@ padding: 0; }
           Create New Event
         </button>
       </div>
-    </div>
+    </div> -->
 
   </div>
 </div>
