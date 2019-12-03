@@ -1,6 +1,6 @@
 
 <script>
-  import Login from "./Login.svelte";
+  // import Login from "./Login.svelte";
   // import Slider from "./Slider.svelte";
   import moment from "moment";
   import { onMount } from 'svelte';
@@ -13,10 +13,12 @@
   let gotEvents = false;
 
   // // TODO this needs to pickup an environment somehow (dev/staging/prod)
-  // // let serverURL = "http://staging.cohort.rocks/api/v2"
-  let serverURL = "http://localhost:3000/api/v2";
+  // // let serverURL = "https://staging.cohort.rocks/api/v2"
+  
+  // let serverURL = "http://localhost:3000/api/v2";
+  let serverURL;
 
-  let requestURL = "http://localhost:3000/api/v2/occasions/3/broadcast"
+  let requestURL = serverURL + "/occasions/3/broadcast"
 
 //grabbing events info from the server
   onMount( async () => {
@@ -25,7 +27,6 @@
     })
 
     events = await response.json()
-    console.log(events)
     gotEvents = true
     focusedEvent = events[0]
   })
@@ -171,6 +172,8 @@
   let indexInOccasions;
 
   let sliderCue;
+//password check on login
+  let authenticated = false;
 
   // when an event button is hit only open occasions for that event
   function eventButton() {
@@ -300,8 +303,16 @@
     ];
     events = events.concat(newEvent);
   }
-
-
+    function verifyPassword(){
+      // verifying password logic 
+      var passwordCheck = document.getElementById('password').value;
+      if (passwordCheck == "5555"){
+        authenticated = true;
+        document.getElementById("eventsList").style.display="block";
+        
+        
+      }
+    }
 </script>
 
 <style>
@@ -443,8 +454,37 @@ padding: 0; }
 
 <!-- Keeping this as a component cause it will likely need switching out -->
 <div id="login">
-  <Login />
+  {#if !authenticated}
+  <div class="container">
+    <form id="formContent">
 
+      <div class="row"> 
+        <div class= "col-md-12 text-center mt-4 mb-2">  
+          <h4>Welcome Administrator</h4>
+        </div>
+      </div>
+
+      <div class="form-group">
+          <input type="text" id="login" class="form-control" name="login" placeholder="username"> 
+      </div>
+
+      <div class="form-group"> 
+        <input type="text" id="password" class="form-control" name="login" placeholder="password">     
+      </div>
+
+      <button type="button" class="btn btn-primary" on:click={verifyPassword}> Log In </button>
+                
+      <div class="form-group">
+        <label for="urlSelect">Select Dev Mode</label>
+        <select bind:value={serverURL} size= "1" class="form-control" id="urlSelect" name="selector">
+          <option value="http://localhost:3000/api/v2">Development</option>
+          <option value="https://staging.cohort.rocks/">Production</option>
+        </select>
+      </div>
+
+    </form>
+  </div>
+  {/if}
 </div>
 
 <!-- #eventsList allows a list of events to be built and shown -->
