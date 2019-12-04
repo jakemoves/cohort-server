@@ -38,7 +38,8 @@
     "@babel/cli": "^7.2.3"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "babel src --out-dir lib --source-maps --ignore 'src/**/*.test.js'"
   },
   "engines": {
     "node": "8.16.0"

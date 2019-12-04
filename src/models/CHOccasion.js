@@ -79,6 +79,7 @@ class CHOccasion extends machina.Fsm {
 
   addDevice(device){
     this.handle('addDevice', device)
+    console.log("" + this.devices.length + " devices connected")
   }
 }
 
