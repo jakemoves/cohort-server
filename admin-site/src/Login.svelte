@@ -20,7 +20,6 @@
 </style>
 
 {#if !authenticated}
-<!-- kept this as a modal-dialog class because it contains things more tightly --> 
   <div class="container">
     <form id="formContent">
       <div class="row"> 
