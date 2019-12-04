@@ -18,7 +18,6 @@
   // let serverURL = "http://localhost:3000/api/v2";
   let serverURL;
 
-  let requestURL = serverURL + "/occasions/3/broadcast"
 
 //grabbing events info from the server
   let GetEvents = async () => {
@@ -32,26 +31,27 @@
     focusedEvent = events[0]
   }
 
+  
   window.onCueSliderInput = (event) => {
   const SliderValue = event.target.value
   if( SliderValue == 100){  
 // user dragged slider all the way across — emit 'activated' event
   try {
-      fetch(requestURL, {
+      fetch(serverURL + "/occasions/3/broadcast", {
             method: 'POST',
-            //for local testing//
-            mode: 'no-cors',
-            // //
             headers: { 'Content-Type': 'application/json'},
-            body: { 
+            body: JSON.stringify({ 
               "mediaDomain": sliderCue.mediaDomain,
               "cueNumber": sliderCue.cueNumber,
               "cueAction": sliderCue.cueAction,
               "targetTags": sliderCue.targetTags
-            }
+              	// "mediaDomain": 0,
+	              // "cueNumber": 1,
+	              // "cueAction": 0,
+	              // "targetTags": ["all"]
+            })
           })
           .then( response => {
-            console.log(sliderCue.cueNumber);
             console.log(response.status); 
             if(response.status == 200){
               response.json().then( details => {
