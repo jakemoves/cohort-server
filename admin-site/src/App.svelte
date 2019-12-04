@@ -37,7 +37,7 @@
   if( SliderValue == 100){  
 // user dragged slider all the way across — emit 'activated' event
   try {
-      fetch(serverURL + "/occasions/3/broadcast", {
+      fetch(serverURL + "/occasions/" + focusedOccasionID + "/broadcast", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify({ 
@@ -56,7 +56,6 @@
             if(response.status == 200){
               response.json().then( details => {
                 console.log(details)
-                // vm.errorOnGo = false
                 event.target.disabled = false
                 event.target.value = 0
                 event.target.classList.add('cue-sent-response-success')
@@ -65,8 +64,7 @@
             } else {
               response.text().then( errorMessage => {
                 console.log('error on request: ' + errorMessage)
-                // vm.errorOnGo = true
-                // vm.goResults = body.error
+      
                 event.target.disabled = false
                 event.target.value = 0
                 event.target.classList.add('cue-sent-response-error')
@@ -212,6 +210,55 @@
   function openOccasionButton() {
     document.getElementById("closeOccasion").style.display = "none";
     document.getElementById("openOccasion").style.display = "block";
+
+    try {
+      fetch(serverURL + "/occasions/" + focusedOccasionID, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({"state":"opened"}) 
+      }).then( response => { 
+            if(response.status == 200){
+              response.json().then( details => {
+              })
+            } else {
+              response.text().then( errorMessage => {
+                console.log('occasion open error on request: ' + errorMessage)
+              })
+            }
+      }).catch( error => {
+            console.log("Error occasion open")
+          })
+    } catch (e) {
+      console.log(e.message)
+      } 
+  };
+
+  function closeOccasionButton(){
+    document.getElementById('confirmEndOccasion').style.display = "none";
+    document.getElementById("closeOccasion").style.display = "block";
+
+    try {
+      fetch(serverURL + "/occasions/" + focusedOccasionID, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({"state":"closed"}) 
+      }).then( response => { 
+            
+            if(response.status == 200){
+              response.json().then( details => {
+              })
+            } else {
+              response.text().then( errorMessage => {
+                console.log('occasion close error on request: ' + errorMessage)
+              })
+            }
+      }).catch( error => {
+            console.log("Error occasion close")
+          })
+    } catch (e) {
+      console.log(e.message)
+      } 
+
   }
 
   function confirmOccasionDelete() {
@@ -650,7 +697,7 @@ padding: 0; }
           type="button"
           class="btn btn-outline-danger btn-block"
           on:click={confirmEnd}>
-          End Occasion
+          Close Occasion
         </button>
       </div>
     </div>
@@ -921,8 +968,8 @@ padding: 0; }
           type="button"
           class="btn btn-outline-danger"
           value="confirmEndOccasion"
-          on:click={backToEvents}>
-          End Occasion
+          on:click={closeOccasionButton}>
+          Close Occasion
         </button>
       </div>
       {/if}
