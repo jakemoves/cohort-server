@@ -150,7 +150,15 @@ exports.occasions_qrcode = async (req, res) => {
   }
 
   const baseURL = req.hostname
-  const qrcodeURL = req.protocol + '://' + baseURL + '/api/v2/occasions/' + occasionId + '/join'
+  let protocol
+
+  if(baseURL.match(/local/) != null){
+    protocol = "http"
+  } else {
+    protocol = "https"
+  }
+
+  const qrcodeURL = protocol + '://' + baseURL + '/join/occasions/' + occasionId
 
   try {
     const qrcode = await qrcodeService.getQRCode(qrcodeURL)

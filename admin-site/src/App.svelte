@@ -545,10 +545,10 @@ padding: 0; }
        </div>    
      
       <div class="form-group" id = "devTools">
-        <label for="urlSelect">Select Dev Mode</label>
+        <label for="urlSelect">Select Cohort server to connect to</label>
         <select bind:value={serverURL} size= "1" class="form-control" id="urlSelect" name="selector">
-          <option value="https://staging.cohort.rocks/api/v2">Production</option>
-          <option value="http://localhost:3000/api/v2">Development</option>
+          <option value="https://staging.cohort.rocks/api/v2">Staging</option>
+          <option value="http://localhost:3000/api/v2">Development (localhost)</option>
         </select>
       </div>
       
