@@ -205,6 +205,9 @@ describe('Basic startup', () => {
 
     expect(res.status).toEqual(400)
     expect(res.text).toEqual("Error: an event with open occasions cannot be deleted. Close occasion:" + openOccasionId + " and try again.")
+
+    const res2 = await request(app).get('/api/v2/events/2')
+    expect(res2.status).toEqual(200)
   })
 
   test('DELETE /events/:id -- happy path', async () => {
