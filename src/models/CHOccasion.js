@@ -36,6 +36,7 @@ class CHOccasion extends machina.Fsm {
 
               if(deviceIndex !== undefined){
                 this.devices.splice(deviceIndex, 1)
+                console.log("" + this.devices.length + " devices connected to occasion:" + this.id)
               } else {
                 throw new Error('Device with closed socket not found in occasion.devices')
               }
@@ -79,7 +80,7 @@ class CHOccasion extends machina.Fsm {
 
   addDevice(device){
     this.handle('addDevice', device)
-    console.log("" + this.devices.length + " devices connected")
+    console.log("" + this.devices.length + " devices connected to occasion:" + this.id)
   }
 }
 
