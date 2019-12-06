@@ -82,7 +82,22 @@ exports.events_create = (req, res) => {
   })
 }
 
-exports.events_delete = (req, res) => {
+exports.events_delete = async (req, res) => {
+  const event = await eventsTable.getOneByID(req.params.id)
+
+  if(event == null){
+    handleError(404, "Error: event with id:" + req.params.id + " not found", res)
+    return
+  }
+
+  // there are fancier ways to do this, sure
+  for(i = 0; i < event.occasions.length; i++){
+    if(event.occasions[i].state == 'opened'){
+      handleError(400, "Error: an event with open occasions cannot be deleted. Close occasion:" + event.occasions[i].id + " and try again.", res)
+      return
+    }
+  }
+
   return eventsTable.deleteOne(req.params.id)
     .then( (deletedIds) => {
       if(deletedIds.length == 1) {

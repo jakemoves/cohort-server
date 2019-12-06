@@ -2,6 +2,7 @@
 // Released under the MIT License (see /LICENSE)
 
 const machina = require('machina')
+// occasions are modeled as a finite state machine
 
 class CHOccasion extends machina.Fsm {
   id
