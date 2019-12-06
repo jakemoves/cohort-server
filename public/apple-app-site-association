@@ -3,7 +3,7 @@
     "apps": [],
     "details": [{
       "appID": "J93D25NHHG.rocks.cohort.cohort-unity-client",
-      "paths": ["/api/v2/occasions/*"]
+      "paths": ["join/occasions/*"]
     }]
   }
 }
