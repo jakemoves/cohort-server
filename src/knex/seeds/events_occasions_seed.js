@@ -12,31 +12,60 @@ exports.seed = function(knex, Promise) {
           "cueNumber": 1,
           "cueAction": 0,
           "targetTags": ["all"]          
+        },{ 
+          "mediaDomain": 0,
+          "cueNumber": 2,
+          "cueAction": 0,
+          "targetTags": ["all"]          
+        },{ 
+          "mediaDomain": 0,
+          "cueNumber": 1,
+          "cueAction": 0,
+          "targetTags": ["all"]          
+        },{ 
+          "mediaDomain": 1,
+          "cueNumber": 1,
+          "cueAction": 0,
+          "targetTags": ["all"]          
+        },{ 
+          "mediaDomain": 2,
+          "cueNumber": 1,
+          "cueAction": 0,
+          "targetTags": ["all"]          
+        },{ 
+          "mediaDomain": 4,
+          "cueNumber": 1,
+          "cueAction": 0,
+          "targetTags": ["all"]          
         }]
       } else {
         cues = []
       }
 
-      return JSON.stringify([{
+      return JSON.stringify([defaultEpisode(eventLabel, cues)])
+    }
+
+    defaultEpisode = (label, cues) => {
+      return {
         episodeNumber: 0,
-        label: eventLabel,
+        label: label,
         cues: cues
-      }])
+      }
     }
 
     return knex('events').insert([
-      {label: 'pimohtēwak', episodes: defaultEpisodeAsJSON('pimohtēwak')},
-      {label: 'lot_x', episodes: defaultEpisodeAsJSON('lot_x', true)},
-      {label: 'midway', episodes: defaultEpisodeAsJSON('midway')},
-      {label: 'fluxdelux', episodes: defaultEpisodeAsJSON('fluxdelux')},
-      {label: 'café sarajevo', episodes: defaultEpisodeAsJSON('café sarajevo')}
+      {label: 'pimohtēwak', episodes: defaultEpisodeAsJSON('pimohtēwak', false)},
+      {label: 'demo event', episodes: defaultEpisodeAsJSON('demo event', true)},
+      {label: 'midway', episodes: defaultEpisodeAsJSON('midway', false)},
+      {label: 'fluxdelux', episodes: defaultEpisodeAsJSON('fluxdelux', false)},
+      {label: 'café sarajevo', episodes: defaultEpisodeAsJSON('café sarajevo', false)}
     ])
     .then( () => {
       // add occasions to events
       return knex.raw('TRUNCATE TABLE occasions RESTART IDENTITY CASCADE').then( () => {
         return knex('occasions').insert([
           { 
-            event_id: 4,
+            event_id: 2,
             label: 'Show 1',
             state: 'closed',
             doorsOpenDateTime: '2019-04-01 13:30:00+05:00',
@@ -47,7 +76,7 @@ exports.seed = function(knex, Promise) {
             locationCity: 'Toronto'
           },{
             // overnight occasion
-            event_id: 4,
+            event_id: 2,
             label: 'Show 2',
             state: 'closed',
             doorsOpenDateTime: '2019-05-31 09:30:00+05:00',
@@ -68,7 +97,7 @@ exports.seed = function(knex, Promise) {
             locationCity: 'Toronto'
           },{ 
             event_id: 2,
-            label: 'Show 1',
+            label: 'Show 3',
             state: 'closed',
             doorsOpenDateTime: '2019-06-02 13:30:00+05:00',
             startDateTime: '2019-06-02 14:00:00+05:00',
@@ -78,7 +107,7 @@ exports.seed = function(knex, Promise) {
             locationCity: 'Toronto'
           },{ 
             event_id: 2,
-            label: 'Show 2',
+            label: 'Show 4',
             state: 'closed',
             doorsOpenDateTime: '2019-06-03 13:30:00+05:00',
             startDateTime: '2019-06-03 14:00:00+05:00',

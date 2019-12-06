@@ -84,16 +84,13 @@ describe('Basic startup', () => {
     expect(res.status).toEqual(200)
     expect(res.body).toHaveLength(5)
 
-    expect(res.body[0]).toHaveProperty('label')
-    expect(res.body[0].label).toEqual('pimohtēwak')
-
     expect(res.body[1]).toHaveProperty('label')
-    expect(res.body[1].label).toEqual('lot_x')
+    expect(res.body[1].label).toEqual('demo event')
 
-    expect(res.body[3]).toHaveProperty('occasions')
-    expect(res.body[3].occasions).toHaveLength(2)
-    expect(res.body[3].occasions[0]).toHaveProperty('label')
-    expect(res.body[3].occasions[0].label).toEqual('Show 1')
+    expect(res.body[1]).toHaveProperty('occasions')
+    expect(res.body[1].occasions).toHaveLength(5)
+    expect(res.body[1].occasions[0]).toHaveProperty('label')
+    expect(res.body[1].occasions[0].label).toEqual('Show 1')
 
   })
 
@@ -119,15 +116,15 @@ describe('Basic startup', () => {
     expect(res2.status).toEqual(200)
 
     expect(res2.body).toHaveProperty('occasions')
-    expect(res2.body.occasions).toHaveLength(3)
-    expect(res2.body.occasions[0].state).toEqual('opened')
+    expect(res2.body.occasions).toHaveLength(5)
+    expect(res2.body.occasions[2].state).toEqual('opened')
 
     expect(res2.body.episodes).toBeDefined()
     expect(res2.body.episodes).toHaveLength(1)
-    expect(res2.body.episodes[0].label).toEqual('lot_x')
+    expect(res2.body.episodes[0].label).toEqual('demo event')
     expect(res2.body.episodes[0].episodeNumber).toEqual(0)
     expect(res2.body.episodes[0].cues).toBeDefined()
-    expect(res2.body.episodes[0].cues).toHaveLength(1)
+    expect(res2.body.episodes[0].cues).toHaveLength(6)
   })
 
   test('GET /events/:id -- error: event not found', async () => {
