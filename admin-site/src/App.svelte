@@ -27,7 +27,6 @@
     events = await response.json()
     gotEvents = true
     focusedEvent = events[0]
-    console.log(events);
     storedEvents = writable(events);
     // storedEvents.subscribe(value => {
     //   console.log(value);
@@ -283,7 +282,7 @@
     document.getElementById("eventsList").style.display = "block";
     //updates Events to remove occasion.
     focusedEvent.occasions.splice(indexInOccasions, 1);
-    console.log(events);
+    
     storedEvents.update(value => events);
     storedEvents.subscribe(value => {
       console.log(value);
