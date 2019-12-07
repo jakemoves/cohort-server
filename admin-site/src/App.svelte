@@ -192,10 +192,15 @@
   
   function occasionButton() {
     document.getElementById("occasionList").style.display = "none";
-    document.getElementById("closeOccasion").style.display = "block";
     focusedOccasionID = this.value;
     indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
     focusedOccasion = focusedEvent.occasions[indexInOccasions];
+
+    if(focusedOccasion.state == "closed"){
+      document.getElementById("closeOccasion").style.display = "block";
+    } else {
+      document.getElementById("openOccasion").style.display = "block";
+    }
 
 	  formattedStartTimeFull = moment(focusedOccasion.startDateTime)
       .format("LLL");
@@ -327,14 +332,13 @@
   //this changes which cue details are shown
   function changeCueState() {
     let direction = this.value;
-    if (direction == "next" && cueState <= focusedEvent.episodes[0].cues.length - 1) {
+    let amountOfCues = focusedEvent.episodes[0].cues.length;
+    if (direction == "next" && cueState < amountOfCues - 1) {
       cueState += 1;
-    } else if (direction == "previous" && cueState > 1) {
+    } else if (direction == "previous" && cueState > 0) {
       cueState -= 1;
-    } else {
-      cueState = 1;
-    }
-
+    } 
+    console.log (cueState);
     //update broadcast message 
     sliderCue = focusedEvent.episodes[0].cues[cueState-1];
     
@@ -674,7 +678,7 @@ padding: 0; }
           type="button"
           class="btn btn-outline-primary abs-left"
           value="openOccasion"
-          on:click={backToCloseOccasion}>
+          on:click={backToOccasionList}>
           <span class="fa fa-angle-left" />
           Back
         </button>
@@ -722,9 +726,8 @@ padding: 0; }
         <h5>Cue Details</h5>
         
         {#if focusedEvent != null && focusedEvent !== undefined}
-          {#each focusedEvent.episodes[0].cues as cue}
-           
-            {#if cue.cueNumber == cueState}
+          {#each focusedEvent.episodes[0].cues as cue, index}
+            {#if index == cueState}
             
               <div id={cue.cueNumber} >
                 <ul>Media Domain:
@@ -769,6 +772,7 @@ padding: 0; }
           type="button"
           class="btn btn-info"
           value="previous"
+          disabled={cueState == 1}
           on:click={changeCueState}><span class="fas fa-angle-left"/>&nbsp;Previous</button>
       <!-- </div> -->
       <!-- <div class="col-4 col-md-3"> -->
@@ -776,6 +780,7 @@ padding: 0; }
           type="button"
           class="btn btn-info"
           value="next"
+          disabled={cueState == focusedEvent.episodes[0].cues.length-1}
           on:click={changeCueState}>
          &nbsp;&nbsp;Next&nbsp;<span class="fas fa-angle-right" /> &nbsp;&nbsp;
         </button>
