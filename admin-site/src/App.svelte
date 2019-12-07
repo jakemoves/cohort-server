@@ -8,10 +8,10 @@
   import { writable } from 'svelte/store';
   
 
-  let events = []
+  let storedEvents;
   let gotEvents = false;
   //holds a store of events
-  let storedEvents;
+  $: events = [];
 
   // // TODO this needs to pickup an environment somehow (dev/staging/prod)
   //serverURL populated with dropdown at login - default is staging.cohort.rocks
@@ -24,13 +24,14 @@
       method: 'GET'
     })
 
-    events = await response.json()
+    let grabbedFromServerEvents = await response.json()
     gotEvents = true
+    
+    storedEvents = writable(grabbedFromServerEvents);
+    storedEvents.subscribe(value => {
+      events = value;
+    });
     focusedEvent = events[0]
-    storedEvents = writable(events);
-    // storedEvents.subscribe(value => {
-    //   console.log(value);
-    // });
   }
 
   
@@ -277,13 +278,17 @@
 
   function deleteOccasion() {
     let value;
-    // deletion code goes here
+    let eventful = true;
     document.getElementById("confirmDelete").style.display = "none";
-    document.getElementById("eventsList").style.display = "block";
-    //updates Events to remove occasion.
+    document.getElementById("occasionList").style.display = "block";
+    //updates Events to remove selected occasion.
     focusedEvent.occasions.splice(indexInOccasions, 1);
     
-    storedEvents.update(value => events);
+    // update storedEvents with new events object
+    storedEvents.update(value => {
+      if (eventful) value = events; 
+      
+    });
     storedEvents.subscribe(value => {
       console.log(value);
     });
@@ -363,7 +368,7 @@
     } else if (direction == "previous" && cueState > 0) {
       cueState -= 1;
     } 
-    console.log (cueState);
+    
     //update broadcast message 
     sliderCue = focusedEvent.episodes[0].cues[cueState-1];
     
