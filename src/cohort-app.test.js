@@ -84,16 +84,13 @@ describe('Basic startup', () => {
     expect(res.status).toEqual(200)
     expect(res.body).toHaveLength(5)
 
-    expect(res.body[0]).toHaveProperty('label')
-    expect(res.body[0].label).toEqual('pimohtēwak')
-
     expect(res.body[1]).toHaveProperty('label')
-    expect(res.body[1].label).toEqual('lot_x')
+    expect(res.body[1].label).toEqual('demo event')
 
-    expect(res.body[3]).toHaveProperty('occasions')
-    expect(res.body[3].occasions).toHaveLength(2)
-    expect(res.body[3].occasions[0]).toHaveProperty('label')
-    expect(res.body[3].occasions[0].label).toEqual('Show 1')
+    expect(res.body[1]).toHaveProperty('occasions')
+    expect(res.body[1].occasions).toHaveLength(5)
+    expect(res.body[1].occasions[0]).toHaveProperty('label')
+    expect(res.body[1].occasions[0].label).toEqual('Show 1')
 
   })
 
@@ -119,15 +116,15 @@ describe('Basic startup', () => {
     expect(res2.status).toEqual(200)
 
     expect(res2.body).toHaveProperty('occasions')
-    expect(res2.body.occasions).toHaveLength(3)
-    expect(res2.body.occasions[0].state).toEqual('opened')
+    expect(res2.body.occasions).toHaveLength(5)
+    expect(res2.body.occasions[2].state).toEqual('opened')
 
     expect(res2.body.episodes).toBeDefined()
     expect(res2.body.episodes).toHaveLength(1)
-    expect(res2.body.episodes[0].label).toEqual('lot_x')
+    expect(res2.body.episodes[0].label).toEqual('demo event')
     expect(res2.body.episodes[0].episodeNumber).toEqual(0)
     expect(res2.body.episodes[0].cues).toBeDefined()
-    expect(res2.body.episodes[0].cues).toHaveLength(1)
+    expect(res2.body.episodes[0].cues).toHaveLength(6)
   })
 
   test('GET /events/:id -- error: event not found', async () => {
@@ -189,12 +186,33 @@ describe('Basic startup', () => {
     })
   })
 
-  test('DELETE /events/:id', async () => {
+  test('DELETE /events/:id -- error: event not found', async () => {
+    const res = await request(app)
+      .delete('/api/v2/events/99')
+
+    expect(res.status).toEqual(404)
+    expect(res.text).toEqual("Error: event with id:99 not found")
+  })
+
+  test('DELETE /events/:id -- error: event has open occasions', async () => {
+    const openOccasionId = 3
+
     const res = await request(app)
       .delete('/api/v2/events/2')
-    expect(res.status).toEqual(204)
+
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual("Error: an event with open occasions cannot be deleted. Close occasion:" + openOccasionId + " and try again.")
 
     const res2 = await request(app).get('/api/v2/events/2')
+    expect(res2.status).toEqual(200)
+  })
+
+  test('DELETE /events/:id -- happy path', async () => {
+    const res = await request(app)
+      .delete('/api/v2/events/1')
+    expect(res.status).toEqual(204)
+
+    const res2 = await request(app).get('/api/v2/events/1')
     expect(res2.status).toEqual(404)
   })
 
@@ -764,7 +782,7 @@ describe('Occasion routes', () => {
     let qrcode = res.text
 
     expect(qrcode).toBeDefined()
-    expect(qrcode).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h37v37H0z"/><path stroke="#000000" d="M4 4.5h7m1 0h4m1 0h1m1 0h1m3 0h2m1 0h7M4 5.5h1m5 0h1m3 0h3m3 0h2m1 0h1m2 0h1m5 0h1M4 6.5h1m1 0h3m1 0h1m2 0h1m3 0h3m2 0h1m3 0h1m1 0h3m1 0h1M4 7.5h1m1 0h3m1 0h1m1 0h3m1 0h2m1 0h1m3 0h2m1 0h1m1 0h3m1 0h1M4 8.5h1m1 0h3m1 0h1m1 0h1m1 0h4m1 0h1m3 0h2m1 0h1m1 0h3m1 0h1M4 9.5h1m5 0h1m1 0h1m1 0h1m2 0h1m1 0h3m1 0h1m2 0h1m5 0h1M4 10.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M12 11.5h3m2 0h1m4 0h2M4 12.5h1m3 0h1m1 0h5m1 0h1m1 0h1m1 0h3m2 0h5m2 0h1M6 13.5h3m2 0h3m1 0h3m6 0h1m1 0h1m1 0h5M4 14.5h1m1 0h1m2 0h2m1 0h1m1 0h1m1 0h3m2 0h1m1 0h2m2 0h2m3 0h1M4 15.5h4m1 0h1m2 0h1m5 0h3m1 0h4m5 0h2M10 16.5h1m3 0h1m1 0h8m1 0h3m1 0h1m1 0h1M4 17.5h3m1 0h2m2 0h3m1 0h3m4 0h2m2 0h6M4 18.5h8m1 0h2m1 0h1m4 0h1m1 0h1m2 0h1m5 0h1M11 19.5h6m5 0h1m1 0h1m2 0h1m1 0h1m1 0h2M4 20.5h5m1 0h1m1 0h1m2 0h4m1 0h4m1 0h1m1 0h1m1 0h1m1 0h1M4 21.5h1m2 0h1m5 0h1m1 0h1m2 0h1m5 0h2m5 0h2M6 22.5h1m1 0h1m1 0h3m1 0h1m2 0h2m2 0h1m3 0h1m2 0h3m1 0h1M11 23.5h1m1 0h1m2 0h2m1 0h2m4 0h1m3 0h4M4 24.5h2m2 0h1m1 0h1m3 0h2m1 0h1m1 0h4m1 0h6m2 0h1M12 25.5h1m1 0h6m1 0h1m2 0h1m3 0h1m1 0h1m1 0h1M4 26.5h7m1 0h3m4 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1M4 27.5h1m5 0h1m3 0h1m1 0h1m1 0h1m3 0h1m1 0h1m3 0h5M4 28.5h1m1 0h3m1 0h1m1 0h2m3 0h2m1 0h3m1 0h5m2 0h1M4 29.5h1m1 0h3m1 0h1m2 0h5m1 0h1m3 0h2m3 0h3M4 30.5h1m1 0h3m1 0h1m2 0h1m1 0h1m5 0h2m2 0h4m1 0h3M4 31.5h1m5 0h1m3 0h1m2 0h1m5 0h3m5 0h2M4 32.5h7m1 0h3m5 0h4m1 0h2m1 0h4"/></svg>\n') // have to add newline manually
+    expect(qrcode).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h37v37H0z"/><path stroke="#000000" d="M4 4.5h7m4 0h2m1 0h1m4 0h2m1 0h7M4 5.5h1m5 0h1m1 0h1m4 0h1m3 0h1m2 0h1m1 0h1m5 0h1M4 6.5h1m1 0h3m1 0h1m3 0h3m2 0h1m1 0h1m1 0h1m2 0h1m1 0h3m1 0h1M4 7.5h1m1 0h3m1 0h1m2 0h2m1 0h2m2 0h1m2 0h2m1 0h1m1 0h3m1 0h1M4 8.5h1m1 0h3m1 0h1m1 0h1m4 0h1m2 0h1m2 0h2m1 0h1m1 0h3m1 0h1M4 9.5h1m5 0h1m5 0h1m1 0h4m2 0h1m1 0h1m5 0h1M4 10.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M14 11.5h1m1 0h1m2 0h1m2 0h1m1 0h1M4 12.5h1m1 0h1m1 0h1m1 0h1m2 0h2m1 0h1m3 0h3m5 0h1m2 0h1M4 13.5h2m1 0h2m7 0h2m1 0h5m1 0h3m1 0h1m2 0h1M4 14.5h4m2 0h1m1 0h1m3 0h1m1 0h3m1 0h1m2 0h1m4 0h3M5 15.5h1m3 0h1m1 0h8m1 0h1m3 0h3m2 0h1m1 0h1M8 16.5h6m1 0h2m1 0h5m2 0h1m1 0h1m3 0h2M5 17.5h3m3 0h2m3 0h1m1 0h2m2 0h1m2 0h1m3 0h1m2 0h1M7 18.5h1m2 0h1m1 0h1m1 0h1m2 0h1m2 0h1m1 0h7m1 0h3M4 19.5h6m2 0h1m1 0h2m3 0h1m2 0h3m1 0h2m3 0h1M6 20.5h1m3 0h1m3 0h3m3 0h3m2 0h3m3 0h2M5 21.5h2m1 0h2m3 0h3m1 0h1m1 0h1m1 0h2m4 0h2m1 0h1m1 0h1M4 22.5h1m1 0h2m1 0h3m3 0h2m1 0h2m3 0h1m3 0h1m1 0h1m1 0h2M5 23.5h3m1 0h1m5 0h1m1 0h3m4 0h3m3 0h2M4 24.5h1m2 0h5m1 0h1m4 0h2m1 0h2m1 0h5M12 25.5h1m3 0h1m1 0h2m1 0h2m1 0h1m3 0h1m2 0h2M4 26.5h7m2 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h2m1 0h1m1 0h2m1 0h2M4 27.5h1m5 0h1m2 0h2m1 0h1m3 0h1m1 0h3m3 0h1m1 0h2M4 28.5h1m1 0h3m1 0h1m1 0h5m4 0h2m1 0h6m1 0h2M4 29.5h1m1 0h3m1 0h1m3 0h1m4 0h1m1 0h2m2 0h1m1 0h1m1 0h1m1 0h1M4 30.5h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h2m1 0h1m1 0h2m1 0h1m5 0h1M4 31.5h1m5 0h1m3 0h2m1 0h1m1 0h1m1 0h2m1 0h3m2 0h1m1 0h1M4 32.5h7m1 0h8m1 0h2m1 0h1m1 0h1m1 0h1m1 0h3"/></svg>\n') // have to add newline manually
   })
 })
 

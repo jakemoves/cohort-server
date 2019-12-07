@@ -9,7 +9,6 @@ const eventsTable = require('../knex/queries/event-queries')
 const CHOccasion = require('../models/CHOccasion')
 const broadcastService = require('../services/broadcastService')
 const qrcodeService = require('../services/qrcodeService')
-// const QRCode = require('qrcode')
 
 handleError = (httpStatusCode, error, res) => {
   console.log(error)
@@ -85,35 +84,37 @@ exports.occasions_update = async (req, res) => {
     return
   }
 
-  if(req.body.state != null && req.body.state !== undefined){
-    if(!(req.body.state == 'opened' || req.body.state == 'closed')){
-      handleError(400, "Error: event state can only be set to 'opened' or 'closed'", res)
-      return
-    }
-
-    let updatedDbOccasion = await occasionsTable
-      .update(req.params.id, 'state', req.body.state)
-      .catch( error => {
-        handleError(500, error, res)
-      })
-
-    switch(updatedDbOccasion.state) {
-      case 'opened': {
-        let occasion = CHOccasion.fromDatabaseRow(updatedDbOccasion)
-        req.app.get('cohortSession').addListenersForOccasion(occasion)
-        occasion.open()
-        // add listeners here for device add/remove?
-        break }
-      case 'closed': {
-        let occasion = req.app.get('cohortSession').openOccasions
-          .find( occasion => occasion.id == updatedDbOccasion.id)
-        occasion.close()
-        break }
-      default: break
-    }
-    res.status(200).json(updatedDbOccasion) 
-    // doesn't return devices with the occasion, but that might not be relevant for open / close updates; a just-opened event shouldn't have any devices connected, and a just-closed one doesn't either
+  if(req.body.state == null || req.body.state === undefined){
+    handleError(400, "Error: no updateable property was found in the request (i.e. 'state')", res)
+    return
   }
+
+  if(!(req.body.state == 'opened' || req.body.state == 'closed')){
+    handleError(400, "Error: event state can only be set to 'opened' or 'closed'", res)
+    return
+  }
+
+  let updatedDbOccasion = await occasionsTable
+    .update(req.params.id, 'state', req.body.state)
+    .catch( error => {
+      handleError(500, error, res)
+    })
+
+  switch(updatedDbOccasion.state) {
+    case 'opened': {
+      let occasion = CHOccasion.fromDatabaseRow(updatedDbOccasion)
+      req.app.get('cohortSession').addListenersForOccasion(occasion)
+      occasion.open()
+      break }
+    case 'closed': {
+      let occasion = req.app.get('cohortSession').openOccasions
+        .find( occasion => occasion.id == updatedDbOccasion.id)
+      occasion.close()
+      break }
+    default: break
+  }
+  res.status(200).json(updatedDbOccasion) 
+  // doesn't return devices with the occasion, but that might not be relevant for open / close updates; a just-opened event shouldn't have any devices connected, and a just-closed one doesn't either
 }
   
 exports.occasions_broadcast = async (req, res) => {
@@ -152,7 +153,9 @@ exports.occasions_qrcode = async (req, res) => {
   const baseURL = req.hostname
   let protocol
 
-  if(baseURL.match(/local/) != null){
+  // check for localhost, computername.local, and IP address
+  if((baseURL.match(/local/) != null) ||
+      baseURL.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/)){
     protocol = "http"
   } else {
     protocol = "https"

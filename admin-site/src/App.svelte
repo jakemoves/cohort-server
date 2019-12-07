@@ -443,6 +443,11 @@
     font-size:0.8rem;
   }
 
+  .abs-left { 
+    position: absolute;
+    left: 0.5rem;
+  }
+
 
 /* Slider style */
 label{
@@ -601,11 +606,11 @@ padding: 0; }
     <hr />
 
     {#if events.length === 0}
-      <p> That's uneventful. Sorry, no events have been added yet</p>
+      <p>That's uneventful. Sorry, no events have been added yet</p>
     {:else}
       {#each events as event}
         <div class="row mt-2">
-          <div class="col-6 text-center">
+          <div class="col-6 text-right">
             <h3>{event.label}:</h3>
           </div>
           <div class="col-6">
@@ -650,17 +655,13 @@ padding: 0; }
         <button
 		      alt="back to events list"
           type="button"
-          class="btn btn-outline-primary float-left mr-2"
+          class="btn btn-outline-primary mr-2 abs-left"
           value="occasionList"
           on:click={backToEvents}>
-		  <span class="fa fa-angle-left" />
+		      <span class="fa fa-angle-left" />
           Back
         </button>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12 text-center">
-        <h3>Occasions</h3>
+        <h3 class="text-center">Occasions</h3>
       </div>
     </div>
 
@@ -699,27 +700,21 @@ padding: 0; }
 <div id="openOccasion">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-4 mt-2">
+      <div class="col-md-12 mt-2">
         <button
-		  alt="back to occasions list"
+          alt="back to occasions list"
           type="button"
-          class="btn btn-outline-primary"
+          class="btn btn-outline-primary abs-left"
           value="openOccasion"
           on:click={backToCloseOccasion}>
-		  <span class="fa fa-angle-left" />
+          <span class="fa fa-angle-left" />
           Back
         </button>
+        {#if gotEvents == true}
+          <h3 class="text-center">{focusedOccasion.label}</h3>
+        {/if}
       </div>
     </div>
-    <!-- </div> -->
-    
-      {#if gotEvents == true}
-      <div class="row">
-        <div class="col-12 text-center">
-          <h3>{focusedEvent.label} - {formattedStartTime}</h3>
-        </div>
-      </div>
-      {/if}
    
     <hr />
 
@@ -866,29 +861,22 @@ padding: 0; }
 <div id="closeOccasion">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-4 col-md-4 mt-2">
+      <div class="col-12 mt-2">
         <button
         alt="back to Occasions list"
         type="button"
-        class="btn btn-outline-primary"
+        class="btn btn-outline-primary abs-left"
         value="closeOccasion"
         on:click={backToOccasionList}>
         <span class="fa fa-angle-left" />
         Back
         </button>
+        {#if gotEvents == true}
+          <h3 class="text-center">{focusedOccasion.label}</h3>
+        {/if}
       </div>
     </div>
-      <div class="row">
-
-        {#if gotEvents == true}
-          <div class="col-12 text-center">
-            <h3>
-              {focusedEvent.label} - {formattedStartTime}.
-            </h3>
-          </div>
-        
-        {/if}
-    </div>
+    
     <hr>
     <div class="row">
       <div class="col-md-12">
