@@ -27,7 +27,7 @@
     events = await response.json()
     gotEvents = true
     focusedEvent = events[0]
-
+    console.log(events);
     storedEvents = writable(events);
     // storedEvents.subscribe(value => {
     //   console.log(value);
@@ -157,7 +157,7 @@
   //for new event creation parameters
   let label = "";
 
-  let cueState = 1;
+  let cueState = 0;
   //Holds event ID in order to display occasions for that event
   let focusedEventLabel = "0";
   let focusedOccasionID = 0;
@@ -282,30 +282,31 @@
     document.getElementById("confirmDelete").style.display = "none";
     document.getElementById("eventsList").style.display = "block";
     //updates Events to remove occasion.
-    // let updateEvents = focusedEvent.occasions.splice(indexInOccasions);
-    // storedEvents.update(value => events);
-    // storedEvents.subscribe(value => {
-    //   console.log(value);
-    // });
+    focusedEvent.occasions.splice(indexInOccasions, 1);
+    console.log(events);
+    storedEvents.update(value => events);
+    storedEvents.subscribe(value => {
+      console.log(value);
+    });
   
-  function deleteOccasionServer() {
-    try {
-        return fetch(serverURL + "/occasions/" + focusedOccasionID, {
-          method: 'DELETE'
-        }) .then(response => {
-              response.json().then( details => {
-              console.log(details)
-              })
-          }).catch( error => {
-                console.log("Error on occasion delete!")
-              })
-        } catch (e) {
-            console.log(e.message)
-          }
-          GetEvents();
-  } 
+  // function deleteOccasionServer() {
+  //   try {
+  //       return fetch(serverURL + "/occasions/" + focusedOccasionID, {
+  //         method: 'DELETE'
+  //       }) .then(response => {
+  //             response.json().then( details => {
+  //             console.log(details)
+  //             })
+  //         }).catch( error => {
+  //               console.log("Error on occasion delete!")
+  //             })
+  //       } catch (e) {
+  //           console.log(e.message)
+  //         }
+  //         GetEvents();
+  // } 
 
-    deleteOccasionServer();
+    // deleteOccasionServer();
 
     
   }
@@ -357,14 +358,13 @@
   //this changes which cue details are shown
   function changeCueState() {
     let direction = this.value;
-    if (direction == "next" && cueState <= focusedEvent.episodes[0].cues.length - 1) {
+    let amountOfCues = focusedEvent.episodes[0].cues.length;
+    if (direction == "next" && cueState < amountOfCues - 1) {
       cueState += 1;
-    } else if (direction == "previous" && cueState > 1) {
+    } else if (direction == "previous" && cueState > 0) {
       cueState -= 1;
-    } else {
-      cueState = 1;
-    }
-
+    } 
+    console.log (cueState);
     //update broadcast message 
     sliderCue = focusedEvent.episodes[0].cues[cueState-1];
     
@@ -390,7 +390,7 @@
     var passwordCheck = document.getElementById('password').value;
     if (passwordCheck == "5555"){
       authenticated = true;
-      // document.getElementById("eventsList").style.display="block";
+      document.getElementById("eventsList").style.display="block";
       
       GetEvents();
     }
@@ -754,9 +754,9 @@ padding: 0; }
         <h5>Cue Details</h5>
         
         {#if focusedEvent != null && focusedEvent !== undefined}
-          {#each focusedEvent.episodes[0].cues as cue}
-           
-            {#if cue.cueNumber == cueState}
+          {#each focusedEvent.episodes[0].cues as cue, index}
+
+            {#if index == cueState}
             
               <div id={cue.cueNumber} >
                 <ul>Media Domain:
