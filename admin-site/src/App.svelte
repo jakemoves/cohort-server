@@ -5,17 +5,16 @@
   import moment from "moment";
   import { onMount } from 'svelte';
   import { createEventDispatcher } from "svelte";
-
-
+  import { writable } from 'svelte/store';
   
 
   let events = []
   let gotEvents = false;
+  //holds a store of events
+  let storedEvents;
 
   // // TODO this needs to pickup an environment somehow (dev/staging/prod)
-  // // let serverURL = "https://staging.cohort.rocks/api/v2"
-  
-  // let serverURL = "http://localhost:3000/api/v2";
+  //serverURL populated with dropdown at login - default is staging.cohort.rocks
   let serverURL;
 
 
@@ -27,8 +26,12 @@
 
     events = await response.json()
     gotEvents = true
-    console.log(serverURL)
     focusedEvent = events[0]
+
+    storedEvents = writable(events);
+    // storedEvents.subscribe(value => {
+    //   console.log(value);
+    // });
   }
 
   
@@ -177,6 +180,9 @@
 //to show/hide dev Tools.
   let devElement = false;
 
+  //hold DOM state
+  let pageState = 1;
+
   // when an event button is hit only open occasions for that event
   function eventButton() {
     document.getElementById("eventsList").style.display = "none";
@@ -271,13 +277,37 @@
   }
 
   function deleteOccasion() {
+    let value;
     // deletion code goes here
     document.getElementById("confirmDelete").style.display = "none";
     document.getElementById("eventsList").style.display = "block";
-    //removes occasion from object and from list
-    // Jake TODO: review store & one-way data flow
-    focusedEvent.occasions.splice(indexInOccasions, 1);
-    document.getElementById(focusedOccasionID).remove();
+    //updates Events to remove occasion.
+    // let updateEvents = focusedEvent.occasions.splice(indexInOccasions);
+    // storedEvents.update(value => events);
+    // storedEvents.subscribe(value => {
+    //   console.log(value);
+    // });
+  
+  function deleteOccasionServer() {
+    try {
+        return fetch(serverURL + "/occasions/" + focusedOccasionID, {
+          method: 'DELETE'
+        }) .then(response => {
+              response.json().then( details => {
+              console.log(details)
+              })
+          }).catch( error => {
+                console.log("Error on occasion delete!")
+              })
+        } catch (e) {
+            console.log(e.message)
+          }
+          GetEvents();
+  } 
+
+    deleteOccasionServer();
+
+    
   }
   function backToEvents() {
     let id = this.value;
@@ -354,16 +384,17 @@
     ];
     events = events.concat(newEvent);
   }
-    function verifyPassword(){
-      // verifying password logic 
-      var passwordCheck = document.getElementById('password').value;
-      if (passwordCheck == "5555"){
-        authenticated = true;
-        document.getElementById("eventsList").style.display="block";
-        
-        GetEvents();
-      }
+
+  function verifyPassword(){
+    // verifying password logic 
+    var passwordCheck = document.getElementById('password').value;
+    if (passwordCheck == "5555"){
+      authenticated = true;
+      // document.getElementById("eventsList").style.display="block";
+      
+      GetEvents();
     }
+  }
     
     function HideShowDev() {
      let devTools = document.getElementById('devTools');
@@ -517,6 +548,7 @@ padding: 0; }
 
   /* end of Slider style */
 </style>
+
 
 <!-- Keeping this as a component cause it will likely need switching out -->
 <div id="login">
