@@ -211,36 +211,35 @@
     formattedEndTime = moment(focusedOccasion.endDateTime)
       .format("LL");
   }
+
   //these are navigation buttons..not very elegant and partly due to modals not working
   function openOccasionButton() {
-    document.getElementById("closeOccasion").style.display = "none";
-    document.getElementById("openOccasion").style.display = "block";
-
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
         method: 'PATCH',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"state":"opened"}) 
       }).then( response => { 
-            if(response.status == 200){
-              response.json().then( details => {
-              })
-            } else {
-              response.text().then( errorMessage => {
-                console.log('occasion open error on request: ' + errorMessage)
-              })
-            }
-      }).catch( error => {
-            console.log("Error occasion open")
+        if(response.status == 200){
+          response.json().then( details => {
+            document.getElementById("closeOccasion").style.display = "none";
+            document.getElementById("openOccasion").style.display = "block";
           })
+        } else {
+          response.text().then( errorMessage => {
+            console.log('occasion open error on request: ' + errorMessage)
+          })
+        }
+      }).catch( error => {
+        console.log("Error occasion open")
+      })
     } catch (e) {
       console.log(e.message)
-      } 
+    } 
   };
 
   function closeOccasionButton(){
     document.getElementById('confirmEndOccasion').style.display = "none";
-    document.getElementById("closeOccasion").style.display = "block";
 
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
@@ -248,22 +247,22 @@
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"state":"closed"}) 
       }).then( response => { 
-            
-            if(response.status == 200){
-              response.json().then( details => {
-              })
-            } else {
-              response.text().then( errorMessage => {
-                console.log('occasion close error on request: ' + errorMessage)
-              })
-            }
-      }).catch( error => {
-            console.log("Error occasion close")
+        if(response.status == 200){
+          response.json().then( details => {
+            document.getElementById("openOccasion").style.display = "none";
+            document.getElementById("closeOccasion").style.display = "block";
           })
+        } else {
+          response.text().then( errorMessage => {
+            console.log('occasion close error on request: ' + errorMessage)
+          })
+        }
+      }).catch( error => {
+        console.log("Error occasion close")
+      })
     } catch (e) {
       console.log(e.message)
-      } 
-
+    } 
   }
 
   function confirmOccasionDelete() {
@@ -640,7 +639,7 @@ padding: 0; }
     <hr />
     {#if focusedEvent != undefined}
       {#if focusedEvent.occasions.length === 0}
-        <p>No occasions for this event yet</p>
+        <p class="text-center">No occasions for this event yet</p>
       {:else}
         {#each events as event}
           {#if event.label == focusedEventLabel && event.occasions != null && event.occasions.length > 0}
