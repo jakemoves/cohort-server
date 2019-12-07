@@ -1,3 +1,7 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
 
 <script>
   // import Login from "./Login.svelte";
@@ -31,53 +35,67 @@
     focusedEvent = events[0]
   }
 
-  
+  // cue broadcast
   window.onCueSliderInput = (event) => {
   const SliderValue = event.target.value
   if( SliderValue == 100){  
-// user dragged slider all the way across — emit 'activated' event
-  try {
+    event.target.disabled == true
+
+    broadcastStatus = "pending"
+    try {
       fetch(serverURL + "/occasions/" + focusedOccasionID + "/broadcast", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({ 
-              "mediaDomain": sliderCue.mediaDomain,
-              "cueNumber": sliderCue.cueNumber,
-              "cueAction": sliderCue.cueAction,
-              "targetTags": sliderCue.targetTags
-              	// "mediaDomain": 0,
-	              // "cueNumber": 1,
-	              // "cueAction": 0,
-	              // "targetTags": ["all"]
-            })
-          })
-          .then( response => {
-            console.log(response.status); 
-            if(response.status == 200){
-              response.json().then( details => {
-                console.log(details)
-                event.target.disabled = false
-                event.target.value = 0
-                event.target.classList.add('cue-sent-response-success')
-                event.target.classList.remove('cue-sent-response-pending')
-              })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(sliderCue)
+      })
+      .then( response => {
+        console.log(response.status); 
+        if(response.status == 200){
+          response.json().then( results => {
+            console.log(results)
+            event.target.disabled = false
+            event.target.value = 0
+
+            const flatResults = results.map( result => result.success)
+
+            const attempts = flatResults.length
+            let successes = flatResults.filter( result => result == true).length
+
+            broadcastResults = "Broadcast to " + successes + "/" + attempts + " devices"
+
+            if(attempts == successes){
+              // all devices received broadcast
+              broadcastStatus = "full-success"
             } else {
-              response.text().then( errorMessage => {
-                console.log('error on request: ' + errorMessage)
-      
-                event.target.disabled = false
-                event.target.value = 0
-                event.target.classList.add('cue-sent-response-error')
-                event.target.classList.remove('cue-sent-response-pending')
-              })
+              broadcastStatus = "partial-success"
             }
-          }).catch( error => {
-            console.log("Error on push notification broadcast!")
           })
+        } else {
+          response.text().then( errorMessage => {
+            
+            event.target.disabled = false
+            event.target.value = 0
+            
+            broadcastResults = errorMessage
+            broadcastStatus = "error"
+            console.log('error on request: ' + errorMessage)
+          })
+        }
+      }).catch( error => {
+        event.target.disabled = false
+        event.target.value = 0
+        broadcastResults = errorMessage
+        broadcastStatus = "error"
+        
+      })
     } catch (e) {
+      event.target.disabled = false
+      event.target.value = 0
+
+      broadcastResults = errorMessage
+      broadcastStatus = "error"
       console.log(e.message)
-      // vm.errorOnGo = true
-      } 
+    } 
   }
 };
 
@@ -171,6 +189,9 @@
   let indexInOccasions;
 
   let sliderCue;
+  let broadcastStatus = "unsent"
+  let broadcastResults
+
 //password check on login
   let authenticated = false;
 
@@ -301,6 +322,8 @@
     let id = this.value;
     document.getElementById(id).style.display = "none";
     document.getElementById("occasionList").style.display = "block";
+
+    broadcastStatus = "unsent"
   }
 
   function backToCloseOccasion() {
@@ -340,6 +363,8 @@
     console.log (cueState);
     //update broadcast message 
     sliderCue = focusedEvent.episodes[0].cues[cueState-1];
+
+    broadcastStatus = "unsent"
     
   }
 
@@ -420,17 +445,15 @@
     left: 0.5rem;
   }
 
-
-/* Slider style */
-label{
-    margin: 1rem;
-}
 /* Slider CSS */
+label{
+  margin: 1rem;
+}
 #cue-control-go {
   -webkit-appearance: none;
   width: 40%;
   margin: 1rem 5%;
-padding: 0; }
+  padding: 0; }
 
 #cue-control-go:focus {
   outline: none; }
@@ -440,18 +463,55 @@ padding: 0; }
   height: 50px;
   cursor: pointer;
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  background: #3071a9;
   border-radius: 50px;
   border: 0px solid #010101; }
 
-#cue-control-go .cue-sent-response-pending::-webkit-slider-runnable-track {
+.slider-container.status-unsent  #cue-control-go::-webkit-slider-runnable-track {
+  background: #007bff;
+}
+
+.slider-container.status-pending  #cue-control-go::-webkit-slider-runnable-track {
+  background: #6db4ff;
+}
+
+.slider-container.status-full-success  #cue-control-go::-webkit-slider-runnable-track {
+  background: #28a745;
+}
+
+.slider-container.status-partial-success  #cue-control-go::-webkit-slider-runnable-track {
+  background: #ffc107;
+}
+
+.slider-container.status-error  #cue-control-go::-webkit-slider-runnable-track {
+  background: #dc3545;
+}
+
+
+.slider-container .alert,
+.slider-container.status-unsent .alert {
+  display: none;
+}
+
+.slider-container.status-full-success .alert-success {
+  display: block;
+}
+
+.slider-container.status-partial-success .alert-warning {
+  display: block;
+}
+
+.slider-container.status-error .alert-danger {
+  display: block;
+}
+
+/* #cue-control-go .cue-sent-response-pending::-webkit-slider-runnable-track {
   background: #5fa36f; }
 
 #cue-control-go .cue-sent-response-success::-webkit-slider-runnable-track {
   background: #28a745; }
 
 #cue-control-go .cue-sent-response-error::-webkit-slider-runnable-track {
-  background: #dc3545; }
+  background: #dc3545; } */
 
 #cue-control-go:disabled::-webkit-slider-runnable-track {
   background: #6C8CA8; }
@@ -789,10 +849,19 @@ padding: 0; }
 
     <div class="row mt-3">
       <div class="col-md-12">
-         <div class="text-center">
-        <label for="cue-control-go">Drag slider to the right to fire cue</label>
-        <input class="cue-controls__cue-controls-go" type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event) v-bind:disabled="selectedOccasion == null">
-    </div>
+        <div class="slider-container status-{broadcastStatus} text-center">
+          <label for="cue-control-go">Drag slider to the right to fire cue</label>
+          <input type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event)>
+          <div class="alert alert-success text-center">
+            {broadcastResults}
+          </div>
+          <div class="alert alert-warning text-center">
+            {broadcastResults}
+          </div>
+          <div class="alert alert-danger text-center">
+            {broadcastResults}
+          </div>
+        </div>
       </div>
     </div>
      {/if}
