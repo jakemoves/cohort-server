@@ -172,7 +172,7 @@
   //for new event creation parameters
   let label = "";
 
-  let cueState = 1;
+  let cueState = 0;
   //Holds event ID in order to display occasions for that event
   let focusedEventLabel = "0";
   let focusedOccasionID = 0;
@@ -354,15 +354,15 @@
   //this changes which cue details are shown
   function changeCueState() {
     let direction = this.value;
-    let amountOfCues = focusedEvent.episodes[0].cues.length;
-    if (direction == "next" && cueState < amountOfCues - 1) {
-      cueState += 1;
+    let cuesLength = focusedEvent.episodes[0].cues.length;
+    if (direction == "next" && cueState < cuesLength - 1) {
+      cueState ++;
     } else if (direction == "previous" && cueState > 0) {
-      cueState -= 1;
+      cueState --;
     } 
     console.log (cueState);
     //update broadcast message 
-    sliderCue = focusedEvent.episodes[0].cues[cueState-1];
+    sliderCue = focusedEvent.episodes[0].cues[cueState];
 
     broadcastStatus = "unsent"
     
@@ -831,7 +831,7 @@ label{
           type="button"
           class="btn btn-info"
           value="previous"
-          disabled={cueState == 1}
+          disabled={cueState == 0}
           on:click={changeCueState}><span class="fas fa-angle-left"/>&nbsp;Previous</button>
       <!-- </div> -->
       <!-- <div class="col-4 col-md-3"> -->
