@@ -347,7 +347,7 @@
     // for testing "/occasions/3/qrcode"
     let QrResponse = async () => { 
       let response = await fetch(serverURL + "/occasions/" + focusedOccasionID + "/qrcode", {
-      method: 'GET'
+          method: 'GET'
       });
       let qrcode = await response.text()
       let qrContainer = document.getElementById("QRcodeContainer")
@@ -370,7 +370,7 @@
     } 
     
     //update broadcast message 
-    sliderCue = focusedEvent.episodes[0].cues[cueState-1];
+    sliderCue = focusedEvent.episodes[0].cues[cueState];
     
   }
 
