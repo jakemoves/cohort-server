@@ -385,8 +385,8 @@
     } 
     console.log (cueState);
     //update broadcast message 
+    targetGrouping = ""
     sliderCue = focusedEvent.episodes[0].cues[cueState];
-
     broadcastStatus = "unsent"
     
   }
