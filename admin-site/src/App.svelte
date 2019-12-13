@@ -44,7 +44,7 @@
     broadcastStatus = "pending"
 
     if(targetGrouping != null && targetGrouping !== undefined && targetGrouping != ""){
-      sliderCue.targetTags.push(targetGrouping)
+      sliderCue.targetTags = [targetGrouping]
     }
 
     try {
