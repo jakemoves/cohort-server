@@ -161,7 +161,14 @@ exports.occasions_qrcode = async (req, res) => {
     protocol = "https"
   }
 
-  const qrcodeURL = protocol + '://' + baseURL + '/join/occasions/' + occasionId
+  // check for grouping
+  let query = ""
+  if(req.query.grouping != null && req.query.grouping !== undefined){
+    let grouping = encodeURIComponent(req.query.grouping)
+    query = "?grouping=" + grouping
+  }
+
+  const qrcodeURL = protocol + '://' + baseURL + '/join/occasions/' + occasionId + query
 
   try {
     const qrcode = await qrcodeService.getQRCode(qrcodeURL)
@@ -172,6 +179,22 @@ exports.occasions_qrcode = async (req, res) => {
   }
 }
 
+exports.occasions_join = (req, res) => {
+  if(req.params.id != 6){
+    res.sendStatus(404)
+    return
+  }
+
+  // check for grouping
+  let query = ""
+  if(req.query.grouping != null && req.query.grouping !== undefined){
+    let grouping = encodeURIComponent(req.query.grouping)
+    query = "?grouping=" + grouping
+  }
+
+  // support overhear saskatoon workshop
+  res.redirect('/events/overhear-live' + query)
+}
 
 // exports.occasionsForEvent = ( req, res ) => {
 //   let eventId = req.params.id

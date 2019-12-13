@@ -15,6 +15,8 @@ const app = express()
 const jsonParser = bodyParser.json()
 const v1routes = require('./routes-v1.js')
 const v2routes = require('./routes-v2.js')
+const joinRoutes = require('./routes-join.js')
+
 app.use(bodyParser.json())
 
 app.use( (req, res, next) => {
@@ -26,6 +28,7 @@ app.use( (req, res, next) => {
 
 app.use('/api/v1', v1routes)
 app.use('/api/v2', v2routes)
+app.use('/join', joinRoutes)
 
 let staticPath = path.join(__dirname, '../public') // because we run the app from /lib
 app.use(express.static(staticPath))

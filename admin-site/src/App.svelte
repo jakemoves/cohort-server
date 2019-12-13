@@ -42,6 +42,11 @@
     event.target.disabled == true
 
     broadcastStatus = "pending"
+
+    if(targetGrouping != null && targetGrouping !== undefined && targetGrouping != ""){
+      sliderCue.targetTags.push(targetGrouping)
+    }
+
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID + "/broadcast", {
         method: 'POST',
@@ -168,6 +173,11 @@
 //     }]
 //   }
 // ];
+
+  // for draft qr code grouping support
+  let qrCodeURL
+  let qrGrouping = ""
+  let targetGrouping = ""
 
   //for new event creation parameters
   let label = "";
@@ -333,22 +343,35 @@
   }
 
   
-  function showQR() {
+  async function showQR() {
+    console.log('showQR')
     let id = this.value;
     //grab QR code for that occasion and update
     // for testing "/occasions/3/qrcode"
-    let QrResponse = async () => { 
-      let response = await fetch(serverURL + "/occasions/" + focusedOccasionID + "/qrcode", {
-      method: 'GET'
-      });
-      let qrcode = await response.text()
-      let qrContainer = document.getElementById("QRcodeContainer")
-      qrContainer.innerHTML = qrcode
-    };
-    QrResponse();
+    await updateQRCode()
 
     document.getElementById(id).style.display = "none";
     document.getElementById("QRcode").style.display = "block";
+  }
+
+  function updateQRCode(){
+    return new Promise( async (resolve) => {
+      let queryString = ""
+      console.log(qrGrouping)
+      if(qrGrouping != null && qrGrouping !== undefined && qrGrouping != ""){
+        queryString = "?grouping=" + encodeURIComponent(qrGrouping)
+      }
+
+      qrCodeURL = serverURL + "/occasions/" + focusedOccasionID + "/qrcode" + queryString
+      let response = await fetch(qrCodeURL, {
+        method: 'GET'
+      })
+      let qrcode = await response.text()
+      let qrContainer = document.getElementById("QRcodeContainer")
+      qrContainer.innerHTML = qrcode
+      console.log('updated QR code')
+      resolve()
+    })
   }
 
   //this changes which cue details are shown
@@ -804,16 +827,22 @@ label{
 					  </ul>
                 <ul>Cue Number: {cue.cueNumber}</ul>
                 <ul>Cue Action:
-				  {#if cue.cueAction == 0}
-				    Play (or 'on')
-				  {:else if cue.cueAction == 1}
-				    Pause
-				  {:else if cue.cueAction == 2}
-				    Restart
-				  {:else if cue.cueAction == 3}
-				    Stop (or 'off')
-				  {/if}
-				 </ul>
+                  {#if cue.cueAction == 0}
+                    Play (or 'on')
+                  {:else if cue.cueAction == 1}
+                    Pause
+                  {:else if cue.cueAction == 2}
+                    Restart
+                  {:else if cue.cueAction == 3}
+                    Stop (or 'off')
+                  {/if}
+                </ul>
+                <form class="form-inline">
+                  <div class="form-group">
+                    <label for="targetGrouping">Send to group:</label>
+                    <input type="text" class="form-control" id="targetGrouping" bind:value={targetGrouping} placeholder="all">
+                  </div>
+                </form>
               </div>
             {/if}
           {/each}
@@ -886,10 +915,19 @@ label{
       <div class="modal-body">
         <div class="container-fluid">
           <div class="row">
+            <div class="col-md-12">
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="grouping" aria-label="grouping" aria-describedby="button-add-grouping-to-qr" bind:value={qrGrouping}>
+                <div class="input-group-append">
+                  <button class="btn btn-outline-success" type="button" id="button-add-grouping-to-qr" value="openOccasion" on:click={updateQRCode}>Add grouping</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
             <div class="col-md-12 text-center">
               <div id = "QRcodeContainer">
                 <!-- QR code populated here -->
-
               </div>
             </div>
           </div>
