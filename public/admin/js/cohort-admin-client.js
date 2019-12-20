@@ -98,7 +98,7 @@ var vm = new Vue({
       if(process.env.NODE_ENV == 'development'){
         return 'ws://localhost:3000/sockets'
       } else {
-        return 'wss://staging.cohort.rocks/sockets'
+        return 'wss://cafesarajevo.cohort.rocks/sockets'
       }
 
     },
