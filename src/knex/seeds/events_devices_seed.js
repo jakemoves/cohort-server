@@ -30,9 +30,9 @@ exports.seed = function(knex, Promise) {
         return knex('events').insert([
           {label: 'pimohtēwak', state: 'closed'},
           {label: 'lot_x', state: 'closed'},
-          {label: 'midway', state: 'open' },
-          {label: 'fluxdelux', state: 'open' },
-          {label: 'café sarajevo', state: 'closed'}
+          {label: 'midway', state: 'closed' },
+          {label: 'fluxdelux', state: 'closed' },
+          {label: 'café sarajevo', state: 'open'}
         ])
         .then( () => {
           // add occasions to events
