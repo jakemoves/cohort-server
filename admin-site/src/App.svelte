@@ -35,6 +35,7 @@
     storedEvents.subscribe(value => {
       events = value;
     });
+
     focusedEvent = events[0]
   }
 
@@ -201,6 +202,11 @@
 //to show/hide dev Tools.
   let devElement = false;
 
+//show/hide modal
+  let modalhtml;
+  //double check that a delete Occasion has happened
+  let deleteOccasionHasHappened = false;
+
   //hold DOM state
   let pageState = 1;
 
@@ -266,7 +272,7 @@
   };
 
   function closeOccasionButton(){
-    document.getElementById('confirmEndOccasion').style.display = "none";
+    document.getElementById('confirmCloseOccasion').style.display = "none";
 
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
@@ -296,27 +302,38 @@
     document.getElementById("closeOccasion").style.display = "none";
     document.getElementById("confirmDelete").style.display = "block";
   }
-  function cancelDelete() {
-    document.getElementById("confirmDelete").style.display = "none";
-    document.getElementById("closeOccasion").style.display = "block";
-  }
 
   function deleteOccasion() {
     let value;
-    let eventful = true;
-    document.getElementById("confirmDelete").style.display = "none";
-    document.getElementById("occasionList").style.display = "block";
+    // let eventful = true;
     //updates Events to remove selected occasion.
     focusedEvent.occasions.splice(indexInOccasions, 1);
-    
+
+    //use this at the end of whatever logic is used for delete
+    deleteOccasionHasHappened = true;
+  
+    if (deleteOccasionHasHappened){
+      modalhtml = "modal";
+      document.getElementById("closeOccasion").style.display = "none";
+      document.getElementById("occasionList").style.display = "block";
+
+    } else {
+      modalhtml = '';
+    }
+
+
+
+
     // update storedEvents with new events object
-    storedEvents.update(value => {
-      if (eventful) value = events; 
+    // storedEvents.update(value => {
+    //   // if (eventful) value = events; 
+    //   value = events;
       
-    });
-    storedEvents.subscribe(value => {
-      console.log(value);
-    });
+    // });
+    // storedEvents.subscribe(value => {
+    //   console.log(value);
+    // });
+    
   
   // function deleteOccasionServer() {
   //   try {
@@ -345,13 +362,10 @@
     document.getElementById("eventsList").style.display = "block";
   }
   function cancelEnd() {
-    document.getElementById("confirmEndOccasion").style.display = "none";
+    document.getElementById("confirmCloseOccasion").style.display = "none";
     document.getElementById("openOccasion").style.display = "block";
   }
-  function confirmEnd() {
-    document.getElementById("openOccasion").style.display = "none";
-    document.getElementById("confirmEndOccasion").style.display = "block";
-  }
+  
 
   function backToOccasionList() {
     let id = this.value;
@@ -382,8 +396,8 @@
     };
     QrResponse();
 
-    document.getElementById(id).style.display = "none";
-    document.getElementById("QRcode").style.display = "block";
+    // document.getElementById(id).style.display = "none";
+    // document.getElementById("QRcode").style.display = "block";
   }
 
   //this changes which cue details are shown
@@ -446,10 +460,7 @@
   #eventsList,
   #closeOccasion,
   #openOccasion,
-  #occasionList,
-  #QRcode,
-  #confirmDelete,
-  #confirmEndOccasion {
+  #occasionList {
     display: none;
   }
   #devTools{
@@ -770,7 +781,8 @@ label{
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12 mt-2">
-        <button
+      <!-- //maybe no back button if we want to encourage a close occasion -->
+        <!-- <button
           alt="back to occasions list"
           type="button"
           class="btn btn-outline-primary abs-left"
@@ -778,7 +790,7 @@ label{
           on:click={backToOccasionList}>
           <span class="fa fa-angle-left" />
           Back
-        </button>
+        </button> -->
         {#if gotEvents == true}
           <h3 class="text-center">{focusedOccasion.label}</h3>
         {/if}
@@ -792,7 +804,8 @@ label{
         <button
           type="button"
           class="btn btn-outline-danger btn-block"
-          on:click={confirmEnd}>
+          data-toggle="modal" 
+          data-target="#closeOccassionModal">
           Close Occasion
         </button>
       </div>
@@ -804,8 +817,10 @@ label{
           type="button"
           class="btn btn-outline-primary btn-block"
           value="openOccasion"
+          data-toggle="modal" 
+          data-target="#QRcodeModal"
           on:click={showQR}>
-          <u>Show QR Code</u>
+          Show QR Code
         </button>
       </div>
     </div>
@@ -907,6 +922,7 @@ label{
   </div>
 </div>
 
+<div class="modal fade" id="QRcodeModal" tabindex="-1" role="dialog" aria-labelledby="QRcodeModalLabel" aria-hidden="true">
 <div id="QRcode">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -916,8 +932,7 @@ label{
           class="close"
           data-dismiss="modal"
           aria-label="Close"
-          value="QRcode"
-          on:click={backToOccasionList}>
+          value="QRcode">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -935,6 +950,7 @@ label{
       </div>
     </div>
   </div>
+</div>
 </div>
 
 <div id="closeOccasion">
@@ -975,6 +991,8 @@ label{
 				type="button"
 				class="btn btn-link"
 				value="closeOccasion"
+        data-toggle="modal" 
+        data-target="#QRcodeModal"
 				on:click={showQR}>
 				Get QR Code
         	</button>
@@ -998,7 +1016,9 @@ label{
         <button
           type="button"
           class="btn btn-outline-danger btn-block"
-          on:click={confirmOccasionDelete}>
+          data-toggle="modal" 
+          data-target="#deleteOccassionModal">
+          <!-- on:click={confirmOccasionDelete} -->
           Delete Occasion
         </button>
       </div>
@@ -1006,8 +1026,8 @@ label{
   </div>
 </div>
 
-<!-- //modals show/hide not working, so removed below so they can act as a static document 
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div> -->
+<!-- //modals show/hide not working, so removed below so they can act as a static document  -->
+<div class="modal fade" id="deleteOccassionModal" tabindex="-1" role="dialog" aria-labelledby="deleteOccassionModalLabel" aria-hidden="true">
 <div id="confirmDelete">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -1015,13 +1035,6 @@ label{
         <h5 class="modal-title" id="deleteOccasionConfirmation">
           Delete Occasion
         </h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
       </div>
 
       {#if gotEvents == true}
@@ -1030,10 +1043,10 @@ label{
         ?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" on:click={cancelDelete}>
+        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
           Cancel
         </button>
-        <button type="button" class="btn btn-outline-danger" on:click={deleteOccasion}>
+        <button type="button" class="btn btn-outline-danger" on:click={deleteOccasion} data-dismiss={modalhtml}>
           Delete Occasion
         </button>
       </div>
@@ -1041,33 +1054,36 @@ label{
     </div>
   </div>
 </div>
+</div>
 
-<div id="confirmEndOccasion">
+<div class="modal fade" id="closeOccassionModal" tabindex="-1" role="dialog" aria-labelledby="closeOccassionModalLabel" aria-hidden="true">
+<div id="confirmCloseOccasion">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="deleteOccasionConfirmation">
-          End Occasion
+          Close Occasion
         </h5>
       </div>
 
       {#if gotEvents == true}
       <div class="modal-body">
-        Are you sure you want to end {focusedEvent.label} - {formattedStartTime}
+        Are you sure you want to close {focusedEvent.label} - {formattedStartTime}
         ?
       </div>
       <div class="modal-footer">
         <button 
-		  type="button" 
-		  class="btn btn-outline-secondary" 
-		  on:click={cancelEnd}>
+		      type="button" 
+		      class="btn btn-outline-secondary"
+          data-dismiss="modal">
           Cancel
         </button>
         <button
           type="button"
           class="btn btn-outline-danger"
-          value="confirmEndOccasion"
-          on:click={closeOccasionButton}>
+          value="confirmCloseOccasion"
+          on:click={closeOccasionButton}
+          data-dismiss="modal">
           Close Occasion
         </button>
       </div>
@@ -1075,4 +1091,5 @@ label{
     </div>
   </div>
 
+</div>
 </div>
