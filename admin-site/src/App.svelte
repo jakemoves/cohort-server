@@ -4,12 +4,13 @@
 -->
 
 <script>
-  // import Login from "./Login.svelte";
-  // import Slider from "./Slider.svelte";
   import moment from "moment";
   import { onMount } from 'svelte';
   import { createEventDispatcher } from "svelte";
   import { writable } from 'svelte/store';
+  import Page from './ParentPage.svelte';
+
+  
   
 
   let storedEvents;
@@ -230,7 +231,7 @@
     focusedOccasion = focusedEvent.occasions[indexInOccasions];
 
     if(focusedOccasion.state == "closed"){
-      document.getElementById("closeOccasion").style.display = "block";
+      document.getElementById("closedOccasion").style.display = "block";
     } else {
       document.getElementById("openOccasion").style.display = "block";
     }
@@ -255,7 +256,7 @@
       }).then( response => { 
         if(response.status == 200){
           response.json().then( details => {
-            document.getElementById("closeOccasion").style.display = "none";
+            document.getElementById("closedOccasion").style.display = "none";
             document.getElementById("openOccasion").style.display = "block";
           })
         } else {
@@ -283,7 +284,7 @@
         if(response.status == 200){
           response.json().then( details => {
             document.getElementById("openOccasion").style.display = "none";
-            document.getElementById("closeOccasion").style.display = "block";
+            document.getElementById("closedOccasion").style.display = "block";
           })
         } else {
           response.text().then( errorMessage => {
@@ -299,7 +300,7 @@
   }
 
   function confirmOccasionDelete() {
-    document.getElementById("closeOccasion").style.display = "none";
+    document.getElementById("closedOccasion").style.display = "none";
     document.getElementById("confirmDelete").style.display = "block";
   }
 
@@ -314,7 +315,7 @@
   
     if (deleteOccasionHasHappened){
       modalhtml = "modal";
-      document.getElementById("closeOccasion").style.display = "none";
+      document.getElementById("closedOccasion").style.display = "none";
       document.getElementById("occasionList").style.display = "block";
 
     } else {
@@ -375,11 +376,11 @@
     broadcastStatus = "unsent"
   }
 
-  function backToCloseOccasion() {
-    let id = this.value;
-    document.getElementById(id).style.display = "none";
-    document.getElementById("closeOccasion").style.display = "block";
-  }
+  // function backToClosedOccasion() {
+  //   let id = this.value;
+  //   document.getElementById(id).style.display = "none";
+  //   document.getElementById("closedOccasion").style.display = "block";
+  // }
 
   
   function showQR() {
@@ -458,7 +459,7 @@
 
 <style>
   #eventsList,
-  #closeOccasion,
+  #closedOccasion,
   #openOccasion,
   #occasionList {
     display: none;
@@ -777,10 +778,10 @@ label{
   </div>
 </div>
 
-<div id="openOccasion">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12 mt-2">
+<!-- <div id="openOccasion">
+  <div class="container-fluid"> -->
+    <!-- <div class="row">
+      <div class="col-md-12 mt-2"> -->
       <!-- //maybe no back button if we want to encourage a close occasion -->
         <!-- <button
           alt="back to occasions list"
@@ -791,14 +792,13 @@ label{
           <span class="fa fa-angle-left" />
           Back
         </button> -->
-        {#if gotEvents == true}
+        <!-- {#if gotEvents == true}
           <h3 class="text-center">{focusedOccasion.label}</h3>
         {/if}
       </div>
-    </div>
+    </div> -->
    
-    <hr />
-
+   <Page pageID='openOccasion' headerSize={3} headingText={focusedOccasion.label}>
     <div class="row ">
       <div class="col-md-12">
         <button
@@ -919,8 +919,131 @@ label{
     </div>
      {/if}
   {/if} 
+   </Page>
+    <!-- <hr />
+
+    <div class="row ">
+      <div class="col-md-12">
+        <button
+          type="button"
+          class="btn btn-outline-danger btn-block"
+          data-toggle="modal" 
+          data-target="#closeOccassionModal">
+          Close Occasion
+        </button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-block"
+          value="openOccasion"
+          data-toggle="modal" 
+          data-target="#QRcodeModal"
+          on:click={showQR}>
+          Show QR Code
+        </button>
+      </div>
+    </div>
+{#if gotEvents == true }
+  {#if focusedEvent.episodes[0].cues.length == 0}
+    <div class="row">
+      <div class="col-md-12">
+       <p>Sorry, no cues for this event can be found. We're cue-less.  </p>
+      </div>
+    </div>
+  {:else}
+
+    <div class="row">
+      <div class="col-md-12">
+        <h5>Cue Details</h5>
+        
+        {#if focusedEvent != null && focusedEvent !== undefined}
+          {#each focusedEvent.episodes[0].cues as cue, index}
+            {#if index == cueState}
+            
+              <div id={cue.cueNumber} >
+                <ul>Media Domain:
+              {#if cue.mediaDomain == 0}
+                Sound
+              {:else if cue.mediaDomain == 1}
+                Video
+              {:else if cue.mediaDomain == 2}
+                Text
+              {:else if cue.mediaDomain == 3}
+                Light 
+              {:else if cue.mediaDomain == 4}
+                Haptic
+              {/if}					  
+					  </ul>
+                <ul>Cue Number: {cue.cueNumber}</ul>
+                <ul>Cue Action:
+				  {#if cue.cueAction == 0}
+				    Play (or 'on')
+				  {:else if cue.cueAction == 1}
+				    Pause
+				  {:else if cue.cueAction == 2}
+				    Restart
+				  {:else if cue.cueAction == 3}
+				    Stop (or 'off')
+				  {/if}
+				 </ul>
+              </div>
+            {/if}
+          {/each}
+        {/if}
+
+      </div>
+    </div>
+   
+
+
+    <div class="row">
+      <!-- <div class="col-4 col-md-3"> -->
+      <!-- <div class="col-12 d-flex justify-content-between">
+        <button
+          type="button"
+          class="btn btn-info"
+          value="previous"
+          disabled={cueState == 0}
+          on:click={changeCueState}><span class="fas fa-angle-left"/>&nbsp;Previous</button> -->
+      <!-- </div> -->
+      <!-- <div class="col-4 col-md-3"> -->
+        <!-- <button
+          type="button"
+          class="btn btn-info"
+          value="next"
+          disabled={cueState == focusedEvent.episodes[0].cues.length-1}
+          on:click={changeCueState}>
+         &nbsp;&nbsp;Next&nbsp;<span class="fas fa-angle-right" /> &nbsp;&nbsp;
+        </button>
+      </div> -->
+      <!-- </div> -->
+    <!-- </div>
+
+    <div class="row mt-3">
+      <div class="col-md-12">
+        <div class="slider-container status-{broadcastStatus} text-center">
+          <label for="cue-control-go">Drag slider to the right to fire cue</label>
+          <input type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event)>
+          <div class="alert alert-success text-center">
+            {broadcastResults}
+          </div>
+          <div class="alert alert-warning text-center">
+            {broadcastResults}
+          </div>
+          <div class="alert alert-danger text-center">
+            {broadcastResults}
+          </div>
+        </div>
+      </div>
+    </div>
+     {/if}
+  {/if} 
   </div>
-</div>
+</div> -->
 
 <div class="modal fade" id="QRcodeModal" tabindex="-1" role="dialog" aria-labelledby="QRcodeModalLabel" aria-hidden="true">
 <div id="QRcode">
@@ -953,7 +1076,7 @@ label{
 </div>
 </div>
 
-<div id="closeOccasion">
+<div id="closedOccasion">
   <div class="container-fluid">
     <div class="row">
       <div class="col-12 mt-2">
@@ -961,7 +1084,7 @@ label{
         alt="back to Occasions list"
         type="button"
         class="btn btn-outline-primary abs-left"
-        value="closeOccasion"
+        value="closedOccasion"
         on:click={backToOccasionList}>
         <span class="fa fa-angle-left" />
         Back
@@ -990,7 +1113,7 @@ label{
 				alt="link to QR Code"
 				type="button"
 				class="btn btn-link"
-				value="closeOccasion"
+				value="closedOccasion"
         data-toggle="modal" 
         data-target="#QRcodeModal"
 				on:click={showQR}>
@@ -1018,7 +1141,6 @@ label{
           class="btn btn-outline-danger btn-block"
           data-toggle="modal" 
           data-target="#deleteOccassionModal">
-          <!-- on:click={confirmOccasionDelete} -->
           Delete Occasion
         </button>
       </div>
