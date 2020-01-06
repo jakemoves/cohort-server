@@ -10,8 +10,7 @@
   import { writable } from 'svelte/store';
   import Page from './ParentPage.svelte';
   import Slider from './Slider.svelte';
-
-  
+  import Button from './Button.svelte';
   
 
   let storedEvents;
@@ -274,7 +273,6 @@
   };
 
   function closeOccasionButton(){
-    document.getElementById('confirmCloseOccasion').style.display = "none";
 
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
@@ -385,7 +383,8 @@
 
   
   function showQR() {
-    let id = this.value;
+    console.log('fired');
+    // let id = this.value;
     //grab QR code for that occasion and update
     // for testing "/occasions/3/qrcode"
     let QrResponse = async () => { 
@@ -642,7 +641,7 @@
 
    
    <Page pageID='openOccasion' headerSize={3} headingText={focusedOccasion.label}>
-    <div class="row ">
+    <!-- <div class="row ">
       <div class="col-md-12">
         <button
           type="button"
@@ -652,21 +651,20 @@
           Close Occasion
         </button>
       </div>
-    </div>
+    </div> -->
+    <Button 
+      sizeDetails="col-md-12 mb-2" 
+      buttonType='btn-outline-danger' 
+      buttonText="Close Occasion" 
+      dataTarget="#closeOccassionModal"/>
 
-    <div class="row">
-      <div class="col-md-12">
-        <button
-          type="button"
-          class="btn btn-outline-primary btn-block"
-          value="openOccasion"
-          data-toggle="modal" 
-          data-target="#QRcodeModal"
-          on:click={showQR}>
-          Show QR Code
-        </button>
-      </div>
-    </div>
+    <Button on:click={showQR}
+      sizeDetails="col-md-12 mb-2" 
+      buttonType='btn-outline-primary' 
+      buttonText="Show QR Code" 
+      dataTarget="#QRcodeModal"/>
+
+
 {#if gotEvents == true }
   {#if focusedEvent.episodes[0].cues.length == 0}
     <div class="row">
@@ -742,6 +740,7 @@
       </div>
       <!-- </div> -->
     </div>
+
     <Slider _broadcastResults={broadcastResults} _broadcastStatus={broadcastStatus}/>
      {/if}
   {/if} 
