@@ -1,69 +1,20 @@
 <script>
-let requestURL = "http://localhost:3000/api/v2/occasions/3/broadcast"
-window.onCueSliderInput = (event) => {
-  const SliderValue = event.target.value
-  if( SliderValue == 100){  
-// user dragged slider all the way across — emit 'activated' event
-  try {
-      fetch(requestURL, {
-            method: 'POST',
-            //for local testing//
-            mode: 'no-cors',
-            // //
-            headers: { 'Content-Type': 'application/json'},
-            body: { 
-              "mediaDomain": _mediaDomain,
-              "cueNumber": _cueNumber,
-              "cueAction": _cueAction,
-              "targetTags": _targetTags
-            }
-          })
-          .then( response => {
-            console.log(response.status); 
-            if(response.status == 200){
-              response.json().then( details => {
-                console.log(details)
-                // vm.errorOnGo = false
-                event.target.disabled = false
-                event.target.value = 0
-                event.target.classList.add('cue-sent-response-success')
-                event.target.classList.remove('cue-sent-response-pending')
-              })
-            } else {
-              response.text().then( errorMessage => {
-                console.log('error on request: ' + errorMessage)
-                // vm.errorOnGo = true
-                // vm.goResults = body.error
-                event.target.disabled = false
-                event.target.value = 0
-                event.target.classList.add('cue-sent-response-error')
-                event.target.classList.remove('cue-sent-response-pending')
-              })
-            }
-          }).catch( error => {
-            console.log("Error on push notification broadcast!")
-          })
-    } catch (e) {
-      console.log(e.message)
-      // vm.errorOnGo = true
-      } 
-  }
-};
 
-
+export let _broadcastResults;
+export let _broadcastStatus;
 </script>
 
 
 <style>
-label{
-    margin: 1rem;
-}
 /* Slider CSS */
+label{
+  margin: 1rem;
+}
 #cue-control-go {
   -webkit-appearance: none;
   width: 40%;
   margin: 1rem 5%;
-padding: 0; }
+  padding: 0; }
 
 #cue-control-go:focus {
   outline: none; }
@@ -73,18 +24,55 @@ padding: 0; }
   height: 50px;
   cursor: pointer;
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  background: #3071a9;
   border-radius: 50px;
   border: 0px solid #010101; }
 
-#cue-control-go .cue-sent-response-pending::-webkit-slider-runnable-track {
+.slider-container.status-unsent  #cue-control-go::-webkit-slider-runnable-track {
+  background: #007bff;
+}
+
+.slider-container.status-pending  #cue-control-go::-webkit-slider-runnable-track {
+  background: #6db4ff;
+}
+
+.slider-container.status-full-success  #cue-control-go::-webkit-slider-runnable-track {
+  background: #28a745;
+}
+
+.slider-container.status-partial-success  #cue-control-go::-webkit-slider-runnable-track {
+  background: #ffc107;
+}
+
+.slider-container.status-error  #cue-control-go::-webkit-slider-runnable-track {
+  background: #dc3545;
+}
+
+
+.slider-container .alert,
+.slider-container.status-unsent .alert {
+  display: none;
+}
+
+.slider-container.status-full-success .alert-success {
+  display: block;
+}
+
+.slider-container.status-partial-success .alert-warning {
+  display: block;
+}
+
+.slider-container.status-error .alert-danger {
+  display: block;
+}
+
+/* #cue-control-go .cue-sent-response-pending::-webkit-slider-runnable-track {
   background: #5fa36f; }
 
 #cue-control-go .cue-sent-response-success::-webkit-slider-runnable-track {
   background: #28a745; }
 
 #cue-control-go .cue-sent-response-error::-webkit-slider-runnable-track {
-  background: #dc3545; }
+  background: #dc3545; } */
 
 #cue-control-go:disabled::-webkit-slider-runnable-track {
   background: #6C8CA8; }
@@ -156,10 +144,25 @@ padding: 0; }
 #cue-control-go:focus::-ms-fill-upper {
   background: #367ebd; }
 
+  /* end of Slider style */
+
     
     </style>
 
-   <div class="text-center">
-        <label for="cue-control-go">Drag slider to the right to fire cue</label>
-        <input class="cue-controls__cue-controls-go" type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event) v-bind:disabled="selectedOccasion == null">
+    <div class="row mt-3">
+      <div class="col-md-12">
+        <div class="slider-container status-{_broadcastStatus} text-center">
+          <label for="cue-control-go">Drag slider to the right to fire cue</label>
+          <input type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event)>
+          <div class="alert alert-success text-center">
+            {_broadcastResults}
+          </div>
+          <div class="alert alert-warning text-center">
+            {_broadcastResults}
+          </div>
+          <div class="alert alert-danger text-center">
+            {_broadcastResults}
+          </div>
+        </div>
+      </div>
     </div>

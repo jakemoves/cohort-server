@@ -9,6 +9,7 @@
   import { createEventDispatcher } from "svelte";
   import { writable } from 'svelte/store';
   import Page from './ParentPage.svelte';
+  import Slider from './Slider.svelte';
 
   
   
@@ -194,8 +195,8 @@
   let indexInOccasions;
 
   let sliderCue;
-  let broadcastStatus = "unsent"
-  let broadcastResults
+  let broadcastStatus = "unsent";
+  let broadcastResults;
 
 //password check on login
   let authenticated = false;
@@ -494,145 +495,6 @@
     left: 0.5rem;
   }
 
-/* Slider CSS */
-label{
-  margin: 1rem;
-}
-#cue-control-go {
-  -webkit-appearance: none;
-  width: 40%;
-  margin: 1rem 5%;
-  padding: 0; }
-
-#cue-control-go:focus {
-  outline: none; }
-
-#cue-control-go::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 50px;
-  cursor: pointer;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  border-radius: 50px;
-  border: 0px solid #010101; }
-
-.slider-container.status-unsent  #cue-control-go::-webkit-slider-runnable-track {
-  background: #007bff;
-}
-
-.slider-container.status-pending  #cue-control-go::-webkit-slider-runnable-track {
-  background: #6db4ff;
-}
-
-.slider-container.status-full-success  #cue-control-go::-webkit-slider-runnable-track {
-  background: #28a745;
-}
-
-.slider-container.status-partial-success  #cue-control-go::-webkit-slider-runnable-track {
-  background: #ffc107;
-}
-
-.slider-container.status-error  #cue-control-go::-webkit-slider-runnable-track {
-  background: #dc3545;
-}
-
-
-.slider-container .alert,
-.slider-container.status-unsent .alert {
-  display: none;
-}
-
-.slider-container.status-full-success .alert-success {
-  display: block;
-}
-
-.slider-container.status-partial-success .alert-warning {
-  display: block;
-}
-
-.slider-container.status-error .alert-danger {
-  display: block;
-}
-
-/* #cue-control-go .cue-sent-response-pending::-webkit-slider-runnable-track {
-  background: #5fa36f; }
-
-#cue-control-go .cue-sent-response-success::-webkit-slider-runnable-track {
-  background: #28a745; }
-
-#cue-control-go .cue-sent-response-error::-webkit-slider-runnable-track {
-  background: #dc3545; } */
-
-#cue-control-go:disabled::-webkit-slider-runnable-track {
-  background: #6C8CA8; }
-
-#cue-control-go::-webkit-slider-thumb {
-  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
-  border: 1px solid #000000;
-  height: 50px;
-  width: 75px;
-  border-radius: 50px;
-  background: #ffffff;
-  cursor: pointer;
-  -webkit-appearance: none;
-  margin-top: 0px; }
-
-#cue-control-go:focus::-webkit-slider-runnable-track {
-  background: #367ebd; }
-
-#cue-control-go::-moz-range-track {
-  width: 100%;
-  height: 50px;
-  cursor: pointer;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  background: #3071a9;
-  border-radius: 0px;
-  border: 0px solid #010101; }
-
-#cue-control-go::-moz-range-thumb {
-  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
-  border: 1px solid #000000;
-  height: 50px;
-  width: 75px;
-  border-radius: 50px;
-  background: #ffffff;
-  cursor: pointer; }
-
-#cue-control-go::-ms-track {
-  width: 100%;
-  height: 50px;
-  cursor: pointer;
-  background: transparent;
-  border-color: transparent;
-  color: transparent; }
-
-#cue-control-go::-ms-fill-lower {
-  background: #2a6495;
-  border: 0px solid #010101;
-  border-radius: 0px;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; }
-
-#cue-control-go::-ms-fill-upper {
-  background: #3071a9;
-  border: 0px solid #010101;
-  border-radius: 0px;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; }
-
-#cue-control-go::-ms-thumb {
-  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
-  border: 1px solid #000000;
-  width: 75px;
-  border-radius: 50px;
-  background: #ffffff;
-  cursor: pointer;
-  height: 50px; }
-
-#cue-control-go:focus::-ms-fill-lower {
-  background: #3071a9; }
-
-#cue-control-go:focus::-ms-fill-upper {
-  background: #367ebd; }
-
-  /* end of Slider style */
 </style>
 
 
@@ -778,25 +640,6 @@ label{
   </div>
 </div>
 
-<!-- <div id="openOccasion">
-  <div class="container-fluid"> -->
-    <!-- <div class="row">
-      <div class="col-md-12 mt-2"> -->
-      <!-- //maybe no back button if we want to encourage a close occasion -->
-        <!-- <button
-          alt="back to occasions list"
-          type="button"
-          class="btn btn-outline-primary abs-left"
-          value="openOccasion"
-          on:click={backToOccasionList}>
-          <span class="fa fa-angle-left" />
-          Back
-        </button> -->
-        <!-- {#if gotEvents == true}
-          <h3 class="text-center">{focusedOccasion.label}</h3>
-        {/if}
-      </div>
-    </div> -->
    
    <Page pageID='openOccasion' headerSize={3} headingText={focusedOccasion.label}>
     <div class="row ">
@@ -899,151 +742,11 @@ label{
       </div>
       <!-- </div> -->
     </div>
-
-    <div class="row mt-3">
-      <div class="col-md-12">
-        <div class="slider-container status-{broadcastStatus} text-center">
-          <label for="cue-control-go">Drag slider to the right to fire cue</label>
-          <input type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event)>
-          <div class="alert alert-success text-center">
-            {broadcastResults}
-          </div>
-          <div class="alert alert-warning text-center">
-            {broadcastResults}
-          </div>
-          <div class="alert alert-danger text-center">
-            {broadcastResults}
-          </div>
-        </div>
-      </div>
-    </div>
+    <Slider _broadcastResults={broadcastResults} _broadcastStatus={broadcastStatus}/>
      {/if}
   {/if} 
-   </Page>
-    <!-- <hr />
-
-    <div class="row ">
-      <div class="col-md-12">
-        <button
-          type="button"
-          class="btn btn-outline-danger btn-block"
-          data-toggle="modal" 
-          data-target="#closeOccassionModal">
-          Close Occasion
-        </button>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-12">
-        <button
-          type="button"
-          class="btn btn-outline-primary btn-block"
-          value="openOccasion"
-          data-toggle="modal" 
-          data-target="#QRcodeModal"
-          on:click={showQR}>
-          Show QR Code
-        </button>
-      </div>
-    </div>
-{#if gotEvents == true }
-  {#if focusedEvent.episodes[0].cues.length == 0}
-    <div class="row">
-      <div class="col-md-12">
-       <p>Sorry, no cues for this event can be found. We're cue-less.  </p>
-      </div>
-    </div>
-  {:else}
-
-    <div class="row">
-      <div class="col-md-12">
-        <h5>Cue Details</h5>
-        
-        {#if focusedEvent != null && focusedEvent !== undefined}
-          {#each focusedEvent.episodes[0].cues as cue, index}
-            {#if index == cueState}
-            
-              <div id={cue.cueNumber} >
-                <ul>Media Domain:
-              {#if cue.mediaDomain == 0}
-                Sound
-              {:else if cue.mediaDomain == 1}
-                Video
-              {:else if cue.mediaDomain == 2}
-                Text
-              {:else if cue.mediaDomain == 3}
-                Light 
-              {:else if cue.mediaDomain == 4}
-                Haptic
-              {/if}					  
-					  </ul>
-                <ul>Cue Number: {cue.cueNumber}</ul>
-                <ul>Cue Action:
-				  {#if cue.cueAction == 0}
-				    Play (or 'on')
-				  {:else if cue.cueAction == 1}
-				    Pause
-				  {:else if cue.cueAction == 2}
-				    Restart
-				  {:else if cue.cueAction == 3}
-				    Stop (or 'off')
-				  {/if}
-				 </ul>
-              </div>
-            {/if}
-          {/each}
-        {/if}
-
-      </div>
-    </div>
+</Page>
    
-
-
-    <div class="row">
-      <!-- <div class="col-4 col-md-3"> -->
-      <!-- <div class="col-12 d-flex justify-content-between">
-        <button
-          type="button"
-          class="btn btn-info"
-          value="previous"
-          disabled={cueState == 0}
-          on:click={changeCueState}><span class="fas fa-angle-left"/>&nbsp;Previous</button> -->
-      <!-- </div> -->
-      <!-- <div class="col-4 col-md-3"> -->
-        <!-- <button
-          type="button"
-          class="btn btn-info"
-          value="next"
-          disabled={cueState == focusedEvent.episodes[0].cues.length-1}
-          on:click={changeCueState}>
-         &nbsp;&nbsp;Next&nbsp;<span class="fas fa-angle-right" /> &nbsp;&nbsp;
-        </button>
-      </div> -->
-      <!-- </div> -->
-    <!-- </div>
-
-    <div class="row mt-3">
-      <div class="col-md-12">
-        <div class="slider-container status-{broadcastStatus} text-center">
-          <label for="cue-control-go">Drag slider to the right to fire cue</label>
-          <input type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event)>
-          <div class="alert alert-success text-center">
-            {broadcastResults}
-          </div>
-          <div class="alert alert-warning text-center">
-            {broadcastResults}
-          </div>
-          <div class="alert alert-danger text-center">
-            {broadcastResults}
-          </div>
-        </div>
-      </div>
-    </div>
-     {/if}
-  {/if} 
-  </div>
-</div> -->
 
 <div class="modal fade" id="QRcodeModal" tabindex="-1" role="dialog" aria-labelledby="QRcodeModalLabel" aria-hidden="true">
 <div id="QRcode">
@@ -1148,7 +851,7 @@ label{
   </div>
 </div>
 
-<!-- //modals show/hide not working, so removed below so they can act as a static document  -->
+
 <div class="modal fade" id="deleteOccassionModal" tabindex="-1" role="dialog" aria-labelledby="deleteOccassionModalLabel" aria-hidden="true">
 <div id="confirmDelete">
   <div class="modal-dialog" role="document">
