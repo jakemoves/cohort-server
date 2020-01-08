@@ -35,6 +35,7 @@
     storedEvents = writable(grabbedFromServerEvents);
     storedEvents.subscribe(value => {
       events = value;
+      console.log(value);
     });
 
     focusedEvent = events[0]
@@ -402,16 +403,14 @@
   }
 
   //this changes which cue details are shown
-  function changeCueState() {
-    let direction = this.value;
-
+  function changeCueState(direction) {
     let cuesLength = focusedEvent.episodes[0].cues.length;
     if (direction == "next" && cueState < cuesLength - 1) {
       cueState ++;
     } else if (direction == "previous" && cueState > 0) {
       cueState --;
     } 
-    console.log (cueState);
+    
     //update broadcast message 
     sliderCue = focusedEvent.episodes[0].cues[cueState];
 
@@ -473,9 +472,6 @@
     padding-left: 0;
   }
 
-  button {
-	  margin-bottom:0.5rem;
-  }
 
   h1 {
     font-size: 2rem;
@@ -497,7 +493,7 @@
 </style>
 
 
-<!-- Keeping this as a component cause it will likely need switching out -->
+
 <div id="login">
   {#if !authenticated}
   <div class="container">
@@ -641,29 +637,17 @@
 
    
    <Page pageID='openOccasion' headerSize={3} headingText={focusedOccasion.label}>
-    <!-- <div class="row ">
-      <div class="col-md-12">
-        <button
-          type="button"
-          class="btn btn-outline-danger btn-block"
-          data-toggle="modal" 
-          data-target="#closeOccassionModal">
-          Close Occasion
-        </button>
-      </div>
-    </div> -->
-    <Button 
-      sizeDetails="col-md-12 mb-2" 
-      buttonType='btn-outline-danger' 
-      buttonText="Close Occasion" 
-      dataTarget="#closeOccassionModal"/>
-
-    <Button on:click={showQR}
-      sizeDetails="col-md-12 mb-2" 
-      buttonType='btn-outline-primary' 
-      buttonText="Show QR Code" 
-      dataTarget="#QRcodeModal"/>
-
+     <div class="row">
+      <Button
+        buttonType='btn-outline-danger' 
+        buttonText="Close Occasion" 
+        dataTarget="#closeOccassionModal"/>
+    </div>
+    <div class="row">
+      <Button on:click={showQR} 
+        buttonText="Show QR Code" 
+        dataTarget="#QRcodeModal"/>
+    </div>
 
 {#if gotEvents == true }
   {#if focusedEvent.episodes[0].cues.length == 0}
@@ -719,27 +703,24 @@
 
 
     <div class="row">
-      <!-- <div class="col-4 col-md-3"> -->
       <div class="col-12 d-flex justify-content-between">
-        <button
-          type="button"
-          class="btn btn-info"
-          value="previous"
-          disabled={cueState == 0}
-          on:click={changeCueState}><span class="fas fa-angle-left"/>&nbsp;Previous</button>
-      <!-- </div> -->
-      <!-- <div class="col-4 col-md-3"> -->
-        <button
-          type="button"
-          class="btn btn-info"
-          value="next"
-          disabled={cueState == focusedEvent.episodes[0].cues.length-1}
-          on:click={changeCueState}>
-         &nbsp;&nbsp;Next&nbsp;<span class="fas fa-angle-right" /> &nbsp;&nbsp;
-        </button>
+        <Button on:click={() => changeCueState ("previous")}
+          bsSizePosition = ""
+          buttonType = 'btn-info'
+          buttonText = &nbsp;Previous
+          value = previous
+          iconLeft = "fas fa-angle-left"
+          disabled = {cueState == 0}/>
+
+        <Button on:click={() => changeCueState ("next")}
+          bsSizePosition = ""
+          buttonType = 'btn-info'
+          buttonText = &nbsp;&nbsp;&nbsp;Next&nbsp;
+          value = next
+          iconRight = "fas fa-angle-right"
+          disabled={cueState == focusedEvent.episodes[0].cues.length-1}/>
       </div>
-      <!-- </div> -->
-    </div>
+    </div>    
 
     <Slider _broadcastResults={broadcastResults} _broadcastStatus={broadcastStatus}/>
      {/if}
