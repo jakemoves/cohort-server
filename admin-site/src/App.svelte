@@ -11,7 +11,7 @@
   import Page from './ParentPage.svelte';
   import Slider from './Slider.svelte';
   import Button from './Button.svelte';
-  
+  import Modal from './Modal.svelte';
 
   let storedEvents;
   let gotEvents = false;
@@ -210,12 +210,11 @@
   let deleteOccasionHasHappened = false;
 
   //hold DOM state
-  let pageState = 1;
+  let pageState = 0;
 
   // when an event button is hit only open occasions for that event
   function eventButton() {
-    document.getElementById("eventsList").style.display = "none";
-    document.getElementById("occasionList").style.display = "block";
+    pageState = 2;
     focusedEventLabel = this.value;
     indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
     focusedEvent = events[indexInEvents];
@@ -226,15 +225,14 @@
   }
   
   function occasionButton() {
-    document.getElementById("occasionList").style.display = "none";
     focusedOccasionID = this.value;
     indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
     focusedOccasion = focusedEvent.occasions[indexInOccasions];
 
     if(focusedOccasion.state == "closed"){
-      document.getElementById("closedOccasion").style.display = "block";
+      pageState = 3;
     } else {
-      document.getElementById("openOccasion").style.display = "block";
+      pageState = 4;
     }
 
 	  formattedStartTimeFull = moment(focusedOccasion.startDateTime)
@@ -247,7 +245,7 @@
       .format("LL");
   }
 
-  //these are navigation buttons..not very elegant and partly due to modals not working
+
   function openOccasionButton() {
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
@@ -257,8 +255,7 @@
       }).then( response => { 
         if(response.status == 200){
           response.json().then( details => {
-            document.getElementById("closedOccasion").style.display = "none";
-            document.getElementById("openOccasion").style.display = "block";
+            pageState = 4;
           })
         } else {
           response.text().then( errorMessage => {
@@ -273,6 +270,10 @@
     } 
   };
 
+  function goBackAPage(){
+    pageState --;
+  }
+
   function closeOccasionButton(){
 
     try {
@@ -283,8 +284,7 @@
       }).then( response => { 
         if(response.status == 200){
           response.json().then( details => {
-            document.getElementById("openOccasion").style.display = "none";
-            document.getElementById("closedOccasion").style.display = "block";
+            pageState=3;
           })
         } else {
           response.text().then( errorMessage => {
@@ -297,11 +297,6 @@
     } catch (e) {
       console.log(e.message)
     } 
-  }
-
-  function confirmOccasionDelete() {
-    document.getElementById("closedOccasion").style.display = "none";
-    document.getElementById("confirmDelete").style.display = "block";
   }
 
   function deleteOccasion() {
@@ -357,11 +352,11 @@
 
     
   }
-  function backToEvents() {
-    let id = this.value;
-    document.getElementById(id).style.display = "none";
-    document.getElementById("eventsList").style.display = "block";
-  }
+  // function backToEvents() {
+  //   let id = this.value;
+  //   document.getElementById(id).style.display = "none";
+  //   document.getElementById("eventsList").style.display = "block";
+  // }
   function cancelEnd() {
     document.getElementById("confirmCloseOccasion").style.display = "none";
     document.getElementById("openOccasion").style.display = "block";
@@ -438,9 +433,11 @@
     var passwordCheck = document.getElementById('password').value;
     if (passwordCheck == "5555"){
       authenticated = true;
-      document.getElementById("eventsList").style.display="block";
-      
       GetEvents();
+      pageState = 1;
+      // document.getElementById("eventsList").style.display="block";
+      
+      
     }
   }
     
@@ -457,12 +454,12 @@
 </script>
 
 <style>
-  #eventsList,
-  #closedOccasion,
+  /* #eventsList, */
+  /* #closedOccasion,
   #openOccasion,
   #occasionList {
     display: none;
-  }
+  } */
   #devTools{
     visibility: hidden;
 
@@ -485,15 +482,11 @@
     font-size:0.8rem;
   }
 
-  .abs-left { 
-    position: absolute;
-    left: 0.5rem;
-  }
 
 </style>
 
 
-
+{#if pageState == 0}
 <div id="login">
   {#if !authenticated}
   <div class="container">
@@ -533,7 +526,7 @@
 </div>
 
 <!-- #eventsList allows a list of events to be built and shown -->
-
+{:else if pageState == 1}
 <div id="eventsList">
   <div class="container-fluid">
     <div class="row">
@@ -584,7 +577,7 @@
 
   </div>
 </div>
-
+{:else if pageState == 2}
 <!-- //occasions list populated by looping through events of "focused" event ID -->
 <div id="occasionList">
   <div class="container-fluid">
@@ -595,7 +588,7 @@
           type="button"
           class="btn btn-outline-primary mr-2 abs-left"
           value="occasionList"
-          on:click={backToEvents}>
+          on:click={goBackAPage}>
 		      <span class="fa fa-angle-left" />
           Back
         </button>
@@ -635,11 +628,66 @@
   </div>
 </div>
 
-   
-   <Page pageID='openOccasion' headerSize={3} headingText={focusedOccasion.label}>
+{:else if pageState == 3} 
+<Page 
+    pageID='closedOccasion' 
+    headerSize={3} 
+    headingText={focusedOccasion.label}
+    hasBackButton = {1}>
+    <div slot="backButton">
+       <Button on:click={goBackAPage}
+          bsSizePosition=""
+          buttonType="btn-outline-primary abs-left"
+          iconLeft= "fa fa-angle-left"
+          buttonText="Back"/>
+    </div>
+
+    <div class="row">
+      <Button on:click={showQR}
+        buttonText="Get QR Code" 
+        dataTarget="#QRcodeModal"/>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <label for="OccasionDetails">
+          <h4>Occasion Details</h4>
+        </label>
+        <ul id="OccasionDetails">
+          <li>Start Date : {formattedStartTimeFull}</li>
+          <li>End Date : {formattedEndTimeFull}</li>
+          <li>Location Label: {focusedOccasion.locationLabel}</li>
+          <li>Location Address: {focusedOccasion.locationAddress}</li>
+          <li>Location City: {focusedOccasion.locationCity}</li>
+		 
+		    </ul>
+		  <hr> 
+        <div class="row">
+          <Button on:click={openOccasionButton}
+            buttonType="btn-outline-success btn-block"
+            buttonText="Open Occasion"/>
+        </div>
+        <div class="row">
+          <Button
+            buttonType="btn-outline-danger btn-block"
+            buttonText="Delete Occasion"
+            dataTarget="#deleteOccassionModal"/>
+        </div>
+		  
+        
+      </div>
+    </div>
+    
+</Page>
+
+{:else if pageState == 4}  
+  <Page 
+    pageID='openOccasion' 
+    headerSize={3} 
+    headingText={focusedOccasion.label}>
      <div class="row">
       <Button
-        buttonType='btn-outline-danger' 
+        buttonType='btn-outline-danger btn-block' 
         buttonText="Close Occasion" 
         dataTarget="#closeOccassionModal"/>
     </div>
@@ -649,117 +697,85 @@
         dataTarget="#QRcodeModal"/>
     </div>
 
-{#if gotEvents == true }
-  {#if focusedEvent.episodes[0].cues.length == 0}
-    <div class="row">
-      <div class="col-md-12">
-       <p>Sorry, no cues for this event can be found. We're cue-less.  </p>
-      </div>
-    </div>
-  {:else}
-
-    <div class="row">
-      <div class="col-md-12">
-        <h5>Cue Details</h5>
-        
-        {#if focusedEvent != null && focusedEvent !== undefined}
-          {#each focusedEvent.episodes[0].cues as cue, index}
-            {#if index == cueState}
-            
-              <div id={cue.cueNumber} >
-                <ul>Media Domain:
-              {#if cue.mediaDomain == 0}
-                Sound
-              {:else if cue.mediaDomain == 1}
-                Video
-              {:else if cue.mediaDomain == 2}
-                Text
-              {:else if cue.mediaDomain == 3}
-                Light 
-              {:else if cue.mediaDomain == 4}
-                Haptic
-              {/if}					  
-					  </ul>
-                <ul>Cue Number: {cue.cueNumber}</ul>
-                <ul>Cue Action:
-				  {#if cue.cueAction == 0}
-				    Play (or 'on')
-				  {:else if cue.cueAction == 1}
-				    Pause
-				  {:else if cue.cueAction == 2}
-				    Restart
-				  {:else if cue.cueAction == 3}
-				    Stop (or 'off')
-				  {/if}
-				 </ul>
-              </div>
-            {/if}
-          {/each}
-        {/if}
-
-      </div>
-    </div>
-   
-
-
-    <div class="row">
-      <div class="col-12 d-flex justify-content-between">
-        <Button on:click={() => changeCueState ("previous")}
-          bsSizePosition = ""
-          buttonType = 'btn-info'
-          buttonText = &nbsp;Previous
-          value = previous
-          iconLeft = "fas fa-angle-left"
-          disabled = {cueState == 0}/>
-
-        <Button on:click={() => changeCueState ("next")}
-          bsSizePosition = ""
-          buttonType = 'btn-info'
-          buttonText = &nbsp;&nbsp;&nbsp;Next&nbsp;
-          value = next
-          iconRight = "fas fa-angle-right"
-          disabled={cueState == focusedEvent.episodes[0].cues.length-1}/>
-      </div>
-    </div>    
-
-    <Slider _broadcastResults={broadcastResults} _broadcastStatus={broadcastStatus}/>
-     {/if}
-  {/if} 
-</Page>
-   
-
-<div class="modal fade" id="QRcodeModal" tabindex="-1" role="dialog" aria-labelledby="QRcodeModalLabel" aria-hidden="true">
-<div id="QRcode">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-          value="QRcode">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-12 text-center">
-              <div id = "QRcodeContainer">
-                <!-- QR code populated here -->
-
-              </div>
-            </div>
+    {#if gotEvents == true }
+      {#if focusedEvent.episodes[0].cues.length == 0}
+        <div class="row">
+          <div class="col-md-12">
+          <p>Sorry, no cues for this event can be found. We're cue-less.  </p>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
+      {:else}
+        <div class="row">
+          <div class="col-md-12">
+            <h5>Cue Details</h5>
+            
+            {#if focusedEvent != null && focusedEvent !== undefined}
+              {#each focusedEvent.episodes[0].cues as cue, index}
+                {#if index == cueState}
+                  <div id={cue.cueNumber} >
+                    <ul>Media Domain:
+                      {#if cue.mediaDomain == 0}
+                        Sound
+                      {:else if cue.mediaDomain == 1}
+                        Video
+                      {:else if cue.mediaDomain == 2}
+                        Text
+                      {:else if cue.mediaDomain == 3}
+                        Light 
+                      {:else if cue.mediaDomain == 4}
+                        Haptic
+                      {/if}					  
+                    </ul>
+                    <ul>Cue Number: {cue.cueNumber}</ul>
+                    <ul>Cue Action:
+                      {#if cue.cueAction == 0}
+                        Play (or 'on')
+                      {:else if cue.cueAction == 1}
+                        Pause
+                      {:else if cue.cueAction == 2}
+                        Restart
+                      {:else if cue.cueAction == 3}
+                        Stop (or 'off')
+                      {/if}
+                    </ul>
+                  </div>
+                {/if}
+              {/each}
+            {/if}
 
-<div id="closedOccasion">
+          </div>
+        </div>
+   
+        <div class="row">
+          <div class="col-12 d-flex justify-content-between">
+            <Button on:click={() => changeCueState ("previous")}
+              bsSizePosition = ""
+              buttonType = 'btn-info'
+              buttonText = &nbsp;Previous
+              value = previous
+              iconLeft = "fas fa-angle-left"
+              disabled = {cueState == 0}/>
+
+            <Button on:click={() => changeCueState ("next")}
+              bsSizePosition = ""
+              buttonType = 'btn-info'
+              buttonText = &nbsp;&nbsp;&nbsp;Next&nbsp;
+              value = next
+              iconRight = "fas fa-angle-right"
+              disabled={cueState == focusedEvent.episodes[0].cues.length-1}/>
+          </div>
+        </div>    
+
+        <Slider _broadcastResults={broadcastResults} _broadcastStatus={broadcastStatus}/>
+      {/if}
+    {/if} 
+
+  </Page>
+
+
+
+{/if}
+<!-- <div id="closedOccasion">
   <div class="container-fluid">
     <div class="row">
       <div class="col-12 mt-2">
@@ -829,7 +845,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 
 <div class="modal fade" id="deleteOccassionModal" tabindex="-1" role="dialog" aria-labelledby="deleteOccassionModalLabel" aria-hidden="true">
@@ -851,7 +867,10 @@
         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
           Cancel
         </button>
-        <button type="button" class="btn btn-outline-danger" on:click={deleteOccasion} data-dismiss={modalhtml}>
+        <button type="button" 
+          class="btn btn-outline-danger" 
+          on:click={deleteOccasion} 
+          data-dismiss={modalhtml}>
           Delete Occasion
         </button>
       </div>
@@ -861,40 +880,44 @@
 </div>
 </div>
 
-<div class="modal fade" id="closeOccassionModal" tabindex="-1" role="dialog" aria-labelledby="closeOccassionModalLabel" aria-hidden="true">
-<div id="confirmCloseOccasion">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteOccasionConfirmation">
-          Close Occasion
-        </h5>
-      </div>
-
-      {#if gotEvents == true}
-      <div class="modal-body">
-        Are you sure you want to close {focusedEvent.label} - {formattedStartTime}
-        ?
-      </div>
-      <div class="modal-footer">
-        <button 
-		      type="button" 
-		      class="btn btn-outline-secondary"
-          data-dismiss="modal">
-          Cancel
-        </button>
-        <button
-          type="button"
-          class="btn btn-outline-danger"
-          value="confirmCloseOccasion"
-          on:click={closeOccasionButton}
-          data-dismiss="modal">
-          Close Occasion
-        </button>
-      </div>
-      {/if}
-    </div>
+<Modal
+  modalID="closeOccassionModal">
+  <h5 slot="modalHeader" class="modal-title">
+      Close Occasion
+  </h5>
+  <div slot="modalBody">
+    {#if gotEvents == true}
+      Are you sure you want to close {focusedEvent.label} - {formattedStartTime}?
+    {/if}
   </div>
+  <div class="row" slot="modalFooter">
+    <Button
+      bsSizePosition = "mr-1"
+      buttonType="btn-outline-secondary"
+      dataDismiss ="modal"
+      buttonText = "Cancel"/>
 
-</div>
-</div>
+    <Button on:click={closeOccasionButton}
+      bsSizePosition = "mr-1"
+      buttonType="btn-outline-danger"
+      dataDismiss="modal"
+      buttonText="Close Occasion"/>
+  </div>
+</Modal>
+
+<Modal
+  modalID="QRcodeModal">
+    <div slot="modalHeader">
+    <Button
+          buttonType="close"
+          dataDismiss="modal"
+          ariaLabel="Close"
+          iconRight = "fas fa-times"/>
+    </div>
+    <div slot="modalBody" class="container-fluid">
+      <div id = "QRcodeContainer">
+        <!-- QR code populated here -->
+      </div>
+    </div>
+</Modal>
+
