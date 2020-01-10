@@ -208,7 +208,7 @@
   let devElement = false;
 
 //show/hide modal
-  let modalhtml;
+  // let modalhtml;
   //double check that a delete Occasion has happened
   let deleteOccasionHasHappened = false;
 
@@ -216,20 +216,22 @@
   let pageState = 0;
 
   // when an event button is hit only open occasions for that event
-  function eventButton() {
+  function eventButton(value) {
     
-    focusedEventLabel = this.value;
+    focusedEventLabel = value;
     indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
     focusedEvent = events[indexInEvents];
 
     ///sorting occasions by date
     let occasionArray = focusedEvent.occasions;
-    dateSortedOccasions = occasionArray.sort((a, b) => a.valueOf() - b.valueOf());
-    
+    let sortDates = (a, b) => moment(a.startDateTime).format('YYYYMMDD') -moment(b.startDateTime).format('YYYYMMDD');
+    dateSortedOccasions = occasionArray.sort(sortDates);
+
     //set up slider cue to hold cues in first index (0)
      sliderCue = focusedEvent.episodes[0].cues[0]
      pageState = 2;
   }
+  
   
  function occasionButton(id) {
     focusedOccasionID = id;
@@ -310,7 +312,7 @@
 
   function deleteOccasion() {
     let value;
-    // let eventful = true;
+    
     //updates Events to remove selected occasion.
     focusedEvent.occasions.splice(indexInOccasions, 1);
 
@@ -318,15 +320,11 @@
     deleteOccasionHasHappened = true;
   
     if (deleteOccasionHasHappened){
-      modalhtml = "modal";
-      document.getElementById("closedOccasion").style.display = "none";
-      document.getElementById("occasionList").style.display = "block";
+      pageState = 2;
+    } 
+   
 
-    } else {
-      modalhtml = '';
-    }
-
-
+  }
 
 
     // update storedEvents with new events object
@@ -360,7 +358,7 @@
     // deleteOccasionServer();
 
     
-  }
+  // }
   // function backToEvents() {
   //   let id = this.value;
   //   document.getElementById(id).style.display = "none";
@@ -388,9 +386,6 @@
       qrContainer.innerHTML = qrcode
     };
     QrResponse();
-
-    // document.getElementById(id).style.display = "none";
-    // document.getElementById("QRcode").style.display = "block";
   }
 
   //this changes which cue details are shown
@@ -431,9 +426,6 @@
       authenticated = true;
       GetEvents();
       pageState = 1;
-      // document.getElementById("eventsList").style.display="block";
-      
-      
     }
   }
     
@@ -450,41 +442,20 @@
 </script>
 
 <style>
-  /* #eventsList, */
-  /* #closedOccasion,
-  #openOccasion,
-  #occasionList {
-    display: none;
-  } */
   #devTools{
     visibility: hidden;
 
-  }
-
-  #createEventInput {
-    padding-left: 0;
-  }
-
-
-  h1 {
-    font-size: 2rem;
-  }
-
-  button > h3, button > p {
-    margin-bottom: 0;
   }
 
   .form-control{
     font-size:0.8rem;
   }
 
-
 </style>
 
 
 {#if pageState == 0}
 <div id="login">
-  {#if !authenticated}
   <div class="container">
     <form id="formContent">
 
@@ -518,75 +489,45 @@
       
     </form>
   </div>
-  {/if}
 </div>
 
 <!-- #eventsList allows a list of events to be built and shown -->
 {:else if pageState == 1}
-<div id="eventsList">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12 text-center mt-4">
-        <h1>Events</h1>
-      </div>
-    </div>
-    <hr />
+  <Page
+    pageID="eventsList"
+    headingText="Events">
 
     {#if events.length === 0}
-      <p>That's uneventful. Sorry, no events have been added yet</p>
+        <p>That's uneventful. Sorry, no events have been added yet</p>
     {:else}
-      {#each events as event}
+      {#each events as event (event.id)}
         <div class="row mt-2">
-          <div class="col-6 text-right">
-            <h3>{event.label}:</h3>
+            <div class="col-6 text-right">
+              <h3>{event.label}:</h3>
+            </div>
+            <Button on:click={()=>eventButton(event.label)}
+              buttonHtml='<p class="mb-0">Occasions&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>'
+              bsSizePosition ="col-6" />
+
           </div>
-          <div class="col-6">
-            <button
-              alt="click here for {event.label} occasion list"
-              type="button"
-              class="btn btn-outline-primary btn-block"
-              value={event.label}
-              on:click={eventButton}>
-              <p>Occasions&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>
-            </button>
-          </div>
-        </div>
       {/each}
     {/if}
+  </Page>
 
-    <hr />
-    <!-- event creation -->
-    <!-- <div class="input-group mb-auto">
-      <input
-        type="text"
-        id="title"
-        class="form-control"
-        placeholder="New Event Name"
-        value={label}
-        on:input={setTitle} />
-      <div class="input-group-append">
-        <button class="btn btn-primary" on:click={createEvent}>
-          Create New Event
-        </button>
-      </div>
-    </div> -->
-
-  </div>
-</div>
 {:else if pageState == 2}
 <!-- //occasions list populated by looping through events of "focused" event ID -->
   <Page
-    pageID = "occasionList"
-    headerSize={3} 
+    pageID = "occasionList" 
     headingText="Occasions">
+
     <div slot="backButton">
        <Button on:click={goBackAPage}
           bsSizePosition=""
           buttonType="btn-outline-primary abs-left"
-          iconLeft= "fa fa-angle-left"
+          iconLeft= "backButton fa fa-angle-left"
           buttonText="Back"/>
     </div>
-    
+
     {#if focusedEvent.occasions.length === 0}
         <p class="text-center">No occasions for this event yet</p>
     {:else}
@@ -600,15 +541,16 @@
   </Page>
 
 {:else if pageState == 3} 
-<Page 
+  <Page 
     pageID='closedOccasion' 
     headerSize={3} 
     headingText={focusedOccasion.label}>
+
     <div slot="backButton">
        <Button on:click={goBackAPage}
           bsSizePosition=""
           buttonType="btn-outline-primary abs-left"
-          iconLeft= "fa fa-angle-left"
+          iconLeft= "backButton fa fa-angle-left"
           buttonText="Back"/>
     </div>
 
@@ -620,6 +562,7 @@
 
     <div class="row">
       <div class="col-md-12">
+
         <label for="OccasionDetails">
           <h4>Occasion Details</h4>
         </label>
@@ -629,7 +572,6 @@
           <li>Location Label: {focusedOccasion.locationLabel}</li>
           <li>Location Address: {focusedOccasion.locationAddress}</li>
           <li>Location City: {focusedOccasion.locationCity}</li>
-		 
 		    </ul>
 		  <hr> 
         <div class="row">
@@ -641,19 +583,18 @@
           <Button
             buttonType="btn-outline-danger btn-block"
             buttonText="Delete Occasion"
-            dataTarget="#deleteOccassionModal"/>
+            dataTarget="#deleteOccasionModal"/>
         </div>
-		  
-        
+		 
       </div>
     </div>
     
-</Page>
+
+  </Page>
 
 {:else if pageState == 4}  
   <Page 
-    pageID='openOccasion' 
-    headerSize={3} 
+    pageID='openOccasion'
     headingText={focusedOccasion.label}>
      <div class="row">
       <Button
@@ -741,48 +682,40 @@
     {/if} 
 
   </Page>
-
+ 
 {/if}
 <!-- //end of page state logic -->
-<div class="modal fade" id="deleteOccassionModal" tabindex="-1" role="dialog" aria-labelledby="deleteOccassionModalLabel" aria-hidden="true">
-<div id="confirmDelete">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteOccasionConfirmation">
-          Delete Occasion
-        </h5>
-      </div>
-
-      {#if gotEvents == true}
-      <div class="modal-body">
-        Are you sure you want to delete {focusedEvent.label} - {formattedStartTime}
-        ?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
-          Cancel
-        </button>
-        <button type="button" 
-          class="btn btn-outline-danger" 
-          on:click={deleteOccasion} 
-          data-dismiss={modalhtml}>
-          Delete Occasion
-        </button>
-      </div>
-      {/if}
-    </div>
+<Modal
+  modalID = "deleteOccasionModal"
+  modalTitle= "Delete Occasion">
+  
+  <div slot="modalBody">
+    {#if gotEvents}
+      Are you sure you want to delete {focusedEvent.label} - {formattedStartTime}?
+    {/if}
   </div>
-</div>
-</div>
+
+  <div class="row" slot="modalFooter">
+    <Button
+      bsSizePosition = "mr-1"
+      buttonType="btn-outline-secondary"
+      dataDismiss ="modal"
+      buttonText = "Cancel"/>
+
+    <Button on:click={deleteOccasion}
+      bsSizePosition = "mr-1"
+      buttonType="btn-outline-danger"
+      dataDismiss="modal"
+      buttonText="Delete Occasion"/>
+  </div>
+</Modal>
 
 <Modal
-  modalID="closeOccassionModal">
-  <h5 slot="modalHeader" class="modal-title">
-      Close Occasion
-  </h5>
+  modalID="closeOccassionModal"
+  modalTitle="Close Occasion">
+  
   <div slot="modalBody">
-    {#if gotEvents == true}
+    {#if gotEvents}
       Are you sure you want to close {focusedEvent.label} - {formattedStartTime}?
     {/if}
   </div>
@@ -803,13 +736,15 @@
 
 <Modal
   modalID="QRcodeModal">
-    <div slot="modalHeader">
-    <Button
+    <div slot="closeButton">
+      <Button
           buttonType="close"
           dataDismiss="modal"
           ariaLabel="Close"
           iconRight = "fas fa-times"/>
+    
     </div>
+    
     <div slot="modalBody" class="container-fluid">
       <div id = "QRcodeContainer">
         <!-- QR code populated here -->

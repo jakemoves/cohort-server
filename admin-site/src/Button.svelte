@@ -24,6 +24,10 @@ export let buttonHtml = "";
     position: absolute;
     left: 0.5rem;
   }
+  .backButton{
+      vertical-align: text-bottom;
+  }
+  
 </style>
 
 

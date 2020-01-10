@@ -1,6 +1,6 @@
 <script>
  import Button from './Button.svelte';
- export let headerSize;
+ export let headerSize = 3;
  export let headingText;
  export let pageID;
 
