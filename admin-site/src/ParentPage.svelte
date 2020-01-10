@@ -3,7 +3,7 @@
  export let headerSize;
  export let headingText;
  export let pageID;
- export let hasBackButton = 0;
+
 </script>
 <style>
 

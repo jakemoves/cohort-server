@@ -10,6 +10,7 @@ export let iconRight = undefined;
 //for modal close
 export let dataDismiss = undefined;
 export let ariaLabel = undefined;
+export let buttonHtml = "";
 
 </script>
 <style>
@@ -28,7 +29,7 @@ export let ariaLabel = undefined;
 
     <div class={bsSizePosition}>
     
-            <button on:click 
+            <button on:click
                 type="button" 
                 class="btn {buttonType}" 
                 data-toggle="modal" 
@@ -39,7 +40,7 @@ export let ariaLabel = undefined;
                 disabled = {disabled}>
 
             <span class={iconLeft}/>
-            {buttonText} 
+           {@html buttonHtml}{buttonText}
             <span class={iconRight}/>
         </button>
     

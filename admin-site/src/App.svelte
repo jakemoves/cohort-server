@@ -11,8 +11,10 @@
   import Page from './ParentPage.svelte';
   import Slider from './Slider.svelte';
   import Button from './Button.svelte';
+  // import {goBackAPage} from './ButtonActions.svelte'
   import Modal from './Modal.svelte';
-
+  import OccasionsList from './OccasionsList.svelte';
+  
   let storedEvents;
   let gotEvents = false;
   //holds a store of events
@@ -184,6 +186,7 @@
   let focusedOccasionID = 0;
   let focusedEvent;
   let focusedOccasion = "0";
+  let dateSortedOccasions =[];
   //hold formatted time
   let formattedStartTime = "";
   let formattedEndTime = "";
@@ -214,18 +217,22 @@
 
   // when an event button is hit only open occasions for that event
   function eventButton() {
-    pageState = 2;
+    
     focusedEventLabel = this.value;
     indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
     focusedEvent = events[indexInEvents];
 
-     
+    ///sorting occasions by date
+    let occasionArray = focusedEvent.occasions;
+    dateSortedOccasions = occasionArray.sort((a, b) => a.valueOf() - b.valueOf());
+    
     //set up slider cue to hold cues in first index (0)
      sliderCue = focusedEvent.episodes[0].cues[0]
+     pageState = 2;
   }
   
-  function occasionButton() {
-    focusedOccasionID = this.value;
+ function occasionButton(id) {
+    focusedOccasionID = id;
     indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
     focusedOccasion = focusedEvent.occasions[indexInOccasions];
 
@@ -272,6 +279,8 @@
 
   function goBackAPage(){
     pageState --;
+    // not sure this is the right space for this
+    broadcastStatus = "unsent"
   }
 
   function closeOccasionButton(){
@@ -357,30 +366,17 @@
   //   document.getElementById(id).style.display = "none";
   //   document.getElementById("eventsList").style.display = "block";
   // }
-  function cancelEnd() {
-    document.getElementById("confirmCloseOccasion").style.display = "none";
-    document.getElementById("openOccasion").style.display = "block";
-  }
   
 
-  function backToOccasionList() {
-    let id = this.value;
-    document.getElementById(id).style.display = "none";
-    document.getElementById("occasionList").style.display = "block";
-
-    broadcastStatus = "unsent"
-  }
-
-  // function backToClosedOccasion() {
+  // function backToOccasionList() {
   //   let id = this.value;
   //   document.getElementById(id).style.display = "none";
-  //   document.getElementById("closedOccasion").style.display = "block";
+  //   document.getElementById("occasionList").style.display = "block";
+
+  //   broadcastStatus = "unsent"
   // }
 
-  
   function showQR() {
-    console.log('fired');
-    // let id = this.value;
     //grab QR code for that occasion and update
     // for testing "/occasions/3/qrcode"
     let QrResponse = async () => { 
@@ -579,61 +575,35 @@
 </div>
 {:else if pageState == 2}
 <!-- //occasions list populated by looping through events of "focused" event ID -->
-<div id="occasionList">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12 mt-2">
-        <button
-		      alt="back to events list"
-          type="button"
-          class="btn btn-outline-primary mr-2 abs-left"
-          value="occasionList"
-          on:click={goBackAPage}>
-		      <span class="fa fa-angle-left" />
-          Back
-        </button>
-        <h3 class="text-center">Occasions</h3>
-      </div>
+  <Page
+    pageID = "occasionList"
+    headerSize={3} 
+    headingText="Occasions">
+    <div slot="backButton">
+       <Button on:click={goBackAPage}
+          bsSizePosition=""
+          buttonType="btn-outline-primary abs-left"
+          iconLeft= "fa fa-angle-left"
+          buttonText="Back"/>
     </div>
-
-    <hr />
-    {#if focusedEvent != undefined}
-      {#if focusedEvent.occasions.length === 0}
+    
+    {#if focusedEvent.occasions.length === 0}
         <p class="text-center">No occasions for this event yet</p>
-      {:else}
-        {#each events as event}
-          {#if event.label == focusedEventLabel && event.occasions != null && event.occasions.length > 0}
-            {#each event.occasions as occasion (occasion.id)}
-                <div class="row">
-                  <div class="col">
-                    <button
-                      alt="click here for details"
-                      type="button"
-                      id={occasion.id}
-                      class="btn btn-outline-primary btn-block"
-                      value={occasion.id}
-                      on:click={occasionButton}>
-                      <h3 class="m-0">{event.label}  - {occasion.label} </h3>
-                      <h5>{occasion.locationCity} - {moment(occasion.startDateTime).format("LL")} - id:{occasion.id}</h5>	
-                    </button>
-                  </div>
-                </div>
-            {/each}
-
-          {/if}
-
-        {/each}
-      {/if}
+    {:else}
+      {#each dateSortedOccasions as occasion (occasion.id)}
+        <Button on:click={() => occasionButton(occasion.id)}
+            buttonHtml = '<h3 class="m-0">{occasion.label}  - {occasion.label} </h3> <h5>{occasion.locationCity} - {moment(occasion.startDateTime).format("LL")} - id:{occasion.id}</h5>'
+            value = {occasion.id}/>
+      {/each}
     {/if}
-  </div>
-</div>
+
+  </Page>
 
 {:else if pageState == 3} 
 <Page 
     pageID='closedOccasion' 
     headerSize={3} 
-    headingText={focusedOccasion.label}
-    hasBackButton = {1}>
+    headingText={focusedOccasion.label}>
     <div slot="backButton">
        <Button on:click={goBackAPage}
           bsSizePosition=""
@@ -772,82 +742,8 @@
 
   </Page>
 
-
-
 {/if}
-<!-- <div id="closedOccasion">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12 mt-2">
-        <button
-        alt="back to Occasions list"
-        type="button"
-        class="btn btn-outline-primary abs-left"
-        value="closedOccasion"
-        on:click={backToOccasionList}>
-        <span class="fa fa-angle-left" />
-        Back
-        </button>
-        {#if gotEvents == true}
-          <h3 class="text-center">{focusedOccasion.label}</h3>
-        {/if}
-      </div>
-    </div>
-    
-    <hr>
-    <div class="row">
-      <div class="col-md-12">
-        <label for="OccasionDetails">
-          <h4>Occasion Details</h4>
-        </label>
-        <ul id="OccasionDetails">
-          <li>Start Date : {formattedStartTimeFull}</li>
-          <li>End Date : {formattedEndTimeFull}</li>
-          <li>Location Label: {focusedOccasion.locationLabel}</li>
-          <li>Location Address: {focusedOccasion.locationAddress}</li>
-          <li>Location City: {focusedOccasion.locationCity}</li>
-		  <hr>
-		  <li>
-			<button
-				alt="link to QR Code"
-				type="button"
-				class="btn btn-link"
-				value="closedOccasion"
-        data-toggle="modal" 
-        data-target="#QRcodeModal"
-				on:click={showQR}>
-				Get QR Code
-        	</button>
-		  </li>
-		  <hr>
-        </ul>
-      </div>
-    </div>
-	<div class="row">
-      <div class="col-md-12">
-        <button
-          type="button"
-          class="btn btn-outline-success btn-block"
-          on:click={openOccasionButton}>
-          Open Occasion
-        </button>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <button
-          type="button"
-          class="btn btn-outline-danger btn-block"
-          data-toggle="modal" 
-          data-target="#deleteOccassionModal">
-          Delete Occasion
-        </button>
-      </div>
-    </div>
-  </div>
-</div> -->
-
-
+<!-- //end of page state logic -->
 <div class="modal fade" id="deleteOccassionModal" tabindex="-1" role="dialog" aria-labelledby="deleteOccassionModalLabel" aria-hidden="true">
 <div id="confirmDelete">
   <div class="modal-dialog" role="document">
