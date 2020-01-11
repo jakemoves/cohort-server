@@ -473,10 +473,18 @@
         <input type="text" id="password" class="form-control" name="login" placeholder="password">     
       </div>
 
-      <button type="button" class="btn btn-primary" on:click={verifyPassword}> Log In </button>
+      <!-- <button type="button" class="btn btn-primary" on:click={verifyPassword}> Log In </button> -->
+      <Button on:click={verifyPassword}
+        buttonType = "btn-primary"
+        bsSizePosition = ""
+        buttonText = "Login"/>
 
       <div class="form-group mt-5">
-        <button type="button" class="btn btn-light btn-outline-dark btn-sm mt-4" on:click={HideShowDev}> Show/Hide Developer Tools </button>
+        <Button on:click={HideShowDev}
+        buttonType = "btn-light btn-outline-dark btn-sm mt-4"
+        bsSizePosition = ""
+        buttonText = "Show/Hide Developer Tools"/>
+        <!-- <button type="button" class="btn btn-light btn-outline-dark btn-sm mt-4" on:click={HideShowDev}> Show/Hide Developer Tools </button> -->
        </div>    
      
       <div class="form-group" id = "devTools">
@@ -491,7 +499,7 @@
   </div>
 </div>
 
-<!-- #eventsList allows a list of events to be built and shown -->
+<!-- #eventsList allows a list of events to be built and shown based on main events object -->
 {:else if pageState == 1}
   <Page
     pageID="eventsList"

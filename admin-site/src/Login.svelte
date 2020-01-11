@@ -1,27 +1,27 @@
 <!-- Login component with a simple password verification -->
 
  <script>
-    export let authenticated = false;
+  import Page from './ParentPage.svelte';
+  import Button from './Button.svelte';
+  
+  export let authenticated = false;
+  export let serverURL;
 
     function verifyPassword(){
       // verifying password logic 
       var passwordCheck = document.getElementById('password').value;
       if (passwordCheck == "5555"){
         authenticated = true;
-        document.getElementById("eventsList").style.display="block";
+        
       }
     }
 
 </script> 
 
-<style>
 
-
-</style>
-
-{#if !authenticated}
-  <div class="container">
+ <div class="container">
     <form id="formContent">
+
       <div class="row"> 
         <div class= "col-md-12 text-center mt-4 mb-2">  
           <h4>Welcome Administrator</h4>
@@ -36,13 +36,27 @@
         <input type="text" id="password" class="form-control" name="login" placeholder="password">     
       </div>
 
-      <button type="button" class="btn btn-primary" on:click={verifyPassword}> Log In </button>
-                
-       
+      <!-- <button type="button" class="btn btn-primary" on:click={verifyPassword}> Log In </button> -->
+      <Button on:click={verifyPassword}
+        buttonType = "btn-primary"
+        bsSizePosition = ""
+        buttonText = "Login"/>
+        
+      <div class="form-group mt-5">
+        <button type="button" class="btn btn-light btn-outline-dark btn-sm mt-4" on:click={HideShowDev}> Show/Hide Developer Tools </button>
+       </div>    
+     
+      <div class="form-group" id = "devTools">
+        <label for="urlSelect">Select Cohort server to connect to</label>
+        <select bind:value={serverURL} size= "1" class="form-control" id="urlSelect" name="selector">
+          <option value="https://staging.cohort.rocks/api/v2">Staging</option>
+          <option value="http://localhost:3000/api/v2">Development (localhost)</option>
+        </select>
+      </div>
+      
     </form>
   </div>
 
-{/if}
 
 
 
