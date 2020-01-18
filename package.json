@@ -34,8 +34,9 @@
     "ws": "^6.0.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.0",
-    "@babel/cli": "^7.2.3"
+    "hexo": "^4.2.0"
   },
   "scripts": {
     "test": "jest",
