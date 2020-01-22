@@ -4,7 +4,6 @@
 
 # Site
 title: Cohort Blog
-subtitle: 'Dispatches from theatre and dance artists using adventurous technology'
 description: ''
 keywords:
 author: John Doe
@@ -13,8 +12,8 @@ timezone: ''
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://cohort.rocks/blog
-root: /blog/
+url: https://blog.cohort.rocks/
+root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
