@@ -73,27 +73,46 @@ describe('Basic startup', () => {
     expect(res.status).toEqual(200)
     expect(res.text).toEqual('Cohort rocks')
   })
+})
 
-  test('login -- error: invalid password', async () => {
+/*    USER ROUTES */
+describe('User registration', () => {
+
+  test('register -- happy path', async () => {
     const res = await request(app)
-      .post('/api/v2/login')
+      .post('/api/v2/users')
       .send({
         'username': 'cohort_test_user',
         'password': '4444'
       })
     
-      expect(res.status).toEqual(401)
+    expect(res.status).toEqual(201)
+    expect(res.body.id).toBeDefined()
+    expect(res.header.location).toEqual('/api/v2/users/' + res.body.id)
+    expect(res.body.username).toEqual('cohort_test_user')
+    expect(res.body.password).toBeUndefined()
   })
 
-  test('login -- happy path', async () => {
+  test('register -- error: username already exists', async () => {
     const res = await request(app)
-      .post('/api/v2/login')
+      .post('/api/v2/users')
       .send({
         'username': 'cohort_test_user',
-        'password': '5555'
+        'password': '4444'
       })
     
-      expect(res.status).toEqual(200)
+    expect(res.status).toEqual(201)
+    
+    const res2 = await request(app)
+      .post('/api/v2/users')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '3333'
+      })
+    
+    expect(res2.status).toEqual(403)
+    expect(res2.text).toEqual('Username already exists')
+
   })
 })
 

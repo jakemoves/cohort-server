@@ -7,6 +7,7 @@ const routerWithAuth = express.Router()
 
 const eventsController = require('./controllers/eventsController')
 const occasionsController = require('./controllers/occasionsController')
+const usersController = require('./controllers/usersController')
 // const demoController = require('./controllers/demoController')
 // const servicesController = require('./controllers/servicesController')
 
@@ -14,14 +15,17 @@ router.get('', (req, res) => {
   res.send('Cohort rocks')
 })
 
-//   login
-routerWithAuth.post('/login',
-  function(req, res){
-    console.log('authentication succeeded for user:')
-    console.log(req.user)
-    res.sendStatus(200)
-  }
-)
+//   login & registration
+
+router.post('/users', usersController.register_user)
+
+// routerWithAuth.post('/login',
+//   function(req, res){
+//     console.log('authentication succeeded for user:')
+//     console.log(req.user)
+//     res.sendStatus(200)
+//   }
+// )
 
 /* 
  *   events
@@ -87,6 +91,7 @@ router.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
 // router.get('/events/:id/demo', demoController.prepare_lotx_demo)
 
 module.exports = {
-  router: router,
-  routerWithAuth: routerWithAuth
+  router: router
+  // ,
+  // routerWithAuth: routerWithAuth
 }
