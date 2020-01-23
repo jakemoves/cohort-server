@@ -61,15 +61,39 @@ beforeAll( () => {
  */
 
 describe('Basic startup', () => {
+
   test('the app inits', async () => {
     const res = await request(app).get('/api/v2')
     expect(res.status).toEqual(200)
     expect(res.text).toEqual('Cohort rocks')
   })
+
   test('the app inits a second time', async () => {
     const res = await request(app).get('/api/v2')
     expect(res.status).toEqual(200)
     expect(res.text).toEqual('Cohort rocks')
+  })
+
+  test('login -- error: invalid password', async () => {
+    const res = await request(app)
+      .post('/api/v2/login')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '4444'
+      })
+    
+      expect(res.status).toEqual(401)
+  })
+
+  test('login -- happy path', async () => {
+    const res = await request(app)
+      .post('/api/v2/login')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '5555'
+      })
+    
+      expect(res.status).toEqual(200)
   })
 })
 

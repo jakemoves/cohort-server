@@ -3,6 +3,7 @@
 
 const express = require('express')
 const router = express.Router()
+const passport = require('passport')
 
 const eventsController = require('./controllers/eventsController')
 const occasionsController = require('./controllers/occasionsController')
@@ -12,6 +13,20 @@ const occasionsController = require('./controllers/occasionsController')
 router.get('', (req, res) => {
   res.send('Cohort rocks')
 })
+
+//   login
+router.get('/login', function(req, res) {
+  res.sendStatus(444)
+})
+
+router.post('/login',
+  passport.authenticate('local'), 
+  function(req, res){
+    console.log('authentication succeeded for user:')
+    console.log(req.user)
+    res.sendStatus(200)
+  }
+)
 
 /* 
  *   events
