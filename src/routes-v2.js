@@ -3,7 +3,7 @@
 
 const express = require('express')
 const router = express.Router()
-const passport = require('passport')
+const routerWithAuth = express.Router()
 
 const eventsController = require('./controllers/eventsController')
 const occasionsController = require('./controllers/occasionsController')
@@ -15,12 +15,7 @@ router.get('', (req, res) => {
 })
 
 //   login
-router.get('/login', function(req, res) {
-  res.sendStatus(444)
-})
-
-router.post('/login',
-  passport.authenticate('local'), 
+routerWithAuth.post('/login',
   function(req, res){
     console.log('authentication succeeded for user:')
     console.log(req.user)
@@ -45,7 +40,7 @@ router.patch('/events/:id/episodes', eventsController.events_update_episodes)
 router.post('/occasions', occasionsController.occasions_create)
 router.delete('/occasions/:id', occasionsController.occasions_delete)
 router.patch('/occasions/:id', occasionsController.occasions_update)
-router.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
+routerWithAuth.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
 router.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
 
 // router.post('/events/:id/occasions', occasionsController.occasions_create)
@@ -91,4 +86,7 @@ router.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
 // router.get('/events/:id/demo/prepare', demoController.prepare_demo)
 // router.get('/events/:id/demo', demoController.prepare_lotx_demo)
 
-module.exports = router
+module.exports = {
+  router: router,
+  routerWithAuth: routerWithAuth
+}

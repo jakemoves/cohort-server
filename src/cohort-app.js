@@ -35,7 +35,7 @@ passport.use(new AuthStrategy(
     if(password != '5555'){
       return callback(null, false)
     }
-    
+
     return callback(null, { id: 0, username: "cohort_test_user"})
   })
 )
@@ -71,7 +71,8 @@ app.use( (req, res, next) => {
 })
 
 app.use('/api/v1', v1routes)
-app.use('/api/v2', v2routes)
+app.use('/api/v2', v2routes.router)
+app.use('/api/v2', passport.authenticate('local'), v2routes.routerWithAuth)
 
 let staticPath = path.join(__dirname, '../public') // because we run the app from /lib
 app.use(express.static(staticPath))
