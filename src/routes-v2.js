@@ -86,7 +86,6 @@ router.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
 // router.get('/events/:id/demo', demoController.prepare_lotx_demo)
 
 module.exports = {
-  router: router
-  // ,
-  // routerWithAuth: routerWithAuth
+  router: router,
+  routerWithAuth: routerWithAuth
 }

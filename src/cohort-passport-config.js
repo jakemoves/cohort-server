@@ -77,25 +77,25 @@ passport.use('login',
   )
 )
 
-// const opts = {
-//   jwtFromRequest: ExtractJWT.fromAuthHeaderWithScheme('JWT'),
-//   secretOrKey: process.env.JWT_SECRET
-// }
+const opts = {
+  jwtFromRequest: ExtractJWT.fromAuthHeaderWithScheme('JWT'),
+  secretOrKey: process.env.JWT_SECRET
+}
 
-// passport.use(
-//   'jwt',
-//   new JWTStrategy(opts, (jwt_payload, done) => {
+passport.use(
+  'jwt',
+  new JWTStrategy(opts, (jwt_payload, done) => {
 
-//     usersTable.findOneByUsername(jwt_payload.id)
-//     .then( user => {
-//       if(user != null && user !== undefined){
-//         done(null, user)
-//       } else {
-//         done(null, false) // no error passed here?
-//       }
-//     })
-//     .catch( error => {
-//       done(null, false, error) // error from database
-//     })
-//   })
-// )
+    usersTable.findOneByUsername(jwt_payload.id)
+    .then( user => {
+      if(user != null){
+        done(null, user)
+      } else {
+        done(null, false) // no error passed here?
+      }
+    })
+    .catch( error => {
+      done(null, false, error) // error from database
+    })
+  })
+)

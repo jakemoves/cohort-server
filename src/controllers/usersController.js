@@ -23,7 +23,6 @@ handleError = (httpStatusCode, error, res) => {
 exports.register_user = async (req, res, next) => {
   passport.authenticate('register', (err, user, authError) => {
     if(err){
-      console.log(err)
       handleError(500, err, res)
       return
     } 
@@ -52,11 +51,10 @@ exports.register_user = async (req, res, next) => {
 exports.login_user = async (req, res, next) => {
   passport.authenticate('login', (err, user, authError) => {
     if(err){
-      console.log(err)
       handleError(500, err, res)
       return
     }
-    
+
     if(authError !== undefined){
       if(authError.message == 'Username not found'){
         handleError(404, authError, res)

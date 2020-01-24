@@ -2,6 +2,7 @@
 // Released under the MIT License (see /LICENSE)
 
 const moment = require('moment')
+const passport = require('passport')
 
 const occasionsTable = require('../knex/queries/occasion-queries')
 const eventsTable = require('../knex/queries/event-queries')
@@ -117,7 +118,7 @@ exports.occasions_update = async (req, res) => {
   // doesn't return devices with the occasion, but that might not be relevant for open / close updates; a just-opened event shouldn't have any devices connected, and a just-closed one doesn't either
 }
   
-exports.occasions_broadcast = async (req, res) => {
+exports.occasions_broadcast = async (req, res, next) => {
   // broadcast logic must go in a service
   // this is mocked for now
   const occasionId = req.params.id
