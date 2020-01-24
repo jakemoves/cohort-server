@@ -34,14 +34,16 @@
     "ws": "^6.0.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.0",
-    "@babel/cli": "^7.2.3"
+    "hexo": "^4.2.0"
   },
   "scripts": {
     "test": "jest",
     "build": "babel src --out-dir lib --source-maps --ignore 'src/**/*.test.js'",
-    "build-admin-site": "cd admin-site && yarn run build",
-    "build-all": "npm run build && npm run build-admin-site"
+    "build-admin-site": "cd admin-site && yarn run build && cd ..",
+    "build-blog": "cd blog && npm run build-all && cd ..",
+    "build-all": "npm run build && npm run build-admin-site && npm run build-blog"
   },
   "engines": {
     "node": "8.16.0"

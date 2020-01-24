@@ -1,0 +1,1 @@
+- run `npm run build-all` to generate the static site and copy it to /public/blog

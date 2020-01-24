@@ -1,0 +1,24 @@
+<% if (post.prev || post.next){ %>
+<nav class="article-nav">
+  <ul class="nav d-flex justify-content-between">
+    <li class="nav-item older text-left">
+      <% if (post.next){ %>
+        <a class="nav-link" href="<%- url_for(post.next.path) %>" id="article-nav-older" class="article-nav-link-wrap">
+          <strong><%= __('older') %></strong>
+          <div><%= post.next.title %></div>
+        </a>
+      <% } %>
+    </li>
+    <li class="nav-item newer text-right">
+      <% if (post.prev){ %>
+        <a class="nav-link" href="<%- url_for(post.prev.path) %>">
+          <strong><%= __('newer') %></strong>
+          <div>
+            <%= post.prev.title %>
+          </div>
+        </a>
+      <% } %>
+      </li>
+  </ul>
+</nav>
+<% } %>
