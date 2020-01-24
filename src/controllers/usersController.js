@@ -16,15 +16,16 @@ handleError = (httpStatusCode, error, res) => {
   res.send()
 }
 
+// uses passport's custom callback option to provide details for failed auth attempts
 exports.register_user = async (req, res, next) => {
-  passport.authenticate('register', (err, user, info) => {
+  passport.authenticate('register', (err, user, authError) => {
     if(err){
       console.log(err)
       handleError(500, err, res)
       return
     } 
-    if( info !== undefined){
-      handleError(403, new Error(info.message), res)
+    if( authError !== undefined){
+      handleError(403, authError, res)
     } else {
       req.logIn(user, error => {
         const username = req.body.username

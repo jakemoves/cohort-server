@@ -19,7 +19,7 @@ passport.use('register',
       usersTable.findOneByUsername(username)
         .then( user => {
           if(user !== null){
-            return done(null, false, { message: 'Username already exists'})
+            return done(null, false, new Error('Username already exists'))
           } else {
             bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
               .then( hashedPassword => {
