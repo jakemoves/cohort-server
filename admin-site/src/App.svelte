@@ -21,8 +21,20 @@
   $: events = [];
 
   // // TODO this needs to pickup an environment somehow (dev/staging/prod)
-  //serverURL populated with dropdown at login - default is staging.cohort.rocks
+//on mount it 
   let serverURL;
+
+
+//checking for local dev ...needs testing on staging site
+onMount(() => {
+    let page = window.location.href;
+    let splitURL = page.split('/');
+    let splitLocal = splitURL[2].split(":")
+    
+    if(splitLocal == "localhost"){
+      serverURL = "http://localhost:3000/api/v2";
+    }
+	});
 
 
 //grabbing events info from the server
@@ -473,7 +485,6 @@
         <input type="text" id="password" class="form-control" name="login" placeholder="password">     
       </div>
 
-      <!-- <button type="button" class="btn btn-primary" on:click={verifyPassword}> Log In </button> -->
       <Button on:click={verifyPassword}
         buttonType = "btn-primary"
         bsSizePosition = ""
@@ -484,7 +495,6 @@
         buttonType = "btn-light btn-outline-dark btn-sm mt-4"
         bsSizePosition = ""
         buttonText = "Show/Hide Developer Tools"/>
-        <!-- <button type="button" class="btn btn-light btn-outline-dark btn-sm mt-4" on:click={HideShowDev}> Show/Hide Developer Tools </button> -->
        </div>    
      
       <div class="form-group" id = "devTools">
