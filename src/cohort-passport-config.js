@@ -36,3 +36,40 @@ passport.use('register',
     }
   )
 )
+
+passport.use(
+  'login',
+  new LocalStrategy(
+    {
+      usernameField: 'username',
+      passwordField: 'password',
+      session: false
+    },
+    (username, password, done) => {
+      usersTable.findOneByUsername(username)
+        .then( user => {
+          if(user == null){
+            return done(null, false, new Error('Username not found'))
+          } else {
+            bcrypt.compare(password, user.password)
+              .then( response => {
+                if(response !== true){
+                  return done(null, false, new Error('Incorrect password'))
+                } else {
+                  // happy path, user was found and authenticated
+                  return done(null, user)
+                }
+
+              })
+              .catch( error => {
+                return done(null, false, error)
+              })
+          }
+        })
+        .catch( error => {
+          done(null, false, error) // error from database
+        })
+    }
+  )
+)
+
