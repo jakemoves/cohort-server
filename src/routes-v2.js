@@ -15,17 +15,12 @@ router.get('', (req, res) => {
   res.send('Cohort rocks')
 })
 
-//   login & registration
+/*
+ *   login, registration, users
+ */
 
 router.post('/users', usersController.register_user)
-
-// routerWithAuth.post('/login',
-//   function(req, res){
-//     console.log('authentication succeeded for user:')
-//     console.log(req.user)
-//     res.sendStatus(200)
-//   }
-// )
+router.post('/login', usersController.login_user)
 
 /* 
  *   events

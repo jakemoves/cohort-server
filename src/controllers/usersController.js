@@ -5,6 +5,7 @@
 // per https://itnext.io/implementing-json-web-tokens-passport-js-in-a-javascript-application-with-react-b86b1f313436
 
 const passport = require('passport')
+const jwt = require('jsonwebtoken')
 const usersTable = require('../knex/queries/user-queries')
 
 handleError = (httpStatusCode, error, res) => {
@@ -41,30 +42,49 @@ exports.register_user = async (req, res, next) => {
             res.json(user)
           })
           .catch(error => {
-            handleError(400, error, res)
+            handleError(500, error, res) // DB error
           })
       })
     }
   })(req, res, next)
 }
 
-// exports.login_user = async (req, res, next) => {
-//   passport.authenticate('login', (err, user, authError) => {
-//     if(err){
-//       console.log(err)
-//       handleError(500, err, res)
-//       return
-//     }
-//     if(authError !== undefined){
-//       handleError(403, authError, res)
-//       return
-//     } else {
-//       req.logIn(user, err => {
-//         const username = req.body.username
-//         usersTable.findOneByUsername(username)
-//           .then(user => {
-//       })
-//     }
-
-//   })
-// }
+exports.login_user = async (req, res, next) => {
+  passport.authenticate('login', (err, user, authError) => {
+    if(err){
+      console.log(err)
+      handleError(500, err, res)
+      return
+    }
+    
+    if(authError !== undefined){
+      if(authError.message == 'Username not found'){
+        handleError(404, authError, res)
+        return
+      } else {
+        handleError(403, authError, res)
+        return
+      }
+    } else {
+      req.logIn(user, err => {
+        const username = user.username
+        usersTable.findOneByUsername(username)
+          .then(user => {
+            const token = jwt.sign({
+              id: user.username
+            }, process.env.JWT_SECRET)
+            res.status(200)
+            res.send({
+              // auth: true,
+              token: token
+              //, message: 'User found and logged in'
+            })
+            console.log('user "' + user.username + '" logged in')
+          })
+          .catch(error => {
+            handleError(500, error, res) // DB error
+          })
+      })
+    }
+  })(req, res, next)
+}

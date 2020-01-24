@@ -93,6 +93,34 @@ describe('User registration', () => {
     expect(res.body.password).toBeUndefined()
   })
 
+  test('register -- happy path, twice', async () => {
+    const res = await request(app)
+      .post('/api/v2/users')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '4444'
+      })
+    
+    expect(res.status).toEqual(201)
+    expect(res.body.id).toBeDefined()
+    expect(res.header.location).toEqual('/api/v2/users/' + res.body.id)
+    expect(res.body.username).toEqual('cohort_test_user')
+    expect(res.body.password).toBeUndefined()
+
+    const res2 = await request(app)
+      .post('/api/v2/users')
+      .send({
+        'username': 'cohort_test_user_2',
+        'password': '4444'
+      })
+    
+    expect(res2.status).toEqual(201)
+    expect(res2.body.id).toBeDefined()
+    expect(res2.header.location).toEqual('/api/v2/users/' + res2.body.id)
+    expect(res2.body.username).toEqual('cohort_test_user_2')
+    expect(res2.body.password).toBeUndefined()
+  })
+
   test('register -- error: username already exists', async () => {
     const res = await request(app)
       .post('/api/v2/users')
@@ -112,7 +140,60 @@ describe('User registration', () => {
     
     expect(res2.status).toEqual(403)
     expect(res2.text).toEqual('Username already exists')
+  })
 
+  test('login -- happy path', async () => {
+    const res0 = await request(app)
+      .post('/api/v2/users')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '4444'
+      })
+    
+    expect(res0.status).toEqual(201)
+
+    const res1 = await request(app)
+      .post('/api/v2/login')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '4444'
+      })
+    
+    expect(res1.status).toEqual(200)
+    expect(res1.body.token).toBeDefined()
+  })
+
+  test('login -- error: username not found', async () => {
+    const res = await request(app)
+      .post('/api/v2/login')
+      .send({
+        'username': 'cohort_test_user_that_doesnt_exist',
+        'password': '4444'
+      })
+    
+    expect(res.status).toEqual(404)
+    expect(res.text).toEqual("Username not found")
+  })
+  
+  test('login -- error: incorrect password', async () => {
+    const res0 = await request(app)
+        .post('/api/v2/users')
+        .send({
+          'username': 'cohort_test_user',
+          'password': '4444'
+        })
+      
+    expect(res0.status).toEqual(201)
+  
+    const res = await request(app)
+      .post('/api/v2/login')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '3333'
+      })
+    
+    expect(res.status).toEqual(403)
+    expect(res.text).toEqual("Incorrect password")
   })
 })
 

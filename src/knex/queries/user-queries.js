@@ -9,16 +9,28 @@ Users = () => {
 
 // queries
 findOneByUsername = async (username) => {
-  let user = await Users().select()
-  if(user.length == 0){
+  let users = await Users().where('username', username)
+  if(users.length == 0){
     return null
   } else {
-    return user[0]
+    return users[0]
   }
 }
 
 create = async (username, hashedPassword) => {
-  return Users().insert({username: username, password: hashedPassword})
+  return Users()
+  .insert({
+    username: username, 
+    password: hashedPassword
+  })
+  .returning('username')
+  .then(usernames => {
+    if(usernames.length == 1){
+      return findOneByUsername(usernames[0])
+    } else {
+      return new Error('Insert query failed')
+    }
+  })
 }
 
 module.exports = { 
