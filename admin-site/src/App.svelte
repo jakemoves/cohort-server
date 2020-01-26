@@ -441,7 +441,7 @@ onMount(() => {
     }
   }
     
-    function HideShowDev() {
+    function hideShowDev() {
      let devTools = document.getElementById('devTools');
 
         if(devTools.style.visibility == "visible"){
@@ -486,14 +486,14 @@ onMount(() => {
       </div>
 
       <Button on:click={verifyPassword}
-        buttonType = "btn-primary"
-        bsSizePosition = ""
+        buttonStyle = "btn-primary"
+        gridLayout = ""
         buttonText = "Login"/>
 
       <div class="form-group mt-5">
-        <Button on:click={HideShowDev}
-        buttonType = "btn-light btn-outline-dark btn-sm mt-4"
-        bsSizePosition = ""
+        <Button on:click={hideShowDev}
+        buttonStyle = "btn-light btn-outline-dark btn-sm mt-4"
+        gridLayout = ""
         buttonText = "Show/Hide Developer Tools"/>
        </div>    
      
@@ -525,7 +525,7 @@ onMount(() => {
             </div>
             <Button on:click={()=>eventButton(event.label)}
               buttonHtml='<p class="mb-0">Occasions&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>'
-              bsSizePosition ="col-6" />
+              gridLayout ="col-6" />
 
           </div>
       {/each}
@@ -540,8 +540,8 @@ onMount(() => {
 
     <div slot="backButton">
        <Button on:click={goBackAPage}
-          bsSizePosition=""
-          buttonType="btn-outline-primary abs-left"
+          gridLayout=""
+          buttonStyle="btn-outline-primary abs-left"
           iconLeft= "backButton fa fa-angle-left"
           buttonText="Back"/>
     </div>
@@ -566,8 +566,8 @@ onMount(() => {
 
     <div slot="backButton">
        <Button on:click={goBackAPage}
-          bsSizePosition=""
-          buttonType="btn-outline-primary abs-left"
+          gridLayout=""
+          buttonStyle="btn-outline-primary abs-left"
           iconLeft= "backButton fa fa-angle-left"
           buttonText="Back"/>
     </div>
@@ -594,12 +594,12 @@ onMount(() => {
 		  <hr> 
         <div class="row">
           <Button on:click={openOccasionButton}
-            buttonType="btn-outline-success btn-block"
+            buttonStyle="btn-outline-success btn-block"
             buttonText="Open Occasion"/>
         </div>
         <div class="row">
           <Button
-            buttonType="btn-outline-danger btn-block"
+            buttonStyle="btn-outline-danger btn-block"
             buttonText="Delete Occasion"
             dataTarget="#deleteOccasionModal"/>
         </div>
@@ -616,7 +616,7 @@ onMount(() => {
     headingText={focusedOccasion.label}>
      <div class="row">
       <Button
-        buttonType='btn-outline-danger btn-block' 
+        buttonStyle='btn-outline-danger btn-block' 
         buttonText="Close Occasion" 
         dataTarget="#closeOccassionModal"/>
     </div>
@@ -678,16 +678,16 @@ onMount(() => {
         <div class="row">
           <div class="col-12 d-flex justify-content-between">
             <Button on:click={() => changeCueState ("previous")}
-              bsSizePosition = ""
-              buttonType = 'btn-info'
+              gridLayout = ""
+              buttonStyle = 'btn-info'
               buttonText = &nbsp;Previous
               value = previous
               iconLeft = "fas fa-angle-left"
               disabled = {cueState == 0}/>
 
             <Button on:click={() => changeCueState ("next")}
-              bsSizePosition = ""
-              buttonType = 'btn-info'
+              gridLayout = ""
+              buttonStyle = 'btn-info'
               buttonText = &nbsp;&nbsp;&nbsp;Next&nbsp;
               value = next
               iconRight = "fas fa-angle-right"
@@ -715,14 +715,14 @@ onMount(() => {
 
   <div class="row" slot="modalFooter">
     <Button
-      bsSizePosition = "mr-1"
-      buttonType="btn-outline-secondary"
+      gridLayout = "mr-1"
+      buttonStyle="btn-outline-secondary"
       dataDismiss ="modal"
       buttonText = "Cancel"/>
 
     <Button on:click={deleteOccasion}
-      bsSizePosition = "mr-1"
-      buttonType="btn-outline-danger"
+      gridLayout = "mr-1"
+      buttonStyle="btn-outline-danger"
       dataDismiss="modal"
       buttonText="Delete Occasion"/>
   </div>
@@ -739,14 +739,14 @@ onMount(() => {
   </div>
   <div class="row" slot="modalFooter">
     <Button
-      bsSizePosition = "mr-1"
-      buttonType="btn-outline-secondary"
+      gridLayout = "mr-1"
+      buttonStyle="btn-outline-secondary"
       dataDismiss ="modal"
       buttonText = "Cancel"/>
 
     <Button on:click={closeOccasionButton}
-      bsSizePosition = "mr-1"
-      buttonType="btn-outline-danger"
+      gridLayout = "mr-1"
+      buttonStyle="btn-outline-danger"
       dataDismiss="modal"
       buttonText="Close Occasion"/>
   </div>
@@ -756,7 +756,7 @@ onMount(() => {
   modalID="QRcodeModal">
     <div slot="closeButton">
       <Button
-          buttonType="close"
+          buttonStyle="close"
           dataDismiss="modal"
           ariaLabel="Close"
           iconRight = "fas fa-times"/>

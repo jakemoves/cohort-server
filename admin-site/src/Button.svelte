@@ -1,6 +1,6 @@
 <script>
 export let buttonText = "";
-export let buttonType = 'btn-outline-primary btn-block';
+export let buttonStyle = 'btn-outline-primary btn-block';
 export let dataTarget = undefined;
 export let value = "";
 export let disabled = undefined;
@@ -35,7 +35,7 @@ export let buttonHtml = "";
     
             <button on:click
                 type="button" 
-                class="btn {buttonType}" 
+                class="btn {buttonStyle}" 
                 data-toggle="modal" 
                 data-target={dataTarget}
                 data-dismiss = {dataDismiss}
