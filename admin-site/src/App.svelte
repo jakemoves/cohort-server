@@ -6,19 +6,35 @@
 <script>
   import moment from "moment";
   import { onMount } from 'svelte';
+  import { onDestroy } from 'svelte';
   import { createEventDispatcher } from "svelte";
   import { writable } from 'svelte/store';
   import Page from './ParentPage.svelte';
   import Slider from './Slider.svelte';
   import Button from './Button.svelte';
-  // import {goBackAPage} from './ButtonActions.svelte'
+
   import Modal from './Modal.svelte';
-  import OccasionsList from './OccasionsList.svelte';
+  import List from './ArrayList.svelte';
   
-  let storedEvents;
+  //import events from store
+  import {events, storedEvents} from './EventsStore.js';
+
+  //initiate pageState at 0
+  let pageState = 0;
+
+  //grab info from events
+  function messageFromArrayList(value){
+    pageState = value.detail.pageState;
+    focusedEvent = value.detail.focusedEvent;
+    dateSortedOccasions = value.detail.dateSortedOccasions;
+    sliderCue = value.detail.sliderCue;
+    focusedOccasion = value.detail.sliderCue;
+  }
+  
+  
   let gotEvents = false;
   //holds a store of events
-  $: events = [];
+  // $: events = [];
 
   // // TODO this needs to pickup an environment somehow (dev/staging/prod)
 //on mount it 
@@ -34,27 +50,8 @@ onMount(() => {
     if(splitLocal == "localhost"){
       serverURL = "http://localhost:3000/api/v2";
     }
-	});
-
-
-//grabbing events info from the server
-  let GetEvents = async () => {
-    let response = await fetch(serverURL + "/events", {
-      method: 'GET'
-    })
-
-    let grabbedFromServerEvents = await response.json()
-    gotEvents = true
-    
-    storedEvents = writable(grabbedFromServerEvents);
-    storedEvents.subscribe(value => {
-      events = value;
-      console.log(value);
-    });
-
-    focusedEvent = events[0]
-  }
-
+  });
+  
   // cue broadcast
   window.onCueSliderInput = (event) => {
   const SliderValue = event.target.value
@@ -119,76 +116,6 @@ onMount(() => {
   }
 };
 
-//for testing
-//   let events = [
-//     {
-//       id: 2,
-//       label: "LOT X",
-//       //"heroImage": URL-TO-IMG, // optional
-//       occasions: [
-//         {
-//           id: 1,
-//           event_id: 1,
-//           state: "closed", // can be open or closed; closed events cannot be joined
-//           startDateTime: "2019-05-23T17:00:00.000Z", // stored in UTC, browser does conversion
-//           doorsOpenDateTime: "2019-05-23T16:30:00.000Z",
-//           endDateTime: "2019-05-29T03:50:00.000Z",
-//           locationLabel: "Show #5",
-//           locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
-//           locationCity: "Toronto",
-//           publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
-//           devices: [
-//             {
-//               id: 1,
-//               guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
-//               apnsDeviceToken: null, // not used for now -- this is for push notifications
-//               isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
-//               tags: ["blue", "1984"]
-//             }
-//           ]
-//         },
-//         {
-//           id: 2,
-//           event_id: 1,
-//           state: "closed", // can be open or closed; closed events cannot be joined
-//           startDateTime: "2019-06-28T17:00:00.000Z", // stored in UTC, browser does conversion
-//           doorsOpenDateTime: "2019-06-28T16:30:00.000Z",
-//           endDateTime: "2019-07-10T03:50:00.000Z",
-//           locationLabel: "Show #5",
-//           locationAddress: "125 Emerson Ave, Toronto ON, M6H 3S7",
-//           locationCity: "Toronto",
-//           publicURL: "https://cohort.rocks/api/v2/events/1/occasions/3", // for making QR code to join the event
-//           devices: [
-//             {
-//               id: 1,
-//               guid: "dklfjdklf-dfd-f-df-dfdfdfas-3r3r-fdf3",
-//               apnsDeviceToken: null, // not used for now -- this is for push notifications
-//               isAdmin: true, // here for now -- the admin site will connect to an occasion as a device
-//               tags: ["blue", "1984"]
-//             }
-//           ]
-//         }
-//       ],
-//       episodes:[
-//         {
-//           cues: [
-//             {
-//           mediaDomain: 0, // enum: audio, video, text, light, haptic
-//           cueNumber: 1,
-//           cueAction: 0, // enum: play/on, pause, restart, stop/off
-//           targetTags: ["all"]
-//         },
-//         {
-//           mediaDomain: 0, // enum: audio, video, text, light, haptic
-//           cueNumber: 2,
-//           cueAction: 3, // enum: play/on, pause, restart, stop/off
-//           targetTags: ["all"]
-//         }
-//       ]
-//     }]
-//   }
-// ];
-
   //for new event creation parameters
   let label = "";
 
@@ -219,52 +146,50 @@ onMount(() => {
 //to show/hide dev Tools.
   let devElement = false;
 
-//show/hide modal
-  // let modalhtml;
-  //double check that a delete Occasion has happened
+//double check that a delete Occasion has happened
   let deleteOccasionHasHappened = false;
 
-  //hold DOM state
-  let pageState = 0;
+//hold DOM state
+  // let pageState = 0;
 
-  // when an event button is hit only open occasions for that event
-  function eventButton(value) {
+// when an event button is hit only open occasions for that event
+  // function eventButton(value) {
     
-    focusedEventLabel = value;
-    indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
-    focusedEvent = events[indexInEvents];
+  //   focusedEventLabel = value;
+  //   indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
+  //   focusedEvent = events[indexInEvents];
 
-    ///sorting occasions by date
-    let occasionArray = focusedEvent.occasions;
-    let sortDates = (a, b) => moment(a.startDateTime).format('YYYYMMDD') -moment(b.startDateTime).format('YYYYMMDD');
-    dateSortedOccasions = occasionArray.sort(sortDates);
+  //   ///sorting occasions by date
+  //   let occasionArray = focusedEvent.occasions;
+  //   let sortDates = (a, b) => moment(a.startDateTime).format('YYYYMMDD') -moment(b.startDateTime).format('YYYYMMDD');
+  //   dateSortedOccasions = occasionArray.sort(sortDates);
 
-    //set up slider cue to hold cues in first index (0)
-     sliderCue = focusedEvent.episodes[0].cues[0]
-     pageState = 2;
-  }
+  //   //set up slider cue to hold cues in first index (0)
+  //    sliderCue = focusedEvent.episodes[0].cues[0]
+  //    pageState = 2;
+  // }
   
   
- function occasionButton(id) {
-    focusedOccasionID = id;
-    indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
-    focusedOccasion = focusedEvent.occasions[indexInOccasions];
+//  function occasionButton(id) {
+//     focusedOccasionID = id;
+//     indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
+//     focusedOccasion = focusedEvent.occasions[indexInOccasions];
 
-    if(focusedOccasion.state == "closed"){
-      pageState = 3;
-    } else {
-      pageState = 4;
-    }
+//     if(focusedOccasion.state == "closed"){
+//       pageState = 3;
+//     } else {
+//       pageState = 4;
+//     }
 
-	  formattedStartTimeFull = moment(focusedOccasion.startDateTime)
-      .format("LLL");
-    formattedEndTimeFull = moment(focusedOccasion.endDateTime)
-	    .format("LLL");
-	  formattedStartTime = moment(focusedOccasion.startDateTime)
-      .format("LL");
-    formattedEndTime = moment(focusedOccasion.endDateTime)
-      .format("LL");
-  }
+// 	  formattedStartTimeFull = moment(focusedOccasion.startDateTime)
+//       .format("LLL");
+//     formattedEndTimeFull = moment(focusedOccasion.endDateTime)
+// 	    .format("LLL");
+// 	  formattedStartTime = moment(focusedOccasion.startDateTime)
+//       .format("LL");
+//     formattedEndTime = moment(focusedOccasion.endDateTime)
+//       .format("LL");
+//   }
 
 
   function openOccasionButton() {
@@ -324,9 +249,6 @@ onMount(() => {
 
   function deleteOccasion() {
     let value;
-    
-    //updates Events to remove selected occasion.
-    focusedEvent.occasions.splice(indexInOccasions, 1);
 
     //use this at the end of whatever logic is used for delete
     deleteOccasionHasHappened = true;
@@ -334,22 +256,16 @@ onMount(() => {
     if (deleteOccasionHasHappened){
       pageState = 2;
     } 
-   
 
-  }
+   //updates events to remove selected occasion.
+   focusedEvent.occasions.splice(indexInOccasions, 1);
 
-
-    // update storedEvents with new events object
-    // storedEvents.update(value => {
-    //   // if (eventful) value = events; 
-    //   value = events;
-      
-    // });
-    // storedEvents.subscribe(value => {
-    //   console.log(value);
-    // });
+    storedEvents.subscribe(value => {
+      console.log(value);
+    });
     
-  
+    
+  //if wanting to delete from the server;
   // function deleteOccasionServer() {
   //   try {
   //       return fetch(serverURL + "/occasions/" + focusedOccasionID, {
@@ -369,22 +285,8 @@ onMount(() => {
 
     // deleteOccasionServer();
 
-    
-  // }
-  // function backToEvents() {
-  //   let id = this.value;
-  //   document.getElementById(id).style.display = "none";
-  //   document.getElementById("eventsList").style.display = "block";
-  // }
-  
+   }
 
-  // function backToOccasionList() {
-  //   let id = this.value;
-  //   document.getElementById(id).style.display = "none";
-  //   document.getElementById("occasionList").style.display = "block";
-
-  //   broadcastStatus = "unsent"
-  // }
 
   function showQR() {
     //grab QR code for that occasion and update
@@ -422,21 +324,20 @@ onMount(() => {
   }
 
   //whichever parameters we want to be able to build for new events from the site would go below
-  function createEvent() {
-    let newEvent = [
-      {
-        label: label
-      }
-    ];
-    events = events.concat(newEvent);
-  }
+  // function createEvent() {
+  //   let newEvent = [
+  //     {
+  //       label: label
+  //     }
+  //   ];
+  //   events = events.concat(newEvent);
+  // }
 
   function verifyPassword(){
     // verifying password logic 
     var passwordCheck = document.getElementById('password').value;
     if (passwordCheck == "5555"){
       authenticated = true;
-      GetEvents();
       pageState = 1;
     }
   }
@@ -450,6 +351,7 @@ onMount(() => {
           devTools.style.visibility = "visible"
         }
     }
+
   
 </script>
 
@@ -509,27 +411,17 @@ onMount(() => {
   </div>
 </div>
 
-<!-- #eventsList allows a list of events to be built and shown based on main events object -->
+<!-- #eventsList allows a list of events to be built and shown based on "events" from store-->
 {:else if pageState == 1}
   <Page
     pageID="eventsList"
     headingText="Events">
 
-    {#if events.length === 0}
-        <p>That's uneventful. Sorry, no events have been added yet</p>
-    {:else}
-      {#each events as event (event.id)}
-        <div class="row mt-2">
-            <div class="col-6 text-right">
-              <h3>{event.label}:</h3>
-            </div>
-            <Button on:click={()=>eventButton(event.label)}
-              buttonHtml='<p class="mb-0">Occasions&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>'
-              gridLayout ="col-6" />
+    <List on:message = {messageFromArrayList}
+    arrayName = {events}
+    emptyArrayMessage = "That's uneventful. Sorry, no events have been added yet."
+    />
 
-          </div>
-      {/each}
-    {/if}
   </Page>
 
 {:else if pageState == 2}
@@ -546,7 +438,12 @@ onMount(() => {
           buttonText="Back"/>
     </div>
 
-    {#if focusedEvent.occasions.length === 0}
+    <List on:message = {messageFromArrayList}
+    arrayName = {dateSortedOccasions}
+    listType = "Occasions"
+    emptyArrayMessage = "No occasions for this event yet"/>
+
+    <!-- {#if focusedEvent.occasions.length === 0}
         <p class="text-center">No occasions for this event yet</p>
     {:else}
       {#each dateSortedOccasions as occasion (occasion.id)}
@@ -554,7 +451,7 @@ onMount(() => {
             buttonHtml = '<h3 class="m-0">{occasion.label}  - {occasion.label} </h3> <h5>{occasion.locationCity} - {moment(occasion.startDateTime).format("LL")} - id:{occasion.id}</h5>'
             value = {occasion.id}/>
       {/each}
-    {/if}
+    {/if} -->
 
   </Page>
 
