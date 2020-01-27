@@ -119,8 +119,6 @@ exports.occasions_update = async (req, res) => {
 }
   
 exports.occasions_broadcast = async (req, res, next) => {
-  // broadcast logic must go in a service
-  // this is mocked for now
   const occasionId = req.params.id
 
   const occasion = req.app.get('cohortSession').openOccasions
@@ -128,6 +126,12 @@ exports.occasions_broadcast = async (req, res, next) => {
 
   if(occasion === undefined){
     handleError(404, 'Error: no open occasion found with id:' + occasionId, res)
+    return
+  }
+
+  // TODO eventually we may need a PermissionsService to do these checks...
+  if(occasion.owner_id != req.user.id && !req.user.is_admin){
+    handleError(401, 'Authorization required', res)
     return
   }
 

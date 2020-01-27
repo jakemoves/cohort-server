@@ -102,6 +102,24 @@ beforeAll( () => {
       })
     })
   }
+
+  cohortLogin = async (username, password) => {
+    const payload = { username: username, password: password }
+
+    const res = await request(app)
+    .post('/api/v2/login')
+    .send(payload)
+
+    if(res.status != 200 || res.body.token === undefined){
+      return new Error('login failed: ' + res.text)
+    }
+
+    return res.body.token
+  }
+
+  loginAsTestAdminUser = async () => {
+    return cohortLogin('test_admin_user', process.env.TEST_ADMIN_USER_PASSWORD)
+  }
 })
 
 /*
@@ -265,12 +283,31 @@ describe('Occasions & WebSocket broadcasts', () => {
       done()
     }, 1500)
   })
+  
+  test('POST /occasions/:id/broadcast -- error: auth required', async () => {
+    const payload = { 
+      "mediaDomain": 0,
+      "cueNumber": 1,
+      "cueAction": 0,
+      "targetTags": ["all"]
+    }
+
+    const res = await request(app)
+    .post('/api/v2/occasions/3/broadcast')
+    .send(payload)
+
+    expect(res.status).toEqual(401)
+  })
 
   test('POST occasions/:id/broadcast: error -- no open occasion matching id', async () => {
+    const token = await loginAsTestAdminUser()
+    expect(token).toBeDefined()
+    
     const occasionId = 4
 
     const res = await request(app)
       .post('/api/v2/occasions/' + occasionId + '/broadcast')
+      .set('Authorization', 'JWT ' + token)
       .send({
         "mediaDomain": 0,
         "cueNumber": 1,
@@ -283,10 +320,14 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: error -- no devices connected', async () => {
+    const token = await loginAsTestAdminUser()
+    expect(token).toBeDefined()
+
     const occasionId = 3
 
     const res = await request(app)
       .post('/api/v2/occasions/' + occasionId + '/broadcast')
+      .set('Authorization', 'JWT ' + token)
       .send({
         "mediaDomain": 0,
         "cueNumber": 1,
@@ -299,6 +340,9 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: happy path', async () => {
+    const token = await loginAsTestAdminUser()
+    expect(token).toBeDefined()
+
     const occasionId = 3
     const cue = { 
       "mediaDomain": 0,
@@ -318,6 +362,7 @@ describe('Occasions & WebSocket broadcasts', () => {
 
     const res = await request(app)
       .post('/api/v2/occasions/3/broadcast')
+      .set('Authorization', 'JWT ' + token)
       .send(cue)
 
     expect(res.status).toEqual(200)
@@ -329,6 +374,9 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: happy path, multiple clients, same occasion', async () => {
+    const token = await loginAsTestAdminUser()
+    expect(token).toBeDefined()
+
     const occasionId = 3
     const cue = { 
       "mediaDomain": 0,
@@ -355,6 +403,7 @@ describe('Occasions & WebSocket broadcasts', () => {
 
     const res = await request(app)
       .post('/api/v2/occasions/3/broadcast')
+      .set('Authorization', 'JWT ' + token)
       .send(cue)
 
     expect(res.status).toEqual(200)
@@ -372,6 +421,9 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: happy path, multiple clients, different occasions', async () => {
+    const token = await loginAsTestAdminUser()
+    expect(token).toBeDefined()
+    
     let res1 = await request(app)
       .patch('/api/v2/occasions/4')
       .send({state: 'opened'})
@@ -410,6 +462,7 @@ describe('Occasions & WebSocket broadcasts', () => {
 
     const res = await request(app)
       .post('/api/v2/occasions/3/broadcast')
+      .set('Authorization', 'JWT ' + token)
       .send(cue)
 
     clients.forEach(client => client.close())

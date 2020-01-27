@@ -63,7 +63,6 @@ passport.use('login',
               // happy path, user was found and authenticated
               return done(null, user)
             }
-
           })
           .catch( error => {
             return done(null, false, error)
@@ -85,7 +84,6 @@ const opts = {
 passport.use(
   'jwt',
   new JWTStrategy(opts, (jwt_payload, done) => {
-
     usersTable.findOneByUsername(jwt_payload.id)
     .then( user => {
       if(user != null){
