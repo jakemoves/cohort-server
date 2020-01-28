@@ -1,8 +1,10 @@
 <script>
  import Button from './Button.svelte';
+ import BackButton from './BackButton.svelte';
  export let headerSize = 3;
  export let headingText = "";
  export let pageID = "";
+ export let includeBackButton = false;
 
 </script>
 <style>
@@ -13,8 +15,10 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 mt-2">
-                
-              <slot name="backButton"></slot>
+              {#if includeBackButton}
+                <BackButton/>
+
+              {/if}
 
               {#if headerSize == 1}
                 <h1 class="text-center">

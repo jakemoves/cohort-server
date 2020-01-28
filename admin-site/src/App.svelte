@@ -12,6 +12,8 @@
   import Page from './ParentPage.svelte';
   import Slider from './Slider.svelte';
   import Button from './Button.svelte';
+  
+  import { pageStateInStore } from "./PageStore.js";
 
   import Modal from './Modal.svelte';
   import List from './ArrayList.svelte';
@@ -19,18 +21,35 @@
   //import events from store
   import {events, storedEvents} from './EventsStore.js';
 
-  //initiate pageState at 0
+  // initiate pageState at 0
   let pageState = 0;
+  //then update pageState from store
+  pageStateInStore.subscribe(value => {
+    pageState = value;
 
+  })
   //grab info from events
   function messageFromArrayList(value){
-    pageState = value.detail.pageState;
+    // pageState = value.detail.pageState;
     focusedEvent = value.detail.focusedEvent;
     dateSortedOccasions = value.detail.dateSortedOccasions;
     sliderCue = value.detail.sliderCue;
     focusedOccasion = value.detail.sliderCue;
   }
+
+  function messageFromArrayListOccasions(value){
+    // pageState = value.detail.pageState;
+    focusedEvent = value.detail.focusedEvent;
+    focusedOccasion = value.detail.focusedOccasion;
+    formattedStartTimeFull = value.detail.formattedStartTimeFull;
+    formattedEndTimeFull = value.detail.formattedEndTimeFull;
+    formattedStartTime = value.detail.formattedStartTime;
+    formattedEndTime = value.detail.formattedEndTime;
+  }
   
+   function broadcastStatusFromBackButton(value){
+     broadcastStatus = value.detail.broadcastStatus;
+   }
   
   let gotEvents = false;
   //holds a store of events
@@ -149,49 +168,6 @@ onMount(() => {
 //double check that a delete Occasion has happened
   let deleteOccasionHasHappened = false;
 
-//hold DOM state
-  // let pageState = 0;
-
-// when an event button is hit only open occasions for that event
-  // function eventButton(value) {
-    
-  //   focusedEventLabel = value;
-  //   indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
-  //   focusedEvent = events[indexInEvents];
-
-  //   ///sorting occasions by date
-  //   let occasionArray = focusedEvent.occasions;
-  //   let sortDates = (a, b) => moment(a.startDateTime).format('YYYYMMDD') -moment(b.startDateTime).format('YYYYMMDD');
-  //   dateSortedOccasions = occasionArray.sort(sortDates);
-
-  //   //set up slider cue to hold cues in first index (0)
-  //    sliderCue = focusedEvent.episodes[0].cues[0]
-  //    pageState = 2;
-  // }
-  
-  
-//  function occasionButton(id) {
-//     focusedOccasionID = id;
-//     indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
-//     focusedOccasion = focusedEvent.occasions[indexInOccasions];
-
-//     if(focusedOccasion.state == "closed"){
-//       pageState = 3;
-//     } else {
-//       pageState = 4;
-//     }
-
-// 	  formattedStartTimeFull = moment(focusedOccasion.startDateTime)
-//       .format("LLL");
-//     formattedEndTimeFull = moment(focusedOccasion.endDateTime)
-// 	    .format("LLL");
-// 	  formattedStartTime = moment(focusedOccasion.startDateTime)
-//       .format("LL");
-//     formattedEndTime = moment(focusedOccasion.endDateTime)
-//       .format("LL");
-//   }
-
-
   function openOccasionButton() {
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
@@ -201,7 +177,8 @@ onMount(() => {
       }).then( response => { 
         if(response.status == 200){
           response.json().then( details => {
-            pageState = 4;
+            // pageState = 4;
+            pageStateInStore.update(value => value = 4);
           })
         } else {
           response.text().then( errorMessage => {
@@ -216,11 +193,11 @@ onMount(() => {
     } 
   };
 
-  function goBackAPage(){
-    pageState --;
-    // not sure this is the right space for this
-    broadcastStatus = "unsent"
-  }
+  // function goBackAPage(){
+  //   pageState --;
+  //   // not sure this is the right space for this
+  //   broadcastStatus = "unsent"
+  // }
 
   function closeOccasionButton(){
 
@@ -338,7 +315,8 @@ onMount(() => {
     var passwordCheck = document.getElementById('password').value;
     if (passwordCheck == "5555"){
       authenticated = true;
-      pageState = 1;
+      // pageState = 1;
+      pageStateInStore.update(value => value = 1);
     }
   }
     
@@ -426,48 +404,25 @@ onMount(() => {
 
 {:else if pageState == 2}
 <!-- //occasions list populated by looping through events of "focused" event ID -->
-  <Page
+  <Page on:message={broadcastStatusFromBackButton}
     pageID = "occasionList" 
-    headingText="Occasions">
+    headingText="Occasions"
+    includeBackButton = true>
 
-    <div slot="backButton">
-       <Button on:click={goBackAPage}
-          gridLayout=""
-          buttonStyle="btn-outline-primary abs-left"
-          iconLeft= "backButton fa fa-angle-left"
-          buttonText="Back"/>
-    </div>
-
-    <List on:message = {messageFromArrayList}
+    <List on:message = {messageFromArrayListOccasions}
     arrayName = {dateSortedOccasions}
     listType = "Occasions"
-    emptyArrayMessage = "No occasions for this event yet"/>
-
-    <!-- {#if focusedEvent.occasions.length === 0}
-        <p class="text-center">No occasions for this event yet</p>
-    {:else}
-      {#each dateSortedOccasions as occasion (occasion.id)}
-        <Button on:click={() => occasionButton(occasion.id)}
-            buttonHtml = '<h3 class="m-0">{occasion.label}  - {occasion.label} </h3> <h5>{occasion.locationCity} - {moment(occasion.startDateTime).format("LL")} - id:{occasion.id}</h5>'
-            value = {occasion.id}/>
-      {/each}
-    {/if} -->
-
+    emptyArrayMessage = "This happens on occasion. No occasions for this event yet"
+    />
+    
   </Page>
 
 {:else if pageState == 3} 
-  <Page 
+  <Page on:message={broadcastStatusFromBackButton}
     pageID='closedOccasion' 
     headerSize={3} 
-    headingText={focusedOccasion.label}>
-
-    <div slot="backButton">
-       <Button on:click={goBackAPage}
-          gridLayout=""
-          buttonStyle="btn-outline-primary abs-left"
-          iconLeft= "backButton fa fa-angle-left"
-          buttonText="Back"/>
-    </div>
+    headingText={focusedOccasion.label}
+    includeBackButton = true>
 
     <div class="row">
       <Button on:click={showQR}

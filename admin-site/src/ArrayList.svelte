@@ -2,14 +2,17 @@
 import moment from "moment";
 import Button from "./Button.svelte";
 import { events } from './EventsStore.js';
+import { pageStateInStore } from './PageStore.js';
 
 
 import { createEventDispatcher } from 'svelte';
 
 const dispatch = createEventDispatcher();
-let pageState;
 let dateSortedOccasions =[];
 let focusedEvent = [];
+let focused = {
+  "focusedEvent": []
+}
 let sliderCue;
 let focusedOccasion;
 let formattedStartTimeFull;
@@ -24,15 +27,15 @@ export let emptyArrayMessage = "";
 
 function sendEventsPackage(){
   dispatch('message', {
-            "pageState": pageState,
-            "focusedEvent": focusedEvent,
+            // "pageState": pageState,
+            "focusedEvent": focus.focusedEvent,
             "dateSortedOccasions": dateSortedOccasions,
             "sliderCue": sliderCue,
 		});
 }
 function sendOccasionsPackage(){
   dispatch('message', {
-            "pageState": pageState,
+            // "pageState": pageState,
             "focusedOccasion": focusedOccasion,
             "formattedStartTimeFull": formattedStartTimeFull,
             "formattedEndTimeFull": formattedEndTimeFull,
@@ -45,28 +48,31 @@ function sendOccasionsPackage(){
 function eventButton(value) {
     let focusedEventLabel = value;
     let indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
-    focusedEvent = events[indexInEvents];
+    focus.focusedEvent = events[indexInEvents];
 
     ///sorting occasions by date
-    let occasionArray = focusedEvent.occasions;
+    let occasionArray = focus.focusedEvent.occasions;
     let sortDates = (a, b) => moment(a.startDateTime).format('YYYYMMDD') -moment(b.startDateTime).format('YYYYMMDD');
     dateSortedOccasions = occasionArray.sort(sortDates);
 
     //set up slider cue to hold cues in first index (0)
-    sliderCue = focusedEvent.episodes[0].cues[0]
-    pageState = 2;
+    sliderCue = focus.focusedEvent.episodes[0].cues[0]
+    // pageState = 2;
+    pageStateInStore.update(value => value = 2);
     sendEventsPackage();
   }
 
   function occasionButton(id) {
     let focusedOccasionID = id;
-    let indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
-    focusedOccasion = focusedEvent.occasions[indexInOccasions];
+    let indexInOccasions = focus.focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
+    focusedOccasion = focus.focusedEvent.occasions[indexInOccasions];
 
     if(focusedOccasion.state == "closed"){
-      pageState = 3;
+      pageStateInStore.update(value => value = 3);
+      // pageState = 3;
     } else {
-      pageState = 4;
+      pageStateInStore.update(value => value = 4);
+      // pageState = 4;
     }
 
 	  formattedStartTimeFull = moment(focusedOccasion.startDateTime)
