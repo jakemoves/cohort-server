@@ -103,6 +103,23 @@ beforeAll( () => {
     })
   }
 
+  createClientArray = async (occasionId, length, onCueReceived) => {
+    let clients = []
+    for(i = 0; i < length; i++){
+      let client = await createClientAndConnect(occasionId)
+      expect(client).toBeDefined()
+
+      client.addEventListener('message', message => {
+        const msg = JSON.parse(message.data)
+        onCueReceived(msg, client)
+      })
+
+      clients.push(client)
+    }
+
+    return clients
+  }
+
   cohortLogin = async (username, password) => {
     const payload = { username: username, password: password }
 
@@ -119,6 +136,14 @@ beforeAll( () => {
 
   loginAsTestAdminUser = async () => {
     return cohortLogin('test_admin_user', process.env.TEST_ADMIN_USER_PASSWORD)
+  }
+
+  loginAsTestUser1 = async () => {
+    return cohortLogin('test_user_1', process.env.TEST_USER_1_PASSWORD)
+  }
+
+  loginAsTestUser2 = async () => {
+    return cohortLogin('test_user_2', process.env.TEST_USER_2_PASSWORD)
   }
 })
 
@@ -385,21 +410,13 @@ describe('Occasions & WebSocket broadcasts', () => {
       "targetTags": ["all"]
     }
 
-    let clients = []
     let cuesReceived = 0
-    for(i = 0; i < 10; i++){
-      let client = await createClientAndConnect(occasionId)
-      expect(client).toBeDefined()
 
-      client.addEventListener('message', message => {
-        const msg = JSON.parse(message.data)
-        expect(msg).toEqual(cue)
-        cuesReceived++
-        client.close()
-      })
-
-      clients.push(client)
-    }
+    let clients = await createClientArray(occasionId, 10, (msg, client) => {
+      expect(msg).toEqual(cue)
+      cuesReceived++
+      client.close()
+    })
 
     const res = await request(app)
       .post('/api/v2/occasions/3/broadcast')
@@ -437,35 +454,23 @@ describe('Occasions & WebSocket broadcasts', () => {
       "targetTags": ["all"]
     }
 
-    let clients = []
     let cuesReceived = 0
-    for(i = 0; i < 10; i++){
-      // split these devices evenly between two occasions
-      let occasionId
-      if(i % 2 == 0){
-        occasionId = 3
-      } else {
-        occasionId = 4
-      }
-
-      let client = await createClientAndConnect(occasionId)
-      expect(client).toBeDefined()
-
-      client.addEventListener('message', message => {
-        const msg = JSON.parse(message.data)
-        expect(msg).toEqual(cue)
-        cuesReceived++
-      })
-
-      clients.push(client)
-    }
+    let clientsA = await createClientArray(3, 5, (msg, client) => {
+      expect(msg).toEqual(cue)
+      cuesReceived++
+    })
+    let clientsB = await createClientArray(4, 5, (msg, client) => {
+      expect(msg).toEqual(cue)
+      cuesReceived++
+    })
 
     const res = await request(app)
       .post('/api/v2/occasions/3/broadcast')
       .set('Authorization', 'JWT ' + token)
       .send(cue)
 
-    clients.forEach(client => client.close())
+    clientsA.forEach(client => client.close())
+    clientsB.forEach(client => client.close())
 
     expect(res.status).toEqual(200)
     expect(res.body).toHaveLength(5)
@@ -479,6 +484,70 @@ describe('Occasions & WebSocket broadcasts', () => {
     expect(result.size).toEqual(1)
 
     expect(cuesReceived).toEqual(5)
+  })
+
+  test('POST occasions/:id/broadcast: happy path, user can broadcast to an occasion they own', async () => {
+    const token = await loginAsTestUser1()
+    expect(token).toBeDefined()
+
+    const cue = { 
+      "mediaDomain": 0,
+      "cueNumber": 1,
+      "cueAction": 0,
+      "targetTags": ["all"]
+    }
+
+    let cuesReceived = 0
+    
+    let clients = await createClientArray(3, 10, (msg, client) => {
+      cuesReceived++
+      expect(msg).toEqual(cue)
+      client.close()
+    })
+
+    let res = await request(app)
+    .post('/api/v2/occasions/3/broadcast')
+    .set('Authorization', 'JWT ' + token)
+    .send(cue)
+
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(10)
+
+    const results = res.body 
+    expect(results).toHaveLength(10)
+    
+    const result = new Set(results.map( result => result.success)) //remove duplicates from the array
+
+    expect(result.has(true)).toBeTruthy()
+    expect(result.size).toEqual(1)
+
+    expect(cuesReceived).toEqual(10)
+  })
+
+  test('POST occasions/:id/broadcast: happy path, user cannot broadcast to an occasion they do not own', async () => {
+    const token = await loginAsTestUser2()
+    expect(token).toBeDefined()
+
+    const cue = { 
+      "mediaDomain": 0,
+      "cueNumber": 1,
+      "cueAction": 0,
+      "targetTags": ["all"]
+    }
+    
+    let clients = await createClientArray(3, 10, (msg, client) => {
+      cuesReceived++
+      expect(msg).toEqual(cue)
+      client.close()
+    })
+
+    let res = await request(app)
+    .post('/api/v2/occasions/3/broadcast')
+    .set('Authorization', 'JWT ' + token)
+    .send(cue)
+
+    expect(res.status).toEqual(401)
+    clients.forEach(client => client.close())
   })
 
   // test('broadcast: error -- inactive socket (returned array from /broadcast should specify which device guid)

@@ -129,7 +129,7 @@ exports.occasions_broadcast = async (req, res, next) => {
     return
   }
 
-  // TODO eventually we may need a PermissionsService to do these checks...
+  // TODO eventually we may need a PermissionsService to do these checks?
   if(occasion.owner_id != req.user.id && !req.user.is_admin){
     handleError(401, 'Authorization required', res)
     return
