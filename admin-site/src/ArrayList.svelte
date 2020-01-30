@@ -1,21 +1,17 @@
 <script>
 import moment from "moment";
 import Button from "./Button.svelte";
-import { events } from './EventsStore.js';
+import { events, focusedItems } from './EventsStore.js';
 import { pageStateInStore } from './PageStore.js';
-
-
 import { createEventDispatcher } from 'svelte';
 
 const dispatch = createEventDispatcher();
 let dateSortedOccasions =[];
-let focusedEvent = [];
-let focused = {
-  "focusedEvent": []
-}
+export let focusedEvent =[];
+let focusedOccasionID;
 let sliderCue;
 let focusedOccasion;
-let formattedStartTimeFull;
+let formattedStartTimeFull; 
 let formattedEndTimeFull;
 let formattedStartTime;
 let formattedEndTime;
@@ -28,7 +24,7 @@ export let emptyArrayMessage = "";
 function sendEventsPackage(){
   dispatch('message', {
             // "pageState": pageState,
-            "focusedEvent": focus.focusedEvent,
+            "focusedEvent": focusedEvent,
             "dateSortedOccasions": dateSortedOccasions,
             "sliderCue": sliderCue,
 		});
@@ -37,6 +33,7 @@ function sendOccasionsPackage(){
   dispatch('message', {
             // "pageState": pageState,
             "focusedOccasion": focusedOccasion,
+            "focusedOccasionID": focusedOccasionID,
             "formattedStartTimeFull": formattedStartTimeFull,
             "formattedEndTimeFull": formattedEndTimeFull,
             "formattedStartTime": formattedStartTime,
@@ -48,41 +45,39 @@ function sendOccasionsPackage(){
 function eventButton(value) {
     let focusedEventLabel = value;
     let indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
-    focus.focusedEvent = events[indexInEvents];
-
+    focusedEvent = events[indexInEvents];
+    
     ///sorting occasions by date
-    let occasionArray = focus.focusedEvent.occasions;
+    let occasionArray = focusedEvent.occasions;
     let sortDates = (a, b) => moment(a.startDateTime).format('YYYYMMDD') -moment(b.startDateTime).format('YYYYMMDD');
     dateSortedOccasions = occasionArray.sort(sortDates);
 
     //set up slider cue to hold cues in first index (0)
-    sliderCue = focus.focusedEvent.episodes[0].cues[0]
+    sliderCue = focusedEvent.episodes[0].cues[0]
     // pageState = 2;
     pageStateInStore.update(value => value = 2);
     sendEventsPackage();
   }
 
   function occasionButton(id) {
+    // focusedItems.subscribe(value => focusedEvent = value.focusedEvent);
     let focusedOccasionID = id;
-    let indexInOccasions = focus.focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
-    focusedOccasion = focus.focusedEvent.occasions[indexInOccasions];
+    let indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
 
-    if(focusedOccasion.state == "closed"){
-      pageStateInStore.update(value => value = 3);
-      // pageState = 3;
-    } else {
-      pageStateInStore.update(value => value = 4);
-      // pageState = 4;
-    }
+    focusedOccasion = focusedEvent.occasions[indexInOccasions];
 
-	  formattedStartTimeFull = moment(focusedOccasion.startDateTime)
-      .format("LLL");
-    formattedEndTimeFull = moment(focusedOccasion.endDateTime)
-	    .format("LLL");
-	  formattedStartTime = moment(focusedOccasion.startDateTime)
-      .format("LL");
-    formattedEndTime = moment(focusedOccasion.endDateTime)
-      .format("LL");
+    pageStateInStore.update(value => value = 3);
+      
+   
+
+	  // formattedStartTimeFull = moment(focusedOccasion.startDateTime)
+    //   .format("LLL");
+    // formattedEndTimeFull = moment(focusedOccasion.endDateTime)
+	  //   .format("LLL");
+	  // formattedStartTime = moment(focusedOccasion.startDateTime)
+    //   .format("LL");
+    // formattedEndTime = moment(focusedOccasion.endDateTime)
+    //   .format("LL");
 
       sendOccasionsPackage();
   }
@@ -98,7 +93,7 @@ function eventButton(value) {
             </div>
             <Button on:click={()=> eventButton(item.label)}
                 buttonHtml='<p class="mb-0">Occasions&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>'
-                gridLayout ="col-6" />
+                gridStyle ="col-6" />
         </div>
       {:else if listType == "Occasions"}
         <Button on:click={() => occasionButton(item.id)}
@@ -107,3 +102,4 @@ function eventButton(value) {
       {/if}
     {/each}
 {/if}
+

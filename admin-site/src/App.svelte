@@ -12,11 +12,14 @@
   import Page from './ParentPage.svelte';
   import Slider from './Slider.svelte';
   import Button from './Button.svelte';
+  import Occasion from './Occasion.svelte';
   
   import { pageStateInStore } from "./PageStore.js";
 
   import Modal from './Modal.svelte';
   import List from './ArrayList.svelte';
+
+  import { urlStore } from './ServerURLstore.js';
   
   //import events from store
   import {events, storedEvents} from './EventsStore.js';
@@ -30,7 +33,6 @@
   })
   //grab info from events
   function messageFromArrayList(value){
-    // pageState = value.detail.pageState;
     focusedEvent = value.detail.focusedEvent;
     dateSortedOccasions = value.detail.dateSortedOccasions;
     sliderCue = value.detail.sliderCue;
@@ -38,8 +40,8 @@
   }
 
   function messageFromArrayListOccasions(value){
-    // pageState = value.detail.pageState;
     focusedEvent = value.detail.focusedEvent;
+    focusedOccasionID = value.detail.focusedOccasionID;
     focusedOccasion = value.detail.focusedOccasion;
     formattedStartTimeFull = value.detail.formattedStartTimeFull;
     formattedEndTimeFull = value.detail.formattedEndTimeFull;
@@ -59,17 +61,11 @@
 //on mount it 
   let serverURL;
 
+   urlStore.subscribe(value => {
+    serverURL = value;
 
-//checking for local dev ...needs testing on staging site
-onMount(() => {
-    let page = window.location.href;
-    let splitURL = page.split('/');
-    let splitLocal = splitURL[2].split(":")
-    
-    if(splitLocal == "localhost"){
-      serverURL = "http://localhost:3000/api/v2";
-    }
-  });
+  })
+
   
   // cue broadcast
   window.onCueSliderInput = (event) => {
@@ -138,7 +134,7 @@ onMount(() => {
   //for new event creation parameters
   let label = "";
 
-  let cueState = 0;
+  // let cueState = 0;
   //Holds event ID in order to display occasions for that event
   let focusedEventLabel = "0";
   let focusedOccasionID = 0;
@@ -168,30 +164,30 @@ onMount(() => {
 //double check that a delete Occasion has happened
   let deleteOccasionHasHappened = false;
 
-  function openOccasionButton() {
-    try {
-      fetch(serverURL + "/occasions/" + focusedOccasionID, {
-        method: 'PATCH',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"state":"opened"}) 
-      }).then( response => { 
-        if(response.status == 200){
-          response.json().then( details => {
-            // pageState = 4;
-            pageStateInStore.update(value => value = 4);
-          })
-        } else {
-          response.text().then( errorMessage => {
-            console.log('occasion open error on request: ' + errorMessage)
-          })
-        }
-      }).catch( error => {
-        console.log("Error occasion open")
-      })
-    } catch (e) {
-      console.log(e.message)
-    } 
-  };
+  // function openOccasionButton() {
+  //   try {
+  //     fetch(serverURL + "/occasions/" + focusedOccasionID, {
+  //       method: 'PATCH',
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: JSON.stringify({"state":"opened"}) 
+  //     }).then( response => { 
+  //       if(response.status == 200){
+  //         response.json().then( details => {
+  //           // pageState = 4;
+  //           pageStateInStore.update(value => value = 4);
+  //         })
+  //       } else {
+  //         response.text().then( errorMessage => {
+  //           console.log('occasion open error on request: ' + errorMessage)
+  //         })
+  //       }
+  //     }).catch( error => {
+  //       console.log("Error occasion open")
+  //     })
+  //   } catch (e) {
+  //     console.log(e.message)
+  //   } 
+  // };
 
   // function goBackAPage(){
   //   pageState --;
@@ -279,21 +275,21 @@ onMount(() => {
     QrResponse();
   }
 
-  //this changes which cue details are shown
-  function changeCueState(direction) {
-    let cuesLength = focusedEvent.episodes[0].cues.length;
-    if (direction == "next" && cueState < cuesLength - 1) {
-      cueState ++;
-    } else if (direction == "previous" && cueState > 0) {
-      cueState --;
-    } 
+  // //this changes which cue details are shown
+  // function changeCueState(direction) {
+  //   let cuesLength = focusedEvent.episodes[0].cues.length;
+  //   if (direction == "next" && cueState < cuesLength - 1) {
+  //     cueState ++;
+  //   } else if (direction == "previous" && cueState > 0) {
+  //     cueState --;
+  //   } 
     
-    //update broadcast message 
-    sliderCue = focusedEvent.episodes[0].cues[cueState];
+  //   //update broadcast message 
+  //   sliderCue = focusedEvent.episodes[0].cues[cueState];
 
-    broadcastStatus = "unsent"
+  //   broadcastStatus = "unsent"
     
-  }
+  // }
 
   /////for new event generation
   function setTitle(event) {
@@ -367,13 +363,13 @@ onMount(() => {
 
       <Button on:click={verifyPassword}
         buttonStyle = "btn-primary"
-        gridLayout = ""
+        gridStyle = ""
         buttonText = "Login"/>
 
       <div class="form-group mt-5">
         <Button on:click={hideShowDev}
         buttonStyle = "btn-light btn-outline-dark btn-sm mt-4"
-        gridLayout = ""
+        gridStyle = ""
         buttonText = "Show/Hide Developer Tools"/>
        </div>    
      
@@ -411,13 +407,18 @@ onMount(() => {
 
     <List on:message = {messageFromArrayListOccasions}
     arrayName = {dateSortedOccasions}
+    focusedEvent = {focusedEvent}
     listType = "Occasions"
     emptyArrayMessage = "This happens on occasion. No occasions for this event yet"
     />
     
   </Page>
-
-{:else if pageState == 3} 
+  {:else if pageState == 3}
+    <Occasion
+      focusedEvent = {focusedEvent}
+      focusedOccasion = {focusedOccasion}
+      focusedOccasionID  = {focusedOccasionID}/>
+<!-- {:else if pageState == 3} 
   <Page on:message={broadcastStatusFromBackButton}
     pageID='closedOccasion' 
     headerSize={3} 
@@ -530,7 +531,7 @@ onMount(() => {
         <div class="row">
           <div class="col-12 d-flex justify-content-between">
             <Button on:click={() => changeCueState ("previous")}
-              gridLayout = ""
+              gridStyle = ""
               buttonStyle = 'btn-info'
               buttonText = &nbsp;Previous
               value = previous
@@ -538,7 +539,7 @@ onMount(() => {
               disabled = {cueState == 0}/>
 
             <Button on:click={() => changeCueState ("next")}
-              gridLayout = ""
+              gridStyle = ""
               buttonStyle = 'btn-info'
               buttonText = &nbsp;&nbsp;&nbsp;Next&nbsp;
               value = next
@@ -551,7 +552,7 @@ onMount(() => {
       {/if}
     {/if} 
 
-  </Page>
+  </Page> -->
  
 {/if}
 <!-- //end of page state logic -->
@@ -567,13 +568,13 @@ onMount(() => {
 
   <div class="row" slot="modalFooter">
     <Button
-      gridLayout = "mr-1"
+      gridStyle = "mr-1"
       buttonStyle="btn-outline-secondary"
       dataDismiss ="modal"
       buttonText = "Cancel"/>
 
     <Button on:click={deleteOccasion}
-      gridLayout = "mr-1"
+      gridStyle = "mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
       buttonText="Delete Occasion"/>
@@ -591,13 +592,13 @@ onMount(() => {
   </div>
   <div class="row" slot="modalFooter">
     <Button
-      gridLayout = "mr-1"
+      gridStyle = "mr-1"
       buttonStyle="btn-outline-secondary"
       dataDismiss ="modal"
       buttonText = "Cancel"/>
 
     <Button on:click={closeOccasionButton}
-      gridLayout = "mr-1"
+      gridStyle = "mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
       buttonText="Close Occasion"/>

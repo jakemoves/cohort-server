@@ -21,7 +21,7 @@ function goBackAPage(){
 </script>
 
  <Button on:click={goBackAPage}
-          gridLayout=""
+          gridStyle=""
           buttonStyle="btn-outline-primary abs-left"
           iconLeft= "backButton fa fa-angle-left"
           buttonText="Back"/>

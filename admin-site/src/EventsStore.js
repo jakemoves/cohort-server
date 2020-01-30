@@ -1,15 +1,25 @@
 
 //grabbing events info from server and placing in a store
 import {writable} from 'svelte/store';
+import { urlStore } from './ServerURLstore.js';
 
+let serverURL;
 
 let grabbedFromServerEvents;
 export let events;
 export let storedEvents = writable(0);
+export let focusedItems = writable({
+  "focusedEvent": [],
+  "focusedOccasion": []
+});
 
 
-let GetEvents = async () => {
-    let response = await fetch("http://localhost:3000/api/v2/events", {
+let getEvents = async () => {
+    urlStore.subscribe(value => {
+      serverURL = value;
+    })
+
+    let response = await fetch(serverURL + "/events", {
       method: 'GET'
     })
 
@@ -23,6 +33,6 @@ let GetEvents = async () => {
           });
     
 }
-GetEvents();
+getEvents();
 
 

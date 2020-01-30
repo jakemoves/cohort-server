@@ -4,7 +4,7 @@ export let buttonStyle = 'btn-outline-primary btn-block';
 export let dataTarget = undefined;
 export let value = "";
 export let disabled = undefined;
-export let gridLayout = "col-md-12";
+export let gridStyle = "col-md-12";
 export let iconLeft = undefined;
 export let iconRight = undefined;
 //for modal close
@@ -31,7 +31,7 @@ export let buttonHtml = "";
 </style>
 
 
-    <div class={gridLayout}>
+    <div class={gridStyle}>
     
             <button on:click
                 type="button" 
