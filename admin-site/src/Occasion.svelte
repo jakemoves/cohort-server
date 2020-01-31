@@ -3,28 +3,32 @@ import Page from './ParentPage.svelte';
 import { onMount } from 'svelte';
 import { pageStateInStore } from './PageStore.js';
 import { urlStore } from './ServerURLstore.js';
-import { focusedItems } from './EventsStore.js';
+import { storedEvents } from './EventsStore.js';
 import Button from './Button.svelte';
 import moment from "moment";
 import Slider from './Slider.svelte';
+import Modal from './Modal.svelte';
 
-let pageState;
+
 let serverURL;
   urlStore.subscribe(value => {
         serverURL = value;
     })
 
-export let focusedEvent;
+export let focusedEvent = [];
 export let focusedOccasion;
-export let focusedOccasionID;
-// focusedItems.subscribe(value => focusedOccasion = value.focusedOccasion);
+export let focusedOccasionID = 0;
+export let isOccasionOpen;
+export let indexInOccasions;
+
 
 let formattedStartTimeFull;
 let formattedEndTimeFull;
 let formattedStartTime;
 let formattedEndTime;
 
-let occasionIsOpen = false;
+//double check that a delete Occasion has happened
+let deleteOccasionHasHappened = false;
 
 let cueState = 0;
 
@@ -33,19 +37,16 @@ let broadcastStatus = "unsent";
 let broadcastResults;
 
 onMount(async () => {
-     pageStateInStore.subscribe(value => {
-    pageState = value;
-  })
-     formattedStartTimeFull = moment(focusedOccasion.startDateTime)
-      .format("LLL");
-    formattedEndTimeFull = moment(focusedOccasion.endDateTime)
-	    .format("LLL");
-	  formattedStartTime = moment(focusedOccasion.startDateTime)
-      .format("LL");
-    formattedEndTime = moment(focusedOccasion.endDateTime)
-      .format("LL");
+  formattedStartTimeFull = moment(focusedOccasion.startDateTime)
+    .format("LLL");
+  formattedEndTimeFull = moment(focusedOccasion.endDateTime)
+    .format("LLL");
+  formattedStartTime = moment(focusedOccasion.startDateTime)
+    .format("LL");
+  formattedEndTime = moment(focusedOccasion.endDateTime)
+    .format("LL");
 });
-//not working
+
   function openOccasionButton() {
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
@@ -55,8 +56,7 @@ onMount(async () => {
       }).then( response => { 
         if(response.status == 200){
           response.json().then( details => {
-            occasionIsOpen = true;
-            
+             isOccasionOpen = true;
           })
         } else {
           response.text().then( errorMessage => {
@@ -69,27 +69,92 @@ onMount(async () => {
     } catch (e) {
       console.log(e.message)
     } 
+    
   };
 
+ function closeOccasionButton(){
+    try {
+      fetch(serverURL + "/occasions/" + focusedOccasionID, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({"state":"closed"}) 
+      }).then( response => { 
+        if(response.status == 200){
+          response.json().then( details => {
+            isOccasionOpen = false;
+          })
+        } else {
+          response.text().then( errorMessage => {
+            console.log('occasion close error on request: ' + errorMessage)
+          })
+        }
+      }).catch( error => {
+        console.log("Error occasion close")
+      })
+    } catch (e) {
+      console.log(e.message)
+    } 
+  }
 
- function showQR() {
-    //grab QR code for that occasion and update
-    // for testing "/occasions/3/qrcode"
+  function deleteOccasion() {
+    let value;
+
+    //use this at the end of whatever logic is used for delete
+    deleteOccasionHasHappened = true;
+    
+    if (deleteOccasionHasHappened){
+      // pageState = 2;
+      pageStateInStore.update(value => value = 2);
+    } 
+
+    //updates events to remove selected occasion.
+    focusedEvent.occasions.splice(indexInOccasions, 1);
+    
+    storedEvents.subscribe(value => {
+      console.log(value);
+    });
+    
+    
+  //if wanting to delete from the server;
+  // function deleteOccasionServer() {
+  //   try {
+  //       return fetch(serverURL + "/occasions/" + focusedOccasionID, {
+  //         method: 'DELETE'
+  //       }) .then(response => {
+  //             response.json().then( details => {
+  //             console.log(details)
+  //             })
+  //         }).catch( error => {
+  //               console.log("Error on occasion delete!")
+  //             })
+  //       } catch (e) {
+  //           console.log(e.message)
+  //         }
+  //         GetEvents();
+  // } 
+
+    // deleteOccasionServer();
+
+   }
+
+  function showQR() {
+  //grab QR code for that occasion and update
+  // for testing "/occasions/3/qrcode"
     let QrResponse = async () => { 
-      let response = await fetch(serverURL + "/occasions/" + focusedOccasionID + "/qrcode", {
-          method: 'GET'
-      });
-      let qrcode = await response.text()
-      let qrContainer = document.getElementById("QRcodeContainer")
-      qrContainer.innerHTML = qrcode
+        let response = await fetch(serverURL + "/occasions/" + focusedOccasionID + "/qrcode", {
+        method: 'GET'
+        });
+        let qrcode = await response.text()
+        let qrContainer = document.getElementById("QRcodeContainer")
+        qrContainer.innerHTML = qrcode
     };
     QrResponse();
   }
 
 
-function broadcastStatusFromBackButton(value){
-     broadcastStatus = value.detail.broadcastStatus;
-   }
+  function broadcastStatusFromBackButton(value){
+    broadcastStatus = value.detail.broadcastStatus;
+  }
 
      //this changes which cue details are shown
   function changeCueState(direction) {
@@ -99,18 +164,17 @@ function broadcastStatusFromBackButton(value){
     } else if (direction == "previous" && cueState > 0) {
       cueState --;
     } 
-     //update broadcast message 
+        //update broadcast message 
     sliderCue = focusedEvent.episodes[0].cues[cueState];
 
     broadcastStatus = "unsent"
-    
-  }
 
+  }
 
 </script>
 
 
-{#if focusedOccasion.state == "closed"}
+{#if !isOccasionOpen}
 
     <Page on:message={broadcastStatusFromBackButton}
         pageID="closedOccasion"
@@ -152,6 +216,7 @@ function broadcastStatusFromBackButton(value){
         </div>
         </div>
     </Page>
+
 {:else}
   <Page 
     pageID='openOccasion'
@@ -167,7 +232,7 @@ function broadcastStatusFromBackButton(value){
         buttonText="Show QR Code" 
         dataTarget="#QRcodeModal"/>
     </div>
-
+    
     <!-- {#if gotEvents == true } -->
       {#if focusedEvent.episodes[0].cues.length == 0}
         <div class="row">
@@ -243,3 +308,69 @@ function broadcastStatusFromBackButton(value){
 
   </Page>
 {/if}
+<Modal
+  modalID="closeOccassionModal"
+  modalTitle="Close Occasion">
+  
+  <div slot="modalBody">
+    <!-- {#if gotEvents} -->
+      Are you sure you want to close {focusedEvent.label} - {formattedStartTime}?
+    <!-- {/if} -->
+  </div>
+  <div class="row" slot="modalFooter">
+    <Button
+      gridStyle = "mr-1"
+      buttonStyle="btn-outline-secondary"
+      dataDismiss ="modal"
+      buttonText = "Cancel"/>
+
+    <Button on:click={closeOccasionButton}
+      gridStyle = "mr-1"
+      buttonStyle="btn-outline-danger"
+      dataDismiss="modal"
+      buttonText="Close Occasion"/>
+  </div>
+</Modal>
+
+<Modal
+  modalID = "deleteOccasionModal"
+  modalTitle= "Delete Occasion">
+  
+  <div slot="modalBody">
+    <!-- {#if gotEvents} -->
+      Are you sure you want to delete {focusedEvent.label} - {formattedStartTime}?
+    <!-- {/if} -->
+  </div>
+
+  <div class="row" slot="modalFooter">
+    <Button
+      gridStyle = "mr-1"
+      buttonStyle="btn-outline-secondary"
+      dataDismiss ="modal"
+      buttonText = "Cancel"/>
+
+    <Button on:click={deleteOccasion}
+      gridStyle = "mr-1"
+      buttonStyle="btn-outline-danger"
+      dataDismiss="modal"
+      buttonText="Delete Occasion"/>
+  </div>
+</Modal>
+
+<Modal
+  modalID="QRcodeModal">
+    <div slot="closeButton">
+      <Button
+          buttonStyle="close"
+          dataDismiss="modal"
+          ariaLabel="Close"
+          iconRight = "fas fa-times"/>
+    
+    </div>
+    
+    <div slot="modalBody" class="container-fluid">
+      <div id = "QRcodeContainer">
+        <!-- QR code populated here -->
+      </div>
+    </div>
+</Modal>

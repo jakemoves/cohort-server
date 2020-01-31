@@ -7,7 +7,6 @@ import { createEventDispatcher } from 'svelte';
 
 const dispatch = createEventDispatcher();
 let dateSortedOccasions =[];
-export let focusedEvent =[];
 let focusedOccasionID;
 let sliderCue;
 let focusedOccasion;
@@ -15,11 +14,15 @@ let formattedStartTimeFull;
 let formattedEndTimeFull;
 let formattedStartTime;
 let formattedEndTime;
+let isOccasionOpen;
+let indexInOccasions;
 
+export let focusedEvent =[];
 export let listType = "Events";
 export let action= "";
 export let arrayName =[];
 export let emptyArrayMessage = "";
+
 
 function sendEventsPackage(){
   dispatch('message', {
@@ -34,10 +37,12 @@ function sendOccasionsPackage(){
             // "pageState": pageState,
             "focusedOccasion": focusedOccasion,
             "focusedOccasionID": focusedOccasionID,
+            "indexInOccasions":indexInOccasions,
             "formattedStartTimeFull": formattedStartTimeFull,
             "formattedEndTimeFull": formattedEndTimeFull,
             "formattedStartTime": formattedStartTime,
-            "formattedEndTime": formattedEndTime
+            "formattedEndTime": formattedEndTime,
+            "isOccasionOpen": isOccasionOpen
 
 		});
 }
@@ -61,23 +66,18 @@ function eventButton(value) {
 
   function occasionButton(id) {
     // focusedItems.subscribe(value => focusedEvent = value.focusedEvent);
-    let focusedOccasionID = id;
-    let indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
+    focusedOccasionID = id;
+    indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
 
     focusedOccasion = focusedEvent.occasions[indexInOccasions];
 
     pageStateInStore.update(value => value = 3);
+    if (focusedOccasion.state == "closed"){
+      isOccasionOpen = false
+    } else {
+      isOccasionOpen = true
+    }
       
-   
-
-	  // formattedStartTimeFull = moment(focusedOccasion.startDateTime)
-    //   .format("LLL");
-    // formattedEndTimeFull = moment(focusedOccasion.endDateTime)
-	  //   .format("LLL");
-	  // formattedStartTime = moment(focusedOccasion.startDateTime)
-    //   .format("LL");
-    // formattedEndTime = moment(focusedOccasion.endDateTime)
-    //   .format("LL");
 
       sendOccasionsPackage();
   }

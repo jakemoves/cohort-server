@@ -24,6 +24,40 @@
   //import events from store
   import {events, storedEvents} from './EventsStore.js';
 
+    //for new event creation parameters
+  let label = "";
+
+  // let cueState = 0;
+  //Holds event ID in order to display occasions for that event
+  let focusedEventLabel = "0";
+  let focusedOccasionID = 0;
+  let focusedEvent;
+  let focusedOccasion = "0";
+  let dateSortedOccasions =[];
+  let isOccasionOpen;
+  //hold formatted time
+  let formattedStartTime = "";
+  let formattedEndTime = "";
+  let formattedEndTimeFull ="";
+  let formattedStartTimeFull ="";
+  let formattedTime ="";
+
+  
+  let indexInEvents;
+  let indexInOccasions;
+
+  let sliderCue;
+  let broadcastStatus = "unsent";
+  let broadcastResults;
+
+//password check on login
+  let authenticated = false;
+
+//to show/hide dev Tools.
+  let devElement = false;
+
+
+
   // initiate pageState at 0
   let pageState = 0;
   //then update pageState from store
@@ -40,13 +74,15 @@
   }
 
   function messageFromArrayListOccasions(value){
-    focusedEvent = value.detail.focusedEvent;
     focusedOccasionID = value.detail.focusedOccasionID;
     focusedOccasion = value.detail.focusedOccasion;
+    indexInOccasions = value.detail.indexInOccasions;
     formattedStartTimeFull = value.detail.formattedStartTimeFull;
     formattedEndTimeFull = value.detail.formattedEndTimeFull;
     formattedStartTime = value.detail.formattedStartTime;
     formattedEndTime = value.detail.formattedEndTime;
+    isOccasionOpen = value.detail.isOccasionOpen;
+
   }
   
    function broadcastStatusFromBackButton(value){
@@ -131,38 +167,6 @@
   }
 };
 
-  //for new event creation parameters
-  let label = "";
-
-  // let cueState = 0;
-  //Holds event ID in order to display occasions for that event
-  let focusedEventLabel = "0";
-  let focusedOccasionID = 0;
-  let focusedEvent;
-  let focusedOccasion = "0";
-  let dateSortedOccasions =[];
-  //hold formatted time
-  let formattedStartTime = "";
-  let formattedEndTime = "";
-  let formattedEndTimeFull ="";
-  let formattedStartTimeFull ="";
-  let formattedTime ="";
-  
-  let indexInEvents;
-  let indexInOccasions;
-
-  let sliderCue;
-  let broadcastStatus = "unsent";
-  let broadcastResults;
-
-//password check on login
-  let authenticated = false;
-
-//to show/hide dev Tools.
-  let devElement = false;
-
-//double check that a delete Occasion has happened
-  let deleteOccasionHasHappened = false;
 
   // function openOccasionButton() {
   //   try {
@@ -195,30 +199,30 @@
   //   broadcastStatus = "unsent"
   // }
 
-  function closeOccasionButton(){
+  // function closeOccasionButton(){
 
-    try {
-      fetch(serverURL + "/occasions/" + focusedOccasionID, {
-        method: 'PATCH',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"state":"closed"}) 
-      }).then( response => { 
-        if(response.status == 200){
-          response.json().then( details => {
-            pageState=3;
-          })
-        } else {
-          response.text().then( errorMessage => {
-            console.log('occasion close error on request: ' + errorMessage)
-          })
-        }
-      }).catch( error => {
-        console.log("Error occasion close")
-      })
-    } catch (e) {
-      console.log(e.message)
-    } 
-  }
+  //   try {
+  //     fetch(serverURL + "/occasions/" + focusedOccasionID, {
+  //       method: 'PATCH',
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: JSON.stringify({"state":"closed"}) 
+  //     }).then( response => { 
+  //       if(response.status == 200){
+  //         response.json().then( details => {
+  //           pageState=3;
+  //         })
+  //       } else {
+  //         response.text().then( errorMessage => {
+  //           console.log('occasion close error on request: ' + errorMessage)
+  //         })
+  //       }
+  //     }).catch( error => {
+  //       console.log("Error occasion close")
+  //     })
+  //   } catch (e) {
+  //     console.log(e.message)
+  //   } 
+  // }
 
   function deleteOccasion() {
     let value;
@@ -417,7 +421,9 @@
     <Occasion
       focusedEvent = {focusedEvent}
       focusedOccasion = {focusedOccasion}
-      focusedOccasionID  = {focusedOccasionID}/>
+      focusedOccasionID  = {focusedOccasionID}
+      indexInOccasions = {indexInOccasions}
+      isOccasionOpen = {isOccasionOpen}/>
 <!-- {:else if pageState == 3} 
   <Page on:message={broadcastStatusFromBackButton}
     pageID='closedOccasion' 
@@ -556,7 +562,7 @@
  
 {/if}
 <!-- //end of page state logic -->
-<Modal
+<!-- <Modal
   modalID = "deleteOccasionModal"
   modalTitle= "Delete Occasion">
   
@@ -579,9 +585,9 @@
       dataDismiss="modal"
       buttonText="Delete Occasion"/>
   </div>
-</Modal>
+</Modal> -->
 
-<Modal
+<!-- <Modal
   modalID="closeOccassionModal"
   modalTitle="Close Occasion">
   
@@ -619,7 +625,7 @@
     <div slot="modalBody" class="container-fluid">
       <div id = "QRcodeContainer">
         <!-- QR code populated here -->
-      </div>
+      <!-- </div>
     </div>
-</Modal>
+</Modal> --> 
 

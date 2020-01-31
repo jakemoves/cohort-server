@@ -16,6 +16,7 @@ function goBackAPage(){
     pageStateInStore.update(value => value - 1);
     // not sure this is the right space for this
     broadcastStatus = "unsent"
+    
   }
 
 </script>
