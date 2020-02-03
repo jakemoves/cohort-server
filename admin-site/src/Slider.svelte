@@ -1,7 +1,85 @@
 <script>
+import { urlStore } from './ServerURLstore.js';
 
-export let _broadcastResults;
-export let _broadcastStatus;
+
+export let broadcastStatus;
+export let focusedOccasionID;
+export let sliderCue;
+
+let broadcastResults;
+let serverURL;
+
+urlStore.subscribe(value =>{
+  serverURL = value;
+})
+
+
+
+// cue broadcast
+ window.onCueSliderInput = (event) => {
+  
+  const SliderValue = event.target.value
+  if( SliderValue == 100){  
+    event.target.disabled == true
+
+    broadcastStatus = "pending"
+    try {
+      fetch(serverURL + "/occasions/" + focusedOccasionID + "/broadcast", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(sliderCue)
+      })
+      .then( response => {
+        console.log(response.status); 
+        if(response.status == 200){
+          response.json().then( results => {
+            console.log(results)
+            event.target.disabled = false
+            event.target.value = 0
+
+            const flatResults = results.map( result => result.success)
+
+            const attempts = flatResults.length
+            let successes = flatResults.filter( result => result == true).length
+
+            broadcastResults = "Broadcast to " + successes + "/" + attempts + " devices"
+
+            if(attempts == successes){
+              // all devices received broadcast
+              broadcastStatus = "full-success"
+            } else {
+              broadcastStatus = "partial-success"
+            }
+          })
+        } else {
+          response.text().then( errorMessage => {
+            
+            event.target.disabled = false
+            event.target.value = 0
+            
+            broadcastResults = errorMessage
+            broadcastStatus = "error"
+            console.log('error on request: ' + errorMessage)
+          })
+        }
+      }).catch( error => {
+        event.target.disabled = false
+        event.target.value = 0
+        broadcastResults = errorMessage
+        broadcastStatus = "error"
+        
+      })
+    } catch (e) {
+      event.target.disabled = false
+      event.target.value = 0
+
+      broadcastResults = errorMessage
+      broadcastStatus = "error"
+      console.log(e.message)
+    } 
+  }
+};
+
 </script>
 
 
@@ -148,20 +226,20 @@ label{
 
     
     </style>
-
+ 
     <div class="row mt-3">
       <div class="col-md-12">
-        <div class="slider-container status-{_broadcastStatus} text-center">
+        <div class="slider-container status-{broadcastStatus} text-center">
           <label for="cue-control-go">Drag slider to the right to fire cue</label>
           <input type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event)>
           <div class="alert alert-success text-center">
-            {_broadcastResults}
+            {broadcastResults}
           </div>
           <div class="alert alert-warning text-center">
-            {_broadcastResults}
+            {broadcastResults}
           </div>
           <div class="alert alert-danger text-center">
-            {_broadcastResults}
+            {broadcastResults}
           </div>
         </div>
       </div>

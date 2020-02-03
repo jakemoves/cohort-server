@@ -10,13 +10,13 @@
   import { createEventDispatcher } from "svelte";
   import { writable } from 'svelte/store';
   import Page from './ParentPage.svelte';
-  import Slider from './Slider.svelte';
+  // import Slider from './Slider.svelte';
   import Button from './Button.svelte';
   import Occasion from './Occasion.svelte';
   
   import { pageStateInStore } from "./PageStore.js";
 
-  import Modal from './Modal.svelte';
+  // import Modal from './Modal.svelte';
   import List from './ArrayList.svelte';
 
   import { urlStore } from './ServerURLstore.js';
@@ -48,7 +48,7 @@
 
   let sliderCue;
   let broadcastStatus = "unsent";
-  let broadcastResults;
+  // let broadcastResults;
 
 //password check on login
   let authenticated = false;
@@ -85,16 +85,15 @@
 
   }
   
-   function broadcastStatusFromBackButton(value){
-     broadcastStatus = value.detail.broadcastStatus;
-   }
+  function broadcastStatusFromBackButton(value){
+    broadcastStatus = value.detail.broadcastStatus;
+  }
   
-  let gotEvents = false;
+  // let gotEvents = false;
   //holds a store of events
   // $: events = [];
 
-  // // TODO this needs to pickup an environment somehow (dev/staging/prod)
-//on mount it 
+
   let serverURL;
 
    urlStore.subscribe(value => {
@@ -102,127 +101,6 @@
 
   })
 
-  
-  // cue broadcast
-  window.onCueSliderInput = (event) => {
-  const SliderValue = event.target.value
-  if( SliderValue == 100){  
-    event.target.disabled == true
-
-    broadcastStatus = "pending"
-    try {
-      fetch(serverURL + "/occasions/" + focusedOccasionID + "/broadcast", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify(sliderCue)
-      })
-      .then( response => {
-        console.log(response.status); 
-        if(response.status == 200){
-          response.json().then( results => {
-            console.log(results)
-            event.target.disabled = false
-            event.target.value = 0
-
-            const flatResults = results.map( result => result.success)
-
-            const attempts = flatResults.length
-            let successes = flatResults.filter( result => result == true).length
-
-            broadcastResults = "Broadcast to " + successes + "/" + attempts + " devices"
-
-            if(attempts == successes){
-              // all devices received broadcast
-              broadcastStatus = "full-success"
-            } else {
-              broadcastStatus = "partial-success"
-            }
-          })
-        } else {
-          response.text().then( errorMessage => {
-            
-            event.target.disabled = false
-            event.target.value = 0
-            
-            broadcastResults = errorMessage
-            broadcastStatus = "error"
-            console.log('error on request: ' + errorMessage)
-          })
-        }
-      }).catch( error => {
-        event.target.disabled = false
-        event.target.value = 0
-        broadcastResults = errorMessage
-        broadcastStatus = "error"
-        
-      })
-    } catch (e) {
-      event.target.disabled = false
-      event.target.value = 0
-
-      broadcastResults = errorMessage
-      broadcastStatus = "error"
-      console.log(e.message)
-    } 
-  }
-};
-
-
-  // function openOccasionButton() {
-  //   try {
-  //     fetch(serverURL + "/occasions/" + focusedOccasionID, {
-  //       method: 'PATCH',
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: JSON.stringify({"state":"opened"}) 
-  //     }).then( response => { 
-  //       if(response.status == 200){
-  //         response.json().then( details => {
-  //           // pageState = 4;
-  //           pageStateInStore.update(value => value = 4);
-  //         })
-  //       } else {
-  //         response.text().then( errorMessage => {
-  //           console.log('occasion open error on request: ' + errorMessage)
-  //         })
-  //       }
-  //     }).catch( error => {
-  //       console.log("Error occasion open")
-  //     })
-  //   } catch (e) {
-  //     console.log(e.message)
-  //   } 
-  // };
-
-  // function goBackAPage(){
-  //   pageState --;
-  //   // not sure this is the right space for this
-  //   broadcastStatus = "unsent"
-  // }
-
-  // function closeOccasionButton(){
-
-  //   try {
-  //     fetch(serverURL + "/occasions/" + focusedOccasionID, {
-  //       method: 'PATCH',
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: JSON.stringify({"state":"closed"}) 
-  //     }).then( response => { 
-  //       if(response.status == 200){
-  //         response.json().then( details => {
-  //           pageState=3;
-  //         })
-  //       } else {
-  //         response.text().then( errorMessage => {
-  //           console.log('occasion close error on request: ' + errorMessage)
-  //         })
-  //       }
-  //     }).catch( error => {
-  //       console.log("Error occasion close")
-  //     })
-  //   } catch (e) {
-  //     console.log(e.message)
-  //   } 
-  // }
 
   function deleteOccasion() {
     let value;
@@ -264,36 +142,6 @@
 
    }
 
-
-  function showQR() {
-    //grab QR code for that occasion and update
-    // for testing "/occasions/3/qrcode"
-    let QrResponse = async () => { 
-      let response = await fetch(serverURL + "/occasions/" + focusedOccasionID + "/qrcode", {
-          method: 'GET'
-      });
-      let qrcode = await response.text()
-      let qrContainer = document.getElementById("QRcodeContainer")
-      qrContainer.innerHTML = qrcode
-    };
-    QrResponse();
-  }
-
-  // //this changes which cue details are shown
-  // function changeCueState(direction) {
-  //   let cuesLength = focusedEvent.episodes[0].cues.length;
-  //   if (direction == "next" && cueState < cuesLength - 1) {
-  //     cueState ++;
-  //   } else if (direction == "previous" && cueState > 0) {
-  //     cueState --;
-  //   } 
-    
-  //   //update broadcast message 
-  //   sliderCue = focusedEvent.episodes[0].cues[cueState];
-
-  //   broadcastStatus = "unsent"
-    
-  // }
 
   /////for new event generation
   function setTitle(event) {
@@ -411,19 +259,21 @@
 
     <List on:message = {messageFromArrayListOccasions}
     arrayName = {dateSortedOccasions}
-    focusedEvent = {focusedEvent}
+   
     listType = "Occasions"
-    emptyArrayMessage = "This happens on occasion. No occasions for this event yet"
+    emptyArrayMessage = "This happens on occasion. No occasions for this event yet."
     />
     
   </Page>
   {:else if pageState == 3}
+  
     <Occasion
       focusedEvent = {focusedEvent}
       focusedOccasion = {focusedOccasion}
       focusedOccasionID  = {focusedOccasionID}
       indexInOccasions = {indexInOccasions}
-      isOccasionOpen = {isOccasionOpen}/>
+      sliderCue = {sliderCue}
+      broadcastStatus ={broadcastStatus}/>
 <!-- {:else if pageState == 3} 
   <Page on:message={broadcastStatusFromBackButton}
     pageID='closedOccasion' 

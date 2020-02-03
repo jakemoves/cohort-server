@@ -3,38 +3,42 @@ import Page from './ParentPage.svelte';
 import { onMount } from 'svelte';
 import { pageStateInStore } from './PageStore.js';
 import { urlStore } from './ServerURLstore.js';
-import { storedEvents } from './EventsStore.js';
+import { storedEvents, getEventsAndStore } from './EventsStore.js';
 import Button from './Button.svelte';
 import moment from "moment";
 import Slider from './Slider.svelte';
 import Modal from './Modal.svelte';
+import { occasionOpen } from './OccasionState.js';
+
 
 
 let serverURL;
-  urlStore.subscribe(value => {
-        serverURL = value;
-    })
 
-export let focusedEvent = [];
+export let focusedEvent;
 export let focusedOccasion;
-export let focusedOccasionID = 0;
-export let isOccasionOpen;
+export let focusedOccasionID;
 export let indexInOccasions;
 
+export let sliderCue;
+export let broadcastStatus;
+
+let grabbedFromServerEvents;
 
 let formattedStartTimeFull;
 let formattedEndTimeFull;
 let formattedStartTime;
 let formattedEndTime;
 
+let isOccasionOpen;
+occasionOpen.subscribe(value => {
+  isOccasionOpen = value;
+})
+
 //double check that a delete Occasion has happened
 let deleteOccasionHasHappened = false;
 
 let cueState = 0;
 
-let sliderCue;
-let broadcastStatus = "unsent";
-let broadcastResults;
 
 onMount(async () => {
   formattedStartTimeFull = moment(focusedOccasion.startDateTime)
@@ -45,7 +49,13 @@ onMount(async () => {
     .format("LL");
   formattedEndTime = moment(focusedOccasion.endDateTime)
     .format("LL");
+
+  urlStore.subscribe(value => {
+    serverURL = value;
+  })
+
 });
+
 
   function openOccasionButton() {
     try {
@@ -56,7 +66,9 @@ onMount(async () => {
       }).then( response => { 
         if(response.status == 200){
           response.json().then( details => {
-             isOccasionOpen = true;
+            occasionOpen.update(value => value = true);
+            // make sure store updates from server
+            getEventsAndStore();
           })
         } else {
           response.text().then( errorMessage => {
@@ -69,6 +81,7 @@ onMount(async () => {
     } catch (e) {
       console.log(e.message)
     } 
+    //storedEvents.subscribe(value => console.log(value)) 
     
   };
 
@@ -81,7 +94,10 @@ onMount(async () => {
       }).then( response => { 
         if(response.status == 200){
           response.json().then( details => {
-            isOccasionOpen = false;
+            //update state of occasion
+            occasionOpen.update(value => value = false);
+            // make sure store updates from server
+            getEventsAndStore();
           })
         } else {
           response.text().then( errorMessage => {
@@ -93,7 +109,9 @@ onMount(async () => {
       })
     } catch (e) {
       console.log(e.message)
-    } 
+    }
+    //  storedEvents.subscribe(value => console.log(value))
+     
   }
 
   function deleteOccasion() {
@@ -220,7 +238,8 @@ onMount(async () => {
 {:else}
   <Page 
     pageID='openOccasion'
-    headingText={focusedOccasion.label}>
+    headingText={focusedOccasion.label}
+    includeBackButton = true>
      <div class="row">
       <Button
         buttonStyle='btn-outline-danger btn-block' 
@@ -302,7 +321,10 @@ onMount(async () => {
           </div>
         </div>    
 
-        <Slider _broadcastResults={broadcastResults} _broadcastStatus={broadcastStatus}/>
+        <Slider 
+        broadcastStatus={broadcastStatus}
+        sliderCue = {sliderCue}
+        focusedOccasionID = {focusedOccasionID}/>
       {/if}
     <!-- {/if}  -->
 
