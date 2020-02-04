@@ -27,8 +27,6 @@
       document.getElementById("password").value = "5555";
     }
   };
-
-  
   
   function verifyPassword(){
     // verifying password logic 

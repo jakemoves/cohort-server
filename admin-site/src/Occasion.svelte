@@ -122,7 +122,6 @@ function deleteOccasion() {
 
     //use this at the end of whatever logic is used for delete
     // deleteOccasionHasHappened = true;
-    
 
     //updates events to remove selected occasion.
     focusedEvent.occasions.splice(indexInOccasions, 1);
@@ -132,11 +131,7 @@ function deleteOccasion() {
       console.log(value);
     });
    
-    
-    
     pageStateInStore.update(value => value = 2);
-    
-    
     
   //if wanting to delete from the server;
   // function deleteOccasionServer() {
@@ -160,7 +155,6 @@ function deleteOccasion() {
 
    }
   
-
 
   function showQR() {
   //grab QR code for that occasion and update
