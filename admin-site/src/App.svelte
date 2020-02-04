@@ -11,7 +11,7 @@
   import { pageStateInStore } from "./PageStore.js";
   import List from './ArrayList.svelte';
   //import events from store
-  import {events, storedEvents} from './EventsStore.js';
+  import { events, storedEvents } from './EventsStore.js';
 
     //for new event creation parameters if we implment it
   // let label = "";

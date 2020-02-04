@@ -75,7 +75,7 @@ function eventButton(value) {
 }
 
   function occasionButton(id) {
-    console.log(focusedEvent);
+    
     focusedOccasionID = id;
     indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
 
