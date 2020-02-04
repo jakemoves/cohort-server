@@ -3,12 +3,13 @@ import Page from './ParentPage.svelte';
 import { onMount } from 'svelte';
 import { pageStateInStore } from './PageStore.js';
 import { urlStore } from './ServerURLstore.js';
-import { storedEvents, getEventsAndStore } from './EventsStore.js';
+import { events, storedEvents, getEventsAndStore } from './EventsStore.js';
 import Button from './Button.svelte';
 import moment from "moment";
 import Slider from './Slider.svelte';
 import Modal from './Modal.svelte';
 import { occasionOpen } from './OccasionState.js';
+import { onDestroy } from 'svelte';
 
 
 
@@ -38,6 +39,8 @@ occasionOpen.subscribe(value => {
 let deleteOccasionHasHappened = false;
 
 let cueState = 0;
+
+
 
 
 onMount(async () => {
@@ -114,23 +117,25 @@ onMount(async () => {
      
   }
 
-  function deleteOccasion() {
-    let value;
+
+function deleteOccasion() {
 
     //use this at the end of whatever logic is used for delete
-    deleteOccasionHasHappened = true;
+    // deleteOccasionHasHappened = true;
     
-    if (deleteOccasionHasHappened){
-      // pageState = 2;
-      pageStateInStore.update(value => value = 2);
-    } 
 
     //updates events to remove selected occasion.
     focusedEvent.occasions.splice(indexInOccasions, 1);
     
+    //checking that it was removed from store.
     storedEvents.subscribe(value => {
       console.log(value);
     });
+   
+    
+    
+    pageStateInStore.update(value => value = 2);
+    
     
     
   //if wanting to delete from the server;
@@ -154,6 +159,8 @@ onMount(async () => {
     // deleteOccasionServer();
 
    }
+  
+
 
   function showQR() {
   //grab QR code for that occasion and update
@@ -189,7 +196,11 @@ onMount(async () => {
 
   }
 
+
+
 </script>
+
+
 
 
 {#if !isOccasionOpen}

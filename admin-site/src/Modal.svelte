@@ -4,7 +4,8 @@ export let modalID = "";
 export let modalTitle = ""
 </script>
 
-<div class="modal fade" id={modalID} tabindex="-1" role="dialog" aria-labelledby="{modalID}Label" aria-hidden="true">
+
+<div class="modal fade" id={modalID} tabindex="-1" role="dialog" aria-labelledby="{modalID}Label" aria-hidden="true" data-backdrop="false">
   <div>
     <div class="modal-dialog modal-lg">
       <div class="modal-content">

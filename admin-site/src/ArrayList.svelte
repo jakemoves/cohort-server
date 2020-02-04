@@ -43,10 +43,6 @@ function sendOccasionsPackage(){
             "focusedOccasion": focusedOccasion,
             "focusedOccasionID": focusedOccasionID,
             "indexInOccasions":indexInOccasions,
-            "formattedStartTimeFull": formattedStartTimeFull,
-            "formattedEndTimeFull": formattedEndTimeFull,
-            "formattedStartTime": formattedStartTime,
-            "formattedEndTime": formattedEndTime,
             "isOccasionOpen": isOccasionOpen
 
 		});

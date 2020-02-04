@@ -1,25 +1,68 @@
 <!-- Login component with a simple password verification -->
 
  <script>
-  import Page from './ParentPage.svelte';
+  import { onMount } from 'svelte';
   import Button from './Button.svelte';
-  
-  export let authenticated = false;
-  export let serverURL;
+  import { urlStore } from './ServerURLstore.js';
+  import { pageStateInStore } from './PageStore.js';
 
-    function verifyPassword(){
-      // verifying password logic 
-      var passwordCheck = document.getElementById('password').value;
-      if (passwordCheck == "5555"){
-        authenticated = true;
-        
-      }
+  let serverURL;
+  let selectedURL;
+
+ //everytime serverURL changes, update it in the store.
+  $: serverURL,urlStore.update(value => value = serverURL); 
+// add this to the above line to keep track of serverUrl value in store: , urlStore.subscribe(value => {console.log(value)}) 
+  onMount(async () => {
+    serverURL;
+    //checking for local dev ...needs testing on staging site
+    checkLocalUrl();
+  });
+
+  function checkLocalUrl () {
+    let page = window.location.href;
+    let splitURL = page.split('/');
+    let splitLocal = splitURL[2].split(":")
+    if(splitLocal[0] == "localhost"){
+      serverURL = "http://localhost:3000/api/v2";
+      document.getElementById("password").value = "5555";
+    }
+  };
+
+  
+  
+  function verifyPassword(){
+    // verifying password logic 
+    var passwordCheck = document.getElementById('password').value;
+    if (passwordCheck == "5555"){
+      pageStateInStore.update(value => value = 1);
+    }
+  }
+
+  function hideShowDev() {
+    let devTools = document.getElementById('devTools');
+
+    if(devTools.style.visibility == "visible"){
+      devTools.style.visibility = "hidden";
+    } else {
+      devTools.style.visibility = "visible"
     }
 
+    
+  }
+  
 </script> 
+<style>
+  #devTools{
+    visibility: hidden;
+  }
+  .form-control{
+    font-size:0.8rem;
+  }
+</style>
 
 
- <div class="container">
+<div id="login">
+  <div class="container">
     <form id="formContent">
 
       <div class="row"> 
@@ -36,14 +79,16 @@
         <input type="text" id="password" class="form-control" name="login" placeholder="password">     
       </div>
 
-      <!-- <button type="button" class="btn btn-primary" on:click={verifyPassword}> Log In </button> -->
       <Button on:click={verifyPassword}
-        buttonType = "btn-primary"
-        bsSizePosition = ""
+        buttonStyle = "btn-primary"
+        gridStyle = ""
         buttonText = "Login"/>
-        
+
       <div class="form-group mt-5">
-        <button type="button" class="btn btn-light btn-outline-dark btn-sm mt-4" on:click={HideShowDev}> Show/Hide Developer Tools </button>
+        <Button on:click={hideShowDev}
+        buttonStyle = "btn-light btn-outline-dark btn-sm mt-4"
+        gridStyle = ""
+        buttonText = "Show/Hide Developer Tools"/>
        </div>    
      
       <div class="form-group" id = "devTools">
@@ -56,7 +101,7 @@
       
     </form>
   </div>
-
+</div>
 
 
 
