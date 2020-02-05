@@ -27,22 +27,35 @@ handleError = (httpStatusCode, error, res) => {
   res.send()
 }
 
-exports.events = (req, res) => {
-  eventsTable.getAll()
-  .then( events => {
-    res.status(200).json(events)
-  })
-  .catch( error => {
-    
-    handleError(500, error, res)
-  })
+exports.events = async (req, res) => {
+  const user = req.user
+  let events
+  if(user.is_admin){
+    try{
+      events = await eventsTable.getAll()
+    } catch (error) {
+      handleError(500, error, res)
+    }
+  } else {
+    try {
+      events = await eventsTable.getAllOwnedByUser(user.id)
+    } catch (error) {
+      handleError(500, error, res)
+    }
+  }
+  
+  res.status(200).json(events)
 }
 
 exports.events_id = (req, res) => {
   eventsTable.getOneByID(req.params.id)
   .then( event => {
     if(event){
-      res.status(200).json(event)
+      if(req.user.id == event.owner_id || req.user.is_admin) {
+        res.status(200).json(event)
+      } else {
+        res.sendStatus(401)
+      }
     } else {
       handleError(404, "Error: event with id:" + req.params.id + " not found", res)
     }
@@ -69,7 +82,7 @@ exports.events_create = (req, res) => {
     episodes = [ defaultEpisode ] 
   }
 
-  const eventDetails = { label: req.body.label, episodes: episodes }
+  const eventDetails = { owner_id: req.user.id, label: req.body.label, episodes: episodes }
 
   eventsTable.addOne(eventDetails)
   .then( event => {
@@ -87,6 +100,11 @@ exports.events_delete = async (req, res) => {
 
   if(event == null){
     handleError(404, "Error: event with id:" + req.params.id + " not found", res)
+    return
+  }
+
+  if(req.user.id != event.owner_id && !req.is_admin){
+    handleError(401, "Authorization required", res)
     return
   }
 
@@ -123,6 +141,11 @@ exports.events_update_episodes = async (req, res) => {
     return
   }
 
+  if(req.user.id != event.owner_id && !req.is_admin){
+    handleError(401, "Authorization required", res)
+    return
+  }
+  
   const episodes = req.body
   
   if(episodes == null || episodes === undefined){

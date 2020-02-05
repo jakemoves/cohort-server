@@ -54,11 +54,11 @@ exports.seed = function(knex, Promise) {
     }
 
     return knex('events').insert([
-      {label: 'pimohtēwak', episodes: defaultEpisodeAsJSON('pimohtēwak', false)},
-      {label: 'demo event', episodes: defaultEpisodeAsJSON('demo event', true)},
-      {label: 'midway', episodes: defaultEpisodeAsJSON('midway', false)},
-      {label: 'fluxdelux', episodes: defaultEpisodeAsJSON('fluxdelux', false)},
-      {label: 'café sarajevo', episodes: defaultEpisodeAsJSON('café sarajevo', false)}
+      {label: 'pimohtēwak', owner_id: 3, episodes: defaultEpisodeAsJSON('pimohtēwak', false)},
+      {label: 'demo event', owner_id: 3, episodes: defaultEpisodeAsJSON('demo event', true)},
+      {label: 'midway', owner_id: 3, episodes: defaultEpisodeAsJSON('midway', false)},
+      {label: 'fluxdelux', owner_id: 3, episodes: defaultEpisodeAsJSON('fluxdelux', false)},
+      {label: 'café sarajevo', owner_id: 3, episodes: defaultEpisodeAsJSON('café sarajevo', false)}
     ])
     .then( () => {
       // add occasions to events

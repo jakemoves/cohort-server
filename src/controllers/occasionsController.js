@@ -39,8 +39,14 @@ exports.occasions_create = async (req, res) => {
     handleError(404, 'Error: event with id:' + eventId + ' not found. To create an occasion, you must include an eventId property corresponding to an existing event.', res)
     return
   }
+
+  if(req.user.id != event.owner_id && !req.user.is_admin){
+    handleError(401, "Authorization required", res)
+    return
+  }
   
   let occasion = req.body
+  occasion.owner_id = event.owner_id
 
   // this smells, a little -- should we be creating the occasion in memory using the class and then storing it?
   occasion.state = "closed"
@@ -56,9 +62,13 @@ exports.occasions_create = async (req, res) => {
 }
 
 exports.occasions_delete = async (req, res) => {
-  // verify the occasion is closed
   let occasion = await occasionsTable.getOneByID(req.params.id)
+  if(req.user.id != occasion.owner_id && !req.user.is_admin){
+    handleError(401, "Authorization required", res)
+    return
+  }
 
+  // verify the occasion is closed
   if(occasion != null && occasion.state == 'opened'){
     handleError(400, 'Error: an opened occasion cannot be deleted. Close the occasion and try again.', res)
     return
@@ -85,6 +95,11 @@ exports.occasions_update = async (req, res) => {
     return
   }
 
+  if(req.user.id != occasion.owner_id && !req.user.is_admin){
+    handleError(401, "Authorization required", res)
+    return
+  }
+  
   if(req.body.state == null || req.body.state === undefined){
     handleError(400, "Error: no updateable property was found in the request (i.e. 'state')", res)
     return
@@ -152,6 +167,11 @@ exports.occasions_qrcode = async (req, res) => {
 
   if(occasion == null || occasion === undefined){
     handleError(404, "Error: occasion with id:" + occasionId + " not found", res)
+    return
+  }
+
+  if(req.user.id != occasion.owner_id && !req.user.is_admin){
+    handleError(401, "Authorization required", res)
     return
   }
 
