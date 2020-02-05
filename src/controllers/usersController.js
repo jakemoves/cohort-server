@@ -86,3 +86,32 @@ exports.login_user = async (req, res, next) => {
     }
   })(req, res, next)
 }
+
+exports.delete_user = async (req, res) => {
+  if(req.user.id != req.params.id && req.user.is_admin == false){
+    handleError(401, new Error("A user can only be deleted by themselves or by an admin"), res)
+    return
+  }
+  
+  if(req.user.id == req.params.id || req.user.is_admin){
+
+    const userToDelete = await usersTable.findOneByID(req.params.id)
+    if(userToDelete == null){
+      handleError(404, new Error("User with id:" + req.params.id + " not found"), res)
+      return
+    }
+
+    usersTable.deleteOne(req.params.id)
+    .then(deletedIDs => {
+      if(deletedIDs.length == 1 && deletedIDs[0] == req.params.id) {
+        console.log('deleted user with id:' + req.params.id)
+        res.sendStatus(204)
+      } else {
+        handleError(404, "Error: more than one user was deleted?!", res)
+      }
+    })
+    .catch( error => {
+      handleError(500, error, res)
+    }) 
+  }
+}

@@ -17,6 +17,15 @@ findOneByUsername = async (username) => {
   }
 }
 
+findOneByID = async (id) => {
+  let users = await Users().where('id', parseInt(id))
+  if(users.length == 0){
+    return null
+  } else {
+    return users[0]
+  }
+}
+
 create = async (username, hashedPassword) => {
   return Users()
   .insert({
@@ -33,7 +42,16 @@ create = async (username, hashedPassword) => {
   })
 }
 
+deleteOne = (userId) => {
+  return Users()
+  .where('id', parseInt(userId))
+  .del()
+  .returning('id')
+}
+
 module.exports = { 
   findOneByUsername: findOneByUsername,
-  create: create
+  findOneByID: findOneByID,
+  create: create,
+  deleteOne: deleteOne
 }

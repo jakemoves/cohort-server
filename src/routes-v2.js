@@ -20,6 +20,7 @@ router.get('', (req, res) => {
  */
 
 router.post('/users', usersController.register_user)
+routerWithAuth.delete('/users/:id', usersController.delete_user)
 router.post('/login', usersController.login_user)
 
 /* 

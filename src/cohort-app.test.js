@@ -43,7 +43,31 @@ afterAll( async () => {
  */
 
 beforeAll( () => {
-  // add functions here to access within tests
+  cohortLogin = async (username, password) => {
+    const payload = { username: username, password: password }
+
+    const res = await request(app)
+    .post('/api/v2/login')
+    .send(payload)
+
+    if(res.status != 200 || res.body.token === undefined){
+      return new Error('login failed: ' + res.text)
+    }
+
+    return res.body.token
+  }
+
+  loginAsTestAdminUser = async () => {
+    return cohortLogin('test_admin_user', process.env.TEST_ADMIN_USER_PASSWORD)
+  }
+
+  loginAsTestUser1 = async () => {
+    return cohortLogin('test_user_1', process.env.TEST_USER_1_PASSWORD)
+  }
+
+  loginAsTestUser2 = async () => {
+    return cohortLogin('test_user_2', process.env.TEST_USER_2_PASSWORD)
+  }
 })
 
 
@@ -186,6 +210,60 @@ describe('User registration', () => {
     
     expect(res.status).toEqual(403)
     expect(res.text).toEqual("Incorrect password")
+  })
+
+  test('DELETE /users/:id -- happy path, admin user can delete users', async () => {
+    const token = await loginAsTestAdminUser()
+    expect(token).toBeDefined()
+
+    const res = await request(app)
+    .delete('/api/v2/users/3')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res.status).toEqual(204)
+
+    const res1 = await request(app)
+    .delete('/api/v2/users/3')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res1.status).toEqual(404) // auth succeeded, user to delete was not found
+
+    const res2 = await request(app)
+    .get('/api/v2/events')
+
+    const events = res2.body
+    const occasions = events.map( event => event.occasions)
+    
+    expect(occasions).toEqual([[],[],[],[],[]]) // deleting a user should also delete all occasions they own
+  })
+
+  test('DELETE /users/:id -- happy path, user can delete themself', async () => {
+    const token = await loginAsTestUser2()
+    expect(token).toBeDefined()
+
+    const res = await request(app)
+    .delete('/api/v2/users/4')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res.status).toEqual(204)
+
+    const res1 = await request(app)
+    .delete('/api/v2/users/4')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res1.status).toEqual(401) // auth failed because user does not exist anymore
+  })
+
+  test('DELETE /users/:id -- error, user cannot delete other user', async () => {
+    const token = await loginAsTestUser2()
+    expect(token).toBeDefined()
+
+    const res = await request(app)
+    .delete('/api/v2/users/3')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res.status).toEqual(401)
+    expect(res.text).toEqual("A user can only be deleted by themselves or by an admin")
   })
 })
 

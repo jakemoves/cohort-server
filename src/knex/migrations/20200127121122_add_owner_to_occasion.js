@@ -1,7 +1,10 @@
 
 exports.up = function(knex, Promise) {
   return knex.schema.alterTable('occasions', table => {
-    table.integer('owner_id').references('id').inTable('users')
+    table.integer('owner_id')
+      .references('id').inTable('users')
+      .notNullable()
+      .onDelete('CASCADE')
   })
 }
 
