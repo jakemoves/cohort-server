@@ -1,7 +1,7 @@
 <script>
 import Page from './ParentPage.svelte';
 import { onMount } from 'svelte';
-import { pageStateInStore } from './PageStore.js';
+import { pageStateInStore, focusedEventStore } from './PageStore.js';
 import { urlStore } from './ServerURLstore.js';
 import { events, storedEvents, getEventsAndStore } from './EventsStore.js';
 import Button from './Button.svelte';
@@ -9,13 +9,15 @@ import moment from "moment";
 import Slider from './Slider.svelte';
 import Modal from './Modal.svelte';
 import { occasionOpen } from './OccasionState.js';
-import { onDestroy } from 'svelte';
+
+// import { eventButton } from './ArrayList.svelte';
 
 
 
 let serverURL;
 
-export let focusedEvent;
+let focusedEvent;
+focusedEventStore.subscribe(value=> focusedEvent = value);
 export let focusedOccasion;
 export let focusedOccasionID;
 export let indexInOccasions;
@@ -56,6 +58,8 @@ onMount(async () => {
   urlStore.subscribe(value => {
     serverURL = value;
   })
+
+     
 
 });
 
@@ -119,39 +123,21 @@ onMount(async () => {
 
 
 function deleteOccasion() {
-
-    //use this at the end of whatever logic is used for delete
-    // deleteOccasionHasHappened = true;
-
-    //updates events to remove selected occasion.
-    focusedEvent.occasions.splice(indexInOccasions, 1);
-    
-    //checking that it was removed from store.
-    storedEvents.subscribe(value => {
-      console.log(value);
-    });
-   
-    pageStateInStore.update(value => value = 2);
-    
-  //if wanting to delete from the server;
-  // function deleteOccasionServer() {
-  //   try {
-  //       return fetch(serverURL + "/occasions/" + focusedOccasionID, {
-  //         method: 'DELETE'
-  //       }) .then(response => {
-  //             response.json().then( details => {
-  //             console.log(details)
-  //             })
-  //         }).catch( error => {
-  //               console.log("Error on occasion delete!")
-  //             })
-  //       } catch (e) {
-  //           console.log(e.message)
-  //         }
-  //         GetEvents();
-  // } 
-
-    // deleteOccasionServer();
+  try {
+    return fetch(serverURL + "/occasions/" + focusedOccasionID, {
+      method: 'DELETE'
+    }).then( response => { 
+      if(response.status == 204){
+          getEventsAndStore();
+          pageStateInStore.set(2);
+        
+      }
+    }).catch( error => {
+      console.log("Error on occasion delete!")
+    })
+    } catch (e) {
+        console.log(e.message)
+  }
 
    }
   

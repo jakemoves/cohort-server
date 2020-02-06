@@ -9,7 +9,9 @@
   import Button from './Button.svelte';
   import Occasion from './Occasion.svelte';
   import { pageStateInStore } from "./PageStore.js";
-  import List from './ArrayList.svelte';
+  //
+  import OccasionsList from './OccasionsList.svelte';
+  import EventsList from './EventsList.svelte';
   //import events from store
   import { events, storedEvents } from './EventsStore.js';
 
@@ -18,6 +20,7 @@
 
   let focusedOccasionID;
   let focusedEvent;
+  let focusedEventLabel;
   let focusedOccasion;
   let dateSortedOccasions =[];
   let isOccasionOpen;
@@ -37,10 +40,9 @@
 
   //grab info from events + occasions
   function messageFromArrayList(value){
-    focusedEvent = value.detail.focusedEvent;
-    dateSortedOccasions = value.detail.dateSortedOccasions;
+    focusedEventLabel = value.detail.focusedEventLabel;
     sliderCue = value.detail.sliderCue;
-    focusedOccasion = value.detail.sliderCue;
+    
   }
 
   function messageFromArrayListOccasions(value){
@@ -78,10 +80,12 @@
     pageID="eventsList"
     headingText="Events">
 <!-- #eventsList allows a list of events to be built and shown based on "events" from store-->
-    <List on:message = {messageFromArrayList}
+    <EventsList on:message = {messageFromArrayList}
+      />
+    <!-- <List on:message = {messageFromArrayList}
     arrayName = {events}
     emptyArrayMessage = "That's uneventful. Sorry, no events have been added yet."
-    />
+    /> -->
   </Page>
 
 {:else if pageState == 2}
@@ -91,17 +95,18 @@
     headingText="Occasions"
     includeBackButton = true>
 
-    <List on:message = {messageFromArrayListOccasions}
+    <OccasionsList on:message = {messageFromArrayListOccasions}
+      focusedEventLabel = {focusedEventLabel}/>
+    <!-- <List on:message = {messageFromArrayListOccasions}
     arrayName = {dateSortedOccasions}
     listType = "Occasions"
     emptyArrayMessage = "This happens on occasion. No occasions for this event yet."
-    />
+    /> -->
     
   </Page>
 {:else if pageState == 3}
   
   <Occasion
-    focusedEvent = {focusedEvent}
     focusedOccasion = {focusedOccasion}
     focusedOccasionID  = {focusedOccasionID}
     indexInOccasions = {indexInOccasions}

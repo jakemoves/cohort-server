@@ -32,7 +32,7 @@
     // verifying password logic 
     var passwordCheck = document.getElementById('password').value;
     if (passwordCheck == "5555"){
-      pageStateInStore.update(value => value = 1);
+      pageStateInStore.set(1);
     }
   }
 
