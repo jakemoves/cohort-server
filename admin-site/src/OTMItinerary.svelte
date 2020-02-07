@@ -3,6 +3,8 @@
 
 <script>
   import { fade } from 'svelte/transition';
+  import {Howl, Howler} from 'howler';
+
   let UIVisible = true;
   const cadence = 60000 // every 60 seconds 
   let timeoutID
@@ -11,46 +13,64 @@
   let currentTick = 1
 
   let currentScene = 0
+  let soundURL = "WakeUp.mp3"
  
   // ">" alone means the button shows up after a certain number of ticks
   // ">TEXT" means the button triggers the next scene when pressed
   // "+" means the button will grow each tick
   const sceneActions = [
     [
-      [{ label: ">WAKE UP" }]
+      [{ label: "WAKE UP", soundURL: "otmAudio/WakeUp.mp3" }, { label: ">GET READY FOR DAY", soundURL: "otmAudio/GetReadyForDay.mp3"}]
     ],
     [
-      [{ label: ">GET READY FOR DAY"}]
+      [{ label: "EAT A MEAL", soundURL: "otmAudio/EataMeal.mp3" }],
+      [{ label: "READ", soundURL: "otmAudio/Read.mp3" }],
+      [{ label: "PRAY", soundURL: "otmAudio/Pray.mp3" }],
+      [{ label: "MAKE PHONE CALL", soundURL: "otmAudio/MakePhoneCall.mp3" }],
+      [{ label: "INK A TATTOO", soundURL: "otmAudio/InkaTattoo.mp3" }],
+      [{ label: "PLAY TRASHKETBALL", soundURL: "otmAudio/PlayTrashketball.mp3" }],
+      [{ label: "DANCE", soundURL: "otmAudio/Dance.mp3" }],
+      [{ label: "SING", soundURL: "otmAudio/Sing.mp3" }],
+      [{ label: "DRINK PRISON HOOCH", soundURL: "otmAudio/DrinkPrisonHooch.mp3" }],
+      [{ label: "WRITE LETTER", soundURL: "otmAudio/WriteLetter.mp3" }, { label: "MAIL LETTER", soundURL: "otmAudio/MailLetter.mp3" }],
+      [{ label: "EXERCISE", soundURL: "otmAudio/Exercise.mp3" }],
+      [{ label: "TALK TO YOURSELF", soundURL: "otmAudio/TalktoYourself.mp3" }],
+      [{ label: "DO YOGA", soundURL: "otmAudio/DoYoga.mp3" }],
+      [{ label: "COMMUNICATE WITH OTHER PRISONERS", soundURL: "otmAudio/CommunicatewithotherPrisoners.mp3" }],
+      [{ label: "LOOK AT FAMILY PHOTOS", soundURL: "otmAudio/LookatFamilyPhotos.mp3" }],
+      [{ label: "MEDITATE", soundURL: "otmAudio/Meditate.mp3" }],
+      [{ label: ">" }, { label: ">" }, { label:">TELL+", soundURL:"otmAudio/Tell-TheresNewsforYou.mp3" }],
     ],
     [
-      [{ label: "EAT A MEAL" }],
-      [{ label: "READ" }],
-      [{ label: "PRAY" }],
-      [{ label: "MAKE PHONE CALL" }],
-      [{ label: "INK A TATTOO" }],
-      [{ label: "PLAY TRASHKETBALL" }],
-      [{ label: "DANCE" }],
-      [{ label: "SING" }],
-      [{ label: "DRINK PRISON HOOCH" }],
-      [{ label: "WRITE LETTER" }, { label: "MAIL LETTER" }],
-      [{ label: "EXERCISE" }],
-      [{ label: "TALK TO YOURSELF" }],
-      [{ label: "DO YOGA" }],
-      [{ label: "COMMUNICATE WITH OTHER PRISONERS" }],
-      [{ label: "LOOK AT FAMILY PHOTOS" }],
-      [{ label: "MEDITATE" }],
-      [{ label: ">" }, { label: ">" }, { label:">TELL+" }]
-    ],
-    [
-      [{ label: "SCENE THREE" }]
+      [{ label: "CALL LAWYER", soundURL: "otmAudio/CallLawyer.mp3" }],
+      [{ label: "CHOOSE LAST MEAL", soundURL: "otmAudio/ChooseLastMeal.mp3" }],
+      [{ label: "DONATE ORGANS", soundURL: "otmAudio/DonateOrgans.mp3" }],
+      [{ label: "GET AFFAIRS IN ORDER", soundURL: "otmAudio/GetAffairsinOrder.mp3" }],
+      [{ label: "HATCH ESCAPE PLAN", soundURL: "otmAudio/HatchEscapePlan.mp3" }],
+      [{ label: "PSYCH YOURSELF UP", soundURL: "otmAudio/PsychYourselfUp.mp3" }],
+      [{ label: ">" }, { label: ">" }, { label: ">" }, { label: ">" }, { label: ">" }, { label: ">" }, { label: ">" }, { label: ">" }, { label: ">" }, { label: ">" }, { label: ">" }],
+      [
+        { label: ">" }, { label: ">" }, { label: ">" }, { label: ">" }, { label: ">" },
+        { label: "GET READY FOR BED", soundURL: "otmAudio/GetReadyforBed.mp3"},
+        { label: "SLEEP", soundURL: "otmAudio/Sleep.mp3"},
+        { label: "DREAM", soundURL: "otmAudio/Dream.mp3"},
+      ]
     ]
   ]
 
   let selectedAction = ""
+  
+  $: availableActions = sceneActions[currentScene]  
 
-  $: availableActions = sceneActions[currentScene]
+  // set up sound for first button
+  let soundPlayer = new Howl({
+    src: [sceneActions[0][0][0].soundURL]
+  })
+
+  
 
   function onActionButtonTap(event) {
+    
     currentTick++
     selectedAction = event.target.innerText
     UIVisible = false
@@ -65,6 +85,12 @@
 
       if(availableActions[i][0].label.replace(/\+/g, "") == selectedAction){
         // this is the button that was tapped
+
+        // play sound for this button
+        soundPlayer = new Howl({
+          src: [availableActions[i][0].soundURL]
+        })
+        soundPlayer.play()
 
         if(availableActions[i].length == 1){
           // leave a blank space where the button used to be
