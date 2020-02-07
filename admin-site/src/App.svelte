@@ -97,11 +97,8 @@
 
     <OccasionsList on:message = {messageFromArrayListOccasions}
       focusedEventLabel = {focusedEventLabel}/>
-    <!-- <List on:message = {messageFromArrayListOccasions}
-    arrayName = {dateSortedOccasions}
-    listType = "Occasions"
-    emptyArrayMessage = "This happens on occasion. No occasions for this event yet."
-    /> -->
+    <hr>
+    
     
   </Page>
 {:else if pageState == 3}

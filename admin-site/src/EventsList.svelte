@@ -3,7 +3,7 @@
   import moment from 'moment';
   import Array from './ArrayList.svelte';
   import Button from './Button.svelte';
-  import { events } from './EventsStore.js';
+  import { storedEvents } from './EventsStore.js';
   import { pageStateInStore, focusedEventStore, indexInEventsStore, focusedEventLabelStore} from './PageStore.js';
 
   const dispatch = createEventDispatcher();
@@ -11,8 +11,14 @@
   let indexInEvents;
   let focusedEvent;
   let focusedEventLabel;
-
+  
+  let events;
   let sliderCue;
+
+  storedEvents.subscribe(value => {
+    events = value;
+  })
+
 
 
   function sendEventsPackage(){

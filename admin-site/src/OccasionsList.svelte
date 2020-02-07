@@ -3,13 +3,15 @@
   import { onMount } from 'svelte';
   import Array from './ArrayList.svelte';
   import Button from './Button.svelte';
+  import Modal from './Modal.svelte';
   import { focusedEventStore, pageStateInStore, indexInEvents } from './PageStore.js';
-  import { storedEvents} from './EventsStore.js';
+  import { storedEvents, getEventsAndStore} from './EventsStore.js';
   import { occasionOpen } from './OccasionState.js';
+  import { serverURL } from './ServerURLstore.js';
   import moment from "moment";
 
   export let focusedEventLabel;
-  let dateSortedOccasions;
+  let dateSortedOccasions = [];
   const dispatch = createEventDispatcher();
   let focusedOccasionID;
   let indexInOccasions;
@@ -17,12 +19,16 @@
   let focusedOccasionState;
   let focusedEvent;
 
+ 
+
   
   focusedEventStore.subscribe(value => {
     focusedEvent = value;
-    let occasionArray = focusedEvent.occasions;
-    let sortDates = (a, b) => moment(a.startDateTime).format('YYYYMMDD') -moment(b.startDateTime).format('YYYYMMDD');
-    dateSortedOccasions = occasionArray.sort(sortDates);
+    if(focusedEvent != undefined){
+      let occasionArray = focusedEvent.occasions;
+      let sortDates = (a, b) => moment(a.startDateTime).format('YYYYMMDD') -moment(b.startDateTime).format('YYYYMMDD');
+      dateSortedOccasions = occasionArray.sort(sortDates);
+    }
   });
 
   
@@ -44,8 +50,10 @@
     pageStateInStore.set(3);
 
     storedEvents.subscribe(value => {
-      if (value[indexInEvents].occasions[indexInOccasions] != undefined){
-        focusedOccasionState = value[indexInEvents].occasions[indexInOccasions].state
+      if(focusedEvent != undefined){
+        if (value[indexInEvents].occasions[indexInOccasions] != undefined){
+          focusedOccasionState = value[indexInEvents].occasions[indexInOccasions].state
+        }
       }
     });
     
@@ -56,6 +64,31 @@
     }  
 
     sendOccasionsPackage();
+  }
+
+  function deleteEvent(){
+    try {
+    return fetch(serverURL + "/events/" + focusedEvent.id, {
+      method: 'DELETE'
+    }).then( response => {
+      console.log(response.status); 
+      if(response.status == 204){
+          console.log("fired");
+
+           getEventsAndStore()
+           pageStateInStore.set(1)
+          
+          
+          
+      } else {
+        console.log(response.text)
+        }
+      }).catch( error => {
+        console.log("Error on event delete!")
+      })
+    } catch (e) {
+        console.log(e.message)
+    }
   }
 
 
@@ -72,5 +105,37 @@
       {/each}
      
     </Array>
+
+    <hr>
+    <Button
+                buttonStyle="btn-outline-danger btn-block"
+                buttonText="Delete Event"
+                dataTarget="#deleteEventModal"/>
+
+    <Modal
+  modalID = "deleteEventModal"
+  modalTitle= "Delete Event">
+  
+  <div slot="modalBody">
+    <!-- {#if gotEvents} -->
+      Are you sure you want to delete {focusedEvent.label}?
+    <!-- {/if} -->
+  </div>
+
+  <div class="row" slot="modalFooter">
+    <Button
+      gridStyle = "mr-1"
+      buttonStyle="btn-outline-secondary"
+      dataDismiss ="modal"
+      buttonText = "Cancel"/>
+
+    <Button on:click={deleteEvent}
+      gridStyle = "mr-1"
+      buttonStyle="btn-outline-danger"
+      dataDismiss="modal"
+      buttonText="Delete This Event"/>
+  </div>
+</Modal>
+          
 
  
