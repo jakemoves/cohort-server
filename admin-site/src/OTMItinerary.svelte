@@ -171,7 +171,7 @@ button.btn-outline-success:hover, button.btn-outline-success:active {
 .plus-5 {
   transform: scale3d(1.5, 1.5, 1)
 }
-.plus-6, .plus-7, .plus-8, .plus-9, .plus-10, .plus-11, .plus-12, .plus-13, .plus-14, .plus-15 {
+.plus-6, .plus-7, .plus-8, .plus-9, .plus-10, .plus-11, .plus-12, .plus-13, .plus-14, .plus-15, .plus-16, .plus-17, .plus-18 {
   position: relative;
   top: -3rem;
   transform: scale3d(3, 3, 1)
