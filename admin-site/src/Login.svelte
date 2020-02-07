@@ -22,10 +22,16 @@
     let page = window.location.href;
     let splitURL = page.split('/');
     let splitLocal = splitURL[2].split(":")
-    if(splitLocal[0] == "localhost"){
-      serverURL = "http://localhost:3000/api/v2";
-      document.getElementById("password").value = "5555";
+    console.log(splitLocal)
+    if(splitLocal[0].match(/local/) != null ){
+        serverURL = "http://" + splitLocal[0] + ":3000/api/v2";
+        document.getElementById("password").value = "5555";
+      // if(splitLocal[0].match(/localhost/) != null){
+      // } else if(splitLocal[0].match(/.local/)){
+      //   serverURL = "http://" + spli""
+      // }
     }
+    console.log(serverURL)
   };
   
   function verifyPassword(){

@@ -10,6 +10,8 @@ import Slider from './Slider.svelte';
 import Modal from './Modal.svelte';
 import { occasionOpen } from './OccasionState.js';
 
+import OTMItinerary from './OTMItinerary.svelte'
+
 // import { eventButton } from './ArrayList.svelte';
 
 
@@ -41,9 +43,6 @@ occasionOpen.subscribe(value => {
 let deleteOccasionHasHappened = false;
 
 let cueState = 0;
-
-
-
 
 onMount(async () => {
   formattedStartTimeFull = moment(focusedOccasion.startDateTime)
@@ -231,19 +230,24 @@ function deleteOccasion() {
     pageID='openOccasion'
     headingText={focusedOccasion.label}
     includeBackButton = true>
-     <div class="row">
-      <Button
-        buttonStyle='btn-outline-danger btn-block' 
-        buttonText="Close Occasion" 
-        dataTarget="#closeOccassionModal"/>
-    </div>
-    <div class="row">
-      <Button on:click={showQR} 
-        buttonText="Show QR Code" 
-        dataTarget="#QRcodeModal"/>
-    </div>
     
-    <!-- {#if gotEvents == true } -->
+    {#if focusedEvent.label != "The Itinerary"}
+      <div class="row">
+        <Button
+          buttonStyle='btn-outline-danger btn-block' 
+          buttonText="Close Occasion" 
+          dataTarget="#closeOccassionModal"/>
+      </div>
+      <div class="row">
+        <Button on:click={showQR} 
+          buttonText="Show QR Code" 
+          dataTarget="#QRcodeModal"/>
+      </div>
+    {/if}
+
+    {#if focusedEvent.label == "The Itinerary"}
+      <OTMItinerary></OTMItinerary>
+    {:else}
       {#if focusedEvent.episodes[0].cues.length == 0}
         <div class="row">
           <div class="col-md-12">
@@ -251,6 +255,7 @@ function deleteOccasion() {
           </div>
         </div>
       {:else}
+        
         <div class="row">
           <div class="col-md-12">
             <h5>Cue Details</h5>
@@ -317,7 +322,7 @@ function deleteOccasion() {
         sliderCue = {sliderCue}
         focusedOccasionID = {focusedOccasionID}/>
       {/if}
-    <!-- {/if}  -->
+    {/if} 
 
   </Page>
 {/if}
