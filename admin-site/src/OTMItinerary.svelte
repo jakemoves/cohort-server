@@ -45,7 +45,11 @@
       if(availableActions[i][0] == selectedAction){
         console.log("found match")
         if(availableActions[i].length == 1){
-          availableActions.splice(i, 1)
+          // leave a blank space 
+          availableActions[i][0] = ""
+          // to remove button entirely
+          // availableActions.splice(i, 1)
+
           availableActions = availableActions
           console.log("removed action")
         } else {
@@ -105,12 +109,14 @@ button {
       <ul class="d-flex flex-wrap mt-8">
         {#each availableActions as action}
         <li class="col-4 mb-4">
+        {#if action[0] != ""}
           <button 
             type="button" 
             on:click={onActionButtonTap}
             class="btn btn-outline-success btn-block text-center">
             {action[0]}
           </button>
+        {/if}
         </li>
         {/each}
       </ul>
