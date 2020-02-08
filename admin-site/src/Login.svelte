@@ -30,7 +30,37 @@
     }
   };
   
-  function verifyPassword(){
+  async function verifyPassword(){
+    const username = document.getElementById('username').value
+    const password = document.getElementById('password').value
+    const payload = { username: username, password: password }
+
+    let response = await fetch(serverURL + '/login', {
+      method: 'POST',
+      headers: { 'Content-Type':  'application/json' },
+      body: JSON.stringify(payload) 
+    })
+
+    if(response.status == 200){
+      try {
+        const body = await response.body()
+        if(body.token !== undefined){
+          
+        } else {
+          throw new Error('Response from server did not contain a field named "token"')
+        }
+      } catch {
+        const err = await response.text()
+        throw new Error(err)
+      }
+    } else {
+      const err = await response.text()
+      throw new Error(err)
+    }
+
+
+
+
     getEventsAndStore();
     // verifying password logic 
     var passwordCheck = document.getElementById('password').value;

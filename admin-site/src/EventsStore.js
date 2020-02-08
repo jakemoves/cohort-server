@@ -3,6 +3,7 @@
 import {writable} from 'svelte/store';
 import { urlStore } from './ServerURLstore.js';
 import { focusedEventLabel, focusedEventStore } from './PageStore.js';
+import { tokenStore } from './AuthorizationStore.js';
 
 let serverURL;
 
@@ -17,6 +18,11 @@ let focusedEvent;
 export let getEventsAndStore = async () => {
   urlStore.subscribe(value => {
     serverURL = value;
+  })
+
+  tokenStore.subscribe( value => {
+    console.log('token: ')
+    console.log(value)
   })
 
   let response = await fetch(serverURL + "/events", {
