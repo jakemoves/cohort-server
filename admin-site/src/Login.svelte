@@ -5,17 +5,19 @@
   import Button from './Button.svelte';
   import { urlStore } from './ServerURLstore.js';
   import { pageStateInStore } from './PageStore.js';
+  import { getEventsAndStore } from './EventsStore.js';
 
   let serverURL;
   let selectedURL;
 
  //everytime serverURL changes, update it in the store.
-  $: serverURL,urlStore.update(value => value = serverURL); 
+  $: serverURL,urlStore.update(value => value = serverURL) ; 
 // add this to the above line to keep track of serverUrl value in store: , urlStore.subscribe(value => {console.log(value)}) 
   onMount(async () => {
     serverURL;
     //checking for local dev ...needs testing on staging site
     checkLocalUrl();
+    
   });
 
   function checkLocalUrl () {
@@ -29,6 +31,7 @@
   };
   
   function verifyPassword(){
+    getEventsAndStore();
     // verifying password logic 
     var passwordCheck = document.getElementById('password').value;
     if (passwordCheck == "5555"){
