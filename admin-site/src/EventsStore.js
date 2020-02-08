@@ -38,7 +38,7 @@ export let getEventsAndStore = async () => {
   });
   
 }
-getEventsAndStore();
+
 
 
 

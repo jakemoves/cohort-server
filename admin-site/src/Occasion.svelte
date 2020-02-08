@@ -73,7 +73,7 @@ onMount(async () => {
       }).then( response => { 
         if(response.status == 200){
           response.json().then( details => {
-            occasionOpen.update(value => value = true);
+            occasionOpen.set(true);
             // make sure store updates from server
             getEventsAndStore();
           })
@@ -99,10 +99,11 @@ onMount(async () => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"state":"closed"}) 
       }).then( response => { 
+        console.log(response.status);
         if(response.status == 200){
           response.json().then( details => {
             //update state of occasion
-            occasionOpen.update(value => value = false);
+            occasionOpen.set(false);
             // make sure store updates from server
             getEventsAndStore();
           })
