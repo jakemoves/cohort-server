@@ -63,6 +63,12 @@ exports.occasions_create = async (req, res) => {
 
 exports.occasions_delete = async (req, res) => {
   let occasion = await occasionsTable.getOneByID(req.params.id)
+
+  if(occasion == null || occasion === undefined){
+    handleError(404, "Error: occasion with id:" + req.params.id + " not found", res)
+    return
+  }
+
   if(req.user.id != occasion.owner_id && !req.user.is_admin){
     handleError(401, "Authorization required", res)
     return

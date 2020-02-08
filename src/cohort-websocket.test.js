@@ -14,6 +14,7 @@ const moment = require('moment')
 const ws = require('ws')
 
 const CHSession = require('./models/CHSession')
+require('./cohort-test-helpers')
 
 var app, server, webSocketServer
 var socketURL = 'http://localhost:3000/sockets'
@@ -30,6 +31,8 @@ beforeEach( async () => {
   app = require('./cohort-app')
 
   await CHSession.initAndSetOnApp(app)
+
+  setupHelpers(app)
   
   // this is pretty much the same as cohort-server.js
   serverPromise = await new Promise( (resolve, reject) => {
@@ -118,32 +121,6 @@ beforeAll( () => {
     }
 
     return clients
-  }
-
-  cohortLogin = async (username, password) => {
-    const payload = { username: username, password: password }
-
-    const res = await request(app)
-    .post('/api/v2/login')
-    .send(payload)
-
-    if(res.status != 200 || res.body.token === undefined){
-      return new Error('login failed: ' + res.text)
-    }
-
-    return res.body.token
-  }
-
-  loginAsTestAdminUser = async () => {
-    return cohortLogin('test_admin_user', process.env.TEST_ADMIN_USER_PASSWORD)
-  }
-
-  loginAsTestUser1 = async () => {
-    return cohortLogin('test_user_1', process.env.TEST_USER_1_PASSWORD)
-  }
-
-  loginAsTestUser2 = async () => {
-    return cohortLogin('test_user_2', process.env.TEST_USER_2_PASSWORD)
   }
 })
 
@@ -443,6 +420,7 @@ describe('Occasions & WebSocket broadcasts', () => {
     
     let res1 = await request(app)
       .patch('/api/v2/occasions/4')
+      .set('Authorization', 'JWT ' + token)
       .send({state: 'opened'})
     
     expect(res1.status).toEqual(200)
@@ -553,7 +531,11 @@ describe('Occasions & WebSocket broadcasts', () => {
   // test('broadcast: error -- inactive socket (returned array from /broadcast should specify which device guid)
 
   test('close occasion with connected client', async (done) => {
-    expect.assertions(7)
+    expect.assertions(8)
+
+    const token = await loginAsTestAdminUser()
+    expect(token).toBeDefined()
+
     const occasionId = 3
 
     let client = await createClientAndConnect(occasionId)
@@ -568,6 +550,7 @@ describe('Occasions & WebSocket broadcasts', () => {
 
     const res = await request(app)
       .patch('/api/v2/occasions/3')
+      .set('Authorization', 'JWT ' + token)
       .send({state: 'closed'})
 
     expect(res.status).toEqual(200)
@@ -607,3 +590,64 @@ describe('Occasions & WebSocket broadcasts', () => {
     }, keepaliveIntervalDuration * 1.2)
   })
 })
+
+
+
+
+//   test('admin device gets broadcasts when device state changes', async (done) => {
+//     const eventId = 3
+//     const adminGUID = "54321" // this is seeded as an admin device
+//     const device1GUID = "1234567"
+
+//     const webSocketServer = require('./cohort-websockets')({
+//       app: app, server: server, path: '/sockets'
+//     })
+//     expect(webSocketServer).toBeDefined()
+
+//     const adminClient = new ws(socketURL)
+//     var device1Client
+
+//     adminClient.addEventListener('open', event => {
+//       let messagesReceived = 0
+//       adminClient.addEventListener('message', message => {
+//         const msg = JSON.parse(message.data)
+//         messagesReceived++
+
+//         if(messagesReceived == 1){        // handshake was successful
+//           expect(msg.response).toEqual('success')
+
+//           // connect the first device
+//           device1Client = new ws(socketURL)
+//           device1Client.addEventListener('open', event => {
+//             device1Client.send(JSON.stringify({ guid: device1GUID, eventId: eventId}))
+//           })
+
+//         } else if(messagesReceived == 2){ // first device state broadcast
+//           expect(msg.status).toHaveLength(3)
+//           expect(msg.status
+//             .find( deviceState => deviceState.guid == device1GUID)
+//             .socketOpen
+//           ).toEqual(false)
+
+//         } else if(messagesReceived == 3){ // second device state broadcast 
+//           expect(msg.status).toHaveLength(3)
+//           expect(msg.status
+//             .find( deviceState => deviceState.guid == device1GUID)
+//             .socketOpen
+//           ).toEqual(true)
+//           device1Client.close()
+
+//         } else if(messagesReceived == 4){ // last device state broadcast 
+//           expect(msg.status).toHaveLength(3)
+//           expect(msg.status
+//             .find( deviceState => deviceState.guid == device1GUID)
+//             .socketOpen
+//           ).toEqual(false)
+//           done()
+//         } 
+//       })
+
+//       adminClient.send(JSON.stringify({ guid: adminGUID, eventId: eventId }))
+//     })
+//   })
+
