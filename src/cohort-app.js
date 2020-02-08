@@ -6,6 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser')
 const path = require('path')
 const passport = require('passport')
+const cookieParser = require('cookie-parser')
 
 require('dotenv').config({ path: __dirname + '/../.env' })
 
@@ -19,6 +20,7 @@ const jsonParser = bodyParser.json()
  *   Authentication
  */
 
+app.use(cookieParser())
 const passportConfig = require('./cohort-passport-config')
 app.use(passport.initialize())
 

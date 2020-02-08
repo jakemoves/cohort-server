@@ -72,11 +72,30 @@ exports.login_user = async (req, res, next) => {
               id: user.username
             }, process.env.JWT_SECRET)
             res.status(200)
-            res.send({
-              // auth: true,
-              token: token
-              //, message: 'User found and logged in'
+
+            let useSecureCookie 
+            switch(process.env.NODE_ENV){
+              case "development":
+                useSecureCookie = false
+                break
+              case "test":
+                useSecureCookie = false
+                break
+              case "staging":
+                useSecureCookie = true
+                break
+              case "production":
+                useSecureCookie = true
+                break
+              default:
+                useSecureCookie = true
+            }
+            
+            res.cookie('jwt', token, {
+              secure: useSecureCookie,
+              httpOnly: true
             })
+            res.send()
             console.log('user "' + user.username + '" logged in')
           })
           .catch(error => {
