@@ -1,3 +1,9 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+<!-- Button component -->
+
 <script>
 export let buttonText = "";
 export let buttonStyle = 'btn-outline-primary btn-block';

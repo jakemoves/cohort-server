@@ -1,4 +1,7 @@
 
+//  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+//  Released under the MIT License (see /LICENSE)
+
 //grabbing events info from server and placing in a store
 import {writable} from 'svelte/store';
 import { urlStore } from './ServerURLstore.js';

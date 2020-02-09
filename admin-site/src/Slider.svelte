@@ -1,3 +1,9 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+
+<!-- Slider for triggering cues -->
 <script>
 import { urlStore } from './ServerURLstore.js';
 

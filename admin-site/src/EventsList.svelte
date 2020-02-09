@@ -1,3 +1,8 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+<!-- Creating list of events -->
 <script>
   import { createEventDispatcher } from 'svelte';
   import moment from 'moment';
