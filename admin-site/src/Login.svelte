@@ -1,3 +1,8 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+
 <!-- Login component with a simple password verification -->
 
  <script>
@@ -5,36 +10,42 @@
   import Button from './Button.svelte';
   import { urlStore } from './ServerURLstore.js';
   import { pageStateInStore } from './PageStore.js';
+  import { getEventsAndStore } from './EventsStore.js';
 
   let serverURL;
   let selectedURL;
 
  //everytime serverURL changes, update it in the store.
-  $: serverURL,urlStore.update(value => value = serverURL); 
+  $: serverURL,urlStore.update(value => value = serverURL) ; 
 // add this to the above line to keep track of serverUrl value in store: , urlStore.subscribe(value => {console.log(value)}) 
   onMount(async () => {
     serverURL;
     //checking for local dev ...needs testing on staging site
     checkLocalUrl();
+    
   });
 
   function checkLocalUrl () {
-    let page = window.location.href;
-    let splitURL = page.split('/');
-    let splitLocal = splitURL[2].split(":")
-    console.log(splitLocal)
-    if(splitLocal[0].match(/local/) != null ){
-        serverURL = "http://" + splitLocal[0] + ":3000/api/v2";
-        document.getElementById("password").value = "5555";
-      // if(splitLocal[0].match(/localhost/) != null){
-      // } else if(splitLocal[0].match(/.local/)){
-      //   serverURL = "http://" + spli""
-      // }
+    let host = window.location.host; 
+    let splitURL = host.split(':');
+    let splitHost = splitURL[0].split('.');
+
+    if(splitHost[0] == "localhost" || splitHost[1] == "local"){
+      console.log('fire');
+      if( host == "localhost:5000"){
+        serverURL = "http://localhost:3000/api/v2";
+      } else {
+        serverURL = window.location.protocol + '//' + window.location.host + '/api/v2';
+      }
+      document.getElementById("password").value = "5555";
     }
-    console.log(serverURL)
-  };
+  }
+    
+    
+   
   
   function verifyPassword(){
+    getEventsAndStore();
     // verifying password logic 
     var passwordCheck = document.getElementById('password').value;
     if (passwordCheck == "5555"){

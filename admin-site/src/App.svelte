@@ -12,8 +12,7 @@
   //
   import OccasionsList from './OccasionsList.svelte';
   import EventsList from './EventsList.svelte';
-  //import events from store
-  import { events, storedEvents } from './EventsStore.js';
+  
 
     //for new event creation parameters if we implment it
   // let label = "";
@@ -71,6 +70,16 @@
   // }
 
 </script>
+<style>
+  @media (min-width:641px)  {
+    :global(body) {  
+      width: 500px;  
+      margin-left: auto;  
+      margin-right: auto;  
+      text-align: left; 
+      }
+  }
+</style>
 
 {#if pageState == 0}
   <Login/>
@@ -82,10 +91,6 @@
 <!-- #eventsList allows a list of events to be built and shown based on "events" from store-->
     <EventsList on:message = {messageFromArrayList}
       />
-    <!-- <List on:message = {messageFromArrayList}
-    arrayName = {events}
-    emptyArrayMessage = "That's uneventful. Sorry, no events have been added yet."
-    /> -->
   </Page>
 
 {:else if pageState == 2}
