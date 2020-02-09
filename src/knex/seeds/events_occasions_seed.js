@@ -54,68 +54,23 @@ exports.seed = function(knex, Promise) {
     }
 
     return knex('events').insert([
-      {label: 'pimohtēwak', episodes: defaultEpisodeAsJSON('pimohtēwak', false)},
-      {label: 'demo event', episodes: defaultEpisodeAsJSON('demo event', true)},
-      {label: 'midway', episodes: defaultEpisodeAsJSON('midway', false)},
-      {label: 'fluxdelux', episodes: defaultEpisodeAsJSON('fluxdelux', false)},
-      {label: 'café sarajevo', episodes: defaultEpisodeAsJSON('café sarajevo', false)}
+      {label: 'The Itinerary', episodes: defaultEpisodeAsJSON('The Itinerary', false)}
     ])
     .then( () => {
       // add occasions to events
       return knex.raw('TRUNCATE TABLE occasions RESTART IDENTITY CASCADE').then( () => {
         return knex('occasions').insert([
           { 
-            event_id: 2,
-            label: 'Show 1',
-            state: 'closed',
+            event_id: 1,
+            label: 'Workshop / Development',
+            state: 'open',
             doorsOpenDateTime: '2019-04-01 13:30:00+05:00',
             startDateTime: '2019-04-01 14:00:00+05:00',
             endDateTime: '2019-04-01 15:30:00+05:00',
-            locationLabel: "Jacob's house",
-            locationAddress: '125 Emerson Ave',
-            locationCity: 'Toronto'
-          },{
-            // overnight occasion
-            event_id: 2,
-            label: 'Show 2',
-            state: 'closed',
-            doorsOpenDateTime: '2019-05-31 09:30:00+05:00',
-            startDateTime: '2019-05-31 11:00:00+05:00',
-            endDateTime: '2019-06-01 17:00:00+05:00',
-            locationLabel: "Studio 5B, National Ballet School",
-            locationAddress: '400 Jarvis St',
-            locationCity: 'Toronto'
-          },{ 
-            event_id: 2,
-            label: 'Rehearsal',
-            state: 'opened',
-            doorsOpenDateTime: '2019-06-01 13:30:00+05:00',
-            startDateTime: '2019-06-01 14:00:00+05:00',
-            endDateTime: '2019-06-01 15:30:00+05:00',
-            locationLabel: "Harbourfront Centre",
-            locationAddress: '235 Queens Quay W',
-            locationCity: 'Toronto'
-          },{ 
-            event_id: 2,
-            label: 'Show 3',
-            state: 'closed',
-            doorsOpenDateTime: '2019-06-02 13:30:00+05:00',
-            startDateTime: '2019-06-02 14:00:00+05:00',
-            endDateTime: '2019-06-02 15:30:00+05:00',
-            locationLabel: "Harbourfront Centre",
-            locationAddress: '235 Queens Quay W',
-            locationCity: 'Toronto'
-          },{ 
-            event_id: 2,
-            label: 'Show 4',
-            state: 'closed',
-            doorsOpenDateTime: '2019-06-03 13:30:00+05:00',
-            startDateTime: '2019-06-03 14:00:00+05:00',
-            endDateTime: '2019-06-03 15:30:00+05:00',
-            locationLabel: "Harbourfront Centre",
-            locationAddress: '235 Queens Quay W',
-            locationCity: 'Toronto'
-          },
+            locationLabel: "n/a",
+            locationAddress: 'n/a',
+            locationCity: 'n/a'
+          }
         ])
       });
     })

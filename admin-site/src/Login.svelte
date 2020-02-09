@@ -20,8 +20,10 @@
 // add this to the above line to keep track of serverUrl value in store: , urlStore.subscribe(value => {console.log(value)}) 
   onMount(async () => {
     serverURL;
+    serverURL = 'https://otm.cohort.rocks/api/v2'
+    document.getElementById("password").value = "5555";
     //checking for local dev ...needs testing on staging site
-    checkLocalUrl();
+    // checkLocalUrl();
     
   });
 
@@ -99,7 +101,7 @@
         gridStyle = ""
         buttonText = "Login"/>
 
-      <div class="form-group mt-5">
+      <!-- <div class="form-group mt-5">
         <Button on:click={hideShowDev}
         buttonStyle = "btn-light btn-outline-dark btn-sm mt-4"
         gridStyle = ""
@@ -112,7 +114,7 @@
           <option value="https://staging.cohort.rocks/api/v2">Staging</option>
           <option value="http://localhost:3000/api/v2">Development (localhost)</option>
         </select>
-      </div>
+      </div> -->
       
     </form>
   </div>
