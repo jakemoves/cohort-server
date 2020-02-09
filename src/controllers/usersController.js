@@ -9,11 +9,11 @@ const jwt = require('jsonwebtoken')
 const usersTable = require('../knex/queries/user-queries')
 
 handleError = (httpStatusCode, error, res) => {
-  console.log(error)
-
   if(error.message !== undefined){
     error = error.message
   }
+
+  console.log(error)
 
   res.status(httpStatusCode)
   res.write(error)
@@ -56,7 +56,7 @@ exports.login_user = async (req, res, next) => {
     }
 
     if(authError !== undefined){
-      if(authError.message == 'Username not found'){
+      if(authError.message.split(':')[0] == 'Username not found'){
         handleError(404, authError, res)
         return
       } else {
@@ -90,7 +90,7 @@ exports.login_user = async (req, res, next) => {
               default:
                 useSecureCookie = true
             }
-            
+
             res.cookie('jwt', token, {
               secure: useSecureCookie,
               httpOnly: true

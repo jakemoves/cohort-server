@@ -54,12 +54,12 @@ passport.use('login',
       usersTable.findOneByUsername(username)
       .then( user => {
         if(user == null){
-          return done(null, false, new Error('Username not found'))
+          return done(null, false, new Error('Username not found: "' + username +'"'))
         } else {
           bcrypt.compare(password, user.password)
           .then( response => {
             if(response !== true){
-              return done(null, false, new Error('Incorrect password'))
+              return done(null, false, new Error('Incorrect password for username: ' + username))
             } else {
               // happy path, user was found and authenticated
               return done(null, user)

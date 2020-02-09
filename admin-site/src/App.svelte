@@ -12,6 +12,7 @@
   //
   import OccasionsList from './OccasionsList.svelte';
   import EventsList from './EventsList.svelte';
+  import RegistrationForm from './RegistrationForm.svelte'
   
 
     //for new event creation parameters if we implment it
@@ -83,6 +84,7 @@
 
 {#if pageState == 0}
   <Login/>
+  <RegistrationForm />
 
 {:else if pageState == 1}
   <Page
