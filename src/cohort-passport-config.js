@@ -6,6 +6,8 @@ const BCRYPT_SALT_ROUNDS = 12
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const JWTStrategy = require('passport-jwt').Strategy
+const ExtractJWT = require('passport-jwt').ExtractJwt
+
 const usersTable = require('./knex/queries/user-queries')
 
 // per https://itnext.io/implementing-json-web-tokens-passport-js-in-a-javascript-application-with-react-b86b1f313436
@@ -88,7 +90,11 @@ const cookieExtractor = function(req){
 }
 
 const opts = {
-  jwtFromRequest: cookieExtractor,
+  jwtFromRequest: ExtractJWT.fromExtractors([
+    cookieExtractor, 
+    
+    ExtractJWT.fromAuthHeaderWithScheme('JWT')
+  ]),
   secretOrKey: process.env.JWT_SECRET
 }
 

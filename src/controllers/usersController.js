@@ -95,8 +95,16 @@ exports.login_user = async (req, res, next) => {
               secure: useSecureCookie,
               httpOnly: true
             })
-            res.send()
-            console.log('user "' + user.username + '" logged in')
+
+            let tokenMessage = ""
+            if(req.query.sendToken == 'true'){
+              res.send({ jwt: token })
+              tokenMessage = " (and requested a token)"
+            } else {
+              res.send()
+            }
+
+            console.log('user "' + user.username + '" logged in' + tokenMessage)
           })
           .catch(error => {
             handleError(500, error, res) // DB error

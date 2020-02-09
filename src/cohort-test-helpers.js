@@ -36,7 +36,6 @@ loginAsTestUser2 = async () => {
   return cohortLogin('test_user_2', process.env.TEST_USER_2_PASSWORD)
 }
 
-
 module.exports = {
   setupHelpers: setupHelpers,
   cohortLogin: cohortLogin,
