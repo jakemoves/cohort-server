@@ -71,14 +71,14 @@
 
 </script>
 <style>
-  @media (min-width:641px)  {
+  /* @media (min-width:641px)  {
     :global(body) {  
       width: 500px;  
       margin-left: auto;  
       margin-right: auto;  
       text-align: left; 
       }
-  }
+  } */
 </style>
 
 {#if pageState == 0}
