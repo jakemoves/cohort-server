@@ -1,3 +1,8 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+<!-- Creating list of occasions based on chosen event -->
 <script>
   import { createEventDispatcher } from 'svelte';
   import { onMount } from 'svelte';

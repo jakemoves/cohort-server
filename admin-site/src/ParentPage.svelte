@@ -1,3 +1,8 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+<!-- Component for building ui pages -->
 <script>
  import Button from './Button.svelte';
  import BackButton from './BackButton.svelte';

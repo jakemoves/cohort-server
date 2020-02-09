@@ -1,7 +1,12 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+<!-- component to create looped lists -->
 <script>
 export let arrayName="";
 export let emptyArrayMessage="";
-export let arrayHtml = "";
+
 
 </script>
 
