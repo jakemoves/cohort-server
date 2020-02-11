@@ -22,4 +22,4 @@ exports.seed = function(knex, Promise) {
       is_admin: false
     }])
   });
-};
+}; 
