@@ -14,7 +14,7 @@ const moment = require('moment')
 const ws = require('ws')
 
 const CHSession = require('./models/CHSession')
-require('./cohort-test-helpers')
+const login = require('./cohort-test-helpers').login
 
 var app, server, webSocketServer
 var socketURL = 'http://localhost:3000/sockets'
@@ -31,8 +31,6 @@ beforeEach( async () => {
   app = require('./cohort-app')
 
   await CHSession.initAndSetOnApp(app)
-
-  setupHelpers(app)
   
   // this is pretty much the same as cohort-server.js
   serverPromise = await new Promise( (resolve, reject) => {
@@ -302,7 +300,7 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: error -- no open occasion matching id', async () => {
-    const token = await loginAsTestAdminUser()
+    const token = await login('test_admin_user', app)
     expect(token).toBeDefined()
     
     const occasionId = 4
@@ -322,7 +320,7 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: error -- no devices connected', async () => {
-    const token = await loginAsTestAdminUser()
+    const token = await login('test_admin_user', app)
     expect(token).toBeDefined()
 
     const occasionId = 3
@@ -342,7 +340,7 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: happy path', async () => {
-    const token = await loginAsTestAdminUser()
+    const token = await login('test_admin_user', app)
     expect(token).toBeDefined()
 
     const occasionId = 3
@@ -376,7 +374,7 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: happy path, multiple clients, same occasion', async () => {
-    const token = await loginAsTestAdminUser()
+    const token = await login('test_admin_user', app)
     expect(token).toBeDefined()
 
     const occasionId = 3
@@ -415,7 +413,7 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: happy path, multiple clients, different occasions', async () => {
-    const token = await loginAsTestAdminUser()
+    const token = await login('test_admin_user', app)
     expect(token).toBeDefined()
     
     let res1 = await request(app)
@@ -465,7 +463,7 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: happy path, user can broadcast to an occasion they own', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const cue = { 
@@ -503,7 +501,7 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: happy path, user cannot broadcast to an occasion they do not own', async () => {
-    const token = await loginAsTestUser2()
+    const token = await login('test_user_2', app)
     expect(token).toBeDefined()
 
     const cue = { 
@@ -533,7 +531,7 @@ describe('Occasions & WebSocket broadcasts', () => {
   test('close occasion with connected client', async (done) => {
     expect.assertions(8)
 
-    const token = await loginAsTestAdminUser()
+    const token = await login('test_admin_user', app)
     expect(token).toBeDefined()
 
     const occasionId = 3

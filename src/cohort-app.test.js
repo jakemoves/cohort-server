@@ -7,7 +7,7 @@ const knex = require('./knex/knex')
 const moment = require('moment')
 
 const CHSession = require('./models/CHSession')
-require('./cohort-test-helpers')
+const login = require('./cohort-test-helpers').login
 
 var app
 process.env.NODE_ENV = 'test'
@@ -20,8 +20,6 @@ beforeEach( async () => {
 
   app = require('./cohort-app')
   await CHSession.initAndSetOnApp(app)
-
-  setupHelpers(app)
 })
 
 afterEach( async () => {
@@ -132,25 +130,38 @@ describe('User registration', () => {
     expect(res2.text).toEqual('Username already exists')
   })
 
-  test('login -- happy path', async () => {
-    const res0 = await request(app)
-      .post('/api/v2/users')
-      .send({
-        'username': 'cohort_test_user',
-        'password': '4444'
-      })
-    
-    expect(res0.status).toEqual(201)
+  test('login -- happy path: cookie-based auth', async() => {
+    let agent = request.agent(app)
+ 
+    let loginResponse = await agent
+    .post('/api/v2/login')
+    .send({
+      username: 'test_admin_user',
+      password: process.env.TEST_ADMIN_USER_PASSWORD
+    })
 
-    const res1 = await request(app)
-      .post('/api/v2/login')
-      .send({
-        'username': 'cohort_test_user',
-        'password': '4444'
-      })
-    
-    expect(res1.status).toEqual(200)
-    expect(res1.body.token).toBeDefined()
+    expect(loginResponse.status).toEqual(200)
+    expect(loginResponse.headers['set-cookie'][0].substr(0, 3)).toEqual('jwt')
+  })
+
+  test('login -- happy path: token-based auth', async() => {
+    let agent = request.agent(app)
+ 
+    let loginResponse = await agent
+    .post('/api/v2/login?sendToken=true')
+    .send({
+      username: 'test_admin_user',
+      password: process.env.TEST_ADMIN_USER_PASSWORD
+    })
+
+    expect(loginResponse.status).toEqual(200)
+    expect(loginResponse.headers['set-cookie'][0].substr(0, 3)).toEqual('jwt')
+
+    let cookieToken = loginResponse
+    .headers['set-cookie'][0]
+    .substr(4).split(';')[0]
+
+    expect(loginResponse.body.jwt).toEqual(cookieToken)
   })
 
   test('login -- error: username not found', async () => {
@@ -162,7 +173,7 @@ describe('User registration', () => {
       })
     
     expect(res.status).toEqual(404)
-    expect(res.text).toEqual("Username not found")
+    expect(res.text).toEqual('Username not found: "cohort_test_user_that_doesnt_exist"')
   })
   
   test('login -- error: incorrect password', async () => {
@@ -183,46 +194,35 @@ describe('User registration', () => {
       })
     
     expect(res.status).toEqual(403)
-    expect(res.text).toEqual("Incorrect password")
+    expect(res.text).toEqual("Incorrect password for username: cohort_test_user")
   })
 
   test('DELETE /users/:id -- happy path, admin user can delete users', async () => {
-    let testAdminUser = request.agent(app)
+    let token = await login('test_admin_user', app)
 
-    let loginRes = await testAdminUser
-    .post('/api/v2/login')
-    .send({
-      username: 'test_admin_user', 
-      password: process.env.TEST_ADMIN_USER_PASSWORD
-    })
-
-    expect(loginRes.status).toEqual(200)
-    console.log(loginRes.headers)
-    expect(loginRes.headers['set-cookie'][0].substr(0, 3)).toEqual('jwt')
-
-    const res = await testAdminUser
+    const res = await request(app)
     .delete('/api/v2/users/3')
+    .set('Authorization', 'JWT ' + token)
 
     expect(res.status).toEqual(204)
 
+    const res1 = await request(app)
+    .delete('/api/v2/users/3')
+    .set('Authorization', 'JWT ' + token)
 
-    // expect(res.status).toEqual(204)
+    expect(res1.status).toEqual(404) // auth succeeded, user to delete was not found
 
-    // const res1 = await request(app)
-    // .delete('/api/v2/users/3')
+    const res2 = await request(app)
+    .get('/api/v2/events')
+    .set('Authorization', 'JWT ' + token)
 
-    // expect(res1.status).toEqual(404) // auth succeeded, user to delete was not found
-
-    // const res2 = await request(app)
-    // .get('/api/v2/events')
-
-    // const events = res2.body
-    // expect(events).toEqual([])
-    // // deleting a user should also delete all events & occasions they own
+    const events = res2.body
+    expect(events).toEqual([])
+    // deleting a user should also delete all events & occasions they own
   })
 
   test('DELETE /users/:id -- happy path, user can delete themself', async () => {
-    const token = await loginAsTestUser2()
+    const token = await login('test_user_2', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -239,7 +239,7 @@ describe('User registration', () => {
   })
 
   test('DELETE /users/:id -- error, user cannot delete other user', async () => {
-    const token = await loginAsTestUser2()
+    const token = await login('test_user_2', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -258,7 +258,7 @@ describe('User registration', () => {
 
  describe('Event routes', () => {
   test('GET /events -- happy path, as admin user', async () => {
-    const token = await loginAsTestAdminUser()
+    const token = await login('test_admin_user', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -279,7 +279,7 @@ describe('User registration', () => {
   })
 
   test('GET /events -- happy path, as owning user', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -300,7 +300,7 @@ describe('User registration', () => {
   })
 
   test('GET /events/:id', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     // event that doesn't have any occasions
@@ -342,7 +342,7 @@ describe('User registration', () => {
   })
 
   test('GET /events/:id -- error: event not found', async () => {
-    const token = await loginAsTestAdminUser()
+    const token = await login('test_admin_user', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -355,7 +355,7 @@ describe('User registration', () => {
   })
 
   test('POST /events -- happy path (no episodes provided)', async () =>{
-    const token = await loginAsTestUser2()
+    const token = await login('test_user_2', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -377,7 +377,7 @@ describe('User registration', () => {
   })
 
   test('POST /events -- happy path (with episodes)', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -415,7 +415,7 @@ describe('User registration', () => {
   })
 
   test('DELETE /events/:id -- error: event not found', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
     
     const res = await request(app)
@@ -427,7 +427,7 @@ describe('User registration', () => {
   })
 
   test('DELETE /events/:id -- error: event has open occasions', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const openOccasionId = 3
@@ -447,7 +447,7 @@ describe('User registration', () => {
   })
 
   test('DELETE /events/:id -- happy path', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -464,7 +464,7 @@ describe('User registration', () => {
   })
 
   test('PATCH /events/:id/episodes -- error: event not found', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -481,7 +481,7 @@ describe('User registration', () => {
   })
 
   test('PATCH /events/:id/episodes -- error: empty payload', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -494,7 +494,7 @@ describe('User registration', () => {
   })
 
   test('PATCH /events/:id/episodes -- error: non-array payload format', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -511,7 +511,7 @@ describe('User registration', () => {
   })
 
   test('PATCH /events/:id/episodes -- error: episodes missing fields', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -561,7 +561,7 @@ describe('User registration', () => {
   })
 
   test('PATCH /events/:id/episodes -- happy path', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -583,7 +583,7 @@ describe('User registration', () => {
 
 describe('Occasion routes', () => {
   test('POST /occasions -- error: eventId not included', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
     
     const res = await request(app)
@@ -598,7 +598,7 @@ describe('Occasion routes', () => {
   })
 
   test('POST /occasions -- error: event for occasion does not exist', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -614,7 +614,7 @@ describe('Occasion routes', () => {
   })
 
   test('POST /occasions -- happy path', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -633,7 +633,7 @@ describe('Occasion routes', () => {
   })
 
   test('DELETE /occasions -- error: occasion not found', async () => {
-    const token = await loginAsTestAdminUser()
+    const token = await login('test_admin_user', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -644,7 +644,7 @@ describe('Occasion routes', () => {
   })
 
   test('DELETE /occasions -- error: opened occasion cannot be deleted', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -656,7 +656,7 @@ describe('Occasion routes', () => {
   })
 
   test('DELETE /occasions -- happy path', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     numberOfOccasions = async () => {
@@ -690,7 +690,7 @@ describe('Occasion routes', () => {
   })
 
   test('PATCH /occasions/:id -- open occasion', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
@@ -705,7 +705,7 @@ describe('Occasion routes', () => {
   })
 
   test('PATCH /occasions/:id -- close occasion', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
     
     const res = await request(app)
@@ -720,7 +720,7 @@ describe('Occasion routes', () => {
   })
 
   test('GET /occasions/:id/qrcode', async () => {
-    const token = await loginAsTestUser1()
+    const token = await login('test_user_1', app)
     expect(token).toBeDefined()
     
     const res = await request(app)
