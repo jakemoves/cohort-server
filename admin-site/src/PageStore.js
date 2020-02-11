@@ -1,3 +1,9 @@
+
+ // Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+ // Released under the MIT License (see /LICENSE)
+
+ //Store holds page state for UI updates
+ 
 import {writable} from 'svelte/store';
 
 export let pageStateInStore = writable(0);

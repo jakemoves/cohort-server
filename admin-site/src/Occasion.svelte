@@ -1,3 +1,9 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+
+<!-- Component for open and closed occasions -->
 <script>
 import Page from './ParentPage.svelte';
 import { onMount } from 'svelte';
@@ -9,9 +15,6 @@ import moment from "moment";
 import Slider from './Slider.svelte';
 import Modal from './Modal.svelte';
 import { occasionOpen } from './OccasionState.js';
-
-// import { eventButton } from './ArrayList.svelte';
-
 
 
 let serverURL;
@@ -73,7 +76,7 @@ onMount(async () => {
       }).then( response => { 
         if(response.status == 200){
           response.json().then( details => {
-            occasionOpen.update(value => value = true);
+            occasionOpen.set(true);
             // make sure store updates from server
             getEventsAndStore();
           })
@@ -99,10 +102,11 @@ onMount(async () => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"state":"closed"}) 
       }).then( response => { 
+        console.log(response.status);
         if(response.status == 200){
           response.json().then( details => {
             //update state of occasion
-            occasionOpen.update(value => value = false);
+            occasionOpen.set(false);
             // make sure store updates from server
             getEventsAndStore();
           })

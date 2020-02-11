@@ -1,3 +1,8 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+<!-- Component for adding back buttons -->
 <script>
 import Button from "./Button.svelte"
 import { pageStateInStore } from "./PageStore.js";
