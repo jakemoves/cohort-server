@@ -1,3 +1,4 @@
+
 <!-- 
   Copyright Luke Garwood & Jacob Niedzwiecki, 2019
   Released under the MIT License (see /LICENSE)
@@ -153,9 +154,9 @@ function deleteOccasion() {
         let response = await fetch(serverURL + "/occasions/" + focusedOccasionID + "/qrcode", {
         method: 'GET'
         });
-        let qrcode = await response.text()
+        let qrCode = await response.text()
         let qrContainer = document.getElementById("QRcodeContainer")
-        qrContainer.innerHTML = qrcode
+        qrContainer.innerHTML = qrCode
     };
     QrResponse();
   }

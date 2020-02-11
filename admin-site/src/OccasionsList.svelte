@@ -24,7 +24,8 @@
   let focusedOccasionState;
   let focusedEvent;
 
- 
+  let deleteResults;
+  let showDeleteError = false;
 
   
   focusedEventStore.subscribe(value => {
@@ -78,18 +79,21 @@
     }).then( response => {
       console.log(response.status); 
       if(response.status == 204){
-          console.log("fired");
-
            getEventsAndStore()
            pageStateInStore.set(1)
-          
-          
-          
-      } else {
-        console.log(response.text)
-        }
+           showDeleteError = false;  
+      } else if (response.status == 400){
+        showDeleteError = true;
+        deleteResults = "Deleting the event failed. Please close any open occasions."
+      } else response.text().then( errorMessage => {
+        showDeleteError = true;
+        console.log('error on request: ' + errorMessage)
+        deleteResults = errorMessage;
+      });
       }).catch( error => {
         console.log("Error on event delete!")
+        showDeleteError = true;
+        deleteResults = "Deleting the event failed due to " + error;
       })
     } catch (e) {
         console.log(e.message)
@@ -99,28 +103,34 @@
 
 </script>
 
-    <Array
-      arrayName = {dateSortedOccasions} 
-      emptyArrayMessage = "This happens on occasion. No occasions for this event yet.">
+<Array
+  arrayName = {dateSortedOccasions} 
+  emptyArrayMessage = "This happens on occasion. No occasions for this event yet.">
 
-      {#each  dateSortedOccasions as item (item.id)}
-        <Button on:click={() => occasionButton(item.id)}
-        buttonHtml = '<h3 class="m-0">{item.label}  - {item.label} </h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
-        value = {item.id}/> 
-      {/each}
-     
-    </Array>
+  {#each  dateSortedOccasions as item (item.id)}
+    <Button on:click={() => occasionButton(item.id)}
+    buttonHtml = '<h3 class="m-0">{item.label}  - {item.label} </h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
+    value = {item.id}/> 
+  {/each}
+  
+</Array>
 
-    <hr>
-    <Button
-                buttonStyle="btn-outline-danger btn-block"
-                buttonText="Delete Event"
-                dataTarget="#deleteEventModal"/>
+  <hr>
 
-    <Modal
+<Button
+  buttonStyle="btn-outline-danger btn-block"
+  buttonText="Delete Event"
+  dataTarget="#deleteEventModal"/>
+{#if showDeleteError}
+<div class="alert alert-danger text-center">
+    {deleteResults}
+</div>
+{/if}
+
+<Modal
   modalID = "deleteEventModal"
   modalTitle= "Delete Event">
-  
+
   <div slot="modalBody">
     <!-- {#if gotEvents} -->
       Are you sure you want to delete {focusedEvent.label}?
