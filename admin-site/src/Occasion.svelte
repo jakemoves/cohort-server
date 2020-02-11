@@ -155,8 +155,14 @@ function deleteOccasion() {
         method: 'GET'
         });
         let qrCode = await response.text()
-        let qrContainer = document.getElementById("QRcodeContainer")
-        qrContainer.innerHTML = qrCode
+        let qrContainer = document.getElementsByClassName("QRcodeContainer");
+        // qrContainer.forEach(element => {
+        //   qrContainer[element].innerHTML = qrCode;
+        // });
+        for (let i = 0; i < qrContainer.length; i++){
+          qrContainer[i].innerHTML = qrCode
+        }
+       
     };
     QrResponse();
   }
@@ -181,9 +187,28 @@ function deleteOccasion() {
 
   }
 
-
+  function printQR(){
+   window.print();
+  }
 
 </script>
+
+<style>
+   @media print {
+    #printable {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+    }
+    .notPrintable{
+      display:none;
+    }
+}
+</style>
 
 
 
@@ -198,7 +223,7 @@ function deleteOccasion() {
         <div class="row">
         <Button on:click={showQR}
             buttonText="Get QR Code" 
-            dataTarget="#QRcodeModal"/>
+            dataTarget="#QRcodeModalClosed"/>
         </div>
 
         <div class="row">
@@ -376,6 +401,45 @@ function deleteOccasion() {
 </Modal>
 
 <Modal
+  modalID="QRcodeModalClosed">
+
+    <div slot="closeButton">
+      <div class ="row">
+
+        <div class="col-12 mb-2">
+          <Button
+              buttonStyle="close"
+              gridStyle = ""
+              dataDismiss="modal"
+              ariaLabel="Close"
+              iconRight = "fas fa-times"/>
+        </div>
+
+        <div class="col-12">
+          <p>Print this QR code to help audiences/clients connect to your occasion.<br> <strong>Note: </strong>an occasion must be open to receive connections. </p>
+        </div>
+
+      </div> 
+    </div>
+    
+    <div id="printable" slot="modalBody" class="container-fluid">
+      <div class = "QRcodeContainer">
+        <!-- QR code populated here --->
+      </div>
+    </div>
+    
+    <div class='notPrintable' slot="modalFooter">
+       <Button on:click={printQR}
+          buttonText = "Print"
+          buttonStyle = "btn-outline-primary"
+          gridStyle = "col-12"
+          iconLeft  = "fa fa-print"
+        />
+    </div>
+   
+</Modal>
+
+<Modal
   modalID="QRcodeModal">
     <div slot="closeButton">
       <Button
@@ -387,7 +451,7 @@ function deleteOccasion() {
     </div>
     
     <div slot="modalBody" class="container-fluid">
-      <div id = "QRcodeContainer">
+      <div class = "QRcodeContainer">
         <!-- QR code populated here -->
       </div>
     </div>
