@@ -30,14 +30,14 @@ Building for production:
 
 ### tests setup
 - `npm install -g jest`
-- `jest app`
+- `jest app && jest websocket` (the '&&' forces these to run one after the other, they fail if run in parallel which is what happen if you just run `jest`)
 
 ### building the server
 - `npm build`
 
 ### obtaining secret key files
-- ask project lead for APN key and dot-env files
-- put these in the root folder
+- ask project lead for the dot-env file
+- put this in the root folder
 
 ### starting the server
 - `node lib/cohort-server.js`

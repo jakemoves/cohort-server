@@ -3,9 +3,11 @@
 
 const express = require('express')
 const router = express.Router()
+const routerWithAuth = express.Router()
 
 const eventsController = require('./controllers/eventsController')
 const occasionsController = require('./controllers/occasionsController')
+const usersController = require('./controllers/usersController')
 // const demoController = require('./controllers/demoController')
 // const servicesController = require('./controllers/servicesController')
 
@@ -13,25 +15,33 @@ router.get('', (req, res) => {
   res.send('Cohort rocks')
 })
 
+/*
+ *   login, registration, users
+ */
+
+router.post('/users', usersController.register_user)
+router.post('/login', usersController.login_user)
+routerWithAuth.delete('/users/:id', usersController.delete_user)
+
 /* 
  *   events
  */
 
-router.get('/events', eventsController.events)
-router.get('/events/:id', eventsController.events_id)
-router.post('/events', eventsController.events_create)
-router.delete('/events/:id', eventsController.events_delete)
-router.patch('/events/:id/episodes', eventsController.events_update_episodes)
+routerWithAuth.get('/events', eventsController.events)
+routerWithAuth.get('/events/:id', eventsController.events_id)
+routerWithAuth.post('/events', eventsController.events_create)
+routerWithAuth.delete('/events/:id', eventsController.events_delete)
+routerWithAuth.patch('/events/:id/episodes', eventsController.events_update_episodes)
 
 /*
  *   occasions
  */
 
-router.post('/occasions', occasionsController.occasions_create)
-router.delete('/occasions/:id', occasionsController.occasions_delete)
-router.patch('/occasions/:id', occasionsController.occasions_update)
-router.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
-router.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
+routerWithAuth.post('/occasions', occasionsController.occasions_create)
+routerWithAuth.delete('/occasions/:id', occasionsController.occasions_delete)
+routerWithAuth.patch('/occasions/:id', occasionsController.occasions_update)
+routerWithAuth.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
+routerWithAuth.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
 
 // router.post('/events/:id/occasions', occasionsController.occasions_create)
 // router.get('/occasions', occasionsController.occasions)
@@ -76,4 +86,7 @@ router.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
 // router.get('/events/:id/demo/prepare', demoController.prepare_demo)
 // router.get('/events/:id/demo', demoController.prepare_lotx_demo)
 
-module.exports = router
+module.exports = {
+  router: router,
+  routerWithAuth: routerWithAuth
+}

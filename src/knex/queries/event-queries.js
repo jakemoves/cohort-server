@@ -19,6 +19,16 @@ getAll = async () => {
   return events
 }
 
+getAllOwnedByUser = async (userId) => {
+  let events = await Events().where('owner_id', parseInt(userId))
+
+  for(event of events){
+    event.occasions = await occasionsForEvent(event.id)
+  }
+  
+  return events
+}
+
 occasionsForEvent = (eventId) => {
   return Events()
     .join('occasions', 'events.id', '=', 'occasions.event_id')
@@ -74,6 +84,7 @@ updateEpisodesForEvent = (eventId, episodes) => {
 
 module.exports = { 
   getAll: getAll,
+  getAllOwnedByUser: getAllOwnedByUser,
   getOneByID: getOneByID,
   addOne: addOne,
   deleteOne: deleteOne,
