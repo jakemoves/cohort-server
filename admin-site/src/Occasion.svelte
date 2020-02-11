@@ -1,3 +1,9 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+
+<!-- Component for open and closed occasions -->
 <script>
 import Page from './ParentPage.svelte';
 import { onMount } from 'svelte';
@@ -9,9 +15,6 @@ import moment from "moment";
 import Slider from './Slider.svelte';
 import Modal from './Modal.svelte';
 import { occasionOpen } from './OccasionState.js';
-
-// import { eventButton } from './ArrayList.svelte';
-
 
 
 let serverURL;

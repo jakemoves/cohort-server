@@ -34,6 +34,7 @@
     let splitHost = splitURL[0].split('.');
 
     if(splitHost[0] == "localhost" || splitHost[1] == "local"){
+      console.log('fire');
       if( host == "localhost:5000"){
         serverURL = "http://localhost:3000/api/v2";
       } else {
@@ -41,6 +42,9 @@
       }
     }
   }
+    
+    
+   
       
   async function login(){
     const payload = { username: usernameFieldValue, password: passwordFieldValue }
