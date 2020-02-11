@@ -1,3 +1,8 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+
 <!-- Login component with a simple password verification -->
 
  <script>
@@ -24,14 +29,19 @@
   });
 
   function checkLocalUrl () {
-    let page = window.location.href;
-    let splitURL = page.split('/');
-    let splitLocal = splitURL[2].split(":")
-    if(splitLocal[0] == "localhost"){
-      serverURL = "http://localhost:3000/api/v2";
+    let host = window.location.host; 
+    let splitURL = host.split(':');
+    let splitHost = splitURL[0].split('.');
+
+    if(splitHost[0] == "localhost" || splitHost[1] == "local"){
+      if( host == "localhost:5000"){
+        serverURL = "http://localhost:3000/api/v2";
+      } else {
+        serverURL = window.location.protocol + '//' + window.location.host + '/api/v2';
+      }
     }
-  };
-  
+  }
+      
   async function login(){
     const payload = { username: usernameFieldValue, password: passwordFieldValue }
 
