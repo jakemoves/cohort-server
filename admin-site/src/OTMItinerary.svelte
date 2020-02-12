@@ -223,12 +223,12 @@ button.btn-outline-success:hover, button.btn-outline-success:active {
     </div>
     <div class="row">
       <div class="col-12 text-center">
-        <h1>{actionLabel}</h1>
+        <h1 class="{ actionLabel == "LOADING..." ? "text-secondary" : "" }">{actionLabel}</h1>
       </div>
     </div>
     {#if audioError != ""}
-      <div class="row">
-        <div class="alert alert-danger col-12">
+      <div class="row justify-content-center">
+        <div class="alert alert-danger col-6 mt-4">
           {audioError}
         </div>
       </div>
