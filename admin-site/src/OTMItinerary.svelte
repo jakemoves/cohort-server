@@ -13,7 +13,7 @@
   let currentTick = 1
 
   let currentScene = 0
-  let soundURL = "WakeUp.mp3"
+  let soundURL = "otmAudio/WakeUp.mp3"
  
   // ">" alone means the button shows up after a certain number of ticks
   // ">TEXT" means the button triggers the next scene when pressed
@@ -59,20 +59,38 @@
   ]
 
   let selectedAction = ""
+  let actionLabel = "LOADING..."
+  let audioError = ""
   
   $: availableActions = sceneActions[currentScene]  
 
   // set up sound for first button
   let soundPlayer = new Howl({
     src: [sceneActions[0][0][0].soundURL]
+    ,
+    // onload: function(){
+
+    // },
+    onloaderror: function(id, error){
+      console.log(error)
+      audioError = "Error loading audio: " + error
+    },
+    onplay: function(id){
+      selectedAction = "WAKE UP"
+    },
+    onplayerror: function(id, error){
+      console.log(error)
+      audioError = "Error playing audio: " + error
+    }
   })
 
-  
+  // Howler.autoUnlock = false  
 
   function onActionButtonTap(event) {
     
     currentTick++
     selectedAction = event.target.innerText
+    actionLabel = "LOADING..." 
     UIVisible = false
 
     // update available actions
@@ -85,10 +103,25 @@
 
       if(availableActions[i][0].label.replace(/\+/g, "") == selectedAction){
         // this is the button that was tapped
+        let soundName = event.target.innerText
 
         // play sound for this button
         soundPlayer = new Howl({
-          src: [availableActions[i][0].soundURL]
+          src: [availableActions[i][0].soundURL],
+          // onload: function(){
+
+          // },
+          onloaderror: function(id, error){
+            console.log(error)
+            audioError = "Error loading audio: " + error
+          },
+          onplay: function(id){
+            actionLabel = selectedAction
+          },
+          onplayerror: function(id, error){
+            console.log(error)
+            audioError = "Error playing audio: " + error
+          }
         })
         soundPlayer.play()
 
@@ -107,7 +140,6 @@
           console.log("removed action phase")
         }
 
-        console.log(selectedAction.substr(0, 1))
         if(selectedAction.substr(0, 1) == ">" && selectedAction.length > 1){
           currentScene++
           console.log(currentScene)
@@ -191,9 +223,16 @@ button.btn-outline-success:hover, button.btn-outline-success:active {
     </div>
     <div class="row">
       <div class="col-12 text-center">
-        <h1>{selectedAction}</h1>
+        <h1>{actionLabel}</h1>
       </div>
     </div>
+    {#if audioError != ""}
+      <div class="row">
+        <div class="alert alert-danger col-12">
+          {audioError}
+        </div>
+      </div>
+    {/if}
   </div>
 {:else}
   <div class="container" id="between_ticks" transition:fade>
