@@ -76,7 +76,7 @@
     try {
     return fetch(serverURL + "/events/" + focusedEvent.id, {
       method: 'DELETE'
-    }).then( response => {
+    }).then( async (response) => {
       console.log(response.status); 
       if(response.status == 204){
            getEventsAndStore()
@@ -84,7 +84,9 @@
            showDeleteError = false;  
       } else if (response.status == 400){
         showDeleteError = true;
-        deleteResults = "Deleting the event failed. Please close any open occasions."
+        let serverSideError = await response.text()
+        console.log(serverSideError)
+        deleteResults = serverSideError;
       } else response.text().then( errorMessage => {
         showDeleteError = true;
         console.log('error on request: ' + errorMessage)

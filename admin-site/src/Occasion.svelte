@@ -203,6 +203,7 @@ function deleteOccasion() {
         left: 0;
         margin: 0;
         padding: 0;
+        font-size: 3em;
     }
     .notPrintable{
       display:none;
@@ -402,10 +403,8 @@ function deleteOccasion() {
 
 <Modal
   modalID="QRcodeModalClosed">
-
     <div slot="closeButton">
       <div class ="row">
-
         <div class="col-12 mb-2">
           <Button
               buttonStyle="close"
@@ -416,7 +415,7 @@ function deleteOccasion() {
         </div>
 
         <div class="col-12">
-          <p>Print this QR code to help audiences/clients connect to your occasion.<br> <strong>Note: </strong>an occasion must be open to receive connections. </p>
+          <p>Print this QR code to allow mobile devices to connect to your occasion.<br> <strong>Note: </strong>an occasion must be open to receive connections. </p>
         </div>
 
       </div> 
@@ -426,6 +425,7 @@ function deleteOccasion() {
       <div class = "QRcodeContainer">
         <!-- QR code populated here --->
       </div>
+      <p class="text-center">{formattedStartTimeFull}</p>
     </div>
     
     <div class='notPrintable' slot="modalFooter">
