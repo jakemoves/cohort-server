@@ -13,6 +13,7 @@ export let disabled = undefined;
 export let gridStyle = "col-md-12";
 export let iconLeft = undefined;
 export let iconRight = undefined;
+export let buttonType = "button"
 //for modal close
 export let dataDismiss = undefined;
 export let ariaLabel = undefined;
@@ -40,7 +41,7 @@ export let buttonHtml = "";
     <div class={gridStyle}>
     
             <button on:click
-                type="button" 
+                type={buttonType}
                 class="btn {buttonStyle}" 
                 data-toggle="modal" 
                 data-target={dataTarget}

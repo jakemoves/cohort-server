@@ -7,6 +7,7 @@ const machina = require('machina')
 class CHOccasion extends machina.Fsm {
   id
   label
+  owner_id
   startDateTime
   doorsOpenDateTime
   endDateTime
@@ -15,7 +16,7 @@ class CHOccasion extends machina.Fsm {
   locationCity
   devices
 
-  constructor(id, label){
+  constructor(id, label, owner_id){
     // constructor options for FSM
     super({
       namespace: 'cohort-occasion',
@@ -72,11 +73,12 @@ class CHOccasion extends machina.Fsm {
     // constructor actions for CHOccasion
     this.id = id
     this.label = label
+    this.owner_id = owner_id
     this.devices = []
   }
 
   static fromDatabaseRow(dbOccasion){
-    return new CHOccasion(dbOccasion.id, dbOccasion.label)
+    return new CHOccasion(dbOccasion.id, dbOccasion.label, dbOccasion.owner_id)
   }
 
   addDevice(device){

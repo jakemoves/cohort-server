@@ -15,6 +15,9 @@
   let serverURL;
   let selectedURL;
 
+  let usernameFieldValue, passwordFieldValue
+  let errorAlertMessage = ""
+
  //everytime serverURL changes, update it in the store.
   $: serverURL,urlStore.update(value => value = serverURL) ; 
 // add this to the above line to keep track of serverUrl value in store: , urlStore.subscribe(value => {console.log(value)}) 
@@ -37,20 +40,47 @@
       } else {
         serverURL = window.location.protocol + '//' + window.location.host + '/api/v2';
       }
-      document.getElementById("password").value = "5555";
     }
   }
     
     
    
-  
-  function verifyPassword(){
-    getEventsAndStore();
-    // verifying password logic 
-    var passwordCheck = document.getElementById('password').value;
-    if (passwordCheck == "5555"){
-      pageStateInStore.set(1);
+      
+  async function login(){
+    const payload = { username: usernameFieldValue, password: passwordFieldValue }
+
+    let response = await fetch(serverURL + '/login', {
+      method: 'POST',
+      headers: { 'Content-Type':  'application/json' },
+      body: JSON.stringify(payload) 
+    })
+
+    if(response.status != 200){
+      let errorMessage = await response.text()
+      throw new Error(errorMessage)
     }
+  }
+
+  function onLoginButton(event){
+    event.preventDefault()
+
+    login()
+    .then( () => {
+      // happy path!
+      // a cookie named 'jwt' should now be present in this browser
+      errorAlertMessage = ""
+      getEventsAndStore();
+      pageStateInStore.set(1);
+    })
+    .catch( error => {
+      console.log(error)
+      errorAlertMessage = error
+      // based on the error, tell the user what went wrong
+      // common errors:
+      // "missing credentials" (no username and/or no password was entered)
+      // "username not found"
+      // "incorrect password"
+    })
   }
 
   function hideShowDev() {
@@ -70,35 +100,47 @@
   #devTools{
     visibility: hidden;
   }
-  .form-control{
+  
+  /* .form-control{
     font-size:0.8rem;
-  }
+  } */
 </style>
 
 
 <div id="login">
   <div class="container">
-    <form id="formContent">
 
-      <div class="row"> 
-        <div class= "col-md-12 text-center mt-4 mb-2">  
-          <h4>Welcome Administrator</h4>
-        </div>
+    <div class="row"> 
+      <div class= "col-md-12 text-center mt-4 mb-2">  
+        <h4>Login to Cohort</h4>
       </div>
+    </div>
 
+    <form id="loginFormContent">
       <div class="form-group">
-          <input type="text" id="login" class="form-control" name="login" placeholder="username"> 
+          <input type="text" id="login_username" class="form-control" name="loginFormContent" placeholder="username" bind:value={usernameFieldValue}> 
       </div>
 
       <div class="form-group"> 
-        <input type="text" id="password" class="form-control" name="login" placeholder="password">     
+        <input type="password" id="login_password" class="form-control" name="loginFormContent" placeholder="password" bind:value={passwordFieldValue}>     
       </div>
 
-      <Button on:click={verifyPassword}
-        buttonStyle = "btn-primary"
-        gridStyle = ""
-        buttonText = "Login"/>
+      <div class="form-row">
+        <Button on:click={onLoginButton}
+          buttonType = "submit"
+          buttonStyle = "btn-primary btn-block"
+          gridStyle = "form-group col-xs-12 col-sm-6"
+          buttonText = "Login"/>
+      </div>
 
+      {#if errorAlertMessage != ""}
+        <div class="alert alert-danger col-12" role="alert">
+          {errorAlertMessage}
+        </div>
+      {/if}
+    </form>
+
+    <form id="devToolsFormContent">
       <div class="form-group mt-5">
         <Button on:click={hideShowDev}
         buttonStyle = "btn-light btn-outline-dark btn-sm mt-4"
@@ -113,7 +155,6 @@
           <option value="http://localhost:3000/api/v2">Development (localhost)</option>
         </select>
       </div>
-      
     </form>
   </div>
 </div>

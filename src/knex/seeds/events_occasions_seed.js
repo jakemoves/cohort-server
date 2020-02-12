@@ -54,11 +54,11 @@ exports.seed = function(knex, Promise) {
     }
 
     return knex('events').insert([
-      {label: 'pimohtēwak', episodes: defaultEpisodeAsJSON('pimohtēwak', false)},
-      {label: 'demo event', episodes: defaultEpisodeAsJSON('demo event', true)},
-      {label: 'midway', episodes: defaultEpisodeAsJSON('midway', false)},
-      {label: 'fluxdelux', episodes: defaultEpisodeAsJSON('fluxdelux', false)},
-      {label: 'café sarajevo', episodes: defaultEpisodeAsJSON('café sarajevo', false)}
+      {label: 'pimohtēwak', owner_id: 3, episodes: defaultEpisodeAsJSON('pimohtēwak', false)},
+      {label: 'demo event', owner_id: 3, episodes: defaultEpisodeAsJSON('demo event', true)},
+      {label: 'midway', owner_id: 3, episodes: defaultEpisodeAsJSON('midway', false)},
+      {label: 'fluxdelux', owner_id: 3, episodes: defaultEpisodeAsJSON('fluxdelux', false)},
+      {label: 'café sarajevo', owner_id: 3, episodes: defaultEpisodeAsJSON('café sarajevo', false)}
     ])
     .then( () => {
       // add occasions to events
@@ -66,6 +66,7 @@ exports.seed = function(knex, Promise) {
         return knex('occasions').insert([
           { 
             event_id: 2,
+            owner_id: 3,
             label: 'Show 1',
             state: 'closed',
             doorsOpenDateTime: '2019-04-01 13:30:00+05:00',
@@ -77,6 +78,7 @@ exports.seed = function(knex, Promise) {
           },{
             // overnight occasion
             event_id: 2,
+            owner_id: 3,
             label: 'Show 2',
             state: 'closed',
             doorsOpenDateTime: '2019-05-31 09:30:00+05:00',
@@ -87,6 +89,7 @@ exports.seed = function(knex, Promise) {
             locationCity: 'Toronto'
           },{ 
             event_id: 2,
+            owner_id: 3,
             label: 'Rehearsal',
             state: 'opened',
             doorsOpenDateTime: '2019-06-01 13:30:00+05:00',
@@ -97,6 +100,7 @@ exports.seed = function(knex, Promise) {
             locationCity: 'Toronto'
           },{ 
             event_id: 2,
+            owner_id: 3,
             label: 'Show 3',
             state: 'closed',
             doorsOpenDateTime: '2019-06-02 13:30:00+05:00',
@@ -107,6 +111,7 @@ exports.seed = function(knex, Promise) {
             locationCity: 'Toronto'
           },{ 
             event_id: 2,
+            owner_id: 3,
             label: 'Show 4',
             state: 'closed',
             doorsOpenDateTime: '2019-06-03 13:30:00+05:00',
