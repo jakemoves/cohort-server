@@ -118,11 +118,13 @@
 
     <form id="loginFormContent">
       <div class="form-group">
-          <input type="text" id="login_username" class="form-control" name="loginFormContent" placeholder="username" bind:value={usernameFieldValue}> 
+          <label for="login_username">Username</label>
+          <input type="text" id="login_username" class="form-control" name="loginFormContent" placeholder="Enter your username" bind:value={usernameFieldValue}> 
       </div>
 
-      <div class="form-group"> 
-        <input type="password" id="login_password" class="form-control" name="loginFormContent" placeholder="password" bind:value={passwordFieldValue}>     
+      <div class="form-group">
+        <label for="login_password">Password</label> 
+        <input type="password" id="login_password" class="form-control" name="loginFormContent" placeholder="Enter your password" bind:value={passwordFieldValue}>     
       </div>
 
       <div class="form-row">
