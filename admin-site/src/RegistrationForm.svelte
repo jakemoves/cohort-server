@@ -67,7 +67,7 @@
   {#if !registrationSuccessful}
     <div class="row">
       <div class= "col-md-12 text-center mt-4 mb-2">
-        <h5>Register</h5>
+        <h4>Register</h4>
       </div>
     </div>
 
@@ -77,7 +77,7 @@
         <input type="text" id="registration_username" name="registration_username" class="form-control" placeholder="Enter desired username" bind:value={usernameFieldValue}>
       </div>
       <div class="form-group">
-        <label for="registration_password">New Password</label> 
+        <label for="registration_password">Password</label> 
         <input type="password" id="registration_password" name="registration_username"class="form-control" placeholder="Enter new password" bind:value={passwordFieldValue}>
       </div>
       <div class="form-group">
