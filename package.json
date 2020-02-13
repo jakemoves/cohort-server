@@ -4,7 +4,8 @@
   "version": "0.1.3",
   "author": "Jacob Niedzwiecki (http://twitter.com/jakemoves)",
   "contributors": [
-    "Luke Garwood", "Amanda Baker"
+    "Luke Garwood",
+    "Amanda Baker"
   ],
   "bugs": "https://github.com/jakemoves/cohort-server/issues",
   "homepage": "https://cohort.rocks",

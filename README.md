@@ -33,7 +33,13 @@ Building for production:
 - `jest app && jest websocket` (the '&&' forces these to run one after the other, they fail if run in parallel which is what happen if you just run `jest`)
 
 ### building the server
+- `npm install`
 - `npm build`
+
+### building all the things
+This script builds all components (server, admin site, blog) and copies the built admin site and blog to the correct folders under /public.
+- `npm install` (if you're doing this immediately after pulling changes)
+- `npm run build-all`
 
 ### obtaining secret key files
 - ask project lead for the dot-env file
