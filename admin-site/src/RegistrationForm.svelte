@@ -67,19 +67,22 @@
   {#if !registrationSuccessful}
     <div class="row">
       <div class= "col-md-12 text-center mt-4 mb-2">
-        <h5>Register</h5>
+        <h4>Register</h4>
       </div>
     </div>
 
     <form id="registrationForm">
       <div class="form-group">
-        <input type="text" id="registration_username" name="registration_username" class="form-control" placeholder="desired username" bind:value={usernameFieldValue}>
+        <label for="registration_username">New Username</label> 
+        <input type="text" id="registration_username" name="registration_username" class="form-control" placeholder="Enter desired username" bind:value={usernameFieldValue}>
       </div>
       <div class="form-group">
-        <input type="password" id="registration_password" name="registration_username"class="form-control" placeholder="password" bind:value={passwordFieldValue}>
+        <label for="registration_password">Password</label> 
+        <input type="password" id="registration_password" name="registration_username"class="form-control" placeholder="Enter new password" bind:value={passwordFieldValue}>
       </div>
       <div class="form-group">
-        <input type="password" id="registration_confirm_password" name="registration_username"class="form-control" placeholder="confirm password" bind:value={confirmPasswordFieldValue}>
+        <label for="registration_confirm_password">Confirm Password</label> 
+        <input type="password" id="registration_confirm_password" name="registration_username"class="form-control" placeholder="Confirm new password" bind:value={confirmPasswordFieldValue}>
       </div>
       <div class="form-row">
         <Button on:click={onRegisterButton}

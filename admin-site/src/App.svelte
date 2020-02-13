@@ -9,10 +9,10 @@
   import Button from './Button.svelte';
   import Occasion from './Occasion.svelte';
   import { pageStateInStore } from "./PageStore.js";
-  //
   import OccasionsList from './OccasionsList.svelte';
   import EventsList from './EventsList.svelte';
   import RegistrationForm from './RegistrationForm.svelte'
+  import DevTools from './DevTools.svelte';
   
 
     //for new event creation parameters if we implment it
@@ -84,6 +84,8 @@
 
 {#if pageState == 0}
   <Login/>
+  <hr>
+  <!-- <DevTools/> -->
   <RegistrationForm />
 
 {:else if pageState == 1}

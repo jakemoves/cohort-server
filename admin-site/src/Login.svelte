@@ -34,7 +34,7 @@
     let splitHost = splitURL[0].split('.');
 
     if(splitHost[0] == "localhost" || splitHost[1] == "local"){
-      console.log('fire');
+      
       if( host == "localhost:5000"){
         serverURL = "http://localhost:3000/api/v2";
       } else {
@@ -83,28 +83,8 @@
     })
   }
 
-  function hideShowDev() {
-    let devTools = document.getElementById('devTools');
-
-    if(devTools.style.visibility == "visible"){
-      devTools.style.visibility = "hidden";
-    } else {
-      devTools.style.visibility = "visible"
-    }
-
-    
-  }
   
 </script> 
-<style>
-  #devTools{
-    visibility: hidden;
-  }
-  
-  /* .form-control{
-    font-size:0.8rem;
-  } */
-</style>
 
 
 <div id="login">
@@ -118,11 +98,13 @@
 
     <form id="loginFormContent">
       <div class="form-group">
-          <input type="text" id="login_username" class="form-control" name="loginFormContent" placeholder="username" bind:value={usernameFieldValue}> 
+          <label for="login_username">Username</label>
+          <input type="text" id="login_username" class="form-control" name="loginFormContent" placeholder="Enter your username" bind:value={usernameFieldValue}> 
       </div>
 
-      <div class="form-group"> 
-        <input type="password" id="login_password" class="form-control" name="loginFormContent" placeholder="password" bind:value={passwordFieldValue}>     
+      <div class="form-group">
+        <label for="login_password">Password</label> 
+        <input type="password" id="login_password" class="form-control" name="loginFormContent" placeholder="Enter your password" bind:value={passwordFieldValue}>     
       </div>
 
       <div class="form-row">
@@ -140,22 +122,8 @@
       {/if}
     </form>
 
-    <form id="devToolsFormContent">
-      <div class="form-group mt-5">
-        <Button on:click={hideShowDev}
-        buttonStyle = "btn-light btn-outline-dark btn-sm mt-4"
-        gridStyle = ""
-        buttonText = "Show/Hide Developer Tools"/>
-       </div>    
-     
-      <div class="form-group" id = "devTools">
-        <label for="urlSelect">Select Cohort server to connect to</label>
-        <select bind:value={serverURL} size= "1" class="form-control" id="urlSelect" name="selector">
-          <option value="https://staging.cohort.rocks/api/v2">Staging</option>
-          <option value="http://localhost:3000/api/v2">Development (localhost)</option>
-        </select>
-      </div>
-    </form>
+    
+
   </div>
 </div>
 
