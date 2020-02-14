@@ -103,7 +103,8 @@ exports.events_delete = async (req, res) => {
     return
   }
 
-  if(req.user.id != event.owner_id && !req.is_admin){
+  // user must be the owner OR the user must be an admin
+  if(!(req.user.id == event.owner_id || req.user.is_admin)){
     handleError(401, "Authorization required", res)
     return
   }
@@ -141,7 +142,8 @@ exports.events_update_episodes = async (req, res) => {
     return
   }
 
-  if(req.user.id != event.owner_id && !req.is_admin){
+  // user must be the owner OR the user must be an admin
+  if(!(req.user.id == event.owner_id || req.user.is_admin)){
     handleError(401, "Authorization required", res)
     return
   }

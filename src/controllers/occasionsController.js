@@ -101,7 +101,9 @@ exports.occasions_update = async (req, res) => {
     return
   }
 
-  if(req.user.id != occasion.owner_id && !req.user.is_admin){
+  // user must be the owner OR the user must be an admin
+  if(!(req.user.id == occasion.owner_id || req.user.is_admin)){
+    console.log(req.user)
     handleError(401, "Authorization required", res)
     return
   }
