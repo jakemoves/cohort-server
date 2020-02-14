@@ -6,9 +6,10 @@
 
 import {writable} from 'svelte/store';
 
-export let urlStore = writable("https://staging.cohort.rocks/api/v2");
+export let urlStore = writable(window.location.protocol + '//' + window.location.host + '/api/v2');
 export let serverURL;
 
 urlStore.subscribe(value => {
   serverURL = value;
+  console.log(value);
 })
