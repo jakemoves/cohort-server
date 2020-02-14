@@ -63,8 +63,6 @@ onMount(async () => {
     serverURL = value;
   })
 
-     
-
 });
 
 
@@ -261,8 +259,10 @@ function deleteOccasion() {
   <Page 
     pageID='openOccasion'
     headingText={focusedOccasion.label}
-    includeBackButton = true>
-     <div class="row">
+    includeBackButton = true
+    underHeading = {formattedStartTimeFull}>
+   
+    <div class="row">
       <Button
         buttonStyle='btn-outline-danger btn-block' 
         buttonText="Close Occasion" 

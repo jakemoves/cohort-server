@@ -10,6 +10,7 @@
  export let headingText = "";
  export let pageID = "";
  export let includeBackButton = false;
+ export let underHeading = ""
 
 </script>
 <style>
@@ -38,6 +39,11 @@
           </h3>
         {/if}
 
+      </div>
+    </div>
+    <div class="row">
+      <div class = "col-12">
+        <p class = "text-center">{underHeading}</p>
       </div>
     </div>
     <hr/>
