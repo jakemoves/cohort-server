@@ -19,13 +19,9 @@
   let errorAlertMessage = ""
 
  //everytime serverURL changes, update it in the store.
-  $: serverURL,
-    urlStore.subscribe(value => { console.log("Server URL: " + value) });
-    urlStore.update(value => value = serverURL)
-
-// add this to the above line to keep track of serverUrl value in store: 
+  $: serverURL,urlStore.update(value => value = serverURL) ; 
+// add this to the above line to keep track of serverUrl value in store: , urlStore.subscribe(value => {console.log(value)}) 
   onMount(async () => {
-    urlStore.subscribe(value => { console.log("Server URL: " + value) });
     serverURL;
     //checking for local dev ...needs testing on staging site
     checkLocalUrl();
@@ -44,6 +40,8 @@
       } else {
         serverURL = window.location.protocol + '//' + window.location.host + '/api/v2';
       }
+    } else {
+      serverURL = "https://staging.cohort.rocks/api/v2"
     }
   }
     
@@ -52,8 +50,6 @@
       
   async function login(){
     const payload = { username: usernameFieldValue, password: passwordFieldValue }
-
-    console.log(serverURL)
 
     let response = await fetch(serverURL + '/login', {
       method: 'POST',
