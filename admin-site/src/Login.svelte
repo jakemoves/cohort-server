@@ -19,8 +19,11 @@
   let errorAlertMessage = ""
 
  //everytime serverURL changes, update it in the store.
-  $: serverURL,urlStore.update(value => value = serverURL) ; 
-// add this to the above line to keep track of serverUrl value in store: , urlStore.subscribe(value => {console.log(value)}) 
+  $: serverURL,
+    urlStore.update(value => value = serverURL), 
+    urlStore.subscribe(value => {console.log("Server URL: " + value)});
+     
+// add this to the above line to keep track of serverUrl value in store: 
   onMount(async () => {
     serverURL;
     //checking for local dev ...needs testing on staging site
@@ -50,7 +53,7 @@
     const payload = { username: usernameFieldValue, password: passwordFieldValue }
 
     console.log(serverURL)
-    
+
     let response = await fetch(serverURL + '/login', {
       method: 'POST',
       headers: { 'Content-Type':  'application/json' },
