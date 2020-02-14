@@ -49,6 +49,8 @@
   async function login(){
     const payload = { username: usernameFieldValue, password: passwordFieldValue }
 
+    console.log(serverURL)
+    
     let response = await fetch(serverURL + '/login', {
       method: 'POST',
       headers: { 'Content-Type':  'application/json' },
