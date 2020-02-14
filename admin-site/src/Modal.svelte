@@ -17,8 +17,13 @@ export let modalTitle = ""
       <div class="modal-content">
 
         <div class="modal-header">
-          <slot name="closeButton"></slot> 
-          
+          <div class="container-fluid">
+            <div class = "row">
+              <div class = "col-12">
+                <slot name="closeButton"></slot> 
+              </div>
+            </div>
+          </div>
           <h5 class="modal-title">
             {modalTitle}
           </h5>
