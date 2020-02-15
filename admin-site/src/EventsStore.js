@@ -4,10 +4,10 @@
 
 //grabbing events info from server and placing in a store
 import {writable} from 'svelte/store';
-import { urlStore } from './ServerURLstore.js';
+import { serverURL } from './ServerURLstore.js';
 import { focusedEventLabel, focusedEventStore } from './PageStore.js';
 
-let serverURL;
+// let serverURL;
 
 let grabbedFromServerEvents;
 
@@ -18,9 +18,9 @@ let focusedEvent;
 
 
 export let getEventsAndStore = async () => {
-  urlStore.subscribe(value => {
-    serverURL = value;
-  })
+  // urlStore.subscribe(value => {
+  //   serverURL = value;
+  // })
 
   let response = await fetch(serverURL + "/events", {
     method: 'GET'

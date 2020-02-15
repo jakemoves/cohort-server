@@ -101,7 +101,6 @@ onMount(async () => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"state":"closed"}) 
       }).then( response => { 
-        console.log(response.status);
         if(response.status == 200){
           response.json().then( details => {
             //update state of occasion
@@ -120,7 +119,6 @@ onMount(async () => {
     } catch (e) {
       console.log(e.message)
     }
-    //  storedEvents.subscribe(value => console.log(value))
      
   }
 
@@ -402,17 +400,10 @@ function deleteOccasion() {
 </Modal>
 
 <Modal
-  modalID="QRcodeModalClosed">
-    <div slot="closeButton">
+  modalID="QRcodeModalClosed"
+  showCloseButton = true>
+    <div slot="header">
       <div class ="row">
-        <div class="col-12 mb-2">
-          <Button
-              buttonStyle="close"
-              gridStyle = ""
-              dataDismiss="modal"
-              ariaLabel="Close"
-              iconRight = "fas fa-times"/>
-        </div>
 
         <div class="col-12">
           <p>Print this QR code to allow mobile devices to connect to your occasion.<br> <strong>Note: </strong>an occasion must be open to receive connections. </p>
@@ -440,15 +431,9 @@ function deleteOccasion() {
 </Modal>
 
 <Modal
-  modalID="QRcodeModal">
-    <div slot="closeButton">
-      <Button
-          buttonStyle="close"
-          dataDismiss="modal"
-          ariaLabel="Close"
-          iconRight = "fas fa-times"/>
+  modalID="QRcodeModal"
+  showCloseButton = true>
     
-    </div>
     
     <div slot="modalBody" class="container-fluid">
       <div class = "QRcodeContainer">
