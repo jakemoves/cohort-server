@@ -39,9 +39,7 @@
     }
   });
 
-  
-
-   function sendOccasionsPackage(){
+  function sendOccasionsPackage(){
     dispatch('message', {
       "focusedOccasion": focusedOccasion,
       "focusedOccasionID": focusedOccasionID,
@@ -50,7 +48,7 @@
   }
   function sendOccasionState(){
     dispatchOccasionState('state',{
-      "openOccasionCreation": true
+      "occasionCreationFormIsOpen": true
     })
   }
 
@@ -72,7 +70,7 @@
     
     if (focusedOccasionState == "closed"){
       occasionOpen.set(false);
-    } else{
+    } else {
       occasionOpen.set(true);
     }  
 
@@ -109,8 +107,7 @@
   }
 
    function openForm(){
-    sendOccasionState();
-    
+    sendOccasionState(); 
   }
 
 </script>
@@ -135,7 +132,7 @@
 <hr>
 <!-- Block button, more consistent with other button UI -->
 <Button on:click={openForm}
-    buttonText = "Occasion Creation Form"
+    buttonText = "Create a new occasion"
     buttonStyle = "btn-outline-success btn-block"/>
 
     <!-- Inline with other list items version -->
@@ -145,7 +142,7 @@
 
 <Button
   buttonStyle="btn-outline-danger btn-block"
-  buttonText="Delete Event"
+  buttonText="Delete event"
   dataTarget="#deleteEventModal"/>
 {#if showDeleteError}
 <div class="alert alert-danger text-center">
@@ -176,7 +173,7 @@
       gridStyle = "mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
-      buttonText="Delete This Event"/>
+      buttonText="Delete this event"/>
   </div>
 </Modal>
           

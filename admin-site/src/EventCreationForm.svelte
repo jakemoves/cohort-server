@@ -3,57 +3,54 @@ import Button from './Button.svelte';
 import { createEventDispatcher } from 'svelte';
 import { serverURL } from "./ServerURLstore.js";
 import { getEventsAndStore } from './EventsStore.js';
-import { focusedEvent } from './PageStore.js';
 
 
-let newOccasionLabel;
+let newEventLabel;
 let showError = false;
 let errorResults;
 const dispatch = createEventDispatcher();
 
 
-function sendOccasionCreationFormState(){
+function sendEventCreationFormState(){
   dispatch('message', {
-    "openOccasionCreation": false
+    "openEventCreation": false
   });
 }
 
-function createOccasion() {
-  
-  if(newOccasionLabel == undefined){
+function createEvent() {
+ 
+  if(newEventLabel == undefined){
     showError = true;
-    errorResults = "Please give the occasion a name";
+    errorResults = "Please give the event a name";
 
-  } else if (newOccasionLabel.length == 0){
+  } else if (newEventLabel.length == 0){
     showError = true;
-    errorResults = "Please give the occasion a name";
-    
+    errorResults = "Please give the event a name";
+
   } else {
-    
     try {
-        fetch(serverURL + "/occasions/", {
+        fetch(serverURL + "/events", {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ "label": newOccasionLabel,
-                                  "eventId": focusedEvent.id }) 
+          body: JSON.stringify({ "label": newEventLabel }) 
         }).then( response => { 
           if(response.status == 201){
             response.json().then( details => {
               
               // make sure store updates from server
               getEventsAndStore();
-              sendOccasionCreationFormState();
+              sendEventCreationFormState();
               showError = false;
             })
           } else {
             response.text().then( errorMessage => {
-              console.log('Occasion creation error: ' + errorMessage)
+              console.log('Event creation error: ' + errorMessage)
               showError = true;
               errorResults = errorMessage;
             })
           }
         }).catch( error => {
-          console.log("Error on occasion creation")
+          console.log("Error on event creation")
         })
       } catch (e) {
         console.log(e.message)
@@ -63,19 +60,19 @@ function createOccasion() {
 }
 
 function cancel(){
-  sendOccasionCreationFormState();
+  sendEventCreationFormState();
 }
 
 </script>
 
 <form>
   <div class="form-group">
-    <label for="occasionLabel">Occasion Label/Name</label>
-    <input class="form-control" id="occasionLabel" aria-describedby="occasionCreation" placeholder="Enter occasion label." bind:value = {newOccasionLabel}>
+    <label for="eventLabel">Event Label/Name</label>
+    <input class="form-control" id="eventLabel" aria-describedby="eventLabelCreation" placeholder="Enter event label." bind:value = {newEventLabel}>
   </div>
 
-  <Button on:click={createOccasion}
-    buttonText = "Create Occasion"
+  <Button on:click={createEvent}
+    buttonText = "Create event"
     buttonStyle = "btn-outline-success btn-block"/>
   
   <Button on:click={cancel}

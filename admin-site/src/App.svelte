@@ -13,8 +13,8 @@
   import EventsList from './EventsList.svelte';
   import RegistrationForm from './RegistrationForm.svelte'
   import DevTools from './DevTools.svelte';
-  import EventCreation from './EventCreation.svelte';
-  import OccasionCreation from './OccasionCreation.svelte';
+  import EventCreation from './EventCreationForm.svelte';
+  import OccasionCreation from './OccasionCreationForm.svelte';
   
 
   let focusedOccasionID;
@@ -31,13 +31,15 @@
   // let broadcastResults;
 
   let openEventCreation = false;
-  let openOccasionCreation = false;
+  let occasionCreationFormIsOpen = false;
   let pageState;
   //grab pageState from store
   pageStateInStore.subscribe(value => {
     pageState = value;
   })
 
+  /////Functions below grab dispatch messages
+  
   //grab info from events + occasions
   function messageFromArrayList(value){
     focusedEventLabel = value.detail.focusedEventLabel;
@@ -52,29 +54,31 @@
     isOccasionOpen = value.detail.isOccasionOpen;
 
   }
-
-  function messageCloseEventForm(value){
+   //receive message package from EventCreation to hide the event creation form
+  function messageToCloseEventForm(value){
     openEventCreation = value.detail.openEventCreation;
   }
-  function messageOpenEventForm(value){
+   //receive message package from EventsList to show the event creation form
+  function messageToOpenEventForm(value){
     openEventCreation = value.detail.openEventCreation;
   }
-  function messageCloseOccasionForm(value){
-    openOccasionCreation = value.detail.openOccasionCreation;
+   //receive message package from OccasionCreation to exit the occasion creation form
+  function messageToCloseOccasionForm(value){
+    occasionCreationFormIsOpen = value.detail.occasionCreationFormIsOpen;
   }
-  function messageOpenOccasionForm(value){
-    openOccasionCreation = value.detail.openOccasionCreation;
+  //receive message package from OccasionList to show the occasion creation form
+  function messageToOpenOccasionForm(value){
+    occasionCreationFormIsOpen = value.detail.occasionCreationFormIsOpen;
     
   }
-  
+  //receive message package from BackButton on occasion list page to only update occasion state (as opposed to pageState);
   function broadcastStatusFromBackButton(value){
     broadcastStatus = value.detail.broadcastStatus;
-    openOccasionCreation = value.detail.openOccasionCreation;
+    occasionCreationFormIsOpen = value.detail.occasionCreationFormIsOpen;
   }
  
- 
-
 </script>
+
 <style>
   @media (min-width:641px)  {
     :global(body) {  
@@ -89,6 +93,7 @@
 {#if pageState == 0}
   <Login/>
   <hr>
+  <!-- dev tools are currently commented out but could allow manual choosing of serverURL -->
   <!-- <DevTools/> -->
   <RegistrationForm />
 
@@ -96,31 +101,31 @@
   <Page
     pageID="eventsList"
     headingText="Events">
+    
     {#if !openEventCreation}
 <!-- #eventsList allows a list of events to be built and shown based on "events" from store-->
       <EventsList on:message = {messageFromArrayList}
-        on:state ={messageOpenEventForm}/>
+        on:state ={messageToOpenEventForm}/>
     {:else}
-      <EventCreation on:message = {messageCloseEventForm}/>
+      <EventCreation on:message = {messageToCloseEventForm}/>
 
     {/if}
   </Page>
 
 {:else if pageState == 2}
-
-<!-- //occasions list populated by looping through events of "focused" event ID -->
   <Page on:goBack={broadcastStatusFromBackButton}
     pageID = "occasionList" 
     headingText="Occasions"
     includeBackButton = true
-    occasionFormIsOpen = {openOccasionCreation}>
-
-    {#if !openOccasionCreation}
+    occasionCreationFormIsOpen = {occasionCreationFormIsOpen}>
+    <!-- open and close occasion creation form -->
+    {#if !occasionCreationFormIsOpen}
+    <!-- //occasions list populated by looping through events of "focused" event ID -->
       <OccasionsList on:message = {messageFromArrayListOccasions}
-        on:state={messageOpenOccasionForm}
+        on:state={messageToOpenOccasionForm}
         focusedEventLabel = {focusedEventLabel}/>
     {:else}
-      <OccasionCreation on:message = {messageCloseOccasionForm} />
+      <OccasionCreation on:message = {messageToCloseOccasionForm} />
     {/if}
     
   </Page>

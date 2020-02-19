@@ -16,35 +16,7 @@
   let selectedURL;
 
   let usernameFieldValue, passwordFieldValue
-  let errorAlertMessage = ""
-
- 
-// add this to the above line to keep track of serverUrl value in store: , urlStore.subscribe(value => {console.log(value)}) 
-  // onMount(async () => {
-    //checking for local dev ...needs testing on staging site
-    // checkLocalUrl();
-    
-  // });
-
-  // function checkLocalUrl () {
-  //   let host = window.location.host;
-  //   let splitURL = host.split(':');
-  //   let splitHost = splitURL[0].split('.');
-
-  //   if(splitHost[0] == "localhost" || splitHost[1] == "local"){
-  //     let serverURL;
-  //     if( host == "localhost:5000"){
-  //       serverURL = "http://localhost:3000/api/v2";
-  //     }
-  //     //  else {
-  //     //   serverURL = window.location.protocol + '//' + window.location.host + '/api/v2';
-  //     // }
-    
-  //   }
-
-  // }
-    
-    
+  let errorAlertMessage = ""  
    
       
   async function login(){

@@ -66,7 +66,7 @@
 
 </script>
 <style>
- .eventLable {
+ .eventLabel {
   word-wrap:break-word;
  }
  h3 {
@@ -80,7 +80,7 @@
   emptyArrayMessage = "This happens on occasion. No occasions for this event yet.">
     {#each events as item (item.id)}
       <div class="row mt-2">
-        <div class="col-6 text-right eventLable">
+        <div class="col-6 text-right eventLabel">
             <h3>{item.label}:</h3>
         </div>
         <Button on:click={()=> eventButton(item.label)}
@@ -91,5 +91,5 @@
 </Array>
 <hr>
 <Button on:click={openForm}
-    buttonText = "Event Creation Form"
+    buttonText = "Create a new event"
     buttonStyle = "btn-outline-success btn-block"/>

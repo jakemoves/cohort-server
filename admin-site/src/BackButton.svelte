@@ -8,7 +8,7 @@ import Button from "./Button.svelte"
 import { pageStateInStore } from "./PageStore.js";
 import { createEventDispatcher } from 'svelte';
 
-export let occasionFormIsOpen;
+export let occasionCreationFormIsOpen;
 
 const dispatch = createEventDispatcher();
 let broadcastStatus="";
@@ -21,8 +21,8 @@ function sendBackButtonPackage(){
 }
   
 function goBackAPage(){
-  
-  if(!occasionFormIsOpen){
+  //if occasion form is open, only update occasion state with senButtonPackage();
+  if(!occasionCreationFormIsOpen){
     pageStateInStore.update(value => value - 1);
   }
   // not sure this is the right space for this

@@ -219,7 +219,7 @@ function deleteOccasion() {
 
         <div class="row">
         <Button on:click={showQR}
-            buttonText="Get QR Code" 
+            buttonText="Get QR code" 
             dataTarget="#QRcodeModalClosed"/>
         </div>
 
@@ -240,12 +240,12 @@ function deleteOccasion() {
             <div class="row">
             <Button on:click={openOccasionButton}
                 buttonStyle="btn-outline-success btn-block"
-                buttonText="Open Occasion"/>
+                buttonText="Open occasion"/>
             </div>
             <div class="row">
             <Button
                 buttonStyle="btn-outline-danger btn-block"
-                buttonText="Delete Occasion"
+                buttonText="Delete occasion"
                 dataTarget="#deleteOccasionModal"/>
             </div>
             
@@ -263,12 +263,12 @@ function deleteOccasion() {
     <div class="row">
       <Button
         buttonStyle='btn-outline-danger btn-block' 
-        buttonText="Close Occasion" 
+        buttonText="Close occasion" 
         dataTarget="#closeOccassionModal"/>
     </div>
     <div class="row">
       <Button on:click={showQR} 
-        buttonText="Show QR Code" 
+        buttonText="Show QR code" 
         dataTarget="#QRcodeModal"/>
     </div>
     
@@ -352,7 +352,7 @@ function deleteOccasion() {
 {/if}
 <Modal
   modalID="closeOccassionModal"
-  modalTitle="Close Occasion">
+  modalTitle="Close occasion">
   
   <div slot="modalBody">
       Are you sure you want to close {focusedEvent.label} - {formattedStartTime}?
@@ -368,7 +368,7 @@ function deleteOccasion() {
       gridStyle = "mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
-      buttonText="Close Occasion"/>
+      buttonText="Close occasion"/>
   </div>
 </Modal>
 
@@ -393,7 +393,7 @@ function deleteOccasion() {
       gridStyle = "mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
-      buttonText="Delete Occasion"/>
+      buttonText="Delete occasion"/>
   </div>
 </Modal>
 
