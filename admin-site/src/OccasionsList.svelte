@@ -18,6 +18,7 @@
   export let focusedEventLabel;
   let dateSortedOccasions = [];
   const dispatch = createEventDispatcher();
+  const dispatchOccasionState = createEventDispatcher();
   let focusedOccasionID;
   let indexInOccasions;
   let focusedOccasion;
@@ -26,6 +27,7 @@
 
   let deleteResults;
   let showDeleteError = false;
+  let openOccasionCreation = false;
 
   
   focusedEventStore.subscribe(value => {
@@ -45,6 +47,11 @@
       "focusedOccasionID": focusedOccasionID,
       "indexInOccasions":indexInOccasions,
     });
+  }
+  function sendOccasionState(){
+    dispatchOccasionState('state',{
+      "openOccasionCreation": true
+    })
   }
 
   function occasionButton(id) {
@@ -101,6 +108,10 @@
     }
   }
 
+   function openForm(){
+    sendOccasionState();
+    
+  }
 
 </script>
 
@@ -115,6 +126,10 @@
   {/each}
   
 </Array>
+<hr>
+<Button on:click={openForm}
+    buttonText = "Occasion Creation Form"
+    buttonStyle = "btn-outline-success btn-block"/>
 
 <hr>
 

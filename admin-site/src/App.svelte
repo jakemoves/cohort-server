@@ -14,6 +14,7 @@
   import RegistrationForm from './RegistrationForm.svelte'
   import DevTools from './DevTools.svelte';
   import EventCreation from './EventCreation.svelte';
+  import OccasionCreation from './OccasionCreation.svelte';
   
 
     //for new event creation parameters if we implment it
@@ -33,6 +34,7 @@
   // let broadcastResults;
 
   let openEventCreation = false;
+  let openOccasionCreation = false;
   let pageState;
   //grab pageState from store
   pageStateInStore.subscribe(value => {
@@ -54,12 +56,18 @@
 
   }
 
-  function messageCloseForm(value){
+  function messageCloseEventForm(value){
     openEventCreation = value.detail.openEventCreation;
   }
-  function messageOpenForm(value){
+  function messageOpenEventForm(value){
     openEventCreation = value.detail.openEventCreation;
-    console.log(openEventCreation);
+  }
+  function messageCloseOccasionForm(value){
+    openOccasionCreation = value.detail.openOccasionCreation;
+  }
+  function messageOpenOccasionForm(value){
+    openOccasionCreation = value.detail.openOccasionCreation;
+    
   }
   
   function broadcastStatusFromBackButton(value){
@@ -104,9 +112,9 @@
     {#if !openEventCreation}
 <!-- #eventsList allows a list of events to be built and shown based on "events" from store-->
       <EventsList on:message = {messageFromArrayList}
-        on:state ={messageOpenForm}/>
+        on:state ={messageOpenEventForm}/>
     {:else}
-      <EventCreation on:message = {messageCloseForm}/>
+      <EventCreation on:message = {messageCloseEventForm}/>
 
     {/if}
   </Page>
@@ -118,8 +126,13 @@
     headingText="Occasions"
     includeBackButton = true>
 
-    <OccasionsList on:message = {messageFromArrayListOccasions}
-      focusedEventLabel = {focusedEventLabel}/>
+    {#if !openOccasionCreation}
+      <OccasionsList on:message = {messageFromArrayListOccasions}
+        on:state={messageOpenOccasionForm}
+        focusedEventLabel = {focusedEventLabel}/>
+    {:else}
+      <OccasionCreation on:message = {messageCloseOccasionForm} />
+    {/if}
     
   </Page>
 {:else if pageState == 3}
