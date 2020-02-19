@@ -87,5 +87,5 @@
 </Array>
 <hr>
 <Button on:click={openForm}
-    buttonText = "Event creation form"
+    buttonText = "Event Creation Form"
     buttonStyle = "btn-outline-success btn-block"/>

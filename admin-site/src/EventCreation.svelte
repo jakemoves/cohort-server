@@ -6,7 +6,10 @@ import { getEventsAndStore } from './EventsStore.js';
 
 
 let newEventLabel;
+let showError = false;
+let errorResults;
 const dispatch = createEventDispatcher();
+
 
 function sendEventCreationFormState(){
   dispatch('message', {
@@ -15,32 +18,49 @@ function sendEventCreationFormState(){
 }
 
 function createEvent() {
-  try {
-      fetch(serverURL + "/events", {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ "label": newEventLabel }) 
-      }).then( response => {
-      console.log(response.status); 
-        if(response.status == 201){
-          response.json().then( details => {
-            
-            // make sure store updates from server
-            getEventsAndStore();
-            sendEventCreationFormState();
-          })
-        } else {
-          response.text().then( errorMessage => {
-            console.log('Event creation error: ' + errorMessage)
-          })
-        }
-      }).catch( error => {
-        console.log("Error on event creation")
-      })
-    } catch (e) {
-      console.log(e.message)
-    }
+  console.log(newEventLabel);
+  if(newEventLabel == undefined){
+    showError = true;
+    errorResults = "Please give the event a name";
 
+  } else if (newEventLabel.length == 0){
+    showError = true;
+    errorResults = "Please give the event a name";
+    
+  } else {
+    try {
+        fetch(serverURL + "/events", {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ "label": newEventLabel }) 
+        }).then( response => { 
+          if(response.status == 201){
+            response.json().then( details => {
+              
+              // make sure store updates from server
+              getEventsAndStore();
+              sendEventCreationFormState();
+              showError = false;
+            })
+          } else {
+            response.text().then( errorMessage => {
+              console.log('Event creation error: ' + errorMessage)
+              showError = true;
+              errorResults = errorMessage;
+            })
+          }
+        }).catch( error => {
+          console.log("Error on event creation")
+        })
+      } catch (e) {
+        console.log(e.message)
+    }
+  }
+
+}
+
+function cancel(){
+  sendEventCreationFormState();
 }
 
 </script>
@@ -52,7 +72,17 @@ function createEvent() {
   </div>
 
   <Button on:click={createEvent}
-    buttonText = "Create event"
+    buttonText = "Create Event"
     buttonStyle = "btn-outline-success btn-block"/>
+  
+  <Button on:click={cancel}
+    buttonText = "Cancel"
+    buttonStyle = "btn-outline-secondary btn-block"/>
+  
+  {#if showError}
+    <div class="alert alert-danger text-center">
+        {errorResults}
+    </div>
+  {/if}
  
 </form>

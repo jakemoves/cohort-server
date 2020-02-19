@@ -355,9 +355,7 @@ function deleteOccasion() {
   modalTitle="Close Occasion">
   
   <div slot="modalBody">
-    <!-- {#if gotEvents} -->
       Are you sure you want to close {focusedEvent.label} - {formattedStartTime}?
-    <!-- {/if} -->
   </div>
   <div class="row" slot="modalFooter">
     <Button
