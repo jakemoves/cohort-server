@@ -67,8 +67,12 @@
 </script>
 <style>
  .eventLable {
-  word-wrap:break-word
+  word-wrap:break-word;
  }
+ h3 {
+   font-size: 1.55rem;
+ }
+ 
 </style>
 
 <Array

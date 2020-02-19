@@ -8,26 +8,32 @@ import Button from "./Button.svelte"
 import { pageStateInStore } from "./PageStore.js";
 import { createEventDispatcher } from 'svelte';
 
+export let occasionFormIsOpen;
+
 const dispatch = createEventDispatcher();
 let broadcastStatus="";
 
 function sendBackButtonPackage(){
-  dispatch('goBackAPage', {
-            "broadcastStatus": broadcastStatus 
-		});
+  dispatch('goBack', {
+            "broadcastStatus": broadcastStatus,
+            "openOccasionCreation": false
+	});
 }
-
+  
 function goBackAPage(){
+  
+  if(!occasionFormIsOpen){
     pageStateInStore.update(value => value - 1);
-    // not sure this is the right space for this
-    broadcastStatus = "unsent"
-
   }
+  // not sure this is the right space for this
+  broadcastStatus = "unsent"
+  sendBackButtonPackage();
+}
 
 </script>
 
  <Button on:click={goBackAPage}
-          gridStyle=""
-          buttonStyle="btn-outline-primary abs-left"
-          iconLeft= "backButton fa fa-angle-left"
-          buttonText="Back"/>
+    gridStyle=""
+    buttonStyle="btn-outline-primary abs-left"
+    iconLeft= "backButton fa fa-angle-left"
+    buttonText="Back"/>

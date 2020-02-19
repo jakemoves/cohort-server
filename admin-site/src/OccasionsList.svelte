@@ -120,18 +120,28 @@
   emptyArrayMessage = "This happens on occasion. No occasions for this event yet.">
 
   {#each  dateSortedOccasions as item (item.id)}
-    <Button on:click={() => occasionButton(item.id)}
-    buttonHtml = '<h3 class="m-0">{item.label}  - {item.label} </h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
-    value = {item.id}/> 
+    {#if item.locationCity == null}
+      <Button on:click={() => occasionButton(item.id)}
+        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5>City Name - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
+        value = {item.id}/>
+    {:else}
+      <Button on:click={() => occasionButton(item.id)}
+        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
+        value = {item.id}/> 
+    {/if} 
   {/each}
   
 </Array>
 <hr>
+<!-- Block button, more consistent with other button UI -->
 <Button on:click={openForm}
     buttonText = "Occasion Creation Form"
     buttonStyle = "btn-outline-success btn-block"/>
 
-<hr>
+    <!-- Inline with other list items version -->
+  <!-- <Button on:click={openForm}
+    buttonHtml = '<h3 class="m-0">Occasion Creation Form</h3> <h5> </h5>'
+    buttonStyle = "btn-outline-success btn-block"/> -->
 
 <Button
   buttonStyle="btn-outline-danger btn-block"
@@ -143,7 +153,7 @@
 </div>
 {/if}
 
-<hr>
+
 
 <Modal
   modalID = "deleteEventModal"

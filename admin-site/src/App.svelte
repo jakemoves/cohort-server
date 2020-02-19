@@ -17,9 +17,6 @@
   import OccasionCreation from './OccasionCreation.svelte';
   
 
-    //for new event creation parameters if we implment it
-  // let label = "";
-
   let focusedOccasionID;
   let focusedEvent;
   let focusedEventLabel;
@@ -72,20 +69,10 @@
   
   function broadcastStatusFromBackButton(value){
     broadcastStatus = value.detail.broadcastStatus;
+    openOccasionCreation = value.detail.openOccasionCreation;
   }
-  /////for new event generation if we implemet it///
-  // function setTitle(event) {
-  //   label = event.target.value;
-  // }
-  //whichever parameters we want to be able to build for new events from the site would go below
-  // function createEvent() {
-  //   let newEvent = [
-  //     {
-  //       label: label
-  //     }
-  //   ];
-  //   events = events.concat(newEvent);
-  // }
+ 
+ 
 
 </script>
 <style>
@@ -120,11 +107,13 @@
   </Page>
 
 {:else if pageState == 2}
+
 <!-- //occasions list populated by looping through events of "focused" event ID -->
-  <Page on:message={broadcastStatusFromBackButton}
+  <Page on:goBack={broadcastStatusFromBackButton}
     pageID = "occasionList" 
     headingText="Occasions"
-    includeBackButton = true>
+    includeBackButton = true
+    occasionFormIsOpen = {openOccasionCreation}>
 
     {#if !openOccasionCreation}
       <OccasionsList on:message = {messageFromArrayListOccasions}

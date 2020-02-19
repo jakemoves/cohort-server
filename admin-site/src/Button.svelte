@@ -38,22 +38,23 @@ export let buttonHtml = "";
 </style>
 
 
-    <div class={gridStyle}>
-    
-            <button on:click
-                type={buttonType}
-                class="btn {buttonStyle}" 
-                data-toggle="modal" 
-                data-target={dataTarget}
-                data-dismiss = {dataDismiss}
-                aria-label = {ariaLabel}
-                value = {value}
-                disabled = {disabled}>
+<div class={gridStyle}>
+  <button on:click
+    type={buttonType}
+    class="btn {buttonStyle}" 
+    data-toggle="modal" 
+    data-target={dataTarget}
+    data-dismiss = {dataDismiss}
+    aria-label = {ariaLabel}
+    value = {value}
+    disabled = {disabled}>
 
-            <span class={iconLeft}/>
-           {@html buttonHtml}{buttonText}
-            <span class={iconRight}/>
-        </button>
+    <span class={iconLeft}/>
+    {@html buttonHtml}
+    {buttonText}
+    <span class={iconRight}/>
     
-    </div>
+  </button>
+
+</div>
 

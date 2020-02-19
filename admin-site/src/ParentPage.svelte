@@ -11,6 +11,7 @@
  export let pageID = "";
  export let includeBackButton = false;
  export let underHeading = ""
+ export let occasionFormIsOpen;
 
 </script>
 <style>
@@ -22,7 +23,8 @@
     <div class="row">
       <div class="col-12 mt-2">
         {#if includeBackButton}
-          <BackButton/>
+          <BackButton on:goBack
+            occasionFormIsOpen = {occasionFormIsOpen}/>
         {/if}
 
         {#if headerSize == 1}
