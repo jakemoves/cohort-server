@@ -12,6 +12,7 @@
   import { pageStateInStore, focusedEventStore, indexInEventsStore, focusedEventLabelStore} from './PageStore.js';
 
   const dispatch = createEventDispatcher();
+  const dispatchState = createEventDispatcher();
 
   let indexInEvents;
   let focusedEvent;
@@ -33,6 +34,17 @@
     });
   }
 
+  function sendEventCreationFormState(){
+    dispatchState('state', {
+      "openEventCreation": true
+    });
+  }
+
+  function openForm(){
+    sendEventCreationFormState();
+    
+  }
+
 
   //focusedevent store updated when evenst store changes
   function eventButton(value){ 
@@ -41,11 +53,6 @@
     indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
     focusedEvent = events[indexInEvents];
     
-    // ///sorting occasions by date
-    // let occasionArray = focusedEvent.occasions;
-    // let sortDates = (a, b) => moment(a.startDateTime).format('YYYYMMDD') -moment(b.startDateTime).format('YYYYMMDD');
-    // dateSortedOccasions = occasionArray.sort(sortDates);
-
     //set up slider cue to hold cues in first index (0)
     sliderCue = focusedEvent.episodes[0].cues[0]
     //update stores
@@ -56,19 +63,29 @@
   }
 
 
+
 </script>
+<style>
+ .eventLable {
+  word-wrap:break-word
+ }
+</style>
 
 <Array
-      arrayName = {events} 
-      emptyArrayMessage = "This happens on occasion. No occasions for this event yet.">
-        {#each events as item (item.id)}
-          <div class="row mt-2">
-            <div class="col-6 text-right">
-                <h3>{item.label}:</h3>
-            </div>
-            <Button on:click={()=> eventButton(item.label)}
-              buttonHtml='<p class="mb-0">Occasions&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>'
-              gridStyle ="col-6" />
-          </div>
-        {/each}
+  arrayName = {events} 
+  emptyArrayMessage = "This happens on occasion. No occasions for this event yet.">
+    {#each events as item (item.id)}
+      <div class="row mt-2">
+        <div class="col-6 text-right eventLable">
+            <h3>{item.label}:</h3>
+        </div>
+        <Button on:click={()=> eventButton(item.label)}
+          buttonHtml='<p class="mb-0">Occasions&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>'
+          gridStyle ="col-6" />
+      </div>
+    {/each}
 </Array>
+<hr>
+<Button on:click={openForm}
+    buttonText = "Event creation form"
+    buttonStyle = "btn-outline-success btn-block"/>

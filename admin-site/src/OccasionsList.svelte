@@ -76,8 +76,7 @@
     try {
     return fetch(serverURL + "/events/" + focusedEvent.id, {
       method: 'DELETE'
-    }).then( async (response) => {
-      console.log(response.status); 
+    }).then( async (response) => { 
       if(response.status == 204){
            getEventsAndStore()
            pageStateInStore.set(1)
@@ -117,7 +116,7 @@
   
 </Array>
 
-  <hr>
+<hr>
 
 <Button
   buttonStyle="btn-outline-danger btn-block"
@@ -128,6 +127,8 @@
     {deleteResults}
 </div>
 {/if}
+
+<hr>
 
 <Modal
   modalID = "deleteEventModal"

@@ -13,6 +13,7 @@
   import EventsList from './EventsList.svelte';
   import RegistrationForm from './RegistrationForm.svelte'
   import DevTools from './DevTools.svelte';
+  import EventCreation from './EventCreation.svelte';
   
 
     //for new event creation parameters if we implment it
@@ -31,7 +32,7 @@
   let broadcastStatus = "unsent";
   // let broadcastResults;
 
-  
+  let openEventCreation = false;
   let pageState;
   //grab pageState from store
   pageStateInStore.subscribe(value => {
@@ -51,6 +52,14 @@
     indexInOccasions = value.detail.indexInOccasions;
     isOccasionOpen = value.detail.isOccasionOpen;
 
+  }
+
+  function messageCloseForm(value){
+    openEventCreation = value.detail.openEventCreation;
+  }
+  function messageOpenForm(value){
+    openEventCreation = value.detail.openEventCreation;
+    console.log(openEventCreation);
   }
   
   function broadcastStatusFromBackButton(value){
@@ -92,9 +101,14 @@
   <Page
     pageID="eventsList"
     headingText="Events">
+    {#if !openEventCreation}
 <!-- #eventsList allows a list of events to be built and shown based on "events" from store-->
-    <EventsList on:message = {messageFromArrayList}
-      />
+      <EventsList on:message = {messageFromArrayList}
+        on:state ={messageOpenForm}/>
+    {:else}
+      <EventCreation on:message = {messageCloseForm}/>
+
+    {/if}
   </Page>
 
 {:else if pageState == 2}
@@ -106,8 +120,6 @@
 
     <OccasionsList on:message = {messageFromArrayListOccasions}
       focusedEventLabel = {focusedEventLabel}/>
-    <hr>
-    
     
   </Page>
 {:else if pageState == 3}
