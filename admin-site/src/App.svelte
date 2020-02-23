@@ -13,8 +13,8 @@
   import EventsList from './EventsList.svelte';
   import RegistrationForm from './RegistrationForm.svelte'
   import DevTools from './DevTools.svelte';
-  import EventCreation from './EventCreationForm.svelte';
-  import OccasionCreation from './OccasionCreationForm.svelte';
+  import EventCreationFrom from './EventCreationForm.svelte';
+  import OccasionCreationForm from './OccasionCreationForm.svelte';
   
 
   let focusedOccasionID;
@@ -54,7 +54,7 @@
     isOccasionOpen = value.detail.isOccasionOpen;
 
   }
-   //receive message package from EventCreation to hide the event creation form
+   //receive message package from EventCreationFrom to hide the event creation form
   function messageToCloseEventForm(value){
     openEventCreation = value.detail.openEventCreation;
   }
@@ -62,7 +62,7 @@
   function messageToOpenEventForm(value){
     openEventCreation = value.detail.openEventCreation;
   }
-   //receive message package from OccasionCreation to exit the occasion creation form
+   //receive message package from OccasionCreationForm to exit the occasion creation form
   function messageToCloseOccasionForm(value){
     occasionCreationFormIsOpen = value.detail.occasionCreationFormIsOpen;
   }
@@ -107,7 +107,7 @@
       <EventsList on:message = {messageFromArrayList}
         on:state ={messageToOpenEventForm}/>
     {:else}
-      <EventCreation on:message = {messageToCloseEventForm}/>
+      <EventCreationFrom on:message = {messageToCloseEventForm}/>
 
     {/if}
   </Page>
@@ -125,16 +125,13 @@
         on:state={messageToOpenOccasionForm}
         focusedEventLabel = {focusedEventLabel}/>
     {:else}
-      <OccasionCreation on:message = {messageToCloseOccasionForm} />
+      <OccasionCreationForm on:message = {messageToCloseOccasionForm} />
     {/if}
     
   </Page>
 {:else if pageState == 3}
   
   <Occasion
-    focusedOccasion = {focusedOccasion}
-    focusedOccasionID  = {focusedOccasionID}
-    indexInOccasions = {indexInOccasions}
     sliderCue = {sliderCue}
     broadcastStatus ={broadcastStatus}/>
 

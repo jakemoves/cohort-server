@@ -6,64 +6,51 @@
 
 <!-- Component for open and closed occasions -->
 <script>
-import Page from './ParentPage.svelte';
-import { onMount } from 'svelte';
-import { pageStateInStore, focusedEventStore } from './PageStore.js';
-import { urlStore } from './ServerURLstore.js';
-import { events, storedEvents, getEventsAndStore } from './EventsStore.js';
-import Button from './Button.svelte';
-import moment from "moment";
-import Slider from './Slider.svelte';
-import Modal from './Modal.svelte';
-import { occasionOpen } from './OccasionState.js';
+  import Page from './ParentPage.svelte';
+  import { onMount } from 'svelte';
+  import { pageStateInStore, focusedEvent, focusedOccasionStore, focusedOccasionID } from './PageStore.js';
+  import { serverURL } from './ServerURLstore.js';
+  import { getEventsAndStore } from './EventsStore.js';
+  import Button from './Button.svelte';
+  import moment from "moment";
+  import Slider from './Slider.svelte';
+  import Modal from './Modal.svelte';
+ 
 
+  
+  let focusedOccasion;
+  focusedOccasionStore.subscribe(value => {
+    focusedOccasion = value
+  });
+ 
+  export let sliderCue;
+  export let broadcastStatus;
 
-let serverURL;
+  let grabbedFromServerEvents;
 
-let focusedEvent;
-focusedEventStore.subscribe(value=> focusedEvent = value);
-export let focusedOccasion;
-export let focusedOccasionID;
-export let indexInOccasions;
+  let formattedStartTimeFull;
+  let formattedEndTimeFull;
+  let formattedStartTime;
+  let formattedEndTime;
 
-export let sliderCue;
-export let broadcastStatus;
+  //double check that a delete Occasion has happened
+  let deleteOccasionHasHappened = false;
 
-let grabbedFromServerEvents;
-
-let formattedStartTimeFull;
-let formattedEndTimeFull;
-let formattedStartTime;
-let formattedEndTime;
-
-let isOccasionOpen;
-occasionOpen.subscribe(value => {
-  isOccasionOpen = value;
-})
-
-//double check that a delete Occasion has happened
-let deleteOccasionHasHappened = false;
-
-let cueState = 0;
+  let cueState = 0;
 
 
 
 
-onMount(async () => {
-  formattedStartTimeFull = moment(focusedOccasion.startDateTime)
-    .format("LLL");
-  formattedEndTimeFull = moment(focusedOccasion.endDateTime)
-    .format("LLL");
-  formattedStartTime = moment(focusedOccasion.startDateTime)
-    .format("LL");
-  formattedEndTime = moment(focusedOccasion.endDateTime)
-    .format("LL");
-
-  urlStore.subscribe(value => {
-    serverURL = value;
-  })
-
-});
+  onMount(async () => {
+    formattedStartTimeFull = moment(focusedOccasion.startDateTime)
+      .format("LLL");
+    formattedEndTimeFull = moment(focusedOccasion.endDateTime)
+      .format("LLL");
+    formattedStartTime = moment(focusedOccasion.startDateTime)
+      .format("LL");
+    formattedEndTime = moment(focusedOccasion.endDateTime)
+      .format("LL");
+  });
 
 
   function openOccasionButton() {
@@ -75,7 +62,7 @@ onMount(async () => {
       }).then( response => { 
         if(response.status == 200){
           response.json().then( details => {
-            occasionOpen.set(true);
+            
             // make sure store updates from server
             getEventsAndStore();
           })
@@ -94,7 +81,7 @@ onMount(async () => {
     
   };
 
- function closeOccasionButton(){
+  function closeOccasionButton(){
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
         method: 'PATCH',
@@ -103,8 +90,7 @@ onMount(async () => {
       }).then( response => { 
         if(response.status == 200){
           response.json().then( details => {
-            //update state of occasion
-            occasionOpen.set(false);
+            
             // make sure store updates from server
             getEventsAndStore();
           })
@@ -119,46 +105,45 @@ onMount(async () => {
     } catch (e) {
       console.log(e.message)
     }
-     
+      
   }
 
 
-function deleteOccasion() {
-  try {
-    return fetch(serverURL + "/occasions/" + focusedOccasionID, {
-      method: 'DELETE'
-    }).then( response => { 
-      if(response.status == 204){
-          getEventsAndStore();
-          pageStateInStore.set(2);
-        
-      }
-    }).catch( error => {
-      console.log("Error on occasion delete!")
-    })
-    } catch (e) {
-        console.log(e.message)
-  }
+  function deleteOccasion() {
+    try {
+      return fetch(serverURL + "/occasions/" + focusedOccasionID, {
+        method: 'DELETE'
+      }).then( response => { 
+        if(response.status == 204){
+            getEventsAndStore();
+            pageStateInStore.set(2);
+          
+        }
+      }).catch( error => {
+        console.log("Error on occasion delete!")
+      })
+      } catch (e) {
+          console.log(e.message)
+    }
 
-   }
-  
+  }
+    
 
   function showQR() {
   //grab QR code for that occasion and update
   // for testing "/occasions/3/qrcode"
     let QrResponse = async () => { 
-        let response = await fetch(serverURL + "/occasions/" + focusedOccasionID + "/qrcode", {
-        method: 'GET'
-        });
-        let qrCode = await response.text()
-        let qrContainer = document.getElementsByClassName("QRcodeContainer");
-        // qrContainer.forEach(element => {
-        //   qrContainer[element].innerHTML = qrCode;
-        // });
-        for (let i = 0; i < qrContainer.length; i++){
-          qrContainer[i].innerHTML = qrCode
-        }
-       
+      let response = await fetch(serverURL + "/occasions/" + focusedOccasionID + "/qrcode", {
+      method: 'GET'
+      });
+      let qrCode = await response.text()
+      let qrContainer = document.getElementsByClassName("QRcodeContainer");
+      // qrContainer.forEach(element => {
+      //   qrContainer[element].innerHTML = qrCode;
+      // });
+      for (let i = 0; i < qrContainer.length; i++){
+        qrContainer[i].innerHTML = qrCode
+      }  
     };
     QrResponse();
   }
@@ -168,7 +153,7 @@ function deleteOccasion() {
     broadcastStatus = value.detail.broadcastStatus;
   }
 
-     //this changes which cue details are shown
+      //this changes which cue details are shown
   function changeCueState(direction) {
     let cuesLength = focusedEvent.episodes[0].cues.length;
     if (direction == "next" && cueState < cuesLength - 1) {
@@ -184,13 +169,42 @@ function deleteOccasion() {
   }
 
   function printQR(){
-   window.print();
+    window.print();
+  }
+
+  function serverUpdate(methodType, openOrClosedState){
+    try {
+      fetch(serverURL + "/occasions/" + focusedOccasionID, {
+        method: methodType,
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({"state":openOrClosedState}) 
+      }).then( response => { 
+        if(response.status == 200){
+          response.json().then( details => {
+            //update state of occasion
+            // occasionOpen.set(false);
+            // make sure store updates from server
+            getEventsAndStore();
+          })
+        } else {
+          response.text().then( errorMessage => {
+            console.log('occasion' + openOrClosedState + 'error on request: ' + errorMessage)
+          })
+        }
+      }).catch( error => {
+        console.log("Error occasion " + openOrClosedState)
+      })
+    } catch (e) {
+      console.log(e.message)
+    }
+      
+
   }
 
 </script>
 
 <style>
-   @media print {
+  @media print {
     #printable {
         height: 100%;
         width: 100%;
@@ -204,56 +218,54 @@ function deleteOccasion() {
     .notPrintable{
       display:none;
     }
-}
+  }
 </style>
 
 
 
+<!-- update UI based on state of occasion -->
+{#if focusedOccasion.state == "closed"}
+  <Page on:message={broadcastStatusFromBackButton}
+    pageID="closedOccasion"
+    headingText={focusedOccasion.label}
+    includeBackButton = true>
 
-{#if !isOccasionOpen}
+    <div class="row">
+      <Button on:click={showQR}
+        buttonText="Get QR code" 
+        dataTarget="#QRcodeModalClosed"/>
+    </div>
 
-    <Page on:message={broadcastStatusFromBackButton}
-        pageID="closedOccasion"
-        headingText={focusedOccasion.label}
-        includeBackButton = true>
-
-        <div class="row">
-        <Button on:click={showQR}
-            buttonText="Get QR code" 
-            dataTarget="#QRcodeModalClosed"/>
-        </div>
-
-        <div class="row">
-        <div class="col-md-12">
-
-            <label for="OccasionDetails">
+    <div class="row">
+      <div class="col-md-12">
+          <label for="OccasionDetails">
             <h4>Occasion Details</h4>
-            </label>
-            <ul id="OccasionDetails">
+          </label>
+          <ul id="OccasionDetails">
             <li>Start Date : {formattedStartTimeFull}</li>
             <li>End Date : {formattedEndTimeFull}</li>
             <li>Location Label: {focusedOccasion.locationLabel}</li>
             <li>Location Address: {focusedOccasion.locationAddress}</li>
             <li>Location City: {focusedOccasion.locationCity}</li>
-                </ul>
-            <hr> 
-            <div class="row">
+          </ul>
+          <hr> 
+          <div class="row">
             <Button on:click={openOccasionButton}
-                buttonStyle="btn-outline-success btn-block"
-                buttonText="Open occasion"/>
-            </div>
-            <div class="row">
+              buttonStyle="btn-outline-success btn-block"
+              buttonText="Open occasion"/>
+          </div>
+          <div class="row">
             <Button
-                buttonStyle="btn-outline-danger btn-block"
-                buttonText="Delete occasion"
-                dataTarget="#deleteOccasionModal"/>
-            </div>
-            
-        </div>
-        </div>
-    </Page>
+              buttonStyle="btn-outline-danger btn-block"
+              buttonText="Delete occasion"
+              dataTarget="#deleteOccasionModal"/>
+          </div>
+          
+      </div>
+    </div>
+  </Page>
 
-{:else}
+{:else if focusedOccasion.state == "opened"}
   <Page 
     pageID='openOccasion'
     headingText={focusedOccasion.label}

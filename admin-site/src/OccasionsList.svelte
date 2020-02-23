@@ -9,9 +9,8 @@
   import Array from './ArrayList.svelte';
   import Button from './Button.svelte';
   import Modal from './Modal.svelte';
-  import { focusedEventStore, pageStateInStore, indexInEvents } from './PageStore.js';
+  import { focusedEventStore, pageStateInStore, indexInEvents, focusedOccasionStore, focusedOccasionIDStore } from './PageStore.js';
   import { storedEvents, getEventsAndStore} from './EventsStore.js';
-  import { occasionOpen } from './OccasionState.js';
   import { serverURL } from './ServerURLstore.js';
   import moment from "moment";
 
@@ -39,13 +38,6 @@
     }
   });
 
-  function sendOccasionsPackage(){
-    dispatch('message', {
-      "focusedOccasion": focusedOccasion,
-      "focusedOccasionID": focusedOccasionID,
-      "indexInOccasions":indexInOccasions,
-    });
-  }
   function sendOccasionState(){
     dispatchOccasionState('state',{
       "occasionCreationFormIsOpen": true
@@ -54,27 +46,14 @@
 
   function occasionButton(id) {
     focusedOccasionID = id;
-    indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
-
+    //grab id of occasion clicked and send to store
+    focusedOccasionIDStore.set(focusedOccasionID);
+    let indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
+    //update focusedOccasion accordingly
     focusedOccasion = focusedEvent.occasions[indexInOccasions];
+    focusedOccasionStore.set(focusedOccasion);
     
     pageStateInStore.set(3);
-
-    storedEvents.subscribe(value => {
-      if(focusedEvent != undefined){
-        if (value[indexInEvents].occasions[indexInOccasions] != undefined){
-          focusedOccasionState = value[indexInEvents].occasions[indexInOccasions].state
-        }
-      }
-    });
-    
-    if (focusedOccasionState == "closed"){
-      occasionOpen.set(false);
-    } else {
-      occasionOpen.set(true);
-    }  
-
-    sendOccasionsPackage();
   }
 
   function deleteEvent(){
