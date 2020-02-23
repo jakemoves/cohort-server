@@ -1,7 +1,10 @@
 require('dotenv').config({ path: __dirname + '/../../../.env' })
 
 exports.seed = function(knex, Promise) {
-  if(process.env.NODE_ENV != 'production'){
+  if(process.env.NODE_ENV == production){
+    // DO NOT DO ANYTHING TO THE PRODUCTION DATABASE :)
+    return;
+  } else {
     // Deletes ALL existing entries
     return knex('users').del()
     .then(function () {
@@ -23,7 +26,5 @@ exports.seed = function(knex, Promise) {
         is_admin: false
       }])
     });
-  } else {
-    return
   }
 }; 
