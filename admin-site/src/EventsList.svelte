@@ -30,7 +30,6 @@
   function sendEventsPackage(){
     dispatch('message', {
       "sliderCue": sliderCue,
-      "focusedEventLabel": focusedEventLabel
     });
   }
 

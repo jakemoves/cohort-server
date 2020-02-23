@@ -47,13 +47,13 @@
     
   }
 
-  function messageFromArrayListOccasions(value){
-    focusedOccasionID = value.detail.focusedOccasionID;
-    focusedOccasion = value.detail.focusedOccasion;
-    indexInOccasions = value.detail.indexInOccasions;
-    isOccasionOpen = value.detail.isOccasionOpen;
+  // function messageFromArrayListOccasions(value){
+  //   focusedOccasionID = value.detail.focusedOccasionID;
+  //   focusedOccasion = value.detail.focusedOccasion;
+  //   indexInOccasions = value.detail.indexInOccasions;
+  //   isOccasionOpen = value.detail.isOccasionOpen;
 
-  }
+  // }
    //receive message package from EventCreationFrom to hide the event creation form
   function messageToCloseEventForm(value){
     openEventCreation = value.detail.openEventCreation;
@@ -121,7 +121,7 @@
     <!-- open and close occasion creation form -->
     {#if !occasionCreationFormIsOpen}
     <!-- //occasions list populated by looping through events of "focused" event ID -->
-      <OccasionsList on:message = {messageFromArrayListOccasions}
+      <OccasionsList
         on:state={messageToOpenOccasionForm}
         focusedEventLabel = {focusedEventLabel}/>
     {:else}
