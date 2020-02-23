@@ -18,6 +18,7 @@
   export let focusedEventLabel;
   let dateSortedOccasions = [];
   const dispatch = createEventDispatcher();
+  const dispatchOccasionState = createEventDispatcher();
   let focusedOccasionID;
   let indexInOccasions;
   let focusedOccasion;
@@ -26,6 +27,7 @@
 
   let deleteResults;
   let showDeleteError = false;
+  let openOccasionCreation = false;
 
   
   focusedEventStore.subscribe(value => {
@@ -37,14 +39,17 @@
     }
   });
 
-  
-
-   function sendOccasionsPackage(){
+  function sendOccasionsPackage(){
     dispatch('message', {
       "focusedOccasion": focusedOccasion,
       "focusedOccasionID": focusedOccasionID,
       "indexInOccasions":indexInOccasions,
     });
+  }
+  function sendOccasionState(){
+    dispatchOccasionState('state',{
+      "occasionCreationFormIsOpen": true
+    })
   }
 
   function occasionButton(id) {
@@ -65,7 +70,7 @@
     
     if (focusedOccasionState == "closed"){
       occasionOpen.set(false);
-    } else{
+    } else {
       occasionOpen.set(true);
     }  
 
@@ -76,8 +81,7 @@
     try {
     return fetch(serverURL + "/events/" + focusedEvent.id, {
       method: 'DELETE'
-    }).then( async (response) => {
-      console.log(response.status); 
+    }).then( async (response) => { 
       if(response.status == 204){
            getEventsAndStore()
            pageStateInStore.set(1)
@@ -102,6 +106,9 @@
     }
   }
 
+   function openForm(){
+    sendOccasionState(); 
+  }
 
 </script>
 
@@ -110,24 +117,40 @@
   emptyArrayMessage = "This happens on occasion. No occasions for this event yet.">
 
   {#each  dateSortedOccasions as item (item.id)}
-    <Button on:click={() => occasionButton(item.id)}
-    buttonHtml = '<h3 class="m-0">{item.label}  - {item.label} </h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
-    value = {item.id}/> 
+    {#if item.locationCity == null}
+      <Button on:click={() => occasionButton(item.id)}
+        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5>City Name - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
+        value = {item.id}/>
+    {:else}
+      <Button on:click={() => occasionButton(item.id)}
+        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
+        value = {item.id}/> 
+    {/if} 
   {/each}
   
 </Array>
+<hr>
+<!-- Block button, more consistent with other button UI -->
+<Button on:click={openForm}
+    buttonText = "Create a new occasion"
+    buttonStyle = "btn-outline-success btn-block"/>
 
-  <hr>
+    <!-- Inline with other list items version -->
+  <!-- <Button on:click={openForm}
+    buttonHtml = '<h3 class="m-0">Occasion Creation Form</h3> <h5> </h5>'
+    buttonStyle = "btn-outline-success btn-block"/> -->
 
 <Button
   buttonStyle="btn-outline-danger btn-block"
-  buttonText="Delete Event"
+  buttonText="Delete event"
   dataTarget="#deleteEventModal"/>
 {#if showDeleteError}
 <div class="alert alert-danger text-center">
     {deleteResults}
 </div>
 {/if}
+
+
 
 <Modal
   modalID = "deleteEventModal"
@@ -150,7 +173,7 @@
       gridStyle = "mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
-      buttonText="Delete This Event"/>
+      buttonText="Delete this event"/>
   </div>
 </Modal>
           

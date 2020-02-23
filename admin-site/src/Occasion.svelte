@@ -101,7 +101,6 @@ onMount(async () => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"state":"closed"}) 
       }).then( response => { 
-        console.log(response.status);
         if(response.status == 200){
           response.json().then( details => {
             //update state of occasion
@@ -120,7 +119,6 @@ onMount(async () => {
     } catch (e) {
       console.log(e.message)
     }
-    //  storedEvents.subscribe(value => console.log(value))
      
   }
 
@@ -221,7 +219,7 @@ function deleteOccasion() {
 
         <div class="row">
         <Button on:click={showQR}
-            buttonText="Get QR Code" 
+            buttonText="Get QR code" 
             dataTarget="#QRcodeModalClosed"/>
         </div>
 
@@ -242,12 +240,12 @@ function deleteOccasion() {
             <div class="row">
             <Button on:click={openOccasionButton}
                 buttonStyle="btn-outline-success btn-block"
-                buttonText="Open Occasion"/>
+                buttonText="Open occasion"/>
             </div>
             <div class="row">
             <Button
                 buttonStyle="btn-outline-danger btn-block"
-                buttonText="Delete Occasion"
+                buttonText="Delete occasion"
                 dataTarget="#deleteOccasionModal"/>
             </div>
             
@@ -265,12 +263,12 @@ function deleteOccasion() {
     <div class="row">
       <Button
         buttonStyle='btn-outline-danger btn-block' 
-        buttonText="Close Occasion" 
+        buttonText="Close occasion" 
         dataTarget="#closeOccassionModal"/>
     </div>
     <div class="row">
       <Button on:click={showQR} 
-        buttonText="Show QR Code" 
+        buttonText="Show QR code" 
         dataTarget="#QRcodeModal"/>
     </div>
     
@@ -354,12 +352,10 @@ function deleteOccasion() {
 {/if}
 <Modal
   modalID="closeOccassionModal"
-  modalTitle="Close Occasion">
+  modalTitle="Close occasion">
   
   <div slot="modalBody">
-    <!-- {#if gotEvents} -->
       Are you sure you want to close {focusedEvent.label} - {formattedStartTime}?
-    <!-- {/if} -->
   </div>
   <div class="row" slot="modalFooter">
     <Button
@@ -372,7 +368,7 @@ function deleteOccasion() {
       gridStyle = "mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
-      buttonText="Close Occasion"/>
+      buttonText="Close occasion"/>
   </div>
 </Modal>
 
@@ -397,22 +393,15 @@ function deleteOccasion() {
       gridStyle = "mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
-      buttonText="Delete Occasion"/>
+      buttonText="Delete occasion"/>
   </div>
 </Modal>
 
 <Modal
-  modalID="QRcodeModalClosed">
-    <div slot="closeButton">
+  modalID="QRcodeModalClosed"
+  showCloseButton = true>
+    <div slot="header">
       <div class ="row">
-        <div class="col-12 mb-2">
-          <Button
-              buttonStyle="close"
-              gridStyle = ""
-              dataDismiss="modal"
-              ariaLabel="Close"
-              iconRight = "fas fa-times"/>
-        </div>
 
         <div class="col-12">
           <p>Print this QR code to allow mobile devices to connect to your occasion.<br> <strong>Note: </strong>an occasion must be open to receive connections. </p>
@@ -440,15 +429,9 @@ function deleteOccasion() {
 </Modal>
 
 <Modal
-  modalID="QRcodeModal">
-    <div slot="closeButton">
-      <Button
-          buttonStyle="close"
-          dataDismiss="modal"
-          ariaLabel="Close"
-          iconRight = "fas fa-times"/>
+  modalID="QRcodeModal"
+  showCloseButton = true>
     
-    </div>
     
     <div slot="modalBody" class="container-fluid">
       <div class = "QRcodeContainer">

@@ -8,44 +8,15 @@
  <script>
   import { onMount } from 'svelte';
   import Button from './Button.svelte';
-  import { urlStore } from './ServerURLstore.js';
+  import { urlStore, serverURL } from './ServerURLstore.js';
   import { pageStateInStore } from './PageStore.js';
   import { getEventsAndStore } from './EventsStore.js';
 
-  let serverURL;
+   
   let selectedURL;
 
   let usernameFieldValue, passwordFieldValue
-  let errorAlertMessage = ""
-
- //everytime serverURL changes, update it in the store.
-  $: serverURL,urlStore.update(value => value = serverURL) ; 
-// add this to the above line to keep track of serverUrl value in store: , urlStore.subscribe(value => {console.log(value)}) 
-  onMount(async () => {
-    serverURL;
-    //checking for local dev ...needs testing on staging site
-    checkLocalUrl();
-    
-  });
-
-  function checkLocalUrl () {
-    let host = window.location.host; 
-    let splitURL = host.split(':');
-    let splitHost = splitURL[0].split('.');
-
-    if(splitHost[0] == "localhost" || splitHost[1] == "local"){
-      
-      if( host == "localhost:5000"){
-        serverURL = "http://localhost:3000/api/v2";
-      } else {
-        serverURL = window.location.protocol + '//' + window.location.host + '/api/v2';
-      }
-    } else {
-      serverURL = "https://staging.cohort.rocks/api/v2"
-    }
-  }
-    
-    
+  let errorAlertMessage = ""  
    
       
   async function login(){
