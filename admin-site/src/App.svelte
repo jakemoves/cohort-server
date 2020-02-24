@@ -17,15 +17,6 @@
   import OccasionCreationForm from './OccasionCreationForm.svelte';
   
 
-  let focusedOccasionID;
-  let focusedEvent;
-  let focusedEventLabel;
-  let focusedOccasion;
-  let dateSortedOccasions =[];
-  let isOccasionOpen;
-  
-  let indexInOccasions;
-
   let sliderCue;
   let broadcastStatus = "unsent";
   // let broadcastResults;
@@ -42,30 +33,19 @@
   
   //grab info from events + occasions
   function messageFromArrayList(value){
-    focusedEventLabel = value.detail.focusedEventLabel;
-    sliderCue = value.detail.sliderCue;
-    
+    openEventCreation = value.detail.openEventCreation;
   }
 
-  // function messageFromArrayListOccasions(value){
-  //   focusedOccasionID = value.detail.focusedOccasionID;
-  //   focusedOccasion = value.detail.focusedOccasion;
-  //   indexInOccasions = value.detail.indexInOccasions;
-  //   isOccasionOpen = value.detail.isOccasionOpen;
-
-  // }
    //receive message package from EventCreationFrom to hide the event creation form
   function messageToCloseEventForm(value){
     openEventCreation = value.detail.openEventCreation;
   }
-   //receive message package from EventsList to show the event creation form
-  function messageToOpenEventForm(value){
-    openEventCreation = value.detail.openEventCreation;
-  }
+
    //receive message package from OccasionCreationForm to exit the occasion creation form
   function messageToCloseOccasionForm(value){
     occasionCreationFormIsOpen = value.detail.occasionCreationFormIsOpen;
   }
+
   //receive message package from OccasionList to show the occasion creation form
   function messageToOpenOccasionForm(value){
     occasionCreationFormIsOpen = value.detail.occasionCreationFormIsOpen;
@@ -104,8 +84,7 @@
     
     {#if !openEventCreation}
 <!-- #eventsList allows a list of events to be built and shown based on "events" from store-->
-      <EventsList on:message = {messageFromArrayList}
-        on:state ={messageToOpenEventForm}/>
+      <EventsList on:message = {messageFromArrayList}/>
     {:else}
       <EventCreationFrom on:message = {messageToCloseEventForm}/>
 
@@ -122,8 +101,7 @@
     {#if !occasionCreationFormIsOpen}
     <!-- //occasions list populated by looping through events of "focused" event ID -->
       <OccasionsList
-        on:state={messageToOpenOccasionForm}
-        focusedEventLabel = {focusedEventLabel}/>
+        on:state={messageToOpenOccasionForm}/>
     {:else}
       <OccasionCreationForm on:message = {messageToCloseOccasionForm} />
     {/if}
@@ -132,7 +110,6 @@
 {:else if pageState == 3}
   
   <Occasion
-    sliderCue = {sliderCue}
     broadcastStatus ={broadcastStatus}/>
 
 {/if}

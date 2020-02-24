@@ -5,6 +5,8 @@
 - install node 8.16.0
   - we recommend that you use [nvm](https://github.com/nvm-sh/nvm) to manage your node installed versions
   - use nvm to make node 8.16.0 the active version
+  - as different versions of node may be present on your machine, we suggest running `nvm list` to confirm 8.16.0 is the active version (indicated in green)
+  - if not on v8.16.0, run `nvm use 8.16.0`
 - install postgresql ([best instructions](https://gist.github.com/ibraheem4/ce5ccd3e4d7a65589ce84f2a3b7c23a3))
 - clone repo from github
 

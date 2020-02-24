@@ -23,10 +23,9 @@
     focusedOccasion = value
   });
  
-  export let sliderCue;
+  let sliderCue = focusedEvent.episodes[0].cues[0];
   export let broadcastStatus;
 
-  let grabbedFromServerEvents;
 
   let formattedStartTimeFull;
   let formattedEndTimeFull;
@@ -37,9 +36,6 @@
   let deleteOccasionHasHappened = false;
 
   let cueState = 0;
-
-
-
 
   onMount(async () => {
     formattedStartTimeFull = moment(focusedOccasion.startDateTime)
@@ -52,61 +48,36 @@
       .format("LL");
   });
 
-
-  function openOccasionButton() {
+  function serverCallToOpenOrCloseOccasion(state){
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
         method: 'PATCH',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"state":"opened"}) 
+        body: JSON.stringify({"state": state}) 
       }).then( response => { 
         if(response.status == 200){
-          response.json().then( details => {
-            
             // make sure store updates from server
             getEventsAndStore();
-          })
         } else {
           response.text().then( errorMessage => {
-            console.log('occasion open error on request: ' + errorMessage)
+            console.log('Error on ' + state + ' request: ' + errorMessage)
           })
         }
       }).catch( error => {
-        console.log("Error occasion open")
-      })
-    } catch (e) {
-      console.log(e.message)
-    } 
-    //storedEvents.subscribe(value => console.log(value)) 
-    
-  };
-
-  function closeOccasionButton(){
-    try {
-      fetch(serverURL + "/occasions/" + focusedOccasionID, {
-        method: 'PATCH',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"state":"closed"}) 
-      }).then( response => { 
-        if(response.status == 200){
-          response.json().then( details => {
-            
-            // make sure store updates from server
-            getEventsAndStore();
-          })
-        } else {
-          response.text().then( errorMessage => {
-            console.log('occasion close error on request: ' + errorMessage)
-          })
-        }
-      }).catch( error => {
-        console.log("Error occasion close")
+        console.log("Catch error on " + state + ' request')
       })
     } catch (e) {
       console.log(e.message)
     }
-      
   }
+
+  function openOccasionButton() {
+    serverCallToOpenOrCloseOccasion("opened"); 
+  };
+
+  function closeOccasionButton(){
+    serverCallToOpenOrCloseOccasion("closed");  
+  };
 
 
   function deleteOccasion() {
@@ -138,9 +109,7 @@
       });
       let qrCode = await response.text()
       let qrContainer = document.getElementsByClassName("QRcodeContainer");
-      // qrContainer.forEach(element => {
-      //   qrContainer[element].innerHTML = qrCode;
-      // });
+
       for (let i = 0; i < qrContainer.length; i++){
         qrContainer[i].innerHTML = qrCode
       }  
@@ -170,35 +139,6 @@
 
   function printQR(){
     window.print();
-  }
-
-  function serverUpdate(methodType, openOrClosedState){
-    try {
-      fetch(serverURL + "/occasions/" + focusedOccasionID, {
-        method: methodType,
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"state":openOrClosedState}) 
-      }).then( response => { 
-        if(response.status == 200){
-          response.json().then( details => {
-            //update state of occasion
-            // occasionOpen.set(false);
-            // make sure store updates from server
-            getEventsAndStore();
-          })
-        } else {
-          response.text().then( errorMessage => {
-            console.log('occasion' + openOrClosedState + 'error on request: ' + errorMessage)
-          })
-        }
-      }).catch( error => {
-        console.log("Error occasion " + openOrClosedState)
-      })
-    } catch (e) {
-      console.log(e.message)
-    }
-      
-
   }
 
 </script>
@@ -355,8 +295,7 @@
 
         <Slider 
         broadcastStatus={broadcastStatus}
-        sliderCue = {sliderCue}
-        focusedOccasionID = {focusedOccasionID}/>
+        sliderCue = {sliderCue}/>
       {/if}
     <!-- {/if}  -->
 

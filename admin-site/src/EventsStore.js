@@ -16,9 +16,6 @@ let focusedEventUpdate;
 export let events;
 export let storedEvents = writable(0);
 
-
-
-
 export let getEventsAndStore = async () => {
 
   let response = await fetch(serverURL + "/events", {
@@ -26,7 +23,6 @@ export let getEventsAndStore = async () => {
   })
 
   grabbedFromServerEvents = await response.json();
-  grabbedFromServerEvents = grabbedFromServerEvents;
   storedEvents.update(value => 
       value = grabbedFromServerEvents
   );

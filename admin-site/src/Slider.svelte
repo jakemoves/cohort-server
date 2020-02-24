@@ -5,21 +5,14 @@
 
 <!-- Slider for triggering cues -->
 <script>
-import { urlStore } from './ServerURLstore.js';
+import { serverURL } from './ServerURLstore.js';
+import { focusedOccasionID } from './PageStore.js';
 
 
 export let broadcastStatus;
-export let focusedOccasionID;
 export let sliderCue;
 
 let broadcastResults;
-let serverURL;
-
-urlStore.subscribe(value =>{
-  serverURL = value;
-})
-
-
 
 // cue broadcast
  window.onCueSliderInput = (event) => {
@@ -36,10 +29,10 @@ urlStore.subscribe(value =>{
         body: JSON.stringify(sliderCue)
       })
       .then( response => {
-        console.log(response.status); 
+        
         if(response.status == 200){
           response.json().then( results => {
-            console.log(results)
+            
             event.target.disabled = false
             event.target.value = 0
 

@@ -14,9 +14,8 @@
   import { serverURL } from './ServerURLstore.js';
   import moment from "moment";
 
-  export let focusedEventLabel;
+  
   let dateSortedOccasions = [];
-  const dispatch = createEventDispatcher();
   const dispatchOccasionState = createEventDispatcher();
   let focusedOccasionID;
   let indexInOccasions;
@@ -57,6 +56,7 @@
   }
 
   function deleteEvent(){
+
     try {
     return fetch(serverURL + "/events/" + focusedEvent.id, {
       method: 'DELETE'
