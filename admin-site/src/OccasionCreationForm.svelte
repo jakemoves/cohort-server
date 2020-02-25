@@ -47,7 +47,7 @@ function createOccasion() {
             })
           } else {
             response.text().then( errorMessage => {
-              console.log('Occasion creation error: ' + errorMessage)
+              console.log(`Occasion creation error: ${errorMessage}`)
               showError = true;
               errorResults = errorMessage;
             })

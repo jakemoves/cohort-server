@@ -82,11 +82,11 @@
             getEventsAndStore();
         } else {
           response.text().then( errorMessage => {
-            console.log('Error on ' + state + ' request: ' + errorMessage)
+            console.log(`Error on ${state} request: ${errorMessage}`)
           })
         }
       }).catch( error => {
-        console.log("Catch error on " + state + ' request')
+        console.log(`Catch error on ${state} request`)
       })
     } catch (e) {
       console.log(e.message)
@@ -103,6 +103,7 @@
 
 
   function deleteOccasion() {
+    //Delete Occasion is only available in the UI when an occasion is closed
     try {
       return fetch(serverURL + "/occasions/" + focusedOccasionID, {
         method: 'DELETE'

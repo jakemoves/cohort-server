@@ -43,7 +43,7 @@ function createEvent() {
             })
           } else {
             response.text().then( errorMessage => {
-              console.log('Event creation error: ' + errorMessage)
+              console.log(`Event creation error: ${errorMessage}`)
               showError = true;
               errorResults = errorMessage;
             })
