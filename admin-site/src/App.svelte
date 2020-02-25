@@ -94,6 +94,7 @@
   <Page on:goBack={broadcastStatusFromBackButton}
     pageID = "occasionList" 
     headingText={focusedEvent.label}
+    subHeadingText = "Event id: {focusedEvent.id}"
     includeBackButton = true
     occasionCreationFormIsOpen = {occasionCreationFormIsOpen}>
     <!-- open and close occasion creation form -->

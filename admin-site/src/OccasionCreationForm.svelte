@@ -4,7 +4,7 @@ import { createEventDispatcher } from 'svelte';
 import { serverURL } from "./ServerURLstore.js";
 import { getEventsAndStore } from './EventsStore.js';
 import { focusedEvent } from './UpdateUIstore.js';
-
+import ErrorMessage from './ErrorMessages.js';
 
 let newOccasionLabel;
 let showError = false;
@@ -22,11 +22,11 @@ function createOccasion() {
   
   if(newOccasionLabel == undefined){
     showError = true;
-    errorResults = "Please give the occasion a name";
+    errorResults = ErrorMessage.formEmptyNameField;
 
   } else if (newOccasionLabel.length == 0){
     showError = true;
-    errorResults = "Please give the occasion a name";
+    errorResults = ErrorMessage.formEmptyNameField;
     
   } else {
     

@@ -3,7 +3,7 @@ import Button from './Button.svelte';
 import { createEventDispatcher } from 'svelte';
 import { serverURL } from "./ServerURLstore.js";
 import { getEventsAndStore } from './EventsStore.js';
-
+import ErrorMessage from './ErrorMessages.js';
 
 let newEventLabel;
 let showError = false;
@@ -18,14 +18,13 @@ function sendEventCreationFormState(){
 }
 
 function createEvent() {
- 
   if(newEventLabel == undefined){
     showError = true;
-    errorResults = "Please give the event a name";
+    errorResults = ErrorMessage.formEmptyNameField;
 
   } else if (newEventLabel.length == 0){
     showError = true;
-    errorResults = "Please give the event a name";
+    errorResults = ErrorMessage.formEmptyNameField;
 
   } else {
     try {
@@ -72,7 +71,7 @@ function cancel(){
   </div>
 
   <Button on:click={createEvent}
-    buttonText = "Create event"
+    buttonText = "Create Event"
     buttonStyle = "btn-outline-success btn-block"/>
   
   <Button on:click={cancel}

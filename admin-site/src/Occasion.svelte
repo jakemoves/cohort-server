@@ -220,7 +220,7 @@
           <div class="row">
             <Button
               buttonStyle="btn-outline-danger btn-block"
-              buttonText="Delete Occasion"
+              buttonText="Delete {focusedOccasion.label}"
               dataTarget="#deleteOccasionModal"/>
           </div>
           
@@ -233,7 +233,7 @@
     pageID='openOccasion'
     headingText={focusedOccasion.label}
     includeBackButton = true
-    underHeading = {formattedStartTimeFull}>
+    subHeadingText = {formattedStartTimeFull}>
    
     <div class="row">
       <Button

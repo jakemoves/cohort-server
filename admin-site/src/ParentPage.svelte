@@ -10,12 +10,15 @@
  export let headingText = "";
  export let pageID = "";
  export let includeBackButton = false;
- export let underHeading = ""
+ export let subHeadingText= ""
  export let occasionCreationFormIsOpen;
 
 </script>
 <style>
-
+  .subHeadingClass{
+    font-size: 1.2em;
+    font-weight: 425;
+  }
 
 </style>
 <div id={pageID} class="page">
@@ -43,10 +46,10 @@
       <!-- //empty spacer div to keep text centered if event name runs long -->
       <div class="col-3 mt-2"></div>
     </div>
-    {#if underHeading != ""}
+    {#if subHeadingText != ""}
       <div class="row">
         <div class = "col-12">
-          <p class = "text-center">{underHeading}</p>
+          <p class = "text-center subHeadingClass">{subHeadingText}</p>
         </div>
       </div>
     {/if}
