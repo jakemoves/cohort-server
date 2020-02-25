@@ -9,7 +9,7 @@
   import Array from './ArrayList.svelte';
   import Button from './Button.svelte';
   import { storedEvents } from './EventsStore.js';
-  import { pageStateInStore, focusedEventStore, indexInEventsStore, focusedEventLabelStore} from './PageStore.js';
+  import { pageStateInStore, focusedEventStore, indexInEventsStore, focusedEventLabelStore} from './UpdateUIstore.js';
 
   const dispatch = createEventDispatcher();
   

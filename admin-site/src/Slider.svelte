@@ -6,7 +6,7 @@
 <!-- Slider for triggering cues -->
 <script>
 import { serverURL } from './ServerURLstore.js';
-import { focusedOccasionID } from './PageStore.js';
+import { focusedOccasionID } from './UpdateUIstore.js';
 
 
 export let broadcastStatus;

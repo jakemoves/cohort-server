@@ -3,7 +3,7 @@ import Button from './Button.svelte';
 import { createEventDispatcher } from 'svelte';
 import { serverURL } from "./ServerURLstore.js";
 import { getEventsAndStore } from './EventsStore.js';
-import { focusedEvent } from './PageStore.js';
+import { focusedEvent } from './UpdateUIstore.js';
 
 
 let newOccasionLabel;

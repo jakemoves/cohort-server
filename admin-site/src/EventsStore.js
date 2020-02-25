@@ -5,7 +5,7 @@
 //grabbing events info from server and placing in a store
 import {writable} from 'svelte/store';
 import { serverURL } from './ServerURLstore.js';
-import { focusedEventLabel, focusedEvent, focusedEventStore, focusedOccasionStore, focusedOccasionIDStore } from './PageStore.js';
+import { focusedEventLabel, focusedEvent, focusedEventStore, focusedOccasionStore, focusedOccasionIDStore } from './UpdateUIstore.js';
 
 // let serverURL;
 

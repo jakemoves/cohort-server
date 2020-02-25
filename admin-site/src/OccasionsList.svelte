@@ -9,7 +9,7 @@
   import Array from './ArrayList.svelte';
   import Button from './Button.svelte';
   import Modal from './Modal.svelte';
-  import { focusedEventStore, pageStateInStore, focusedOccasionStore, focusedOccasionIDStore } from './PageStore.js';
+  import { focusedEventStore, pageStateInStore, focusedOccasionStore, focusedOccasionIDStore } from './UpdateUIstore.js';
   import { storedEvents, getEventsAndStore} from './EventsStore.js';
   import { serverURL } from './ServerURLstore.js';
   import moment from "moment";

@@ -8,7 +8,7 @@
 <script>
   import Page from './ParentPage.svelte';
   import { onMount } from 'svelte';
-  import { pageStateInStore, focusedEvent, focusedOccasionStore, focusedOccasionID } from './PageStore.js';
+  import { pageStateInStore, focusedEvent, focusedOccasionStore, focusedOccasionID } from './UpdateUIstore.js';
   import { serverURL } from './ServerURLstore.js';
   import { getEventsAndStore } from './EventsStore.js';
   import Button from './Button.svelte';

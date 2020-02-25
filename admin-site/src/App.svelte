@@ -6,9 +6,8 @@
 <script>
   import Page from './ParentPage.svelte';
   import Login from './Login.svelte';
-  import Button from './Button.svelte';
   import Occasion from './Occasion.svelte';
-  import { pageStateInStore, focusedEvent } from "./PageStore.js";
+  import { pageStateInStore, focusedEvent } from "./UpdateUIstore.js";
   import OccasionsList from './OccasionsList.svelte';
   import EventsList from './EventsList.svelte';
   import RegistrationForm from './RegistrationForm.svelte'
