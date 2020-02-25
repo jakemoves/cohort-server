@@ -32,9 +32,6 @@
   let formattedStartTime;
   let formattedEndTime;
 
-  //double check that a delete Occasion has happened
-  let deleteOccasionHasHappened = false;
-
   let cueState = 0;
 
   onMount(async () => {
@@ -48,7 +45,7 @@
       .format("LL");
   });
 
-  function serverCallToOpenOrCloseOccasion(state){
+  function updateOccasionStateOnServer(state){
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
         method: 'PATCH',
@@ -72,11 +69,11 @@
   }
 
   function openOccasionButton() {
-    serverCallToOpenOrCloseOccasion("opened"); 
+    updateOccasionStateOnServer("opened"); 
   };
 
   function closeOccasionButton(){
-    serverCallToOpenOrCloseOccasion("closed");  
+    updateOccasionStateOnServer("closed");  
   };
 
 
@@ -84,7 +81,8 @@
     try {
       return fetch(serverURL + "/occasions/" + focusedOccasionID, {
         method: 'DELETE'
-      }).then( response => { 
+      }).then( response => {
+        console.log(response.status); 
         if(response.status == 204){
             getEventsAndStore();
             pageStateInStore.set(2);

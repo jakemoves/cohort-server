@@ -29,8 +29,8 @@
   }
 
   //when an event button gets clicked, it becomes the "focusedEvent"
-  function eventButton(value){ 
-    let focusedEventLabel = value;
+  function eventButton(e){ 
+    let focusedEventLabel = e.currentTarget.value;
     let indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
     let focusedEvent = events[indexInEvents];
     
@@ -62,8 +62,9 @@
         <div class="col-6 text-right eventLabel">
             <h3>{item.label}:</h3>
         </div>
-        <Button on:click={()=> eventButton(item.label)}
+        <Button on:click={eventButton}
           buttonHtml='<p class="mb-0">Occasions&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>'
+          value = {item.label}
           gridStyle ="col-6" />
       </div>
     {/each}

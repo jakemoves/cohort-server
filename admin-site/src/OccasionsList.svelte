@@ -9,7 +9,7 @@
   import Array from './ArrayList.svelte';
   import Button from './Button.svelte';
   import Modal from './Modal.svelte';
-  import { focusedEventStore, pageStateInStore, indexInEvents, focusedOccasionStore, focusedOccasionIDStore } from './PageStore.js';
+  import { focusedEventStore, pageStateInStore, focusedOccasionStore, focusedOccasionIDStore } from './PageStore.js';
   import { storedEvents, getEventsAndStore} from './EventsStore.js';
   import { serverURL } from './ServerURLstore.js';
   import moment from "moment";
@@ -43,8 +43,8 @@
     })
   }
 
-  function occasionButton(id) {
-    focusedOccasionID = id;
+  function occasionButton(e) {
+    focusedOccasionID = e.currentTarget.value;
     //grab id of occasion clicked and send to store
     focusedOccasionIDStore.set(focusedOccasionID);
     let indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
@@ -56,7 +56,6 @@
   }
 
   function deleteEvent(){
-
     try {
     return fetch(serverURL + "/events/" + focusedEvent.id, {
       method: 'DELETE'
@@ -68,7 +67,6 @@
       } else if (response.status == 400){
         showDeleteError = true;
         let serverSideError = await response.text()
-        console.log(serverSideError)
         deleteResults = serverSideError;
       } else response.text().then( errorMessage => {
         showDeleteError = true;
@@ -97,11 +95,11 @@
 
   {#each  dateSortedOccasions as item (item.id)}
     {#if item.locationCity == null}
-      <Button on:click={() => occasionButton(item.id)}
-        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5>City Name - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
+      <Button on:click={occasionButton}
+        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5> id:{item.id}</h5>'
         value = {item.id}/>
     {:else}
-      <Button on:click={() => occasionButton(item.id)}
+      <Button on:click={occasionButton}
         buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
         value = {item.id}/> 
     {/if} 
@@ -121,7 +119,7 @@
 
 <Button
   buttonStyle="btn-outline-danger btn-block"
-  buttonText="Delete event"
+  buttonText="Delete Event"
   dataTarget="#deleteEventModal"/>
 {#if showDeleteError}
 <div class="alert alert-danger text-center">
