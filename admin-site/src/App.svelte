@@ -8,7 +8,7 @@
   import Login from './Login.svelte';
   import Button from './Button.svelte';
   import Occasion from './Occasion.svelte';
-  import { pageStateInStore } from "./PageStore.js";
+  import { pageStateInStore, focusedEvent } from "./PageStore.js";
   import OccasionsList from './OccasionsList.svelte';
   import EventsList from './EventsList.svelte';
   import RegistrationForm from './RegistrationForm.svelte'
@@ -94,7 +94,7 @@
 {:else if pageState == 2}
   <Page on:goBack={broadcastStatusFromBackButton}
     pageID = "occasionList" 
-    headingText="Occasions"
+    headingText={focusedEvent.label}
     includeBackButton = true
     occasionCreationFormIsOpen = {occasionCreationFormIsOpen}>
     <!-- open and close occasion creation form -->

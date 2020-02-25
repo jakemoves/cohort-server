@@ -119,7 +119,7 @@
 
 <Button
   buttonStyle="btn-outline-danger btn-block"
-  buttonText="Delete Event"
+  buttonText="Delete {focusedEvent.label}"
   dataTarget="#deleteEventModal"/>
 {#if showDeleteError}
 <div class="alert alert-danger text-center">

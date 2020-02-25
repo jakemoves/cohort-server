@@ -21,33 +21,35 @@
 <div id={pageID} class="page">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-12 mt-2">
         {#if includeBackButton}
-          <BackButton on:goBack
-            occasionCreationFormIsOpen = {occasionCreationFormIsOpen}/>
+          <div class="col-3 mt-2">
+            <BackButton on:goBack
+              occasionCreationFormIsOpen = {occasionCreationFormIsOpen}/>
+          </div>
+        {:else}
+          <div class="col-3 mt-2"></div>
         {/if}
 
-        {#if headerSize == 1}
-          <h1 class="text-center">
-              {headingText}
-          </h1>
-        {:else if headerSize == 2}
-          <h2 class="text-center">
-              {headingText}
-          </h2>
-        {:else if headerSize == 3}
-          <h3 class="text-center">
-              {headingText}
-          </h3>
-        {/if}
+        <div class="col-6 mt-2">
+          {#if headerSize == 1}
+            <h1 class="text-center">{headingText}</h1>
+          {:else if headerSize == 2}
+            <h2 class="text-center">{headingText}</h2>
+          {:else if headerSize == 3}
+            <h3 class="text-center">{headingText}</h3>
+          {/if} 
+        </div>
 
-      </div>
+      <!-- //empty spacer div to keep text centered if event name runs long -->
+      <div class="col-3 mt-2"></div>
     </div>
-    <div class="row">
-      <div class = "col-12">
-        <p class = "text-center">{underHeading}</p>
+    {#if underHeading != ""}
+      <div class="row">
+        <div class = "col-12">
+          <p class = "text-center">{underHeading}</p>
+        </div>
       </div>
-    </div>
+    {/if}
     <hr/>
     <slot></slot>
   </div>

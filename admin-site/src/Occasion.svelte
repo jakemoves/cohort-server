@@ -34,6 +34,31 @@
 
   let cueState = 0;
 
+  let mediaDomainEnum = {
+    0:"Sound",
+    1:"Video",
+    2:"Text",
+    3:"Light",
+    4:"Haptic",
+    5:"Image"
+  };
+
+  let cueActionEnum = {
+    0: "Play (or 'on')",
+    1: "Pause",
+    2: "Restart",
+    3: "Stop (or 'off')"
+  }
+
+  function freezeEnums(){
+    //if browser supports Object.freeze, freeze enums so that they are only readable
+    if(Object.freeze){
+      Object.freeze(mediaDomainEnum);
+      Object.freeze(cueActionEnum);
+    }
+  }
+  freezeEnums();
+
   onMount(async () => {
     formattedStartTimeFull = moment(focusedOccasion.startDateTime)
       .format("LLL");
@@ -170,7 +195,7 @@
 
     <div class="row">
       <Button on:click={showQR}
-        buttonText="Get QR code" 
+        buttonText="Get QR Code" 
         dataTarget="#QRcodeModalClosed"/>
     </div>
 
@@ -190,12 +215,12 @@
           <div class="row">
             <Button on:click={openOccasionButton}
               buttonStyle="btn-outline-success btn-block"
-              buttonText="Open occasion"/>
+              buttonText="Open Occasion"/>
           </div>
           <div class="row">
             <Button
               buttonStyle="btn-outline-danger btn-block"
-              buttonText="Delete occasion"
+              buttonText="Delete Occasion"
               dataTarget="#deleteOccasionModal"/>
           </div>
           
@@ -213,12 +238,12 @@
     <div class="row">
       <Button
         buttonStyle='btn-outline-danger btn-block' 
-        buttonText="Close occasion" 
+        buttonText="Close Occasion" 
         dataTarget="#closeOccassionModal"/>
     </div>
     <div class="row">
       <Button on:click={showQR} 
-        buttonText="Show QR code" 
+        buttonText="Show QR Code" 
         dataTarget="#QRcodeModal"/>
     </div>
     
@@ -238,31 +263,9 @@
               {#each focusedEvent.episodes[0].cues as cue, index}
                 {#if index == cueState}
                   <div id={cue.cueNumber} >
-                    <ul>Media Domain:
-                      {#if cue.mediaDomain == 0}
-                        Sound
-                      {:else if cue.mediaDomain == 1}
-                        Video
-                      {:else if cue.mediaDomain == 2}
-                        Text
-                      {:else if cue.mediaDomain == 3}
-                        Light 
-                      {:else if cue.mediaDomain == 4}
-                        Haptic
-                      {/if}					  
-                    </ul>
+                    <ul>Media Domain: {mediaDomainEnum[cue.mediaDomain]}</ul>
                     <ul>Cue Number: {cue.cueNumber}</ul>
-                    <ul>Cue Action:
-                      {#if cue.cueAction == 0}
-                        Play (or 'on')
-                      {:else if cue.cueAction == 1}
-                        Pause
-                      {:else if cue.cueAction == 2}
-                        Restart
-                      {:else if cue.cueAction == 3}
-                        Stop (or 'off')
-                      {/if}
-                    </ul>
+                    <ul>Cue Action: {cueActionEnum[cue.cueAction]}</ul>
                   </div>
                 {/if}
               {/each}
@@ -301,7 +304,7 @@
 {/if}
 <Modal
   modalID="closeOccassionModal"
-  modalTitle="Close occasion">
+  modalTitle="Close Occasion">
   
   <div slot="modalBody">
       Are you sure you want to close {focusedEvent.label} - {formattedStartTime}?
@@ -317,7 +320,7 @@
       gridStyle = "mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
-      buttonText="Close occasion"/>
+      buttonText="Close Occasion"/>
   </div>
 </Modal>
 
@@ -342,7 +345,7 @@
       gridStyle = "mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
-      buttonText="Delete occasion"/>
+      buttonText="Delete Occasion"/>
   </div>
 </Modal>
 
