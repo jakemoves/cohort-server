@@ -34,7 +34,7 @@
 
   let cueState = 0;
 
-  let mediaDomainEnum = {
+  const mediaDomainEnum = {
     0:"Sound",
     1:"Video",
     2:"Text",
@@ -43,7 +43,7 @@
     5:"Image"
   };
 
-  let cueActionEnum = {
+  const cueActionEnum = {
     0: "Play (or 'on')",
     1: "Pause",
     2: "Restart",
@@ -103,7 +103,8 @@
 
 
   function deleteOccasion() {
-    //Delete Occasion is only available in the UI when an occasion is closed
+     //Server will throw an error if we try to delete an open occasion, but we only show the Delete Occasion button when an occasion is closed, 
+     //so we don't need to handle showing that error to users.
     try {
       return fetch(serverURL + "/occasions/" + focusedOccasionID, {
         method: 'DELETE'

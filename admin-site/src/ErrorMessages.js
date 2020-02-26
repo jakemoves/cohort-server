@@ -1,3 +1,3 @@
 module.exports = {
-  formEmptyNameField : `Please enter a label/name above`
+  formEmptyNameField : `Please enter a name above`
 }
