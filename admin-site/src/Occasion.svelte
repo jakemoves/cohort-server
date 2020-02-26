@@ -193,7 +193,7 @@
   <Page on:message={broadcastStatusFromBackButton}
     pageID="closedOccasion"
     headingText={focusedOccasion.label}
-    includeBackButton = true>
+    includeBackButton=true>
 
     <div class="row">
       <Button on:click={showQR}
@@ -234,8 +234,8 @@
   <Page 
     pageID='openOccasion'
     headingText={focusedOccasion.label}
-    includeBackButton = true
-    subHeadingText = {formattedStartTimeFull}>
+    includeBackButton=true
+    subHeadingText={formattedStartTimeFull}>
    
     <div class="row">
       <Button
@@ -253,7 +253,7 @@
       {#if focusedEvent.episodes[0].cues.length == 0}
         <div class="row">
           <div class="col-md-12">
-          <p>Sorry, no cues for this event can be found. We're cue-less.  </p>
+            <p>Sorry, no cues for this event can be found. We're cue-less.  </p>
           </div>
         </div>
       {:else}
@@ -279,26 +279,26 @@
         <div class="row">
           <div class="col-12 d-flex justify-content-between">
             <Button on:click={() => changeCueState ("previous")}
-              gridStyle = ""
-              buttonStyle = 'btn-info'
-              buttonText = &nbsp;Previous
-              value = previous
-              iconLeft = "fas fa-angle-left"
-              disabled = {cueState == 0}/>
+              gridStyle=""
+              buttonStyle='btn-info'
+              buttonText=&nbsp;Previous
+              value=previous
+              iconLeft="fas fa-angle-left"
+              disabled={cueState == 0}/>
 
             <Button on:click={() => changeCueState ("next")}
-              gridStyle = ""
-              buttonStyle = 'btn-info'
-              buttonText = &nbsp;&nbsp;&nbsp;Next&nbsp;
-              value = next
-              iconRight = "fas fa-angle-right"
+              gridStyle=""
+              buttonStyle='btn-info'
+              buttonText=&nbsp;&nbsp;&nbsp;Next&nbsp;
+              value=next
+              iconRight="fas fa-angle-right"
               disabled={cueState == focusedEvent.episodes[0].cues.length-1}/>
           </div>
         </div>    
 
         <Slider 
         broadcastStatus={broadcastStatus}
-        sliderCue = {sliderCue}/>
+        sliderCue={sliderCue}/>
       {/if}
     <!-- {/if}  -->
 
@@ -313,13 +313,13 @@
   </div>
   <div class="row" slot="modalFooter">
     <Button
-      gridStyle = "mr-1"
+      gridStyle="mr-1"
       buttonStyle="btn-outline-secondary"
-      dataDismiss ="modal"
-      buttonText = "Cancel"/>
+      dataDismiss="modal"
+      buttonText="Cancel"/>
 
     <Button on:click={closeOccasionButton}
-      gridStyle = "mr-1"
+      gridStyle="mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
       buttonText="Close Occasion"/>
@@ -327,8 +327,8 @@
 </Modal>
 
 <Modal
-  modalID = "deleteOccasionModal"
-  modalTitle= "Delete Occasion">
+  modalID="deleteOccasionModal"
+  modalTitle="Delete Occasion">
   
   <div slot="modalBody">
     <!-- {#if gotEvents} -->
@@ -338,13 +338,13 @@
 
   <div class="row" slot="modalFooter">
     <Button
-      gridStyle = "mr-1"
+      gridStyle="mr-1"
       buttonStyle="btn-outline-secondary"
-      dataDismiss ="modal"
-      buttonText = "Cancel"/>
+      dataDismiss="modal"
+      buttonText="Cancel"/>
 
     <Button on:click={deleteOccasion}
-      gridStyle = "mr-1"
+      gridStyle="mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
       buttonText="Delete Occasion"/>
@@ -353,9 +353,9 @@
 
 <Modal
   modalID="QRcodeModalClosed"
-  showCloseButton = true>
+  showCloseButton=true>
     <div slot="header">
-      <div class ="row">
+      <div class="row">
 
         <div class="col-12">
           <p>Print this QR code to allow mobile devices to connect to your occasion.<br> <strong>Note: </strong>an occasion must be open to receive connections. </p>
@@ -365,7 +365,7 @@
     </div>
     
     <div id="printable" slot="modalBody" class="container-fluid">
-      <div class = "QRcodeContainer">
+      <div class="QRcodeContainer">
         <!-- QR code populated here --->
       </div>
       <p class="text-center">{formattedStartTimeFull}</p>
@@ -373,22 +373,19 @@
     
     <div class='notPrintable' slot="modalFooter">
        <Button on:click={printQR}
-          buttonText = "Print"
-          buttonStyle = "btn-outline-primary"
-          gridStyle = "col-12"
-          iconLeft  = "fa fa-print"
-        />
+          buttonText="Print"
+          buttonStyle="btn-outline-primary"
+          gridStyle="col-12"
+          iconLeft="fa fa-print"/>
     </div>
    
 </Modal>
 
 <Modal
   modalID="QRcodeModal"
-  showCloseButton = true>
-    
-    
+  showCloseButton=true>
     <div slot="modalBody" class="container-fluid">
-      <div class = "QRcodeContainer">
+      <div class="QRcodeContainer">
         <!-- QR code populated here -->
       </div>
     </div>

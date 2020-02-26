@@ -10,7 +10,7 @@
  export let headingText = "";
  export let pageID = "";
  export let includeBackButton = false;
- export let subHeadingText= ""
+ export let subHeadingText = ""
  export let occasionCreationFormIsOpen;
 
 </script>
@@ -48,8 +48,8 @@
     </div>
     {#if subHeadingText != ""}
       <div class="row">
-        <div class = "col-12">
-          <p class = "text-center subHeadingClass">{subHeadingText}</p>
+        <div class="col-12">
+          <p class="text-center subHeadingClass">{subHeadingText}</p>
         </div>
       </div>
     {/if}
