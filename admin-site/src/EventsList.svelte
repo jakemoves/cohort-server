@@ -9,62 +9,41 @@
   import Array from './ArrayList.svelte';
   import Button from './Button.svelte';
   import { storedEvents } from './EventsStore.js';
-  import { pageStateInStore, focusedEventStore, indexInEventsStore, focusedEventLabelStore} from './PageStore.js';
+  import { pageStateInStore, focusedEventStore, indexInEventsStore, focusedEventLabelStore} from './UpdateUIstore.js';
 
   const dispatch = createEventDispatcher();
-  const dispatchState = createEventDispatcher();
-
-  let indexInEvents;
-  let focusedEvent;
-  let focusedEventLabel;
   
   let events;
-  let sliderCue;
-
   storedEvents.subscribe(value => {
     events = value;
   })
 
-
-
   function sendEventsPackage(){
     dispatch('message', {
-      "sliderCue": sliderCue,
-      "focusedEventLabel": focusedEventLabel
-    });
-  }
-
-  function sendEventCreationFormState(){
-    dispatchState('state', {
       "openEventCreation": true
     });
   }
 
   function openForm(){
-    sendEventCreationFormState();
-    
+    sendEventsPackage();  
   }
 
-
-  //focusedevent store updated when evenst store changes
-  function eventButton(value){ 
-    focusedEventLabel = value;
-    focusedEventLabelStore.set(focusedEventLabel);
-    indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
-    focusedEvent = events[indexInEvents];
+  //when an event button gets clicked, it becomes the "focusedEvent"
+  function eventButton(e){ 
+    let focusedEventLabel = e.currentTarget.value;
+    let indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
+    let focusedEvent = events[indexInEvents];
     
-    //set up slider cue to hold cues in first index (0)
-    sliderCue = focusedEvent.episodes[0].cues[0]
     //update stores
     pageStateInStore.set(2);
-    focusedEventStore.update(value => value = focusedEvent);
-    indexInEventsStore.update(value => value = indexInEvents);
-    sendEventsPackage();
+    focusedEventLabelStore.set(focusedEventLabel);
+    focusedEventStore.set(focusedEvent);
+    indexInEventsStore.set(indexInEvents);
+    
   }
 
-
-
 </script>
+
 <style>
  .eventLabel {
   word-wrap:break-word;
@@ -83,8 +62,9 @@
         <div class="col-6 text-right eventLabel">
             <h3>{item.label}:</h3>
         </div>
-        <Button on:click={()=> eventButton(item.label)}
+        <Button on:click={eventButton}
           buttonHtml='<p class="mb-0">Occasions&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>'
+          value = {item.label}
           gridStyle ="col-6" />
       </div>
     {/each}

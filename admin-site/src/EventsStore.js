@@ -5,29 +5,24 @@
 //grabbing events info from server and placing in a store
 import {writable} from 'svelte/store';
 import { serverURL } from './ServerURLstore.js';
-import { focusedEventLabel, focusedEventStore } from './PageStore.js';
+import { focusedEventLabel, focusedEvent, focusedEventStore, focusedOccasionStore, focusedOccasionIDStore } from './UpdateUIstore.js';
 
 // let serverURL;
 
 let grabbedFromServerEvents;
+let focusedEventUpdate;
 
 
 export let events;
 export let storedEvents = writable(0);
-let focusedEvent;
-
 
 export let getEventsAndStore = async () => {
-  // urlStore.subscribe(value => {
-  //   serverURL = value;
-  // })
 
   let response = await fetch(serverURL + "/events", {
     method: 'GET'
   })
 
   grabbedFromServerEvents = await response.json();
-  grabbedFromServerEvents = grabbedFromServerEvents;
   storedEvents.update(value => 
       value = grabbedFromServerEvents
   );
@@ -35,8 +30,22 @@ export let getEventsAndStore = async () => {
   storedEvents.subscribe(value => {
     events = value;
     let indexInEvents = events.findIndex(event => event.label === focusedEventLabel);
-    focusedEvent = events[indexInEvents];
-    focusedEventStore.update(x => x = focusedEvent);
+    focusedEventUpdate = events[indexInEvents];
+    
+    focusedEventStore.update(x => x = focusedEventUpdate);
+
+    let focusedOccasionID;
+    focusedOccasionIDStore.subscribe(value =>{
+      focusedOccasionID = value
+    });
+    
+    if(focusedEvent != undefined){
+      let indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
+      let focusedOccasion = focusedEvent.occasions[indexInOccasions];
+
+      focusedOccasionStore.set(focusedOccasion);
+    }
+     
    
   });
   

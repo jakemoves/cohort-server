@@ -9,7 +9,7 @@
   import { onMount } from 'svelte';
   import Button from './Button.svelte';
   import { urlStore, serverURL } from './ServerURLstore.js';
-  import { pageStateInStore } from './PageStore.js';
+  import { pageStateInStore } from './UpdateUIstore.js';
   import { getEventsAndStore } from './EventsStore.js';
 
    

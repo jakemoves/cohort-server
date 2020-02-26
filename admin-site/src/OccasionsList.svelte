@@ -9,15 +9,13 @@
   import Array from './ArrayList.svelte';
   import Button from './Button.svelte';
   import Modal from './Modal.svelte';
-  import { focusedEventStore, pageStateInStore, indexInEvents } from './PageStore.js';
+  import { focusedEventStore, pageStateInStore, focusedOccasionStore, focusedOccasionIDStore } from './UpdateUIstore.js';
   import { storedEvents, getEventsAndStore} from './EventsStore.js';
-  import { occasionOpen } from './OccasionState.js';
   import { serverURL } from './ServerURLstore.js';
   import moment from "moment";
 
-  export let focusedEventLabel;
+  
   let dateSortedOccasions = [];
-  const dispatch = createEventDispatcher();
   const dispatchOccasionState = createEventDispatcher();
   let focusedOccasionID;
   let indexInOccasions;
@@ -39,42 +37,22 @@
     }
   });
 
-  function sendOccasionsPackage(){
-    dispatch('message', {
-      "focusedOccasion": focusedOccasion,
-      "focusedOccasionID": focusedOccasionID,
-      "indexInOccasions":indexInOccasions,
-    });
-  }
   function sendOccasionState(){
     dispatchOccasionState('state',{
       "occasionCreationFormIsOpen": true
     })
   }
 
-  function occasionButton(id) {
-    focusedOccasionID = id;
-    indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
-
+  function occasionButton(e) {
+    focusedOccasionID = e.currentTarget.value;
+    //grab id of occasion clicked and send to store
+    focusedOccasionIDStore.set(focusedOccasionID);
+    let indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
+    //update focusedOccasion accordingly
     focusedOccasion = focusedEvent.occasions[indexInOccasions];
+    focusedOccasionStore.set(focusedOccasion);
     
     pageStateInStore.set(3);
-
-    storedEvents.subscribe(value => {
-      if(focusedEvent != undefined){
-        if (value[indexInEvents].occasions[indexInOccasions] != undefined){
-          focusedOccasionState = value[indexInEvents].occasions[indexInOccasions].state
-        }
-      }
-    });
-    
-    if (focusedOccasionState == "closed"){
-      occasionOpen.set(false);
-    } else {
-      occasionOpen.set(true);
-    }  
-
-    sendOccasionsPackage();
   }
 
   function deleteEvent(){
@@ -89,7 +67,6 @@
       } else if (response.status == 400){
         showDeleteError = true;
         let serverSideError = await response.text()
-        console.log(serverSideError)
         deleteResults = serverSideError;
       } else response.text().then( errorMessage => {
         showDeleteError = true;
@@ -118,11 +95,11 @@
 
   {#each  dateSortedOccasions as item (item.id)}
     {#if item.locationCity == null}
-      <Button on:click={() => occasionButton(item.id)}
-        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5>City Name - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
+      <Button on:click={occasionButton}
+        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5> id:{item.id}</h5>'
         value = {item.id}/>
     {:else}
-      <Button on:click={() => occasionButton(item.id)}
+      <Button on:click={occasionButton}
         buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
         value = {item.id}/> 
     {/if} 
@@ -142,7 +119,7 @@
 
 <Button
   buttonStyle="btn-outline-danger btn-block"
-  buttonText="Delete event"
+  buttonText="Delete {focusedEvent.label}"
   dataTarget="#deleteEventModal"/>
 {#if showDeleteError}
 <div class="alert alert-danger text-center">

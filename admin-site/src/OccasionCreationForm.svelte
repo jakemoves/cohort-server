@@ -3,8 +3,8 @@ import Button from './Button.svelte';
 import { createEventDispatcher } from 'svelte';
 import { serverURL } from "./ServerURLstore.js";
 import { getEventsAndStore } from './EventsStore.js';
-import { focusedEvent } from './PageStore.js';
-
+import { focusedEvent } from './UpdateUIstore.js';
+import ErrorMessage from './ErrorMessages.js';
 
 let newOccasionLabel;
 let showError = false;
@@ -22,11 +22,11 @@ function createOccasion() {
   
   if(newOccasionLabel == undefined){
     showError = true;
-    errorResults = "Please give the occasion a name";
+    errorResults = ErrorMessage.formEmptyNameField;
 
   } else if (newOccasionLabel.length == 0){
     showError = true;
-    errorResults = "Please give the occasion a name";
+    errorResults = ErrorMessage.formEmptyNameField;
     
   } else {
     
@@ -47,7 +47,7 @@ function createOccasion() {
             })
           } else {
             response.text().then( errorMessage => {
-              console.log('Occasion creation error: ' + errorMessage)
+              console.log(`Occasion creation error: ${errorMessage}`)
               showError = true;
               errorResults = errorMessage;
             })
@@ -70,8 +70,8 @@ function cancel(){
 
 <form>
   <div class="form-group">
-    <label for="occasionLabel">Occasion Label/Name</label>
-    <input class="form-control" id="occasionLabel" aria-describedby="occasionCreation" placeholder="Enter occasion label." bind:value = {newOccasionLabel}>
+    <label for="occasionLabel">Occasion Name</label>
+    <input class="form-control" id="occasionLabel" aria-describedby="occasionCreation" placeholder="Enter occasion name." bind:value = {newOccasionLabel}>
   </div>
 
   <Button on:click={createOccasion}

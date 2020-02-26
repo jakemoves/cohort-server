@@ -6,25 +6,15 @@
 <script>
   import Page from './ParentPage.svelte';
   import Login from './Login.svelte';
-  import Button from './Button.svelte';
   import Occasion from './Occasion.svelte';
-  import { pageStateInStore } from "./PageStore.js";
+  import { pageStateInStore, focusedEvent } from "./UpdateUIstore.js";
   import OccasionsList from './OccasionsList.svelte';
   import EventsList from './EventsList.svelte';
   import RegistrationForm from './RegistrationForm.svelte'
   import DevTools from './DevTools.svelte';
-  import EventCreation from './EventCreationForm.svelte';
-  import OccasionCreation from './OccasionCreationForm.svelte';
+  import EventCreationFrom from './EventCreationForm.svelte';
+  import OccasionCreationForm from './OccasionCreationForm.svelte';
   
-
-  let focusedOccasionID;
-  let focusedEvent;
-  let focusedEventLabel;
-  let focusedOccasion;
-  let dateSortedOccasions =[];
-  let isOccasionOpen;
-  
-  let indexInOccasions;
 
   let sliderCue;
   let broadcastStatus = "unsent";
@@ -42,30 +32,19 @@
   
   //grab info from events + occasions
   function messageFromArrayList(value){
-    focusedEventLabel = value.detail.focusedEventLabel;
-    sliderCue = value.detail.sliderCue;
-    
+    openEventCreation = value.detail.openEventCreation;
   }
 
-  function messageFromArrayListOccasions(value){
-    focusedOccasionID = value.detail.focusedOccasionID;
-    focusedOccasion = value.detail.focusedOccasion;
-    indexInOccasions = value.detail.indexInOccasions;
-    isOccasionOpen = value.detail.isOccasionOpen;
-
-  }
-   //receive message package from EventCreation to hide the event creation form
+   //receive message package from EventCreationFrom to hide the event creation form
   function messageToCloseEventForm(value){
     openEventCreation = value.detail.openEventCreation;
   }
-   //receive message package from EventsList to show the event creation form
-  function messageToOpenEventForm(value){
-    openEventCreation = value.detail.openEventCreation;
-  }
-   //receive message package from OccasionCreation to exit the occasion creation form
+
+   //receive message package from OccasionCreationForm to exit the occasion creation form
   function messageToCloseOccasionForm(value){
     occasionCreationFormIsOpen = value.detail.occasionCreationFormIsOpen;
   }
+
   //receive message package from OccasionList to show the occasion creation form
   function messageToOpenOccasionForm(value){
     occasionCreationFormIsOpen = value.detail.occasionCreationFormIsOpen;
@@ -104,10 +83,9 @@
     
     {#if !openEventCreation}
 <!-- #eventsList allows a list of events to be built and shown based on "events" from store-->
-      <EventsList on:message = {messageFromArrayList}
-        on:state ={messageToOpenEventForm}/>
+      <EventsList on:message = {messageFromArrayList}/>
     {:else}
-      <EventCreation on:message = {messageToCloseEventForm}/>
+      <EventCreationFrom on:message = {messageToCloseEventForm}/>
 
     {/if}
   </Page>
@@ -115,27 +93,23 @@
 {:else if pageState == 2}
   <Page on:goBack={broadcastStatusFromBackButton}
     pageID = "occasionList" 
-    headingText="Occasions"
+    headingText={focusedEvent.label}
+    subHeadingText = "Event id: {focusedEvent.id}"
     includeBackButton = true
     occasionCreationFormIsOpen = {occasionCreationFormIsOpen}>
     <!-- open and close occasion creation form -->
     {#if !occasionCreationFormIsOpen}
     <!-- //occasions list populated by looping through events of "focused" event ID -->
-      <OccasionsList on:message = {messageFromArrayListOccasions}
-        on:state={messageToOpenOccasionForm}
-        focusedEventLabel = {focusedEventLabel}/>
+      <OccasionsList
+        on:state={messageToOpenOccasionForm}/>
     {:else}
-      <OccasionCreation on:message = {messageToCloseOccasionForm} />
+      <OccasionCreationForm on:message = {messageToCloseOccasionForm} />
     {/if}
     
   </Page>
 {:else if pageState == 3}
   
   <Occasion
-    focusedOccasion = {focusedOccasion}
-    focusedOccasionID  = {focusedOccasionID}
-    indexInOccasions = {indexInOccasions}
-    sliderCue = {sliderCue}
     broadcastStatus ={broadcastStatus}/>
 
 {/if}
