@@ -6,7 +6,10 @@
 
 const passport = require('passport')
 const jwt = require('jsonwebtoken')
-const usersTable = require('../knex/queries/user-queries')
+
+if(process.env.NODE_ENV != 'localoffline'){
+  const usersTable = require('../knex/queries/user-queries')
+}
 
 handleError = (httpStatusCode, error, res) => {
   if(error.message !== undefined){

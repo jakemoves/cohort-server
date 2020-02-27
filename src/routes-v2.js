@@ -40,7 +40,7 @@ routerWithAuth.patch('/events/:id/episodes', eventsController.events_update_epis
 routerWithAuth.post('/occasions', occasionsController.occasions_create)
 routerWithAuth.delete('/occasions/:id', occasionsController.occasions_delete)
 routerWithAuth.patch('/occasions/:id', occasionsController.occasions_update)
-routerWithAuth.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
+router.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
 routerWithAuth.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
 
 // router.post('/events/:id/occasions', occasionsController.occasions_create)

@@ -5,12 +5,12 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const path = require('path')
-const passport = require('passport')
+// const passport = require('passport')
 const cookieParser = require('cookie-parser')
 
-require('dotenv').config({ path: __dirname + '/../.env' })
+const dotenv = require('dotenv').config({ path: __dirname + '/../.env' })
 
-const knex = require('./knex/knex.js')
+// const knex = require('./knex/knex.js')
 
 // configure express
 const app = express()
@@ -20,9 +20,9 @@ const jsonParser = bodyParser.json()
  *   Authentication
  */
 
-app.use(cookieParser())
-const passportConfig = require('./cohort-passport-config')
-app.use(passport.initialize())
+// app.use(cookieParser())
+// const passportConfig = require('./cohort-passport-config')
+// app.use(passport.initialize())
 
 /*
  *   Routing
@@ -41,7 +41,7 @@ app.use( (req, res, next) => {
 
 app.use('/api/v1', v1routes)
 app.use('/api/v2', v2routes.router)
-app.use('/api/v2', passport.authenticate('jwt', { session: false }), v2routes.routerWithAuth)
+// app.use('/api/v2', passport.authenticate('jwt', { session: false }), v2routes.routerWithAuth)
 
 let staticPath = path.join(__dirname, '../public') // because we run the app from /lib
 app.use(express.static(staticPath))
@@ -63,10 +63,10 @@ app.use(express.static(staticPath))
  * 	 Apple Push Notifications 
  */
 
-const cohort_apple_n10ns = require('./cohort-apple-notifications')
+// const cohort_apple_n10ns = require('./cohort-apple-notifications')
 
-const apnProvider = cohort_apple_n10ns.start()
+// const apnProvider = cohort_apple_n10ns.start()
 
-app.set('apnProvider', apnProvider)
+// app.set('apnProvider', apnProvider)
 
 module.exports = app

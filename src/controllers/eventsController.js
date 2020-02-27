@@ -1,14 +1,16 @@
 // Copyright Jacob Niedzwiecki, 2019
 // Released under the MIT License (see /LICENSE)
 
-const knex = require('../knex/knex.js')
+// const knex = require('../knex/knex.js') // may not be required
 const WebSocket = require('ws')
 const fetch = require('node-fetch')
 const apn = require('apn')
 const _uniq = require('lodash/uniq')
 
-const eventsTable = require('../knex/queries/event-queries')
-const cohortMessagesTable = require('../knex/queries/cohort-message-queries')
+if(process.env.NODE_ENV != 'localoffline'){
+  const eventsTable = require('../knex/queries/event-queries')
+  const cohortMessagesTable = require('../knex/queries/cohort-message-queries')
+} 
 
 // const CHDevice = require('../models/CHDevice')
 const CHEvent = require('../models/CHEvent')
