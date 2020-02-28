@@ -48,8 +48,15 @@
  .eventLabel {
   word-wrap:break-word;
  }
+
  h3 {
-   font-size: 1.55rem;
+   font-size: 6vw;
+ }
+ 
+ @media (min-width:641px)  {
+  h3 {
+    font-size: 1.55rem;
+  }
  }
  
 </style>

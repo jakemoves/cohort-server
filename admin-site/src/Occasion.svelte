@@ -1,4 +1,3 @@
-
 <!-- 
   Copyright Luke Garwood & Jacob Niedzwiecki, 2019
   Released under the MIT License (see /LICENSE)
@@ -16,6 +15,11 @@
   import Slider from './Slider.svelte';
   import Modal from './Modal.svelte';
  
+  ///PHONY CODE FOR TESTING//
+  const groupings = [0,1,2,3,4,5,6,7];
+  let groupOnDisplay = 0;
+  let fakeArray = [];
+  ////////////
 
   
   let focusedOccasion;
@@ -137,9 +141,15 @@
 
       for (let i = 0; i < qrContainer.length; i++){
         qrContainer[i].innerHTML = qrCode
-      }  
+      }
+      
+      for (let i = 0; i <= 7; i++){
+        fakeArray[i] = qrCode;
+      }
+      updateQRcodeGroup();
     };
     QrResponse();
+
   }
 
 
@@ -166,24 +176,41 @@
     window.print();
   }
 
+  function updateQRcodeGroup(){
+    let fakeQrContainer = document.getElementById('fakeQRcodeContainer');
+    
+    if(event == undefined){
+      fakeQrContainer.innerHTML = fakeArray[0];
+    } else {
+      groupOnDisplay = event.target.value;
+      fakeQrContainer.innerHTML = fakeArray[groupOnDisplay];
+    }
+  }
+
 </script>
 
 <style>
   @media print {
-    #printable {
+    @page {
+    size: A4;
+    margin: 0;
+    }
+    .printThis {
+        position: fixed;
         height: 100%;
         width: 100%;
-        position: fixed;
         top: 0;
         left: 0;
         margin: 0;
         padding: 0;
         font-size: 3em;
+        min-width: 1000px;  
     }
-    .notPrintable{
+    .dontPrintThis{
       display:none;
     }
   }
+  
 </style>
 
 
@@ -304,6 +331,7 @@
 
   </Page>
 {/if}
+
 <Modal
   modalID="closeOccassionModal"
   modalTitle="Close Occasion">
@@ -354,6 +382,7 @@
 <Modal
   modalID="QRcodeModalClosed"
   showCloseButton=true>
+  
     <div slot="header">
       <div class="row">
 
@@ -363,22 +392,41 @@
 
       </div> 
     </div>
-    
-    <div id="printable" slot="modalBody" class="container-fluid">
-      <div class="QRcodeContainer">
-        <!-- QR code populated here --->
+   
+    <div slot="modalBody" class="printThis container-fluid">
+      <div class="dropdown text-center dontPrintThis">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Select Group
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          {#each groupings as group, i}
+            <button class="dropdown-item" type="button" value={i} on:click={updateQRcodeGroup}>Group {i}</button>
+          {/each}
+        </div>
       </div>
-      <p class="text-center">{formattedStartTimeFull}</p>
-    </div>
+      
+        <div id="fakeQRcodeContainer">
+            <!-- QR code populated here --->
+        </div>
+        <p class="text-center">{formattedStartTimeFull} - Group {groupOnDisplay}</p>
+      
+    </div> 
     
-    <div class='notPrintable' slot="modalFooter">
+    <!-- <div slot="modalBody" class="printThis container-fluid"> -->
+      <!-- <div class="QRcodeContainer"> -->
+        <!-- QR code populated here --->
+      <!-- </div>
+      <p class="text-center">{formattedStartTimeFull}</p>
+    </div> -->
+    
+    <div class='dontPrintThis' slot="modalFooter">
        <Button on:click={printQR}
           buttonText="Print"
           buttonStyle="btn-outline-primary"
           gridStyle="col-12"
           iconLeft="fa fa-print"/>
     </div>
-   
+
 </Modal>
 
 <Modal

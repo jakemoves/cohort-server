@@ -14,7 +14,7 @@ export let showCloseButton = false;
 
 
 <div class="modal fade" id={modalID} tabindex="-1" role="dialog" aria-labelledby="{modalID}Label" aria-hidden="true" data-backdrop="false">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <div class="container-fluid">
