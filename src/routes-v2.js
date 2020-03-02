@@ -31,7 +31,7 @@ routerWithAuth.get('/events', eventsController.events)
 routerWithAuth.get('/events/:id', eventsController.events_id)
 routerWithAuth.post('/events', eventsController.events_create)
 routerWithAuth.delete('/events/:id', eventsController.events_delete)
-routerWithAuth.patch('/events/:id/episodes', eventsController.events_update_episodes)
+routerWithAuth.post('/events/:id/episodes', eventsController.events_update_episodes)
 
 /*
  *   occasions

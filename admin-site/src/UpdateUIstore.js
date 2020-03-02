@@ -5,7 +5,7 @@
  //Store holds page state for UI updates
  
 import {writable} from 'svelte/store';
-import { component_subscribe } from 'svelte/internal';
+// import { component_subscribe } from 'svelte/internal';
 
 export let pageStateInStore = writable(0);
 

@@ -7,7 +7,6 @@ import {writable} from 'svelte/store';
 import { serverURL } from './ServerURLstore.js';
 import { focusedEventLabel, focusedEvent, focusedEventStore, focusedOccasionStore, focusedOccasionIDStore } from './UpdateUIstore.js';
 
-// let serverURL;
 
 let grabbedFromServerEvents;
 let focusedEventUpdate;

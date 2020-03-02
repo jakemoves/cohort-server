@@ -1,3 +1,9 @@
+<!-- 
+  Copyright Luke Garwood & Jacob Niedzwiecki, 2019
+  Released under the MIT License (see /LICENSE)
+-->
+
+<!-- form component for creating new occasions -->
 <script>
 import Button from './Button.svelte';
 import { createEventDispatcher } from 'svelte';

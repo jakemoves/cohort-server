@@ -15,13 +15,7 @@
   import Slider from './Slider.svelte';
   import Modal from './Modal.svelte';
  
-  ///PHONY CODE FOR TESTING//
-  const groupings = [0,1,2,3,4,5,6,7];
-  let groupOnDisplay = 0;
-  let fakeArray = [];
-  ////////////
 
-  
   let focusedOccasion;
   focusedOccasionStore.subscribe(value => {
     focusedOccasion = value
@@ -138,15 +132,10 @@
       });
       let qrCode = await response.text()
       let qrContainer = document.getElementsByClassName("QRcodeContainer");
-
+      
       for (let i = 0; i < qrContainer.length; i++){
         qrContainer[i].innerHTML = qrCode
       }
-      
-      for (let i = 0; i <= 7; i++){
-        fakeArray[i] = qrCode;
-      }
-      updateQRcodeGroup();
     };
     QrResponse();
 
@@ -174,17 +163,6 @@
 
   function printQR(){
     window.print();
-  }
-
-  function updateQRcodeGroup(){
-    let fakeQrContainer = document.getElementById('fakeQRcodeContainer');
-    
-    if(event == undefined){
-      fakeQrContainer.innerHTML = fakeArray[0];
-    } else {
-      groupOnDisplay = event.target.value;
-      fakeQrContainer.innerHTML = fakeArray[groupOnDisplay];
-    }
   }
 
 </script>
@@ -276,7 +254,7 @@
         dataTarget="#QRcodeModal"/>
     </div>
     
-    <!-- {#if gotEvents == true } -->
+   
       {#if focusedEvent.episodes[0].cues.length == 0}
         <div class="row">
           <div class="col-md-12">
@@ -327,7 +305,7 @@
         broadcastStatus={broadcastStatus}
         sliderCue={sliderCue}/>
       {/if}
-    <!-- {/if}  -->
+    
 
   </Page>
 {/if}
@@ -359,9 +337,7 @@
   modalTitle="Delete Occasion">
   
   <div slot="modalBody">
-    <!-- {#if gotEvents} -->
       Are you sure you want to delete {focusedEvent.label} - {formattedStartTime}?
-    <!-- {/if} -->
   </div>
 
   <div class="row" slot="modalFooter">
@@ -392,32 +368,13 @@
 
       </div> 
     </div>
-   
-    <div slot="modalBody" class="printThis container-fluid">
-      <div class="dropdown text-center dontPrintThis">
-        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Select Group
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          {#each groupings as group, i}
-            <button class="dropdown-item" type="button" value={i} on:click={updateQRcodeGroup}>Group {i}</button>
-          {/each}
-        </div>
-      </div>
-      
-        <div id="fakeQRcodeContainer">
-            <!-- QR code populated here --->
-        </div>
-        <p class="text-center">{formattedStartTimeFull} - Group {groupOnDisplay}</p>
-      
-    </div> 
     
-    <!-- <div slot="modalBody" class="printThis container-fluid"> -->
-      <!-- <div class="QRcodeContainer"> -->
+    <div slot="modalBody" class="printThis container-fluid">
+      <div class="QRcodeContainer">
         <!-- QR code populated here --->
-      <!-- </div>
+      </div>
       <p class="text-center">{formattedStartTimeFull}</p>
-    </div> -->
+    </div>
     
     <div class='dontPrintThis' slot="modalFooter">
        <Button on:click={printQR}
