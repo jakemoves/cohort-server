@@ -2,10 +2,12 @@
 // Released under the MIT License (see /LICENSE)
 
 const moment = require('moment')
-const passport = require('passport')
+// const passport = require('passport')
 
-const occasionsTable = require('../knex/queries/occasion-queries')
-const eventsTable = require('../knex/queries/event-queries')
+if(process.env.NODE_ENV != 'localoffline'){
+  const occasionsTable = require('../knex/queries/occasion-queries')
+  const eventsTable = require('../knex/queries/event-queries')
+}
 
 const CHOccasion = require('../models/CHOccasion')
 const broadcastService = require('../services/broadcastService')
@@ -153,10 +155,10 @@ exports.occasions_broadcast = async (req, res, next) => {
   }
 
   // TODO eventually we may need a PermissionsService to do these checks?
-  if(occasion.owner_id != req.user.id && !req.user.is_admin){
-    handleError(401, 'Authorization required', res)
-    return
-  }
+  // if(occasion.owner_id != req.user.id && !req.user.is_admin){
+  //   handleError(401, 'Authorization required', res)
+  //   return
+  // }
 
   const cue = req.body
   
