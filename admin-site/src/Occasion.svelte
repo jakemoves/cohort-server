@@ -130,13 +130,16 @@
       let response = await fetch(serverURL + "/occasions/" + focusedOccasionID + "/qrcode", {
       method: 'GET'
       });
-      let qrCode = await response.text()
-      let qrContainer = document.getElementsByClassName("QRcodeContainer");
+      let qrCode = await response.text().then( x => {
+        let qrContainer = document.getElementsByClassName("QRcodeContainer");
       
-      for (let i = 0; i < qrContainer.length; i++){
-        qrContainer[i].innerHTML = qrCode
-      }
-    };
+        for (let i = 0; i < qrContainer.length; i++){
+          qrContainer[i].innerHTML = x;
+        }
+      });
+      
+    }
+    
     QrResponse();
 
   }
