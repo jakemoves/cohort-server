@@ -35,10 +35,10 @@
   const mediaDomainEnum = {
     0:"Sound",
     1:"Video",
-    2:"Text",
-    3:"Light",
-    4:"Haptic",
-    5:"Image"
+    2:"Image",
+    3:"Text",
+    4:"Light",
+    5:"Haptic",
   };
 
   const cueActionEnum = {

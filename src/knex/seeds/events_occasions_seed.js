@@ -21,12 +21,7 @@ exports.seed = function(knex, Promise) {
           },{ 
             "mediaDomain": 0,
             "cueNumber": 2,
-            "cueAction": 0,
-            "targetTags": ["all"]          
-          },{ 
-            "mediaDomain": 0,
-            "cueNumber": 1,
-            "cueAction": 0,
+            "cueAction": 3,
             "targetTags": ["all"]          
           },{ 
             "mediaDomain": 1,
@@ -34,14 +29,24 @@ exports.seed = function(knex, Promise) {
             "cueAction": 0,
             "targetTags": ["all"]          
           },{ 
+            "mediaDomain": 1,
+            "cueNumber": 2,
+            "cueAction": 1,
+            "targetTags": ["all"]          
+          },{ 
+            "mediaDomain": 1,
+            "cueNumber": 3,
+            "cueAction": 3,
+            "targetTags": ["all"]          
+          },{ 
             "mediaDomain": 2,
             "cueNumber": 1,
             "cueAction": 0,
             "targetTags": ["all"]          
           },{ 
-            "mediaDomain": 4,
-            "cueNumber": 1,
-            "cueAction": 0,
+            "mediaDomain": 2,
+            "cueNumber": 2,
+            "cueAction": 3,
             "targetTags": ["all"]          
           }]
         } else {
