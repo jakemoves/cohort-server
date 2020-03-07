@@ -31,7 +31,7 @@ routerWithAuth.get('/events', eventsController.events)
 routerWithAuth.get('/events/:id', eventsController.events_id)
 routerWithAuth.post('/events', eventsController.events_create)
 routerWithAuth.delete('/events/:id', eventsController.events_delete)
-routerWithAuth.post('/events/:id/episodes', eventsController.events_update_episodes)
+routerWithAuth.post('/events/:id/episodes', eventsController.events_update_episodes) // POST here instead of PATCH because Unity supports a limited set of HTTP verbs
 
 /*
  *   occasions
