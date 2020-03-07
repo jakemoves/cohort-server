@@ -6,7 +6,7 @@ exports.seed = function(knex, Promise) {
     return;
   } else {
     // Deletes ALL existing entries
-    return knex('users').del()
+    return knex.raw('TRUNCATE TABLE users RESTART IDENTITY CASCADE')
     .then(function () {
       return knex('users').insert([{
         username: 'dev_user', // admin
