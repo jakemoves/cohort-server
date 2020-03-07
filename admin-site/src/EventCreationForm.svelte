@@ -24,6 +24,7 @@ function sendEventCreationFormState(){
 }
 
 function createEvent() {
+  event.preventDefault();
   if(newEventLabel == undefined){
     showError = true;
     errorResults = ErrorMessage.formEmptyNameField;
@@ -77,6 +78,7 @@ function cancel(){
   </div>
 
   <Button on:click={createEvent}
+    buttonType = "submit"
     buttonText = "Create Event"
     buttonStyle = "btn-outline-success btn-block"/>
   

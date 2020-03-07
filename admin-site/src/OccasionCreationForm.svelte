@@ -25,6 +25,7 @@ function sendOccasionCreationFormState(){
 }
 
 function createOccasion() {
+  event.preventDefault();
   
   if(newOccasionLabel == undefined){
     showError = true;
@@ -81,6 +82,7 @@ function cancel(){
   </div>
 
   <Button on:click={createOccasion}
+    buttonType = "submit"
     buttonText = "Create Occasion"
     buttonStyle = "btn-outline-success btn-block"/>
   
