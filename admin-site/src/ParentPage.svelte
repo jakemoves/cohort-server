@@ -46,12 +46,17 @@
       <!-- //empty spacer div to keep text centered if event name runs long -->
       <div class="col-3 mt-2"></div>
     </div>
-    {#if subHeadingText != ""}
+    {#if subHeadingText == ""}
+      <!-- don't display if subheading is empty -->
+    {:else if subHeadingText == "Invalid date"}
+     <!-- don't display subheading if it has invald date/time -->
+     {:else}
       <div class="row">
         <div class="col-12">
           <p class="text-center subHeadingClass">{subHeadingText}</p>
         </div>
       </div>
+
     {/if}
     <hr/>
     <slot></slot>

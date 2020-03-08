@@ -32,6 +32,9 @@
 
   let cueState = 0;
 
+  let occasionDetails= [];
+  let showOccasionDetailsTitle = true;
+
   const mediaDomainEnum = {
     0:"Sound",
     1:"Video",
@@ -66,7 +69,28 @@
       .format("LL");
     formattedEndTime = moment(focusedOccasion.endDateTime)
       .format("LL");
+
+     occasionDetails = [
+      {label:"Start Date: ", value:formattedStartTimeFull},
+      {label:"End Date: ", value:formattedEndTimeFull},
+      {label:"Location Label: ", value:focusedOccasion.locationLabel},
+      {label:"Location Address: ", value:focusedOccasion.locationAddress},
+      {label:"Location City: ", value:focusedOccasion.locationCity}
+     ]
+     hideOccasionTitleIfDetailsAreEmpty();
   });
+
+  function hideOccasionTitleIfDetailsAreEmpty(){
+    occasionDetails.forEach(element => {
+      if (element.value == null || element.value == "Invalid date"){
+        showOccasionDetailsTitle = false;
+      } else {
+        showOccasionDetailsTitle = true;
+      }
+    });
+  }
+  
+ 
 
   function updateOccasionStateOnServer(state){
     try {
@@ -93,6 +117,7 @@
 
   function openOccasionButton() {
     updateOccasionStateOnServer("opened"); 
+    
   };
 
   function closeOccasionButton(){
@@ -191,6 +216,10 @@
       display:none;
     }
   }
+
+  ul{
+    list-style: none;
+  }
   
 </style>
 
@@ -211,15 +240,23 @@
 
     <div class="row">
       <div class="col-md-12">
+      {#if showOccasionDetailsTitle}
           <label for="OccasionDetails">
             <h4>Occasion Details</h4>
           </label>
+      {/if}
           <ul id="OccasionDetails">
-            <li>Start Date : {formattedStartTimeFull}</li>
-            <li>End Date : {formattedEndTimeFull}</li>
-            <li>Location Label: {focusedOccasion.locationLabel}</li>
-            <li>Location Address: {focusedOccasion.locationAddress}</li>
-            <li>Location City: {focusedOccasion.locationCity}</li>
+            {#each occasionDetails as { label, value }, i}
+             <!-- svelte doesn't seem to allow compound conditionals -->
+              {#if value === "Invalid date"}
+              <!-- uncomment below to show value is invalid/not set to user -->
+                <!-- <li>{label}Not set yet.</li> -->
+              {:else if value == null}
+                <!-- <li>{label}Not set yet.</li> -->
+              {:else}
+               <li>{label}{value}</li>
+              {/if}
+            {/each}
           </ul>
           <hr> 
           <div class="row">
