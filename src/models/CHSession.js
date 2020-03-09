@@ -4,9 +4,9 @@
 const _flatten = require('lodash/flatten')
 const _uniqBy = require('lodash/uniqBy')
 
-if(process.env.NODE_ENV != 'localoffline') {
-  const occasionsTable = require('../knex/queries/occasion-queries')
-}
+// if(process.env.NODE_ENV != 'localoffline') {
+//   const occasionsTable = require('../knex/queries/occasion-queries')
+// }
 const CHOccasion = require('./CHOccasion')
 
 class CHSession {

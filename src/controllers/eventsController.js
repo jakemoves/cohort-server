@@ -7,10 +7,10 @@ const fetch = require('node-fetch')
 const apn = require('apn')
 const _uniq = require('lodash/uniq')
 
-if(process.env.NODE_ENV != 'localoffline'){
-  const eventsTable = require('../knex/queries/event-queries')
-  const cohortMessagesTable = require('../knex/queries/cohort-message-queries')
-} 
+// if(process.env.NODE_ENV != 'localoffline'){
+//   const eventsTable = require('../knex/queries/event-queries')
+//   const cohortMessagesTable = require('../knex/queries/cohort-message-queries')
+// } 
 
 // const CHDevice = require('../models/CHDevice')
 const CHEvent = require('../models/CHEvent')
