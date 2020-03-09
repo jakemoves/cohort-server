@@ -77,17 +77,25 @@
       {label:"Location Address: ", value:focusedOccasion.locationAddress},
       {label:"Location City: ", value:focusedOccasion.locationCity}
      ]
+
      hideOccasionTitleIfDetailsAreEmpty();
+     
   });
 
   function hideOccasionTitleIfDetailsAreEmpty(){
-    occasionDetails.forEach(element => {
-      if (element.value == null || element.value == "Invalid date"){
-        showOccasionDetailsTitle = false;
-      } else {
-        showOccasionDetailsTitle = true;
-      }
+    //creating a little truth table to check if all the occasion details are invalid/null
+    let numFalse = 0;
+      occasionDetails.forEach(element => {
+        if (element.value === null || element.value === "Invalid date"){
+          numFalse++
+        } 
     });
+    
+    if(numFalse == occasionDetails.length){
+      showOccasionDetailsTitle = false;
+    } else {
+      showOccasionDetailsTitle = true;
+    }
   }
   
  
