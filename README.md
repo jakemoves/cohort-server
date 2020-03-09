@@ -1,6 +1,8 @@
 # Cohort Server
 
 ## Getting started
+- a packaged version of this app that runs on a local (offline) network can be downloaded [here](https://cohort.rocks/binaries/cohort-server-offline-latest.zip)
+
 ### environment setup
 - install node 8.16.0
   - we recommend that you use [nvm](https://github.com/nvm-sh/nvm) to manage your node installed versions
