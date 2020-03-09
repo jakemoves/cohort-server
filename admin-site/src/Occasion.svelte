@@ -79,7 +79,7 @@
      ]
 
      hideOccasionTitleIfDetailsAreEmpty();
-     
+
   });
 
   function hideOccasionTitleIfDetailsAreEmpty(){
@@ -421,7 +421,10 @@
       <div class="QRcodeContainer">
         <!-- QR code populated here --->
       </div>
-      <p class="text-center">{formattedStartTimeFull}</p>
+      <p class="text-center">{focusedEvent.label} - {focusedOccasion.label}</p>
+      {#if formattedStartTimeFull !== "Invalid date"}
+        <p class="text-center">{formattedStartTimeFull}</p>
+      {/if}
     </div>
     
     <div class='dontPrintThis' slot="modalFooter">
@@ -441,5 +444,6 @@
       <div class="QRcodeContainer">
         <!-- QR code populated here -->
       </div>
+       <p class="text-center">{focusedEvent.label} - {focusedOccasion.label}</p>
     </div>
 </Modal>
