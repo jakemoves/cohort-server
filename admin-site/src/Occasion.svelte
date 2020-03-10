@@ -240,12 +240,10 @@
     headingText={focusedOccasion.label}
     includeBackButton=true>
 
-    <div class="row">
       <Button on:click={showQR}
         buttonText="Get QR Code" 
         dataTarget="#QRcodeModalClosed"/>
-    </div>
-
+   
     <div class="row">
       <div class="col-md-12">
       {#if showOccasionDetailsTitle}
@@ -267,18 +265,16 @@
             {/each}
           </ul>
           <hr> 
-          <div class="row">
-            <Button on:click={openOccasionButton}
-              buttonStyle="btn-outline-success btn-block"
-              buttonText="Open Occasion"/>
-          </div>
-          <div class="row">
-            <Button
-              buttonStyle="btn-outline-danger btn-block"
-              buttonText="Delete {focusedOccasion.label}"
-              dataTarget="#deleteOccasionModal"/>
-          </div>
           
+          <Button on:click={openOccasionButton}
+            buttonStyle="btn-outline-success btn-block"
+            buttonText="Open Occasion"/>
+        
+          <Button
+            buttonStyle="btn-outline-danger btn-block"
+            buttonText="Delete {focusedOccasion.label}"
+            dataTarget="#deleteOccasionModal"/>
+               
       </div>
     </div>
   </Page>
@@ -290,18 +286,14 @@
     includeBackButton=true
     subHeadingText={formattedStartTimeFull}>
    
-    <div class="row">
-      <Button
-        buttonStyle='btn-outline-danger btn-block' 
-        buttonText="Close Occasion" 
-        dataTarget="#closeOccassionModal"/>
-    </div>
-    <div class="row">
-      <Button on:click={showQR} 
-        buttonText="Show QR Code" 
-        dataTarget="#QRcodeModal"/>
-    </div>
-    
+    <Button
+      buttonStyle='btn-outline-danger btn-block' 
+      buttonText="Close Occasion" 
+      dataTarget="#closeOccassionModal"/>
+  
+    <Button on:click={showQR} 
+      buttonText="Show QR Code" 
+      dataTarget="#QRcodeModal"/>
    
       {#if focusedEvent.episodes[0].cues.length == 0}
         <div class="row">
