@@ -9173,6 +9173,7 @@ video {
   
 }
 
+
 .card .author {
   display: inline-block;
 }
@@ -9226,6 +9227,9 @@ video {
 .card .card-category {
   /* color: #9A9A9A; */
   color:  #265c00;
+}
+li{
+  font-weight: 400; 
 }
 
 .card .category-social .fa {
