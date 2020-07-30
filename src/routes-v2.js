@@ -8,12 +8,19 @@ const routerWithAuth = express.Router()
 const eventsController = require('./controllers/eventsController')
 const occasionsController = require('./controllers/occasionsController')
 const usersController = require('./controllers/usersController')
+const projectSiteController = require('./controllers/projectSiteController')
 // const demoController = require('./controllers/demoController')
 // const servicesController = require('./controllers/servicesController')
 
 router.get('', (req, res) => {
   res.send('Cohort rocks')
 })
+
+/*
+ *   project site routes
+ */
+router.post('/contact-form', projectSiteController.submit_contact_form)
+
 
 /*
  *   login, registration, users
