@@ -3794,9 +3794,9 @@ fieldset[disabled] .btn-warning.active {
 .btn-danger:not(:disabled):not(.disabled).active,
 .btn-danger:not(:disabled):not(.disabled).active:focus,
 .show>.btn-danger.dropdown-toggle {
-  background-color: #f33816;
+  background-color: #da2b0b;
   color: #FFFFFF;
-  border-color: #f33816;
+  border-color: #da2b0b;
   box-shadow: none;
 }
 
@@ -3828,8 +3828,8 @@ fieldset[disabled] .btn-danger:focus,
 fieldset[disabled] .btn-danger.focus,
 fieldset[disabled] .btn-danger:active,
 fieldset[disabled] .btn-danger.active {
-  background-color: #f33816;
-  border-color: #f33816;
+  background-color: #da2b0b;
+  border-color: #da2b0b;
 }
 
 .btn-danger.btn-link {
@@ -3843,19 +3843,19 @@ fieldset[disabled] .btn-danger.active {
 .btn-danger.btn-link:focus:active,
 .open>.btn-danger.btn-link.dropdown-toggle {
   background-color: transparent !important;
-  color: #f33816 !important;
+  color: #da2b0b !important;
 }
 
 .btn-danger.btn-link .caret {
-  border-top-color: #f5593d;
+  border-top-color: #da2b0b;
 }
 
 .btn-danger .caret {
   border-top-color: #FFFFFF;
 }
-.btn-danger{
+/* .btn-outline-danger{
   color:#da2b0b;
-}
+} */
 
 .btn-neutral {
   background-color: #FFFFFF;
@@ -15579,8 +15579,16 @@ License - nucleoapp.com/license/
    font-size: 1.45em;
 }
 
+.custom-dark-bg{
+  background-color: rgba(1,1,1,0.8);
+}
+
 .custom-slightly-bigger-fontSize{
   font-size: 1.2em;
+
+}
+.custom-really-big-fontSize{
+  font-size: 2.5em;
 
 }
 .flip-card {
@@ -15620,12 +15628,19 @@ License - nucleoapp.com/license/
   height: 100%;
   -webkit-backface-visibility: hidden; /* Safari */
   backface-visibility: hidden;
+
 }
 
 /* Style the front side (fallback if image is missing) */
+#flippy{
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 3px;
+}
 
 
 /* Style the back side */
 .flip-card-back {
   transform: rotateY(180deg);
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 3px;
 }
