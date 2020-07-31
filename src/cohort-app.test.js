@@ -689,12 +689,12 @@ describe('Occasion routes', () => {
     expect(newOccasionsCount).toEqual(occasionsCount - 1)
   })
 
-  test('PATCH /occasions/:id -- open occasion', async () => {
+  test('POST /occasions/:id -- open occasion', async () => {
     const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
-    .patch('/api/v2/occasions/2')
+    .post('/api/v2/occasions/2')
     .set('Authorization', 'JWT ' + token)
     .send({state: 'opened'})
 
@@ -704,12 +704,12 @@ describe('Occasion routes', () => {
     expect(app.get('cohortSession').openOccasions).toHaveLength(2)
   })
 
-  test('PATCH /occasions/:id -- close occasion', async () => {
+  test('POST /occasions/:id -- close occasion', async () => {
     const token = await login('test_user_1', app)
     expect(token).toBeDefined()
     
     const res = await request(app)
-    .patch('/api/v2/occasions/3')
+    .post('/api/v2/occasions/3')
     .set('Authorization', 'JWT ' + token)
     .send({state: 'closed'})
 

@@ -417,7 +417,7 @@ describe('Occasions & WebSocket broadcasts', () => {
     expect(token).toBeDefined()
     
     let res1 = await request(app)
-      .patch('/api/v2/occasions/4')
+      .post('/api/v2/occasions/4')
       .set('Authorization', 'JWT ' + token)
       .send({state: 'opened'})
     
@@ -547,7 +547,7 @@ describe('Occasions & WebSocket broadcasts', () => {
     })
 
     const res = await request(app)
-      .patch('/api/v2/occasions/3')
+      .post('/api/v2/occasions/3')
       .set('Authorization', 'JWT ' + token)
       .send({state: 'closed'})
 
