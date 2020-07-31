@@ -3,7 +3,13 @@
 
 const express = require('express')
 const router = express.Router()
-const routerWithAuth = express.Router()
+
+let localOfflineRouter, routerWithAuth
+if(process.env.NODE_ENV == 'localoffline'){
+  localOfflineRouter = express.Router()
+} else {
+  routerWithAuth = express.Router()
+}
 
 const eventsController = require('./controllers/eventsController')
 const occasionsController = require('./controllers/occasionsController')
@@ -21,27 +27,35 @@ router.get('', (req, res) => {
 
 router.post('/users', usersController.register_user)
 router.post('/login', usersController.login_user)
-routerWithAuth.delete('/users/:id', usersController.delete_user)
+if(process.env.NODE_ENV != 'localoffline'){
+  routerWithAuth.delete('/users/:id', usersController.delete_user)
+}
 
 /* 
  *   events
  */
 
-routerWithAuth.get('/events', eventsController.events)
-routerWithAuth.get('/events/:id', eventsController.events_id)
-routerWithAuth.post('/events', eventsController.events_create)
-routerWithAuth.delete('/events/:id', eventsController.events_delete)
-routerWithAuth.post('/events/:id/episodes', eventsController.events_update_episodes) // POST here instead of PATCH because Unity supports a limited set of HTTP verbs
+if(process.env.NODE_ENV != 'localoffline'){
+  routerWithAuth.get('/events', eventsController.events)
+  routerWithAuth.get('/events/:id', eventsController.events_id)
+  routerWithAuth.post('/events', eventsController.events_create)
+  routerWithAuth.delete('/events/:id', eventsController.events_delete)
+  routerWithAuth.post('/events/:id/episodes', eventsController.events_update_episodes) // POST here instead of PATCH because Unity supports a limited set of HTTP verbs
+}
 
 /*
  *   occasions
  */
 
-routerWithAuth.post('/occasions', occasionsController.occasions_create)
-routerWithAuth.delete('/occasions/:id', occasionsController.occasions_delete)
-routerWithAuth.patch('/occasions/:id', occasionsController.occasions_update)
-routerWithAuth.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
-routerWithAuth.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
+if(process.env.NODE_ENV != 'localoffline'){
+  routerWithAuth.post('/occasions', occasionsController.occasions_create)
+  routerWithAuth.delete('/occasions/:id', occasionsController.occasions_delete)
+  routerWithAuth.patch('/occasions/:id', occasionsController.occasions_update)
+  routerWithAuth.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
+  routerWithAuth.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
+} else {
+  localOfflineRouter.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
+}
 
 // router.post('/events/:id/occasions', occasionsController.occasions_create)
 // router.get('/occasions', occasionsController.occasions)

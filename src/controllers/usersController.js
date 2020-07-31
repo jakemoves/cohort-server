@@ -4,9 +4,12 @@
 // uses passport's custom callback option to provide details on failed auth attempts
 // per https://itnext.io/implementing-json-web-tokens-passport-js-in-a-javascript-application-with-react-b86b1f313436
 
-const passport = require('passport')
-const jwt = require('jsonwebtoken')
-const usersTable = require('../knex/queries/user-queries')
+let passport, jwt
+if(process.env.NODE_ENV != 'localoffline'){
+  passport = require('passport')
+  jwt = require('jsonwebtoken')
+  const usersTable = require('../knex/queries/user-queries')
+}
 
 handleError = (httpStatusCode, error, res) => {
   if(error.message !== undefined){
