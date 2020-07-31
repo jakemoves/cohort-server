@@ -1,5 +1,5 @@
 
-exports.up = function(knex, Promise) {
+exports.up = function(knex) {
   return knex.schema.alterTable('events_devices', table => {
     table.integer('occasion_id')
       .references('occasions.id')
@@ -9,7 +9,7 @@ exports.up = function(knex, Promise) {
   })
 }
 
-exports.down = function(knex, Promise) {
+exports.down = function(knex) {
   return knex.schema.alterTable('events_devices', table => {
     // table.dropUnique(['event_id', 'device_id', 'occasion_id'])
     table.dropColumn('occasion_id')

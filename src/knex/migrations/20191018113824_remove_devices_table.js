@@ -1,10 +1,10 @@
-exports.up = function(knex, Promise) {
+exports.up = function(knex) {
   return knex.schema.dropTable('events_devices').then( () => {
     return knex.schema.dropTable('devices')
   })
 };
 
-exports.down = function(knex, Promise) {
+exports.down = function(knex) {
   return knex.schema.createTable('devices', (table) => {
     table.increments('id').primary().notNullable()
     table.string('guid').notNullable()

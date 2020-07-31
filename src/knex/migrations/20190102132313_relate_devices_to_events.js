@@ -1,5 +1,5 @@
 
-exports.up = function(knex, Promise) {
+exports.up = function(knex) {
   return knex.schema.createTable('events_devices', table => {
     table.increments('id').primary().notNullable()
     table.unique(['event_id', 'device_id'])
@@ -14,6 +14,6 @@ exports.up = function(knex, Promise) {
   })
 }
 
-exports.down = function(knex, Promise) {
+exports.down = function(knex) {
   return knex.schema.dropTable('events_devices')
 }

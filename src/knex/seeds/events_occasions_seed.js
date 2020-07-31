@@ -1,6 +1,6 @@
 require('dotenv').config({ path: __dirname + '/../../../.env' })
 
-exports.seed = function(knex, Promise) {
+exports.seed = function(knex) {
   if(process.env.NODE_ENV == "production"){
     // DO NOT DO ANYTHING TO THE PRODUCTION DATABASE :)
     return;
