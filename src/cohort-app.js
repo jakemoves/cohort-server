@@ -24,6 +24,7 @@ const startAuth = function(){
   passportConfig = require('./cohort-passport-config')
   app.use(passport.initialize())
 }
+
 /*
  *   Database
  */
@@ -32,7 +33,6 @@ const startDatabase = function(){
   knex = require('./knex/knex.js')
 }
 
-console.log(process.env.NODE_ENV)
 if(process.env.NODE_ENV != 'localoffline'){
   startAuth()
   startDatabase()
@@ -58,6 +58,8 @@ app.use('/api/v2', v2routes.router)
 
 if(process.env.NODE_ENV != 'localoffline'){
   app.use('/api/v2', passport.authenticate('jwt', { session: false }), v2routes.routerWithAuth)
+} else {
+  app.use('/api/v2', v2routes.localOfflineRouter)
 }
 
 let staticPath = path.join(__dirname, '../public') // because we run the app from /lib

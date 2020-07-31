@@ -155,10 +155,12 @@ exports.occasions_broadcast = async (req, res, next) => {
     return
   }
 
+  if(process.env.NODE_ENV != 'localoffline'){
   // TODO eventually we may need a PermissionsService to do these checks?
-  if(occasion.owner_id != req.user.id && !req.user.is_admin){
-    handleError(401, 'Authorization required', res)
-    return
+    if(occasion.owner_id != req.user.id && !req.user.is_admin){
+      handleError(401, 'Authorization required', res)
+      return
+    }
   }
 
   const cue = req.body

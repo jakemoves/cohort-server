@@ -25,9 +25,9 @@ router.get('', (req, res) => {
  *   login, registration, users
  */
 
-router.post('/users', usersController.register_user)
-router.post('/login', usersController.login_user)
 if(process.env.NODE_ENV != 'localoffline'){
+  router.post('/users', usersController.register_user)
+  router.post('/login', usersController.login_user)
   routerWithAuth.delete('/users/:id', usersController.delete_user)
 }
 
@@ -50,7 +50,7 @@ if(process.env.NODE_ENV != 'localoffline'){
 if(process.env.NODE_ENV != 'localoffline'){
   routerWithAuth.post('/occasions', occasionsController.occasions_create)
   routerWithAuth.delete('/occasions/:id', occasionsController.occasions_delete)
-  routerWithAuth.patch('/occasions/:id', occasionsController.occasions_update)
+  routerWithAuth.post('/occasions/:id', occasionsController.occasions_update)
   routerWithAuth.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
   routerWithAuth.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
 } else {
@@ -102,5 +102,6 @@ if(process.env.NODE_ENV != 'localoffline'){
 
 module.exports = {
   router: router,
-  routerWithAuth: routerWithAuth
+  routerWithAuth: routerWithAuth,
+  localOfflineRouter: localOfflineRouter
 }
