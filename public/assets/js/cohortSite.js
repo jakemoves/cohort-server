@@ -1,7 +1,3 @@
-//for tab navigation to flip form
-$('#learnmore').keydown(function(){
-  $(".flip-card .flip-card-inner").css("transform", "rotateY(180deg)")
-})
 
 document.getElementById("contact-form").addEventListener("submit", async () => {
   event.preventDefault();
@@ -15,5 +11,12 @@ document.getElementById("contact-form").addEventListener("submit", async () => {
     headers: { 'Content-Type':  'application/json' },
     body: JSON.stringify(payload) 
   })
+  if(response.status == 200){
+    //happy path
+  } else {
+    //error, usually a 500 error
+  }
+  console.log(response);
+
 
 })

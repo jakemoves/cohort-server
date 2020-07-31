@@ -35,7 +35,7 @@
     </title>
   </head>
 
-  <body class="landing-page">
+  <body class="landing-page sidebar-collapse" >
     <div
       class="page-header"
       data-parallax="true"
@@ -172,23 +172,17 @@
                 Take the experience to the next level and cue video or text to display on your participants' phones or
                 tablets as easily as audio.
               </p>
+              <a alt="Link to Cohort github."
+                  href=""
+                  class="btn btn-outline-danger">
+                  Visit our Github to get started by clicking here.
+              </a>
+                    
             </div>
           </div>
           <div class="row m-auto">
-            <div id="flippy" class="col-12 col-lg-4 offset-lg-4 mt-5">
-              <!-- Card Flip -->
-              <div class="flip-card pt-1 pt-lg-4">
-                <div class="flip-card-inner">
-                  <div class="flip-card-front">
-                    <button
-                      type="button"
-                      class="btn btn-outline-danger mt-5"
-                      id="learnmore"
-                    >
-                      Contact us to learn more.
-                    </button>
-                  </div>
-                  <div class="flip-card-back">
+            <div class="col-12 col-lg-4 offset-lg-4 mt-5" id="contactUsForm">
+                <p class="title custom-bigger-fontSize pt-3">If you want to learn more about Cohort's possibilities, get in touch with us.</p>
                     <form
                       id="contact-form"
                     >
@@ -200,7 +194,7 @@
                             <div class="form-group">
                               <label
                                 for="form_name"
-                                style="text-align: left; display: block"
+                                style="text-align: left; display: block; color: white"
                                 >Name *</label
                               >
                               <input
@@ -219,7 +213,7 @@
                             <div class="form-group">
                               <label
                                 for="form_email"
-                                style="text-align: left; display: block"
+                                style="text-align: left; display: block; color: white"
                                 >Email *</label
                               >
                               <input
@@ -241,7 +235,7 @@
                             <div class="form-group">
                               <label
                                 for="form_message"
-                                style="text-align: left; display: block"
+                                style="text-align: left; display: block; color: white"
                                 >Message *</label
                               >
                               <textarea
@@ -256,26 +250,25 @@
                               <div class="help-block with-errors"></div>
                             </div>
                           </div>
-                          <div class="col-md-12">
+                          <div class="col-4 offset-8">
                             <button
                               type="submit"
-                              class="btn btn-success btn-send"
-                            >Submit</button>
+                              class="btn btn-outline-success btn-send align-self-end">
+                              Submit
+                            </button>
                           </div>
                         </div>
                         <div class="row">
-                          <div class="col-md-12">
-                            <p class="text-muted">
+                          <div class="col-6">
+                            <p style="color:white">
                               <strong>*</strong> These fields are required.
                             </p>
                           </div>
                         </div>
                       </div>
                     </form>
-                  </div>
-                </div>
               </div>
-              <!-- End Card Flip -->
+              
             </div>
           </div>
         </div>
@@ -599,6 +592,17 @@
       <div class="wrapper">
         <div class="section text-center section-dark landing-section">
           <div class="container">
+            <div class="row">
+              <div class ="col-12">
+                <p class="title">If you've scrolled this far, you must be curious to learn more.<br> Get in touch with us, and we'd be more than happy to chat about how Cohort can apply to your productions!</p>
+                <a
+                alt="Back to contact form."
+                href="#contactUsForm"
+                class="btn btn-outline-danger"
+                >Send us a quick message here </a
+              >
+              </div>
+            </div>
             <!-- <div class="row">
               <div class="col-md-12 ml-auto mr-auto">
                 <h3 class="title">Using Cohort</h3>
@@ -637,9 +641,9 @@
           </div>
         </div>
       </div>
-      <div class="wrapper">
+      <!-- <div class="wrapper">
         <div class="section text-center landing-section">
-          <div class="container">
+          <div class="container"> -->
             <!-- <div class="row">
               <div class="col-md-12 ml-auto mr-auto">
                 <h3 class="title">Code Links and Documentation</h3>
@@ -756,10 +760,10 @@
               </div>
             </div>
           </div> -->
-        </div>
+        <!-- </div>
       </div>
     </div>
-    <hr />
+    <hr /> -->
     <div class="wrapper">
       <div class="section text-center landing-section m-1">
         <div class="container">
