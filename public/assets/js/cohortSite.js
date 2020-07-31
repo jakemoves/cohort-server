@@ -13,10 +13,12 @@ document.getElementById("contact-form").addEventListener("submit", async () => {
   })
   if(response.status == 200){
     //happy path
+    document.getElementById('contactFormSendSuccess').style.display = "block";
   } else {
     //error, usually a 500 error
+    document.getElementById('contactFormSendFailure').style.display = "block";
   }
-  console.log(response);
+  //console.log(response);
 
 
 })

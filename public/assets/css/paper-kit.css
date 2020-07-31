@@ -15580,7 +15580,7 @@ License - nucleoapp.com/license/
 }
 
 .custom-dark-bg{
-  background-color: rgba(1,1,1,0.8);
+  background-color: rgba(0, 0, 0, 0.85);
 }
 
 .custom-slightly-bigger-fontSize{
@@ -15592,6 +15592,20 @@ License - nucleoapp.com/license/
 
 }
 #contactUsForm{
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(0,0, 0, 0.85);
 
+}
+
+#contactFormSendSuccess, #contactFormSendFailure {
+  display: none;
+}
+.btn-success, .alert-success, .btn-outline-success {
+  background-color: rgba(134, 217, 171, 0.4);
+  border: 2px solid rgb(134, 217, 171);
+  border-radius: 2px;
+}
+.alert-danger {
+  background-color: rgba(218, 43, 11, 0.4);
+  border: 2px solid #da2b0b;
+  border-radius: 2px;
 }

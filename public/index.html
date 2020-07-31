@@ -173,7 +173,7 @@
                 tablets as easily as audio.
               </p>
               <a alt="Link to Cohort github."
-                  href=""
+                  href="https://github.com/jakemoves/cohort-server"
                   class="btn btn-outline-danger">
                   Visit our Github to get started by clicking here.
               </a>
@@ -182,7 +182,7 @@
           </div>
           <div class="row m-auto">
             <div class="col-12 col-lg-4 offset-lg-4 mt-5" id="contactUsForm">
-                <p class="title custom-bigger-fontSize pt-3">If you want to learn more about Cohort's possibilities, get in touch with us.</p>
+                <p class="title custom-bigger-fontSize pt-3">If you want to learn more about Cohort and its applications, get in touch with us.</p>
                     <form
                       id="contact-form"
                     >
@@ -194,9 +194,9 @@
                             <div class="form-group">
                               <label
                                 for="form_name"
-                                style="text-align: left; display: block; color: white"
-                                >Name *</label
-                              >
+                                style="text-align: left; display: block; color: white">
+                                Name *
+                              </label>
                               <input
                                 id="form_name"
                                 type="text"
@@ -250,7 +250,15 @@
                               <div class="help-block with-errors"></div>
                             </div>
                           </div>
-                          <div class="col-4 offset-8">
+                          <div class="col-8">
+                              <div id="contactFormSendSuccess" class="alert alert-success">
+                                 <p> <strong>Message sent!</strong> We'll be in touch with you soon.</p>
+                              </div>
+                              <div id ="contactFormSendFailure" class="alert alert-danger">
+                                  <p> Sorry, message wasn't delivered. Try again or email us directly: cohortrocks at gmail.com</p>
+                               </div>
+                          </div>
+                          <div class="col-4">
                             <button
                               type="submit"
                               class="btn btn-outline-success btn-send align-self-end">
@@ -596,11 +604,11 @@
               <div class ="col-12">
                 <p class="title">If you've scrolled this far, you must be curious to learn more.<br> Get in touch with us, and we'd be more than happy to chat about how Cohort can apply to your productions!</p>
                 <a
-                alt="Back to contact form."
-                href="#contactUsForm"
-                class="btn btn-outline-danger"
-                >Send us a quick message here </a
-              >
+                  alt="Back to contact form."
+                  href="#contactUsForm"
+                  class="btn btn-outline-danger">
+                  Send us a quick message here 
+                </a>
               </div>
             </div>
             <!-- <div class="row">

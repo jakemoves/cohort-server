@@ -8,6 +8,7 @@ exports.submit_contact_form = async (req, res) => {
   let result
   try{
     result = await mailerService.sendMail(messageText, "New contact request for Cohort.", ["luckyjakemoves@gmail.com", "cohortrocks@gmail.com"])
+    
   } 
   catch(error){
     //*create error message
