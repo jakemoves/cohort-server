@@ -4,9 +4,10 @@
 const moment = require('moment')
 const passport = require('passport')
 
+let eventsTable, occasionsTable
 if(process.env.NODE_ENV != 'localoffline'){
-  const occasionsTable = require('../knex/queries/occasion-queries')
-  const eventsTable = require('../knex/queries/event-queries')
+  occasionsTable = require('../knex/queries/occasion-queries')
+  eventsTable = require('../knex/queries/event-queries')
 }
 
 const CHOccasion = require('../models/CHOccasion')

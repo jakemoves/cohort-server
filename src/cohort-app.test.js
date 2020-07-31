@@ -338,7 +338,7 @@ describe('User registration', () => {
     expect(res2.body.episodes[0].label).toEqual('demo event')
     expect(res2.body.episodes[0].episodeNumber).toEqual(0)
     expect(res2.body.episodes[0].cues).toBeDefined()
-    expect(res2.body.episodes[0].cues).toHaveLength(6)
+    expect(res2.body.episodes[0].cues).toHaveLength(7)
   })
 
   test('GET /events/:id -- error: event not found', async () => {
@@ -463,12 +463,12 @@ describe('User registration', () => {
     expect(res2.status).toEqual(404)
   })
 
-  test('PATCH /events/:id/episodes -- error: event not found', async () => {
+  test('POST /events/:id/episodes -- error: event not found', async () => {
     const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
-    .patch('/api/v2/events/99/episodes')
+    .post('/api/v2/events/99/episodes')
     .set('Authorization', 'JWT ' + token)
     .send([{
       episodeNumber: 1,
@@ -480,12 +480,12 @@ describe('User registration', () => {
     expect(res.text).toEqual("Error: event with id:99 not found")
   })
 
-  test('PATCH /events/:id/episodes -- error: empty payload', async () => {
+  test('POST /events/:id/episodes -- error: empty payload', async () => {
     const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
-    .patch('/api/v2/events/3/episodes')
+    .post('/api/v2/events/3/episodes')
     .set('Authorization', 'JWT ' + token)
     .send()
 
@@ -493,12 +493,12 @@ describe('User registration', () => {
     expect(res.text).toEqual("Error: you must provide an array of episodes")
   })
 
-  test('PATCH /events/:id/episodes -- error: non-array payload format', async () => {
+  test('POST /events/:id/episodes -- error: non-array payload format', async () => {
     const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
-    .patch('/api/v2/events/3/episodes')
+    .post('/api/v2/events/3/episodes')
     .set('Authorization', 'JWT ' + token)
     .send({
       episodeNumber: 1,
@@ -510,12 +510,12 @@ describe('User registration', () => {
     expect(res.text).toEqual("Error: you must provide an array of episodes")
   })
 
-  test('PATCH /events/:id/episodes -- error: episodes missing fields', async () => {
+  test('POST /events/:id/episodes -- error: episodes missing fields', async () => {
     const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
-    .patch('/api/v2/events/3/episodes')
+    .post('/api/v2/events/3/episodes')
     .set('Authorization', 'JWT ' + token)
     .send([{
       episodeNumber: 1,
@@ -527,7 +527,7 @@ describe('User registration', () => {
     expect(res.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
 
     const res1 = await request(app)
-    .patch('/api/v2/events/3/episodes')
+    .post('/api/v2/events/3/episodes')
     .set('Authorization', 'JWT ' + token)
     .send([{
       episodeNumber: 1,
@@ -538,7 +538,7 @@ describe('User registration', () => {
     expect(res1.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
 
     const res2 = await request(app)
-    .patch('/api/v2/events/3/episodes')
+    .post('/api/v2/events/3/episodes')
     .set('Authorization', 'JWT ' + token)
     .send([{
       label: 'Act 1',
@@ -549,7 +549,7 @@ describe('User registration', () => {
     expect(res2.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
 
     const res3 = await request(app)
-    .patch('/api/v2/events/3/episodes')
+    .post('/api/v2/events/3/episodes')
     .set('Authorization', 'JWT ' + token)
     .send([{
       episodeNumber: 1,
@@ -560,12 +560,12 @@ describe('User registration', () => {
     expect(res3.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
   })
 
-  test('PATCH /events/:id/episodes -- happy path', async () => {
+  test('POST /events/:id/episodes -- happy path', async () => {
     const token = await login('test_user_1', app)
     expect(token).toBeDefined()
 
     const res = await request(app)
-    .patch('/api/v2/events/3/episodes')
+    .post('/api/v2/events/3/episodes')
     .set('Authorization', 'JWT ' + token)
     .send([{
       episodeNumber: 1,
