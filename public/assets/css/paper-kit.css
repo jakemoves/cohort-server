@@ -12998,12 +12998,6 @@ body {
   text-align: center;
 }
 
-.section {
-  padding: 70px 0;
-  position: relative;
-  background-color: #FFFFFF;
-}
-
 .section .card-profile {
   margin-top: 100px;
 }
@@ -13136,6 +13130,7 @@ body {
 
 .section {
   padding: 70px 0;
+  padding-top: 1%;
   position: relative;
   background-color: #FFFFFF;
 }
