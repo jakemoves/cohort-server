@@ -16,6 +16,8 @@ document.getElementById("contact-form").addEventListener("submit", async () => {
     document.getElementById('contactFormSendSuccess').style.display = "block";
   } else {
     //error, usually a 500 error
+    const errorMessage = await response.text();
+    document.getElementById('contactFormSendFailure').innerHTML= `<p> Sorry, message failed to send to cohortrocks at gmail.com: ${errorMessage} with code ${response.status}.</p>`;
     document.getElementById('contactFormSendFailure').style.display = "block";
   }
   //console.log(response);
