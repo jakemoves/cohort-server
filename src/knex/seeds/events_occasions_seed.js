@@ -65,29 +65,29 @@ exports.seed = function(knex) {
       }
 
       return knex('events').insert([
-{label: 'The Itinerary', episodes: defaultEpisodeAsJSON('The Itinerary', false)},
+        {label: 'The Itinerary', episodes: defaultEpisodeAsJSON('The Itinerary', false)},
         {label: 'pimohtēwak', owner_id: 3, episodes: defaultEpisodeAsJSON('pimohtēwak', false)},
         {label: 'demo event', owner_id: 3, episodes: defaultEpisodeAsJSON('demo event', true)},
         {label: 'midway', owner_id: 3, episodes: defaultEpisodeAsJSON('midway', false)},
         {label: 'fluxdelux', owner_id: 3, episodes: defaultEpisodeAsJSON('fluxdelux', false)},
         {label: 'café sarajevo', owner_id: 3, episodes: defaultEpisodeAsJSON('café sarajevo', false)}
-    ])
       ])
       .then( () => {
         // add occasions to events
         return knex.raw('TRUNCATE TABLE occasions RESTART IDENTITY CASCADE').then( () => {
-          return knex('occasions').insert([{ 
-            event_id: 1,
-            label: 'Workshop / Development',
-            state: 'open',
-            doorsOpenDateTime: '2019-04-01 13:30:00+05:00',
-            startDateTime: '2019-04-01 14:00:00+05:00',
-            endDateTime: '2019-04-01 15:30:00+05:00',
-            locationLabel: "n/a",
-            locationAddress: 'n/a',
-            locationCity: 'n/a'
-          },
+          return knex('occasions').insert([
             { 
+              event_id: 1,
+              owner_id: 3,
+              label: 'Workshop / Development',
+              state: 'open',
+              doorsOpenDateTime: '2019-04-01 13:30:00+05:00',
+              startDateTime: '2019-04-01 14:00:00+05:00',
+              endDateTime: '2019-04-01 15:30:00+05:00',
+              locationLabel: "n/a",
+              locationAddress: 'n/a',
+              locationCity: 'n/a'
+            },{ 
               event_id: 2,
               owner_id: 3,
               label: 'Show 1',
@@ -143,7 +143,7 @@ exports.seed = function(knex) {
               locationLabel: "Harbourfront Centre",
               locationAddress: '235 Queens Quay W',
               locationCity: 'Toronto'
-            },
+            }
           ])
         });
       })

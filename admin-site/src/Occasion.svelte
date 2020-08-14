@@ -14,7 +14,9 @@
   import moment from "moment";
   import Slider from './Slider.svelte';
   import Modal from './Modal.svelte';
+  import OTMItinerary from './OTMItinerary.svelte'
  
+  export let broadcastStatus;
 
   let focusedOccasion;
   focusedOccasionStore.subscribe(value => {
@@ -22,12 +24,6 @@
   });
  
   let sliderCue = focusedEvent.episodes[0].cues[0];
-
-  import OTMItinerary from './OTMItinerary.svelte'
-
-  export let broadcastStatus;
-
-
   let formattedStartTimeFull;
   let formattedEndTimeFull;
   let formattedStartTime;
@@ -106,7 +102,7 @@
   function updateOccasionStateOnServer(state){
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
-        method: 'PATCH',
+        method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"state": state}) 
       }).then( response => { 
@@ -288,7 +284,8 @@
     headingText={focusedOccasion.label}
     includeBackButton=true
     subHeadingText={formattedStartTimeFull}>
-    {#if focusedEvent.label != "The Itinerary"}
+    
+    <!-- {#if focusedEvent.label != "The Itinerary"} -->
    
     <Button
       buttonStyle='btn-outline-danger btn-block' 
@@ -300,60 +297,59 @@
       dataTarget="#QRcodeModal"/>
    
       {#if focusedEvent.label == "The Itinerary"}
-      <OTMItinerary></OTMItinerary>
-    {:else}
-{#if focusedEvent.episodes[0].cues.length == 0}
-        <div class="row">
-          <div class="col-md-12">
-            <p>Sorry, no cues for this event can be found. We're cue-less.  </p>
-          </div>
-        </div>
+        <OTMItinerary></OTMItinerary>
       {:else}
-        
-        <div class="row">
-          <div class="col-md-12">
-            <h5>Cue Details</h5>
-            
-            {#if focusedEvent != null && focusedEvent !== undefined}
-              {#each focusedEvent.episodes[0].cues as cue, index}
-                {#if index == cueState}
-                  <div id={cue.cueNumber} >
-                    <ul>Media Domain: {mediaDomainEnum[cue.mediaDomain]}</ul>
-                    <ul>Cue Number: {cue.cueNumber}</ul>
-                    <ul>Cue Action: {cueActionEnum[cue.cueAction]}</ul>
-                  </div>
-                {/if}
-              {/each}
-            {/if}
-
+        {#if focusedEvent.episodes[0].cues.length == 0}
+          <div class="row">
+            <div class="col-md-12">
+              <p>Sorry, no cues for this event can be found. We're cue-less.  </p>
+            </div>
           </div>
-        </div>
-   
-        <div class="row">
-          <div class="col-12 d-flex justify-content-between">
-            <Button on:click={() => changeCueState ("previous")}
-              gridStyle=""
-              buttonStyle='btn-info'
-              buttonText=&nbsp;Previous
-              value=previous
-              iconLeft="fas fa-angle-left"
-              disabled={cueState == 0}/>
+        {:else}
+          <div class="row">
+            <div class="col-md-12">
+              <h5>Cue Details</h5>
+              
+              {#if focusedEvent != null && focusedEvent !== undefined}
+                {#each focusedEvent.episodes[0].cues as cue, index}
+                  {#if index == cueState}
+                    <div id={cue.cueNumber} >
+                      <ul>Media Domain: {mediaDomainEnum[cue.mediaDomain]}</ul>
+                      <ul>Cue Number: {cue.cueNumber}</ul>
+                      <ul>Cue Action: {cueActionEnum[cue.cueAction]}</ul>
+                    </div>
+                  {/if}
+                {/each}
+              {/if}
 
-            <Button on:click={() => changeCueState ("next")}
-              gridStyle=""
-              buttonStyle='btn-info'
-              buttonText=&nbsp;&nbsp;&nbsp;Next&nbsp;
-              value=next
-              iconRight="fas fa-angle-right"
-              disabled={cueState == focusedEvent.episodes[0].cues.length-1}/>
+            </div>
           </div>
-        </div>    
+    
+          <div class="row">
+            <div class="col-12 d-flex justify-content-between">
+              <Button on:click={() => changeCueState ("previous")}
+                gridStyle=""
+                buttonStyle='btn-info'
+                buttonText=&nbsp;Previous
+                value=previous
+                iconLeft="fas fa-angle-left"
+                disabled={cueState == 0}/>
 
-        <Slider 
-        broadcastStatus={broadcastStatus}
-        sliderCue={sliderCue}/>
-      {/if}
-    {/if} 
+              <Button on:click={() => changeCueState ("next")}
+                gridStyle=""
+                buttonStyle='btn-info'
+                buttonText=&nbsp;&nbsp;&nbsp;Next&nbsp;
+                value=next
+                iconRight="fas fa-angle-right"
+                disabled={cueState == focusedEvent.episodes[0].cues.length-1}/>
+            </div>
+          </div>    
+
+          <Slider 
+          broadcastStatus={broadcastStatus}
+          sliderCue={sliderCue}/>
+        {/if}
+      {/if} 
 
   </Page>
 {/if}
