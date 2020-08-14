@@ -1,5 +1,5 @@
 
-exports.up = function(knex, Promise) {
+exports.up = function(knex) {
   return knex.schema.alterTable('events', table => {
     var defaultEpisodes = JSON.stringify([]);
     
@@ -7,7 +7,7 @@ exports.up = function(knex, Promise) {
   })
 };
 
-exports.down = function(knex, Promise) {
+exports.down = function(knex) {
   return knex.schema.alterTable('events', table => {
     table.dropColumn('episodes')
   })

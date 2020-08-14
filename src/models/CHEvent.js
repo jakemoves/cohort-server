@@ -6,11 +6,13 @@ const CHEpisode = require('./CHEpisode')
 
 class CHEvent {
   id
+  owner_id
   label
   episodes
 
-  constructor(id, label, episodes = []){
+  constructor(id, owner_id, label, episodes = []){
     this.id = id
+    this.owner_id = owner_id
     this.label = label
     
     if(episodes.length = 0){
@@ -24,7 +26,7 @@ class CHEvent {
   }
 
   static fromDatabaseRow(dbEvent){
-    let event = new CHEvent(dbEvent.id, dbEvent.label, dbEvent.episodes)
+    let event = new CHEvent(dbEvent.id, dbEvent.owner_id, dbEvent.label, dbEvent.episodes)
     return event
   }
 }

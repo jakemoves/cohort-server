@@ -5,6 +5,8 @@
 - install node 8.16.0
   - we recommend that you use [nvm](https://github.com/nvm-sh/nvm) to manage your node installed versions
   - use nvm to make node 8.16.0 the active version
+  - as different versions of node may be present on your machine, we suggest running `nvm list` to confirm 8.16.0 is the active version (indicated in green)
+  - if not on v8.16.0, run `nvm use 8.16.0`
 - install postgresql ([best instructions](https://gist.github.com/ibraheem4/ce5ccd3e4d7a65589ce84f2a3b7c23a3))
 - clone repo from github
 
@@ -30,14 +32,20 @@ Building for production:
 
 ### tests setup
 - `npm install -g jest`
-- `jest app`
+- `jest app && jest websocket` (the '&&' forces these to run one after the other, they fail if run in parallel which is what happen if you just run `jest`)
 
 ### building the server
+- `npm install`
 - `npm build`
 
+### building all the things
+This script builds all components (server, admin site, blog) and copies the built admin site and blog to the correct folders under /public.
+- `npm install` (if you're doing this immediately after pulling changes)
+- `npm run build-all`
+
 ### obtaining secret key files
-- ask project lead for APN key and dot-env files
-- put these in the root folder
+- ask project lead for the dot-env file
+- put this in the root folder
 
 ### starting the server
 - `node lib/cohort-server.js`

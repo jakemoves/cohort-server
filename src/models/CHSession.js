@@ -4,7 +4,11 @@
 const _flatten = require('lodash/flatten')
 const _uniqBy = require('lodash/uniqBy')
 
-const occasionsTable = require('../knex/queries/occasion-queries')
+let occasionsTable
+if(process.env.NODE_ENV != 'localoffline') {
+  occasionsTable = require('../knex/queries/occasion-queries')
+}
+
 const CHOccasion = require('./CHOccasion')
 
 class CHSession {
@@ -17,7 +21,16 @@ class CHSession {
   }
 
   async init() {
-    let openOccasionsInDB = await occasionsTable.getAllOpen()
+    let openOccasionsInDB 
+    if(process.env.NODE_ENV != 'localoffline') {
+      openOccasionsInDB = await occasionsTable.getAllOpen()
+    } else {
+      openOccasionsInDB = [{
+        id: 1, 
+        label: "Rehearsal", 
+        owner_id: 1
+      }]
+    }
 
     let openOccasions = openOccasionsInDB.map( dbOccasion => {
       return CHOccasion.fromDatabaseRow(dbOccasion)

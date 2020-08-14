@@ -14,6 +14,7 @@ const moment = require('moment')
 const ws = require('ws')
 
 const CHSession = require('./models/CHSession')
+const login = require('./cohort-test-helpers').login
 
 var app, server, webSocketServer
 var socketURL = 'http://localhost:3000/sockets'
@@ -101,6 +102,23 @@ beforeAll( () => {
         wsClient.send(JSON.stringify({ guid: guid, occasionId: occasionId }))
       })
     })
+  }
+
+  createClientArray = async (occasionId, length, onCueReceived) => {
+    let clients = []
+    for(i = 0; i < length; i++){
+      let client = await createClientAndConnect(occasionId)
+      expect(client).toBeDefined()
+
+      client.addEventListener('message', message => {
+        const msg = JSON.parse(message.data)
+        onCueReceived(msg, client)
+      })
+
+      clients.push(client)
+    }
+
+    return clients
   }
 })
 
@@ -265,12 +283,31 @@ describe('Occasions & WebSocket broadcasts', () => {
       done()
     }, 1500)
   })
+  
+  test('POST /occasions/:id/broadcast -- error: auth required', async () => {
+    const payload = { 
+      "mediaDomain": 0,
+      "cueNumber": 1,
+      "cueAction": 0,
+      "targetTags": ["all"]
+    }
+
+    const res = await request(app)
+    .post('/api/v2/occasions/3/broadcast')
+    .send(payload)
+
+    expect(res.status).toEqual(401)
+  })
 
   test('POST occasions/:id/broadcast: error -- no open occasion matching id', async () => {
+    const token = await login('test_admin_user', app)
+    expect(token).toBeDefined()
+    
     const occasionId = 4
 
     const res = await request(app)
       .post('/api/v2/occasions/' + occasionId + '/broadcast')
+      .set('Authorization', 'JWT ' + token)
       .send({
         "mediaDomain": 0,
         "cueNumber": 1,
@@ -283,10 +320,14 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: error -- no devices connected', async () => {
+    const token = await login('test_admin_user', app)
+    expect(token).toBeDefined()
+
     const occasionId = 3
 
     const res = await request(app)
       .post('/api/v2/occasions/' + occasionId + '/broadcast')
+      .set('Authorization', 'JWT ' + token)
       .send({
         "mediaDomain": 0,
         "cueNumber": 1,
@@ -299,6 +340,9 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: happy path', async () => {
+    const token = await login('test_admin_user', app)
+    expect(token).toBeDefined()
+
     const occasionId = 3
     const cue = { 
       "mediaDomain": 0,
@@ -318,6 +362,7 @@ describe('Occasions & WebSocket broadcasts', () => {
 
     const res = await request(app)
       .post('/api/v2/occasions/3/broadcast')
+      .set('Authorization', 'JWT ' + token)
       .send(cue)
 
     expect(res.status).toEqual(200)
@@ -329,6 +374,9 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: happy path, multiple clients, same occasion', async () => {
+    const token = await login('test_admin_user', app)
+    expect(token).toBeDefined()
+
     const occasionId = 3
     const cue = { 
       "mediaDomain": 0,
@@ -337,24 +385,17 @@ describe('Occasions & WebSocket broadcasts', () => {
       "targetTags": ["all"]
     }
 
-    let clients = []
     let cuesReceived = 0
-    for(i = 0; i < 10; i++){
-      let client = await createClientAndConnect(occasionId)
-      expect(client).toBeDefined()
 
-      client.addEventListener('message', message => {
-        const msg = JSON.parse(message.data)
-        expect(msg).toEqual(cue)
-        cuesReceived++
-        client.close()
-      })
-
-      clients.push(client)
-    }
+    let clients = await createClientArray(occasionId, 10, (msg, client) => {
+      expect(msg).toEqual(cue)
+      cuesReceived++
+      client.close()
+    })
 
     const res = await request(app)
       .post('/api/v2/occasions/3/broadcast')
+      .set('Authorization', 'JWT ' + token)
       .send(cue)
 
     expect(res.status).toEqual(200)
@@ -372,8 +413,12 @@ describe('Occasions & WebSocket broadcasts', () => {
   })
 
   test('POST occasions/:id/broadcast: happy path, multiple clients, different occasions', async () => {
+    const token = await login('test_admin_user', app)
+    expect(token).toBeDefined()
+    
     let res1 = await request(app)
-      .patch('/api/v2/occasions/4')
+      .post('/api/v2/occasions/4')
+      .set('Authorization', 'JWT ' + token)
       .send({state: 'opened'})
     
     expect(res1.status).toEqual(200)
@@ -385,34 +430,23 @@ describe('Occasions & WebSocket broadcasts', () => {
       "targetTags": ["all"]
     }
 
-    let clients = []
     let cuesReceived = 0
-    for(i = 0; i < 10; i++){
-      // split these devices evenly between two occasions
-      let occasionId
-      if(i % 2 == 0){
-        occasionId = 3
-      } else {
-        occasionId = 4
-      }
-
-      let client = await createClientAndConnect(occasionId)
-      expect(client).toBeDefined()
-
-      client.addEventListener('message', message => {
-        const msg = JSON.parse(message.data)
-        expect(msg).toEqual(cue)
-        cuesReceived++
-      })
-
-      clients.push(client)
-    }
+    let clientsA = await createClientArray(3, 5, (msg, client) => {
+      expect(msg).toEqual(cue)
+      cuesReceived++
+    })
+    let clientsB = await createClientArray(4, 5, (msg, client) => {
+      expect(msg).toEqual(cue)
+      cuesReceived++
+    })
 
     const res = await request(app)
       .post('/api/v2/occasions/3/broadcast')
+      .set('Authorization', 'JWT ' + token)
       .send(cue)
 
-    clients.forEach(client => client.close())
+    clientsA.forEach(client => client.close())
+    clientsB.forEach(client => client.close())
 
     expect(res.status).toEqual(200)
     expect(res.body).toHaveLength(5)
@@ -428,10 +462,78 @@ describe('Occasions & WebSocket broadcasts', () => {
     expect(cuesReceived).toEqual(5)
   })
 
+  test('POST occasions/:id/broadcast: happy path, user can broadcast to an occasion they own', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
+    const cue = { 
+      "mediaDomain": 0,
+      "cueNumber": 1,
+      "cueAction": 0,
+      "targetTags": ["all"]
+    }
+
+    let cuesReceived = 0
+    
+    let clients = await createClientArray(3, 10, (msg, client) => {
+      cuesReceived++
+      expect(msg).toEqual(cue)
+      client.close()
+    })
+
+    let res = await request(app)
+    .post('/api/v2/occasions/3/broadcast')
+    .set('Authorization', 'JWT ' + token)
+    .send(cue)
+
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(10)
+
+    const results = res.body 
+    expect(results).toHaveLength(10)
+    
+    const result = new Set(results.map( result => result.success)) //remove duplicates from the array
+
+    expect(result.has(true)).toBeTruthy()
+    expect(result.size).toEqual(1)
+
+    expect(cuesReceived).toEqual(10)
+  })
+
+  test('POST occasions/:id/broadcast: happy path, user cannot broadcast to an occasion they do not own', async () => {
+    const token = await login('test_user_2', app)
+    expect(token).toBeDefined()
+
+    const cue = { 
+      "mediaDomain": 0,
+      "cueNumber": 1,
+      "cueAction": 0,
+      "targetTags": ["all"]
+    }
+    
+    let clients = await createClientArray(3, 10, (msg, client) => {
+      cuesReceived++
+      expect(msg).toEqual(cue)
+      client.close()
+    })
+
+    let res = await request(app)
+    .post('/api/v2/occasions/3/broadcast')
+    .set('Authorization', 'JWT ' + token)
+    .send(cue)
+
+    expect(res.status).toEqual(401)
+    clients.forEach(client => client.close())
+  })
+
   // test('broadcast: error -- inactive socket (returned array from /broadcast should specify which device guid)
 
   test('close occasion with connected client', async (done) => {
-    expect.assertions(7)
+    expect.assertions(8)
+
+    const token = await login('test_admin_user', app)
+    expect(token).toBeDefined()
+
     const occasionId = 3
 
     let client = await createClientAndConnect(occasionId)
@@ -445,7 +547,8 @@ describe('Occasions & WebSocket broadcasts', () => {
     })
 
     const res = await request(app)
-      .patch('/api/v2/occasions/3')
+      .post('/api/v2/occasions/3')
+      .set('Authorization', 'JWT ' + token)
       .send({state: 'closed'})
 
     expect(res.status).toEqual(200)
@@ -485,3 +588,64 @@ describe('Occasions & WebSocket broadcasts', () => {
     }, keepaliveIntervalDuration * 1.2)
   })
 })
+
+
+
+
+//   test('admin device gets broadcasts when device state changes', async (done) => {
+//     const eventId = 3
+//     const adminGUID = "54321" // this is seeded as an admin device
+//     const device1GUID = "1234567"
+
+//     const webSocketServer = require('./cohort-websockets')({
+//       app: app, server: server, path: '/sockets'
+//     })
+//     expect(webSocketServer).toBeDefined()
+
+//     const adminClient = new ws(socketURL)
+//     var device1Client
+
+//     adminClient.addEventListener('open', event => {
+//       let messagesReceived = 0
+//       adminClient.addEventListener('message', message => {
+//         const msg = JSON.parse(message.data)
+//         messagesReceived++
+
+//         if(messagesReceived == 1){        // handshake was successful
+//           expect(msg.response).toEqual('success')
+
+//           // connect the first device
+//           device1Client = new ws(socketURL)
+//           device1Client.addEventListener('open', event => {
+//             device1Client.send(JSON.stringify({ guid: device1GUID, eventId: eventId}))
+//           })
+
+//         } else if(messagesReceived == 2){ // first device state broadcast
+//           expect(msg.status).toHaveLength(3)
+//           expect(msg.status
+//             .find( deviceState => deviceState.guid == device1GUID)
+//             .socketOpen
+//           ).toEqual(false)
+
+//         } else if(messagesReceived == 3){ // second device state broadcast 
+//           expect(msg.status).toHaveLength(3)
+//           expect(msg.status
+//             .find( deviceState => deviceState.guid == device1GUID)
+//             .socketOpen
+//           ).toEqual(true)
+//           device1Client.close()
+
+//         } else if(messagesReceived == 4){ // last device state broadcast 
+//           expect(msg.status).toHaveLength(3)
+//           expect(msg.status
+//             .find( deviceState => deviceState.guid == device1GUID)
+//             .socketOpen
+//           ).toEqual(false)
+//           done()
+//         } 
+//       })
+
+//       adminClient.send(JSON.stringify({ guid: adminGUID, eventId: eventId }))
+//     })
+//   })
+

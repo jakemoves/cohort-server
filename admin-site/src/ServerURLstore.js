@@ -6,7 +6,7 @@
 
 import {writable} from 'svelte/store';
 
-export let urlStore = writable("https://otm.cohort.rocks/api/v2");
+export let urlStore = writable(window.location.protocol + '//' + window.location.host + '/api/v2');
 export let serverURL;
 
 urlStore.subscribe(value => {

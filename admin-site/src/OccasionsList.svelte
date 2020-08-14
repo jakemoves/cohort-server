@@ -9,22 +9,23 @@
   import Array from './ArrayList.svelte';
   import Button from './Button.svelte';
   import Modal from './Modal.svelte';
-  import { focusedEventStore, pageStateInStore, indexInEvents } from './PageStore.js';
+  import { focusedEventStore, pageStateInStore, focusedOccasionStore, focusedOccasionIDStore } from './UpdateUIstore.js';
   import { storedEvents, getEventsAndStore} from './EventsStore.js';
-  import { occasionOpen } from './OccasionState.js';
   import { serverURL } from './ServerURLstore.js';
   import moment from "moment";
 
-  export let focusedEventLabel;
+  
   let dateSortedOccasions = [];
-  const dispatch = createEventDispatcher();
+  const dispatchOccasionState = createEventDispatcher();
   let focusedOccasionID;
   let indexInOccasions;
   let focusedOccasion;
   let focusedOccasionState;
   let focusedEvent;
 
- 
+  let deleteResults;
+  let showDeleteError = false;
+  let openOccasionCreation = false;
 
   
   focusedEventStore.subscribe(value => {
@@ -36,91 +37,102 @@
     }
   });
 
-  
-
-   function sendOccasionsPackage(){
-    dispatch('message', {
-      "focusedOccasion": focusedOccasion,
-      "focusedOccasionID": focusedOccasionID,
-      "indexInOccasions":indexInOccasions,
-    });
+  function sendOccasionState(){
+    dispatchOccasionState('state',{
+      "occasionCreationFormIsOpen": true
+    })
   }
 
-  function occasionButton(id) {
-    focusedOccasionID = id;
-    indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
-
+  function occasionButton(e) {
+    focusedOccasionID = e.currentTarget.value;
+    //grab id of occasion clicked and send to store
+    focusedOccasionIDStore.set(focusedOccasionID);
+    let indexInOccasions = focusedEvent.occasions.findIndex(x => x.id == focusedOccasionID);
+    //update focusedOccasion accordingly
     focusedOccasion = focusedEvent.occasions[indexInOccasions];
+    focusedOccasionStore.set(focusedOccasion);
     
     pageStateInStore.set(3);
-
-    storedEvents.subscribe(value => {
-      if(focusedEvent != undefined){
-        if (value[indexInEvents].occasions[indexInOccasions] != undefined){
-          focusedOccasionState = value[indexInEvents].occasions[indexInOccasions].state
-        }
-      }
-    });
-    
-    if (focusedOccasionState == "closed"){
-      occasionOpen.set(false);
-    } else{
-      occasionOpen.set(true);
-    }  
-
-    sendOccasionsPackage();
   }
 
   function deleteEvent(){
     try {
     return fetch(serverURL + "/events/" + focusedEvent.id, {
       method: 'DELETE'
-    }).then( response => {
-      console.log(response.status); 
+    }).then( async (response) => { 
       if(response.status == 204){
-          console.log("fired");
-
            getEventsAndStore()
            pageStateInStore.set(1)
-          
-          
-          
-      } else {
-        console.log(response.text)
-        }
+           showDeleteError = false;  
+      } else if (response.status == 400){
+        showDeleteError = true;
+        let serverSideError = await response.text()
+        deleteResults = serverSideError;
+      } else response.text().then( errorMessage => {
+        showDeleteError = true;
+        console.log('error on request: ' + errorMessage)
+        deleteResults = errorMessage;
+      });
       }).catch( error => {
         console.log("Error on event delete!")
+        showDeleteError = true;
+        deleteResults = "Deleting the event failed due to " + error;
       })
     } catch (e) {
         console.log(e.message)
     }
   }
 
+   function openForm(){
+    sendOccasionState(); 
+  }
 
 </script>
 
-    <Array
-      arrayName = {dateSortedOccasions} 
-      emptyArrayMessage = "This happens on occasion. No occasions for this event yet.">
+<Array
+  arrayName = {dateSortedOccasions} 
+  emptyArrayMessage = "This happens on occasion. No occasions for this event yet.">
 
-      {#each  dateSortedOccasions as item (item.id)}
-        <Button on:click={() => occasionButton(item.id)}
-        buttonHtml = '<h3 class="m-0">{item.label}  - {item.label} </h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
+  {#each  dateSortedOccasions as item (item.id)}
+    {#if item.locationCity == null}
+      <Button on:click={occasionButton}
+        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5> id:{item.id}</h5>'
+        value = {item.id}/>
+    {:else}
+      <Button on:click={occasionButton}
+        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
         value = {item.id}/> 
-      {/each}
-     
-    </Array>
+    {/if} 
+  {/each}
+  
+</Array>
+<hr>
+<!-- Block button, more consistent with other button UI -->
+<Button on:click={openForm}
+    buttonText = "Create a new occasion"
+    buttonStyle = "btn-outline-success btn-block"/>
 
-    <hr>
-    <Button
-                buttonStyle="btn-outline-danger btn-block"
-                buttonText="Delete Event"
-                dataTarget="#deleteEventModal"/>
+    <!-- Inline with other list items version -->
+  <!-- <Button on:click={openForm}
+    buttonHtml = '<h3 class="m-0">Occasion Creation Form</h3> <h5> </h5>'
+    buttonStyle = "btn-outline-success btn-block"/> -->
 
-    <Modal
+<Button
+  buttonStyle="btn-outline-danger btn-block"
+  buttonText="Delete {focusedEvent.label}"
+  dataTarget="#deleteEventModal"/>
+{#if showDeleteError}
+<div class="alert alert-danger text-center">
+    {deleteResults}
+</div>
+{/if}
+
+
+
+<Modal
   modalID = "deleteEventModal"
   modalTitle= "Delete Event">
-  
+
   <div slot="modalBody">
     <!-- {#if gotEvents} -->
       Are you sure you want to delete {focusedEvent.label}?
@@ -138,7 +150,7 @@
       gridStyle = "mr-1"
       buttonStyle="btn-outline-danger"
       dataDismiss="modal"
-      buttonText="Delete This Event"/>
+      buttonText="Delete this event"/>
   </div>
 </Modal>
           

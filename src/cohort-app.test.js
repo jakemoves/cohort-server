@@ -6,10 +6,8 @@ const uuid = require('uuid/v4')
 const knex = require('./knex/knex')
 const moment = require('moment')
 
-// for websocket tests only
-const ws = require('ws')
-
 const CHSession = require('./models/CHSession')
+const login = require('./cohort-test-helpers').login
 
 var app
 process.env.NODE_ENV = 'test'
@@ -21,9 +19,7 @@ beforeEach( async () => {
   await knex.seed.run()
 
   app = require('./cohort-app')
-  await CHSession.initAndSetOnApp(app).then( () => {
-    // console.log("starting cohort session")
-  })
+  await CHSession.initAndSetOnApp(app)
 })
 
 afterEach( async () => {
@@ -43,15 +39,7 @@ afterAll( async () => {
  */
 
 beforeAll( () => {
-  // createDevice = (guid, tags) => {
-  //   let payload = { guid: guid }
-  //   if(tags !== undefined){
-  //     payload.tags = tags
-  //   }
-  //   return request(app)
-  //     .post('/api/v1/devices')
-  //     .send(payload)
-  // }
+  
 })
 
 
@@ -61,15 +49,205 @@ beforeAll( () => {
  */
 
 describe('Basic startup', () => {
+
   test('the app inits', async () => {
     const res = await request(app).get('/api/v2')
     expect(res.status).toEqual(200)
     expect(res.text).toEqual('Cohort rocks')
   })
+
   test('the app inits a second time', async () => {
     const res = await request(app).get('/api/v2')
     expect(res.status).toEqual(200)
     expect(res.text).toEqual('Cohort rocks')
+  })
+})
+
+/*    USER ROUTES */
+describe('User registration', () => {
+
+  test('register -- happy path', async () => {
+    const res = await request(app)
+      .post('/api/v2/users')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '4444'
+      })
+    
+    expect(res.status).toEqual(201)
+    expect(res.body.id).toBeDefined()
+    expect(res.header.location).toEqual('/api/v2/users/' + res.body.id)
+    expect(res.body.username).toEqual('cohort_test_user')
+    expect(res.body.password).toBeUndefined()
+  })
+
+  test('register -- happy path, twice', async () => {
+    const res = await request(app)
+      .post('/api/v2/users')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '4444'
+      })
+    
+    expect(res.status).toEqual(201)
+    expect(res.body.id).toBeDefined()
+    expect(res.header.location).toEqual('/api/v2/users/' + res.body.id)
+    expect(res.body.username).toEqual('cohort_test_user')
+    expect(res.body.password).toBeUndefined()
+
+    const res2 = await request(app)
+      .post('/api/v2/users')
+      .send({
+        'username': 'cohort_test_user_2',
+        'password': '4444'
+      })
+    
+    expect(res2.status).toEqual(201)
+    expect(res2.body.id).toBeDefined()
+    expect(res2.header.location).toEqual('/api/v2/users/' + res2.body.id)
+    expect(res2.body.username).toEqual('cohort_test_user_2')
+    expect(res2.body.password).toBeUndefined()
+  })
+
+  test('register -- error: username already exists', async () => {
+    const res = await request(app)
+      .post('/api/v2/users')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '4444'
+      })
+    
+    expect(res.status).toEqual(201)
+    
+    const res2 = await request(app)
+      .post('/api/v2/users')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '3333'
+      })
+    
+    expect(res2.status).toEqual(403)
+    expect(res2.text).toEqual('Username already exists')
+  })
+
+  test('login -- happy path: cookie-based auth', async() => {
+    let agent = request.agent(app)
+ 
+    let loginResponse = await agent
+    .post('/api/v2/login')
+    .send({
+      username: 'test_admin_user',
+      password: process.env.TEST_ADMIN_USER_PASSWORD
+    })
+
+    expect(loginResponse.status).toEqual(200)
+    expect(loginResponse.headers['set-cookie'][0].substr(0, 3)).toEqual('jwt')
+  })
+
+  test('login -- happy path: token-based auth', async() => {
+    let agent = request.agent(app)
+ 
+    let loginResponse = await agent
+    .post('/api/v2/login?sendToken=true')
+    .send({
+      username: 'test_admin_user',
+      password: process.env.TEST_ADMIN_USER_PASSWORD
+    })
+
+    expect(loginResponse.status).toEqual(200)
+    expect(loginResponse.headers['set-cookie'][0].substr(0, 3)).toEqual('jwt')
+
+    let cookieToken = loginResponse
+    .headers['set-cookie'][0]
+    .substr(4).split(';')[0]
+
+    expect(loginResponse.body.jwt).toEqual(cookieToken)
+  })
+
+  test('login -- error: username not found', async () => {
+    const res = await request(app)
+      .post('/api/v2/login')
+      .send({
+        'username': 'cohort_test_user_that_doesnt_exist',
+        'password': '4444'
+      })
+    
+    expect(res.status).toEqual(404)
+    expect(res.text).toEqual('Username not found: "cohort_test_user_that_doesnt_exist"')
+  })
+  
+  test('login -- error: incorrect password', async () => {
+    const res0 = await request(app)
+        .post('/api/v2/users')
+        .send({
+          'username': 'cohort_test_user',
+          'password': '4444'
+        })
+      
+    expect(res0.status).toEqual(201)
+  
+    const res = await request(app)
+      .post('/api/v2/login')
+      .send({
+        'username': 'cohort_test_user',
+        'password': '3333'
+      })
+    
+    expect(res.status).toEqual(403)
+    expect(res.text).toEqual("Incorrect password for username: cohort_test_user")
+  })
+
+  test('DELETE /users/:id -- happy path, admin user can delete users', async () => {
+    let token = await login('test_admin_user', app)
+
+    const res = await request(app)
+    .delete('/api/v2/users/3')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res.status).toEqual(204)
+
+    const res1 = await request(app)
+    .delete('/api/v2/users/3')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res1.status).toEqual(404) // auth succeeded, user to delete was not found
+
+    const res2 = await request(app)
+    .get('/api/v2/events')
+    .set('Authorization', 'JWT ' + token)
+
+    const events = res2.body
+    expect(events).toEqual([])
+    // deleting a user should also delete all events & occasions they own
+  })
+
+  test('DELETE /users/:id -- happy path, user can delete themself', async () => {
+    const token = await login('test_user_2', app)
+    expect(token).toBeDefined()
+
+    const res = await request(app)
+    .delete('/api/v2/users/4')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res.status).toEqual(204)
+
+    const res1 = await request(app)
+    .delete('/api/v2/users/4')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res1.status).toEqual(401) // auth failed because user does not exist anymore
+  })
+
+  test('DELETE /users/:id -- error, user cannot delete other user', async () => {
+    const token = await login('test_user_2', app)
+    expect(token).toBeDefined()
+
+    const res = await request(app)
+    .delete('/api/v2/users/3')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res.status).toEqual(401)
+    expect(res.text).toEqual("A user can only be deleted by themselves or by an admin")
   })
 })
 
@@ -79,8 +257,35 @@ describe('Basic startup', () => {
  */
 
  describe('Event routes', () => {
-  test('GET /events', async () => {
-    const res = await request(app).get('/api/v2/events')
+  test('GET /events -- happy path, as admin user', async () => {
+    const token = await login('test_admin_user', app)
+    expect(token).toBeDefined()
+
+    const res = await request(app)
+    .get('/api/v2/events')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(5)
+
+    expect(res.body[1]).toHaveProperty('label')
+    expect(res.body[1].label).toEqual('demo event')
+
+    expect(res.body[1]).toHaveProperty('occasions')
+    expect(res.body[1].occasions).toHaveLength(5)
+    expect(res.body[1].occasions[0]).toHaveProperty('label')
+    expect(res.body[1].occasions[0].label).toEqual('Show 1')
+
+  })
+
+  test('GET /events -- happy path, as owning user', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
+    const res = await request(app)
+    .get('/api/v2/events')
+    .set('Authorization', 'JWT ' + token)
+
     expect(res.status).toEqual(200)
     expect(res.body).toHaveLength(5)
 
@@ -95,8 +300,14 @@ describe('Basic startup', () => {
   })
 
   test('GET /events/:id', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     // event that doesn't have any occasions
-    const res1 = await request(app).get('/api/v2/events/1')
+    const res1 = await request(app)
+    .get('/api/v2/events/1')
+    .set('Authorization', 'JWT ' + token)
+
     expect(res1.status).toEqual(200)
 
     expect(res1.body).toHaveProperty('id')
@@ -112,7 +323,10 @@ describe('Basic startup', () => {
     expect(res1.body.episodes[0].cues).toHaveLength(0)
 
     //event that has occasions
-    const res2 = await request(app).get('/api/v2/events/2')
+    const res2 = await request(app)
+    .get('/api/v2/events/2')
+    .set('Authorization', 'JWT ' + token)
+
     expect(res2.status).toEqual(200)
 
     expect(res2.body).toHaveProperty('occasions')
@@ -124,20 +338,30 @@ describe('Basic startup', () => {
     expect(res2.body.episodes[0].label).toEqual('demo event')
     expect(res2.body.episodes[0].episodeNumber).toEqual(0)
     expect(res2.body.episodes[0].cues).toBeDefined()
-    expect(res2.body.episodes[0].cues).toHaveLength(6)
+    expect(res2.body.episodes[0].cues).toHaveLength(7)
   })
 
   test('GET /events/:id -- error: event not found', async () => {
-    const res = await request(app).get('/api/v2/events/99')
+    const token = await login('test_admin_user', app)
+    expect(token).toBeDefined()
+
+    const res = await request(app)
+    .get('/api/v2/events/99')
+    .set('Authorization', 'JWT ' + token)
+
     expect(res.status).toEqual(404)
 
     expect(res.text).toEqual("Error: event with id:99 not found")
   })
 
   test('POST /events -- happy path (no episodes provided)', async () =>{
+    const token = await login('test_user_2', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .post('/api/v2/events')
-      .send({ label: 'new event' })
+    .post('/api/v2/events')
+    .set('Authorization', 'JWT ' + token)
+    .send({ label: 'new event' })
 
     expect(res.status).toEqual(201)
     expect(res.header.location).toEqual('/api/v2/events/6')
@@ -153,19 +377,23 @@ describe('Basic startup', () => {
   })
 
   test('POST /events -- happy path (with episodes)', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .post('/api/v2/events')
-      .send({ label: 'new event', episodes: [{
-          episodeNumber: 1,
-          label: 'episode 1',
-          cues: [{ 
-            "mediaDomain": 0,
-            "cueNumber": 1,
-            "cueAction": 0,
-            "targetTags": ["all"]
-          }]
-        }] 
-      })
+    .post('/api/v2/events')
+    .set('Authorization', 'JWT ' + token)
+    .send({ label: 'new event', episodes: [{
+        episodeNumber: 1,
+        label: 'episode 1',
+        cues: [{ 
+          "mediaDomain": 0,
+          "cueNumber": 1,
+          "cueAction": 0,
+          "targetTags": ["all"]
+        }]
+      }] 
+    })
 
     expect(res.status).toEqual(201)
     expect(res.header.location).toEqual('/api/v2/events/6')
@@ -187,485 +415,166 @@ describe('Basic startup', () => {
   })
 
   test('DELETE /events/:id -- error: event not found', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+    
     const res = await request(app)
-      .delete('/api/v2/events/99')
+    .delete('/api/v2/events/99')
+    .set('Authorization', 'JWT ' + token)
 
     expect(res.status).toEqual(404)
     expect(res.text).toEqual("Error: event with id:99 not found")
   })
 
   test('DELETE /events/:id -- error: event has open occasions', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     const openOccasionId = 3
 
     const res = await request(app)
-      .delete('/api/v2/events/2')
+    .delete('/api/v2/events/2')
+    .set('Authorization', 'JWT ' + token)
 
     expect(res.status).toEqual(400)
     expect(res.text).toEqual("Error: an event with open occasions cannot be deleted. Close occasion:" + openOccasionId + " and try again.")
 
-    const res2 = await request(app).get('/api/v2/events/2')
+    const res2 = await request(app)
+    .get('/api/v2/events/2')
+    .set('Authorization', 'JWT ' + token)
+
     expect(res2.status).toEqual(200)
   })
 
   test('DELETE /events/:id -- happy path', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .delete('/api/v2/events/1')
+    .delete('/api/v2/events/1')
+    .set('Authorization', 'JWT ' + token)
+
     expect(res.status).toEqual(204)
 
-    const res2 = await request(app).get('/api/v2/events/1')
+    const res2 = await request(app)
+    .get('/api/v2/events/1')
+    .set('Authorization', 'JWT ' + token)
+
     expect(res2.status).toEqual(404)
   })
 
-  test('PATCH /events/:id/episodes -- error: event not found', async () => {
+  test('POST /events/:id/episodes -- error: event not found', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .patch('/api/v2/events/99/episodes')
-      .send([{
-        episodeNumber: 1,
-        label: 'Act 1',
-        cues: []
-      }])
+    .post('/api/v2/events/99/episodes')
+    .set('Authorization', 'JWT ' + token)
+    .send([{
+      episodeNumber: 1,
+      label: 'Act 1',
+      cues: []
+    }])
 
     expect(res.status).toEqual(404)
     expect(res.text).toEqual("Error: event with id:99 not found")
   })
 
-  test('PATCH /events/:id/episodes -- error: empty payload', async () => {
+  test('POST /events/:id/episodes -- error: empty payload', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .patch('/api/v2/events/3/episodes')
-      .send()
+    .post('/api/v2/events/3/episodes')
+    .set('Authorization', 'JWT ' + token)
+    .send()
 
     expect(res.status).toEqual(400)
     expect(res.text).toEqual("Error: you must provide an array of episodes")
   })
 
-  test('PATCH /events/:id/episodes -- error: non-array payload format', async () => {
+  test('POST /events/:id/episodes -- error: non-array payload format', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .patch('/api/v2/events/3/episodes')
-      .send({
-        episodeNumber: 1,
-        label: 'Act 1',
-        cues: []
-      })
+    .post('/api/v2/events/3/episodes')
+    .set('Authorization', 'JWT ' + token)
+    .send({
+      episodeNumber: 1,
+      label: 'Act 1',
+      cues: []
+    })
 
     expect(res.status).toEqual(400)
     expect(res.text).toEqual("Error: you must provide an array of episodes")
   })
 
-  test('PATCH /events/:id/episodes -- error: episodes missing fields', async () => {
+  test('POST /events/:id/episodes -- error: episodes missing fields', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .patch('/api/v2/events/3/episodes')
-      .send([{
-        episodeNumber: 1,
-        label: 'Act 1',
-        cues: 5
-      }])
+    .post('/api/v2/events/3/episodes')
+    .set('Authorization', 'JWT ' + token)
+    .send([{
+      episodeNumber: 1,
+      label: 'Act 1',
+      cues: 5
+    }])
 
     expect(res.status).toEqual(400)
     expect(res.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
 
     const res1 = await request(app)
-      .patch('/api/v2/events/3/episodes')
-      .send([{
-        episodeNumber: 1,
-        cues: []
-      }])
+    .post('/api/v2/events/3/episodes')
+    .set('Authorization', 'JWT ' + token)
+    .send([{
+      episodeNumber: 1,
+      cues: []
+    }])
 
     expect(res1.status).toEqual(400)
     expect(res1.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
 
     const res2 = await request(app)
-      .patch('/api/v2/events/3/episodes')
-      .send([{
-        label: 'Act 1',
-        cues: []
-      }])
+    .post('/api/v2/events/3/episodes')
+    .set('Authorization', 'JWT ' + token)
+    .send([{
+      label: 'Act 1',
+      cues: []
+    }])
 
     expect(res2.status).toEqual(400)
     expect(res2.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
 
     const res3 = await request(app)
-      .patch('/api/v2/events/3/episodes')
-      .send([{
-        episodeNumber: 1,
-        label: 'Act 1'
-      }])
+    .post('/api/v2/events/3/episodes')
+    .set('Authorization', 'JWT ' + token)
+    .send([{
+      episodeNumber: 1,
+      label: 'Act 1'
+    }])
 
     expect(res3.status).toEqual(400)
     expect(res3.text).toEqual("Error: episodes must have 'episodeNumber', 'label', and 'cues' fields; 'cues' must be an array.")
   })
 
-  test('PATCH /events/:id/episodes -- happy path', async () => {
+  test('POST /events/:id/episodes -- happy path', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .patch('/api/v2/events/3/episodes')
-      .send([{
-        episodeNumber: 1,
-        label: 'Act 1',
-        cues: []
-      }])
+    .post('/api/v2/events/3/episodes')
+    .set('Authorization', 'JWT ' + token)
+    .send([{
+      episodeNumber: 1,
+      label: 'Act 1',
+      cues: []
+    }])
 
     expect(res.status).toEqual(200)
   })
-
-  // test('DELETE /events/:id -- error: open event cannot be deleted', async () =>{
-  //   const res = await request(app)
-  //     .delete('/api/v1/events/4')
-  //   expect(res.status).toEqual(403)
-
-  //   const res2 = await request(app).get('/api/v1/events/4')
-  //   expect(res2.status).toEqual(200)
-  // })
-
-  // // should always have occasion
-  // // test('GET /events/:eventId/devices', async () => {
-  // //   const res = await request(app)
-  // //     .get('/api/v1/events/3/devices')
-
-  // //   expect(res.status).toEqual(200)
-  // //   expect(res.body).toHaveLength(3)
-  // // })
-
-  // test('GET /events/:eventId/occasions/:occasionId/devices', async () => {
-  //   const res = await request(app)
-  //     .get('/api/v1/events/4/occasions/1/devices')
-
-  //   expect(res.status).toEqual(200)
-  //   expect(res.body).toHaveLength(1)
-  // })
-
-  // // happy path
-  // test('PATCH /events/:eventId/occasions/:occasionId/check-in', async () => {
-  //   const getDevicesEndpoint = '/api/v1/events/4/occasions/1/devices'
-  //   const res1 = await request(app).get(getDevicesEndpoint)
-  //   expect(res1.status).toEqual(200)
-  //   const deviceCount = res1.body.length
-
-  //   // this device already exists in the DB
-  //   // in a full flow, we would create the device at POST /devices first
-  //   // yeah it's a bit much
-  //   const res2 = await request(app)
-  //     .patch('/api/v1/events/4/occasions/1/check-in')
-  //     .send({ guid: "1234567" })
-
-  //   console.log(res2.body)
-  //   expect(res2.status).toEqual(200)
-
-  //   const eventsTable = require('./knex/queries/event-queries')
-  //   let devices = await eventsTable.getDevicesForEventOccasion(4,1)
-  //   // expect(devices.length).toEqual(2)
-    
-  //   // expect(res2.body).toHaveProperty('id')
-  //   // expect(res2.body.id).toEqual(1)
-
-  //   const res3 = await request(app).get(getDevicesEndpoint)
-  //   expect(res3.body).toHaveLength(deviceCount+1)
-  // })
-
-  // test('PATCH /events/:eventId/check-in => occasion check-in -- error: device is already checked in', async () => {
-  //   const eventId = 4
-  //   const deviceId = 1
-  //   const occasionId = 1
-
-  //   const res1 = await request(app).get('/api/v1/events/' + eventId + '/devices')
-  //   expect(res1.status).toEqual(200)
-  //   const deviceCount = res1.body.length
-  //   // check into event
-    
-  //   const res2 = await request(app)
-  //     .patch('/api/v1/events/' + eventId + '/check-in')
-  //     .send({ guid: "1234567" }) // this device already exists in the DB
-  //   expect(res2.status).toEqual(200)
-  //   expect(res2.body).toHaveProperty('id')
-  //   expect(res2.body.id).toEqual(4)
-
-  //   // verify event check-in
-  //   const getDevicesEndpoint = '/api/v1/events/' + eventId + '/devices'
-  //   const res3 = await request(app).get(getDevicesEndpoint)
-  //   expect(res3.status).toEqual(200)
-  //   const deviceCountAfterEventCheckin = res3.body.length
-  //   expect(deviceCountAfterEventCheckin).toEqual(deviceCount + 1)
-
-  //   // now check into occasion
-  //   const res4 = await request(app)
-  //     .patch('/api/v1/events/' + eventId + '/occasions/' + occasionId + '/check-in')
-  //     .send({ guid: "1234567" })
-
-  //   console.log(res4.body)
-  //   expect(res4.status).toEqual(200)
-
-  //   const eventsDevicesTable = knex('events_devices')
-
-  //   const eventDeviceRelations = await eventsDevicesTable
-  //     .where('event_id', eventId)
-  //     .where('device_id', deviceId)
-    
-  //   console.log(eventDeviceRelations)
-  //   expect(eventDeviceRelations.length).toEqual(1)
-  //   expect(eventDeviceRelations[0].occasion_id).toEqual(1)
-
-  //   // now check in to event again
-  //   const res5 = await request(app)
-  //     .patch('/api/v1/events/' + eventId + '/check-in')
-  //     .send({ guid: "1234567" })
-
-  //   console.log(res5.body)
-  //   expect(res5.status).toEqual(200)
-  // })
-
-  // // happy path for checking into an open event
-
-
-  // test('PATCH /events/:id/check-in -- error: device guid not found', async () => {
-  //   const guid = "foo"
-  //   const res = await request(app)
-  //     .patch('/api/v1/events/1/check-in')
-  //     .send({ guid: guid })
-
-  //   expect(res.status).toEqual(404)
-  //   expect(res.text).toEqual("Error: no device found with guid:foo")
-  // })  
-  
-  // test('PATCH /events/:id/check-in -- error: no guid included in request', async () => {
-  //   const res = await request(app)
-  //     .patch('/api/v1/events/1/check-in')
-  //     .send({ foo: "bar" })
-
-  //   expect(res.status).toEqual(400)
-  //   expect(res.text).toEqual("Error: request must include a device guid")
-  // })
-
-  // // should always have occasion
-  // test('PATCH /events/:id/check-in -- error: invalid event id', async () => {
-  //   const res = await request(app)
-  //     .patch('/api/v1/events/99/check-in')
-  //     .send({ guid: "1234567" })
-
-  //   expect(res.status).toEqual(404)
-  //   expect(res.text).toEqual("Error: no event found with id:99")
-  // })
-
-  // test('PATCH /events/:id/open', async () => {
-  //   let consoleOutput = "";
-  //   storeLog = inputs => (consoleOutput += inputs)
-
-  //   console["log"] = jest.fn(storeLog)
-  //   expect(app.get("cohort").events.length).toEqual(2)
-  //   const res = await request(app)
-  //     .patch('/api/v1/events/2/open')
-    
-  //   expect(res.status).toEqual(200)
-  //   expect(res.body.state).toEqual('open')
-  //   expect(app.get("cohort").events.length).toEqual(3)
-  //   expect(consoleOutput).toEqual("event lot_x is now open")
-  // })
-
-  // test('PATCH /events/:id/close', async () => {
-  //   expect(app.get("cohort").events.length).toEqual(2)
-  //   const res = await request(app)
-  //     .patch('/api/v1/events/3/close')
-    
-  //   expect(res.status).toEqual(200)
-  //   expect(res.body.state).toEqual('closed')
-  //   expect(app.get("cohort").events.length).toEqual(1)
-  // })
-
-  // test('PATCH /events/:id/open and /close', async () => {
-  //   let consoleOutput = "";
-  //   storeLog = inputs => (consoleOutput += inputs)
-
-  //   console["log"] = jest.fn(storeLog)
-  //   expect(app.get("cohort").events.length).toEqual(2)
-  //   const res1 = await request(app)
-  //     .patch('/api/v1/events/2/open')
-    
-  //   expect(res1.status).toEqual(200)
-  //   expect(res1.body.state).toEqual('open')
-  //   expect(app.get("cohort").events.length).toEqual(3)
-  //   expect(consoleOutput).toEqual("event lot_x is now open")
-
-  //   // next close it
-
-  //   expect(app.get("cohort").events.length).toEqual(3)
-  //   const res2 = await request(app)
-  //     .patch('/api/v1/events/2/close')
-    
-  //   expect(res2.status).toEqual(200)
-  //   expect(res2.body.state).toEqual('closed')
-  //   expect(app.get("cohort").events.length).toEqual(2)
-  //   expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closed")
-
-  //   // now re-open it
-  //   const res3 = await request(app)
-  //     .patch('/api/v1/events/2/open')
-    
-  //   expect(res3.status).toEqual(200)
-  //   expect(res3.body.state).toEqual('open')
-  //   expect(app.get("cohort").events.length).toEqual(3)
-  //   expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closedevent lot_x is now open")
-
-  //   // now close it once more
-  //   const res4 = await request(app)
-  //     .patch('/api/v1/events/2/close')
-    
-  //   expect(res4.status).toEqual(200)
-  //   expect(res4.body.state).toEqual('closed')
-  //   expect(app.get("cohort").events.length).toEqual(2)
-  //   expect(consoleOutput).toEqual("event lot_x is now openevent lot_x is now closedevent lot_x is now openevent lot_x is now closed")
-  // })
-
-  // // should always have occasion
-  // test('POST /events/:id/broadcast: error -- no devices connected', async () => {
-  //   const cohortMessage = {
-  //     targetTags: ["all"],
-	//     mediaDomain: "sound",
-	//     cueNumber: 1,
-	//     cueAction: "play"
-  //   }
-
-  //   const res = await request(app)
-  //     .post('/api/v1/events/3/broadcast')
-  //     .send(cohortMessage)
-
-  //   expect(res.status).toEqual(403)
-  //   expect(res.text).toEqual("Warning: No devices are connected via WebSockets, broadcast was not sent")
-  // })
-
-  // test('POST /events/:eventId/occasions/:occasionId/broadcast-push-notification', async () => {
-  //   const eventsTable = require('./knex/queries/event-queries')
-  //   getDevicesForEventOccasion(4, 1).then( devices => {
-  //     console.log(devices)
-  //     expect(devices.length).toEqual(1)
-  //   })
-  // })
-
-  // test('POST /events/:eventId/occasions', async () => {
-  //   const payload = { 
-  //     "doorsOpenDateTime": "2019-02-09T16:00:00-05:00",
-  //     "endDateTime": "2019-02-09T18:00:00-05:00",
-  //     "locationCity": "Cupertino",
-  //     "locationAddress": "One Infinite Loop",
-  //     "locationLabel": "Apple Park",
-  //     "startDateTime": "2019-02-09T15:30:00-05:00"
-  //   }
-
-  //   const res = await request(app)
-  //     .post('/api/v1/events/2/occasions')
-  //     .send(payload)
-
-  //   expect(res.status).toEqual(201)
-  //   expect(res.body.event_id).toEqual("2")
-  //   expect(res.body.id).toBeDefined()
-  //   expect(res.body.locationCity).toEqual("Cupertino")
-  // })
-
-  // test('GET /events/:eventId/occasions/:occasionId/upcoming', async () => {
-  //   const yesterdaysDate = moment().subtract(1, 'days').format("YYYY-MM-DD")
-  //   const todaysDate = moment().format("YYYY-MM-DD")
-
-  //   const payload = { 
-  //     "doorsOpenDateTime": todaysDate + "T16:00:00-05:00",
-  //     "endDateTime": todaysDate + "T18:00:00-05:00",
-  //     "locationCity": "Cupertino",
-  //     "locationAddress": "One Infinite Loop",
-  //     "locationLabel": "Apple Park",
-  //     "startDateTime": todaysDate + "T15:30:00-05:00"
-  //   }
-
-  //   const res1 = await request(app)
-  //     .post('/api/v1/events/2/occasions')
-  //     .send(payload)
-
-  //   expect(res1.status).toEqual(201)
-  //   expect(res1.body.event_id).toEqual("2")
-  //   expect(res1.body.id).toBeDefined()
-  //   expect(res1.body.locationCity).toEqual("Cupertino")
-
-  //   const payload2 = { 
-  //     "doorsOpenDateTime": yesterdaysDate + "T16:00:00-05:00",
-  //     "endDateTime": yesterdaysDate + "T18:00:00-05:00",
-  //     "locationCity": "Cupertino",
-  //     "locationAddress": "One Infinite Loop",
-  //     "locationLabel": "Apple Park",
-  //     "startDateTime": yesterdaysDate + "T15:30:00-05:00"
-  //   }
-
-  //   const res2 = await request(app)
-  //     .post('/api/v1/events/2/occasions')
-  //     .send(payload2)
-
-  //   expect(res2.status).toEqual(201)
-  //   expect(res2.body.event_id).toEqual("2")
-  //   expect(res2.body.id).toBeDefined()
-  //   expect(res2.body.locationCity).toEqual("Cupertino")
-
-  //   const res3 = await request(app)
-  //     .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
-
-  //   expect(res3.status).toEqual(200)
-  //   expect(res3.body).toHaveLength(1)
-  //   expect(res3.body[0].locationLabel).toEqual("Apple Park")
-  //   expect(res3.body[0].locationCity).toEqual("Cupertino")
-
-  // })
-
-  // test('GET /events/:eventId/occasions/:occasionId/upcoming -- edge case: event late in day', async () => {
-  //   const todaysDate = moment().format("YYYY-MM-DD")
-
-  //   const payload = { 
-  //     "doorsOpenDateTime": todaysDate + "T22:50:00-05:00",
-  //     "endDateTime": todaysDate + "T23:50:00-05:00",
-  //     "locationCity": "Cupertino",
-  //     "locationAddress": "One Infinite Loop",
-  //     "locationLabel": "Apple Park",
-  //     "startDateTime": todaysDate + "T23:00:00-05:00"
-  //   }
-
-  //   const res1 = await request(app)
-  //     .post('/api/v1/events/2/occasions')
-  //     .send(payload)
-
-  //   expect(res1.status).toEqual(201)
-  //   expect(res1.body.event_id).toEqual("2")
-  //   expect(res1.body.id).toBeDefined()
-  //   expect(res1.body.locationCity).toEqual("Cupertino")
-
-  //   const res2 = await request(app)
-  //     .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
-
-  //   expect(res2.status).toEqual(200)
-  //   expect(res2.body).toHaveLength(1)
-  //   expect(res2.body[0].locationLabel).toEqual("Apple Park")
-  //   expect(res2.body[0].locationCity).toEqual("Cupertino")
-  // })
-
-  // test('GET /events/:eventId/occasions/:occasionId/upcoming -- edge case: event early in day', async () => {
-  //   const todaysDate = moment().format("YYYY-MM-DD")
-
-  //   const payload = { 
-  //     "doorsOpenDateTime": todaysDate + "T00:50:00-05:00",
-  //     "endDateTime": todaysDate + "T02:00:00-05:00",
-  //     "locationCity": "Cupertino",
-  //     "locationAddress": "One Infinite Loop",
-  //     "locationLabel": "Apple Park",
-  //     "startDateTime": todaysDate + "T01:00:00-05:00"
-  //   }
-
-  //   const res1 = await request(app)
-  //     .post('/api/v1/events/2/occasions')
-  //     .send(payload)
-
-  //   expect(res1.status).toEqual(201)
-  //   expect(res1.body.event_id).toEqual("2")
-  //   expect(res1.body.id).toBeDefined()
-  //   expect(res1.body.locationCity).toEqual("Cupertino")
-
-  //   const res2 = await request(app)
-  //     .get('/api/v1/events/2/occasions/upcoming?onOrAfterDate=' + todaysDate)
-
-  //   expect(res2.status).toEqual(200)
-  //   expect(res2.body).toHaveLength(1)
-  //   expect(res2.body[0].locationLabel).toEqual("Apple Park")
-  //   expect(res2.body[0].locationCity).toEqual("Cupertino")
-  // })
 })
 
 /*
@@ -674,35 +583,47 @@ describe('Basic startup', () => {
 
 describe('Occasion routes', () => {
   test('POST /occasions -- error: eventId not included', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+    
     const res = await request(app)
-      .post('/api/v2/occasions')
-      .send({ 
-        label: 'new occasion'
-      })
+    .post('/api/v2/occasions')
+    .set('Authorization', 'JWT ' + token)
+    .send({ 
+      label: 'new occasion'
+    })
 
     expect(res.status).toEqual(400)
     expect(res.text).toEqual('Error: request must include an existing event id (as "eventId" property)')
   })
 
   test('POST /occasions -- error: event for occasion does not exist', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .post('/api/v2/occasions')
-      .send({ 
-        label: 'new occasion', 
-        eventId: 99 
-      })
+    .post('/api/v2/occasions')
+    .set('Authorization', 'JWT ' + token)
+    .send({ 
+      label: 'new occasion', 
+      eventId: 99 
+    })
 
     expect(res.status).toEqual(404)
     expect(res.text).toEqual('Error: event with id:99 not found. To create an occasion, you must include an eventId property corresponding to an existing event.')
   })
 
   test('POST /occasions -- happy path', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .post('/api/v2/occasions')
-      .send({ 
-        label: 'new occasion', 
-        eventId: 1
-      })
+    .post('/api/v2/occasions')
+    .set('Authorization', 'JWT ' + token)
+    .send({ 
+      label: 'new occasion', 
+      eventId: 1
+    })
 
     expect(res.status).toEqual(201)
     expect(res.header.location).toEqual('/api/v2/occasions/6')
@@ -712,23 +633,37 @@ describe('Occasion routes', () => {
   })
 
   test('DELETE /occasions -- error: occasion not found', async () => {
+    const token = await login('test_admin_user', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .delete('/api/v2/occasions/99')
+    .delete('/api/v2/occasions/99')
+    .set('Authorization', 'JWT ' + token)
 
     expect(res.status).toEqual(404)
   })
 
   test('DELETE /occasions -- error: opened occasion cannot be deleted', async () => {
-    const res = await request(app)
-      .delete('/api/v2/occasions/3')
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
 
-      expect(res.status).toEqual(400)
-      expect(res.text).toEqual('Error: an opened occasion cannot be deleted. Close the occasion and try again.')
+    const res = await request(app)
+    .delete('/api/v2/occasions/3')
+    .set('Authorization', 'JWT ' + token)
+
+    expect(res.status).toEqual(400)
+    expect(res.text).toEqual('Error: an opened occasion cannot be deleted. Close the occasion and try again.')
   })
 
   test('DELETE /occasions -- happy path', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     numberOfOccasions = async () => {
-      const res = await request(app).get('/api/v2/events')
+      const res = await request(app)
+      .get('/api/v2/events')
+      .set('Authorization', 'JWT ' + token)
+
       expect(res.status).toEqual(200)
       
       let occasions = []
@@ -744,7 +679,8 @@ describe('Occasion routes', () => {
     let occasionsCount = await numberOfOccasions()
 
     const res1 = await request(app)
-      .delete('/api/v2/occasions/1')
+    .delete('/api/v2/occasions/1')
+    .set('Authorization', 'JWT ' + token)
 
     expect(res1.status).toEqual(204)
 
@@ -753,10 +689,14 @@ describe('Occasion routes', () => {
     expect(newOccasionsCount).toEqual(occasionsCount - 1)
   })
 
-  test('PATCH /occasions/:id -- open occasion', async () =>{
+  test('POST /occasions/:id -- open occasion', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+
     const res = await request(app)
-      .patch('/api/v2/occasions/2')
-      .send({state: 'opened'})
+    .post('/api/v2/occasions/2')
+    .set('Authorization', 'JWT ' + token)
+    .send({state: 'opened'})
 
     expect(res.status).toEqual(200)
     expect(res.body.id).toEqual(2)
@@ -764,10 +704,14 @@ describe('Occasion routes', () => {
     expect(app.get('cohortSession').openOccasions).toHaveLength(2)
   })
 
-  test('PATCH /occasions/:id -- close occasion', async () =>{
+  test('POST /occasions/:id -- close occasion', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+    
     const res = await request(app)
-      .patch('/api/v2/occasions/3')
-      .send({state: 'closed'})
+    .post('/api/v2/occasions/3')
+    .set('Authorization', 'JWT ' + token)
+    .send({state: 'closed'})
 
     expect(res.status).toEqual(200)
     expect(res.body.id).toEqual(3)
@@ -776,80 +720,29 @@ describe('Occasion routes', () => {
   })
 
   test('GET /occasions/:id/qrcode', async () => {
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+    
     const res = await request(app)
-      .get('/api/v2/occasions/3/qrcode')
+    .get('/api/v2/occasions/3/qrcode')
+    .set('Authorization', 'JWT ' + token)
 
     let qrcode = res.text
 
     expect(qrcode).toBeDefined()
     expect(qrcode).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h37v37H0z"/><path stroke="#000000" d="M4 4.5h7m4 0h2m1 0h1m4 0h2m1 0h7M4 5.5h1m5 0h1m1 0h1m4 0h1m3 0h1m2 0h1m1 0h1m5 0h1M4 6.5h1m1 0h3m1 0h1m3 0h3m2 0h1m1 0h1m1 0h1m2 0h1m1 0h3m1 0h1M4 7.5h1m1 0h3m1 0h1m2 0h2m1 0h2m2 0h1m2 0h2m1 0h1m1 0h3m1 0h1M4 8.5h1m1 0h3m1 0h1m1 0h1m4 0h1m2 0h1m2 0h2m1 0h1m1 0h3m1 0h1M4 9.5h1m5 0h1m5 0h1m1 0h4m2 0h1m1 0h1m5 0h1M4 10.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M14 11.5h1m1 0h1m2 0h1m2 0h1m1 0h1M4 12.5h1m1 0h1m1 0h1m1 0h1m2 0h2m1 0h1m3 0h3m5 0h1m2 0h1M4 13.5h2m1 0h2m7 0h2m1 0h5m1 0h3m1 0h1m2 0h1M4 14.5h4m2 0h1m1 0h1m3 0h1m1 0h3m1 0h1m2 0h1m4 0h3M5 15.5h1m3 0h1m1 0h8m1 0h1m3 0h3m2 0h1m1 0h1M8 16.5h6m1 0h2m1 0h5m2 0h1m1 0h1m3 0h2M5 17.5h3m3 0h2m3 0h1m1 0h2m2 0h1m2 0h1m3 0h1m2 0h1M7 18.5h1m2 0h1m1 0h1m1 0h1m2 0h1m2 0h1m1 0h7m1 0h3M4 19.5h6m2 0h1m1 0h2m3 0h1m2 0h3m1 0h2m3 0h1M6 20.5h1m3 0h1m3 0h3m3 0h3m2 0h3m3 0h2M5 21.5h2m1 0h2m3 0h3m1 0h1m1 0h1m1 0h2m4 0h2m1 0h1m1 0h1M4 22.5h1m1 0h2m1 0h3m3 0h2m1 0h2m3 0h1m3 0h1m1 0h1m1 0h2M5 23.5h3m1 0h1m5 0h1m1 0h3m4 0h3m3 0h2M4 24.5h1m2 0h5m1 0h1m4 0h2m1 0h2m1 0h5M12 25.5h1m3 0h1m1 0h2m1 0h2m1 0h1m3 0h1m2 0h2M4 26.5h7m2 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h2m1 0h1m1 0h2m1 0h2M4 27.5h1m5 0h1m2 0h2m1 0h1m3 0h1m1 0h3m3 0h1m1 0h2M4 28.5h1m1 0h3m1 0h1m1 0h5m4 0h2m1 0h6m1 0h2M4 29.5h1m1 0h3m1 0h1m3 0h1m4 0h1m1 0h2m2 0h1m1 0h1m1 0h1m1 0h1M4 30.5h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h2m1 0h1m1 0h2m1 0h1m5 0h1M4 31.5h1m5 0h1m3 0h2m1 0h1m1 0h1m1 0h2m1 0h3m2 0h1m1 0h1M4 32.5h7m1 0h8m1 0h2m1 0h1m1 0h1m1 0h1m1 0h3"/></svg>\n') // have to add newline manually
   })
+
+  /*
+   *    Broadcast routes (/occasions/:id/broadcast) are tested in 
+   *    cohort-websocket.test.js
+   */
 })
 
 
 
 
   
-
-
-
-//   test('admin device gets broadcasts when device state changes', async (done) => {
-//     const eventId = 3
-//     const adminGUID = "54321" // this is seeded as an admin device
-//     const device1GUID = "1234567"
-
-//     const webSocketServer = require('./cohort-websockets')({
-//       app: app, server: server, path: '/sockets'
-//     })
-//     expect(webSocketServer).toBeDefined()
-
-//     const adminClient = new ws(socketURL)
-//     var device1Client
-
-//     adminClient.addEventListener('open', event => {
-//       let messagesReceived = 0
-//       adminClient.addEventListener('message', message => {
-//         const msg = JSON.parse(message.data)
-//         messagesReceived++
-
-//         if(messagesReceived == 1){        // handshake was successful
-//           expect(msg.response).toEqual('success')
-
-//           // connect the first device
-//           device1Client = new ws(socketURL)
-//           device1Client.addEventListener('open', event => {
-//             device1Client.send(JSON.stringify({ guid: device1GUID, eventId: eventId}))
-//           })
-
-//         } else if(messagesReceived == 2){ // first device state broadcast
-//           expect(msg.status).toHaveLength(3)
-//           expect(msg.status
-//             .find( deviceState => deviceState.guid == device1GUID)
-//             .socketOpen
-//           ).toEqual(false)
-
-//         } else if(messagesReceived == 3){ // second device state broadcast 
-//           expect(msg.status).toHaveLength(3)
-//           expect(msg.status
-//             .find( deviceState => deviceState.guid == device1GUID)
-//             .socketOpen
-//           ).toEqual(true)
-//           device1Client.close()
-
-//         } else if(messagesReceived == 4){ // last device state broadcast 
-//           expect(msg.status).toHaveLength(3)
-//           expect(msg.status
-//             .find( deviceState => deviceState.guid == device1GUID)
-//             .socketOpen
-//           ).toEqual(false)
-//           done()
-//         } 
-//       })
-
-//       adminClient.send(JSON.stringify({ guid: adminGUID, eventId: eventId }))
-//     })
-//   })
-
 
 
 // DEVICE ROUTES

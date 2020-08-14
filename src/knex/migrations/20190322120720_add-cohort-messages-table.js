@@ -1,5 +1,5 @@
 // NB the cohort_messages_n10n table only stores messages sent with notifications. NOT websocket messages
-exports.up = function(knex, Promise) {
+exports.up = function(knex) {
   return Promise.all([
     knex.schema.createTable('cohort_messages_n10n', (table) => {
       table.increments('id').primary().notNullable()
@@ -12,6 +12,6 @@ exports.up = function(knex, Promise) {
   ])
 };
 
-exports.down = function(knex, Promise) {
+exports.down = function(knex) {
   return knex.schema.dropTable('cohort_messages_n10n')
 };

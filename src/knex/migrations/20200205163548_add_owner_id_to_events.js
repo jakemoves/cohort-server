@@ -1,12 +1,15 @@
 
 exports.up = function(knex) {
   return knex.schema.alterTable('events', table => {
-    table.string('state').notNullable()
+    table.integer('owner_id')
+      .references('id').inTable('users')
+      .notNullable()
+      .onDelete('CASCADE')
   })
-};
+}
 
 exports.down = function(knex) {
   return knex.schema.alterTable('events', table => {
-    table.dropColumn('state')
+    table.dropColumn('owner_id')
   })
-};
+}

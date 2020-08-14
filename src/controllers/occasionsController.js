@@ -2,9 +2,13 @@
 // Released under the MIT License (see /LICENSE)
 
 const moment = require('moment')
+const passport = require('passport')
 
-const occasionsTable = require('../knex/queries/occasion-queries')
-const eventsTable = require('../knex/queries/event-queries')
+let eventsTable, occasionsTable
+if(process.env.NODE_ENV != 'localoffline'){
+  occasionsTable = require('../knex/queries/occasion-queries')
+  eventsTable = require('../knex/queries/event-queries')
+}
 
 const CHOccasion = require('../models/CHOccasion')
 const broadcastService = require('../services/broadcastService')
@@ -38,8 +42,14 @@ exports.occasions_create = async (req, res) => {
     handleError(404, 'Error: event with id:' + eventId + ' not found. To create an occasion, you must include an eventId property corresponding to an existing event.', res)
     return
   }
+
+  if(req.user.id != event.owner_id && !req.user.is_admin){
+    handleError(401, "Authorization required", res)
+    return
+  }
   
   let occasion = req.body
+  occasion.owner_id = event.owner_id
 
   // this smells, a little -- should we be creating the occasion in memory using the class and then storing it?
   occasion.state = "closed"
@@ -55,9 +65,19 @@ exports.occasions_create = async (req, res) => {
 }
 
 exports.occasions_delete = async (req, res) => {
-  // verify the occasion is closed
   let occasion = await occasionsTable.getOneByID(req.params.id)
 
+  if(occasion == null || occasion === undefined){
+    handleError(404, "Error: occasion with id:" + req.params.id + " not found", res)
+    return
+  }
+
+  if(req.user.id != occasion.owner_id && !req.user.is_admin){
+    handleError(401, "Authorization required", res)
+    return
+  }
+
+  // verify the occasion is closed
   if(occasion != null && occasion.state == 'opened'){
     handleError(400, 'Error: an opened occasion cannot be deleted. Close the occasion and try again.', res)
     return
@@ -84,6 +104,13 @@ exports.occasions_update = async (req, res) => {
     return
   }
 
+  // user must be the owner OR the user must be an admin
+  if(!(req.user.id == occasion.owner_id || req.user.is_admin)){
+    console.log(req.user)
+    handleError(401, "Authorization required", res)
+    return
+  }
+  
   if(req.body.state == null || req.body.state === undefined){
     handleError(400, "Error: no updateable property was found in the request (i.e. 'state')", res)
     return
@@ -117,9 +144,7 @@ exports.occasions_update = async (req, res) => {
   // doesn't return devices with the occasion, but that might not be relevant for open / close updates; a just-opened event shouldn't have any devices connected, and a just-closed one doesn't either
 }
   
-exports.occasions_broadcast = async (req, res) => {
-  // broadcast logic must go in a service
-  // this is mocked for now
+exports.occasions_broadcast = async (req, res, next) => {
   const occasionId = req.params.id
 
   const occasion = req.app.get('cohortSession').openOccasions
@@ -128,6 +153,14 @@ exports.occasions_broadcast = async (req, res) => {
   if(occasion === undefined){
     handleError(404, 'Error: no open occasion found with id:' + occasionId, res)
     return
+  }
+
+  if(process.env.NODE_ENV != 'localoffline'){
+  // TODO eventually we may need a PermissionsService to do these checks?
+    if(occasion.owner_id != req.user.id && !req.user.is_admin){
+      handleError(401, 'Authorization required', res)
+      return
+    }
   }
 
   const cue = req.body
@@ -147,6 +180,11 @@ exports.occasions_qrcode = async (req, res) => {
 
   if(occasion == null || occasion === undefined){
     handleError(404, "Error: occasion with id:" + occasionId + " not found", res)
+    return
+  }
+
+  if(req.user.id != occasion.owner_id && !req.user.is_admin){
+    handleError(401, "Authorization required", res)
     return
   }
 
