@@ -5,6 +5,8 @@
   import { fade } from 'svelte/transition';
   import {Howl, Howler} from 'howler';
 
+  import GraphViewer from './GraphViewer.svelte'
+
   let UIVisible = true;
   const cadence = 60000 // every 60 seconds 
   let timeoutID
@@ -211,7 +213,9 @@ button.btn-outline-success:hover, button.btn-outline-success:active {
 
 </style>
 
-{#if !UIVisible}
+<GraphViewer></GraphViewer>
+
+<!-- {#if !UIVisible}
   <div class="container" id="during_ticks" transition:fade>
     <div class="row">
       <div class="col-12">
@@ -245,7 +249,6 @@ button.btn-outline-success:hover, button.btn-outline-success:active {
             type="button" 
             on:click={onActionButtonTap}
             class="btn btn-outline-success btn-block text-center plus-{ action[0].label.split("+").length - 1 }">
-            <!-- {action[0]} -->
             {action[0].label.replace(/\+/g, "")}
           </button>
         {/if}
@@ -254,4 +257,4 @@ button.btn-outline-success:hover, button.btn-outline-success:active {
       </ul>
     </div>
   </div>
-{/if}
+{/if} -->
