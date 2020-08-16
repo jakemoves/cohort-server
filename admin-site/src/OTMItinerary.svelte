@@ -5,7 +5,6 @@
   import { fade } from 'svelte/transition';
   import {Howl, Howler} from 'howler';
 
-  import GraphViewer from './GraphViewer.svelte'
 
   let UIVisible = true;
   const cadence = 60000 // every 60 seconds 
@@ -212,8 +211,6 @@ button.btn-outline-success:hover, button.btn-outline-success:active {
 }
 
 </style>
-
-<GraphViewer></GraphViewer>
 
 <!-- {#if !UIVisible}
   <div class="container" id="during_ticks" transition:fade>
