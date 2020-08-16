@@ -1,7 +1,25 @@
 <script>
-  import { onMount } from 'svelte'
   import Graph from 'graph-data-structure'
 
+  let endograph = function(){
+    let graph = new Graph()
+    graph.addNode('Play pebbles')
+    graph.addNode('Retrieve pebbles')
+    graph.addEdge('Play pebbles', 'Retrieve pebbles')
+    graph.addEdge('Retrieve pebbles', 'Play pebbles')
+    
+    return {
+      graph,
+      currentNode: 'Play pebbles',
+      nextNode: () => {
+        this.currentNode = this.graph.adjacent(this.currentNode)[0]
+        console.log('endograph: current node: ' + this.currentNode)
+      }
+    }
+  }
+
+  endograph.nextNode()
+  
   let nodes = [{
     id: "Start"
   },{
