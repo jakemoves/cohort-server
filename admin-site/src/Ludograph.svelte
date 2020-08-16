@@ -2,24 +2,34 @@
   import Graph from 'graph-data-structure'
 
   let endograph = function(){
-    let graph = new Graph()
-    graph.addNode('Play pebbles')
-    graph.addNode('Retrieve pebbles')
-    graph.addEdge('Play pebbles', 'Retrieve pebbles')
-    graph.addEdge('Retrieve pebbles', 'Play pebbles')
+    let id = "exercise"
+    let eGraph = new Graph()
+    eGraph.addNode('Exercise A')
+    eGraph.addNode('Exercise B')
+    eGraph.addEdge('Exercise A', 'Exercise B')
+    eGraph.addEdge('Exercise B', 'Exercise A')
+
+    let currentEndonode = 'Play pebbles'
     
-    return {
-      graph,
-      currentNode: 'Play pebbles',
-      nextNode: () => {
-        this.currentNode = this.graph.adjacent(this.currentNode)[0]
-        console.log('endograph: current node: ' + this.currentNode)
-      }
+    const nextNode = () => {
+      currentEndonode = eGraph.adjacent(currentEndonode)[0]
+      console.log('endograph: current node: ' + currentEndonode)
     }
+
+    let result = {
+      id,
+      eGraph,
+      nextNode,
+      currentEndonode
+    }
+
+    return result
   }
 
-  endograph.nextNode()
-  
+  let exerciseEndograph = endograph()
+  exerciseEndograph.nextNode()
+  exerciseEndograph.nextNode()
+
   let nodes = [{
     id: "Start"
   },{
@@ -36,10 +46,9 @@
     id: "Meditate",
     connectOnTurn: 1
   },{
-    id: "Exercise",
+    id: "exercise",
+    endograph: exerciseEndograph,
     connectOnTurn: 1
-  },{
-    id: "Exercise 2"
   }
   // turn 3
   ,{
@@ -64,7 +73,6 @@
     graph.addNode(node.id)
   })
   graph.addEdge("Start", "Wake up")
-  graph.addEdge("Exercise", "Exercise 2")
 
   let currentNode = nodes.find(node => node.id == "Start")
   let turn = 0
@@ -121,8 +129,14 @@
   const onOptionBtn = function(event){
     visitedNodeIds.push(currentNode.id)
     visitedNodeIds = visitedNodeIds
-    console.log(event.target.innerHTML)
-    currentNode = nodes.find(node => node.id == event.target.innerHTML)
+
+    const nodeId = event.target.innerHTML
+    currentNode = nodes.find(node => node.id == nodeId)
+    
+    if(currentNode.endograph !== undefined){
+      currentNode = endograph.currentEndonode
+    }
+
     turn++
     setupNextTurn()
   }
