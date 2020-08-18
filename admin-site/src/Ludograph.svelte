@@ -9,10 +9,10 @@
     eGraph.addEdge('Exercise A', 'Exercise B')
     eGraph.addEdge('Exercise B', 'Exercise A')
 
-    let currentEndonode = 'Play pebbles'
+    let currentEndonode = {id:'Play pebbles'}
     
     const nextNode = () => {
-      currentEndonode = eGraph.adjacent(currentEndonode)[0]
+      currentEndonode.id = eGraph.adjacent(currentEndonode)[0]
       console.log('endograph: current node: ' + currentEndonode)
     }
 
@@ -134,7 +134,7 @@
     currentNode = nodes.find(node => node.id == nodeId)
     
     if(currentNode.endograph !== undefined){
-      currentNode = endograph.currentEndonode
+      currentNode = currentNode.endograph.currentEndonode
     }
 
     turn++
