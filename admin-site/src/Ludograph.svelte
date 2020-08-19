@@ -1,34 +1,130 @@
 <script>
   import Graph from 'graph-data-structure'
+  import Slider from './Slider.svelte'
 
-  let endograph = function(){
-    let id = "exercise"
-    let eGraph = new Graph()
-    eGraph.addNode('Exercise A')
-    eGraph.addNode('Exercise B')
-    eGraph.addEdge('Exercise A', 'Exercise B')
-    eGraph.addEdge('Exercise B', 'Exercise A')
+  // let endograph = function(){
+  //   let id = "exercise"
+  //   let eGraph = new Graph()
+  //   eGraph.addNode('Exercise A')
+  //   eGraph.addNode('Exercise B')
+  //   eGraph.addEdge('Exercise A', 'Exercise B')
+  //   eGraph.addEdge('Exercise B', 'Exercise A')
 
-    let currentEndonode = {id:'Play pebbles'}
+  //   let currentEndonode = {id:'Play pebbles'}
     
-    const nextNode = () => {
-      currentEndonode.id = eGraph.adjacent(currentEndonode)[0]
-      console.log('endograph: current node: ' + currentEndonode)
-    }
+  //   const nextNode = () => {
+  //     currentEndonode.id = eGraph.adjacent(currentEndonode)[0]
+  //     console.log('endograph: current node: ' + currentEndonode)
+  //   }
 
-    let result = {
-      id,
-      eGraph,
-      nextNode,
-      currentEndonode
-    }
+  //   let result = {
+  //     id,
+  //     eGraph,
+  //     nextNode,
+  //     currentEndonode
+  //   }
 
-    return result
+  //   return result
+  // }
+
+  // let exerciseEndograph = endograph()
+  // exerciseEndograph.nextNode()
+  // exerciseEndograph.nextNode()
+  import CohortClientSession from './CHClientSession.js'
+	
+	/*
+	 *    Prepare Cohort functionality (for live cues)
+	 */	
+	let environment = "prod" // can be local, dev, prod
+	let cohortSocketURL
+
+	switch(environment){
+		case "local":
+			cohortSocketURL = 'ws://localhost:3000/sockets'
+			break
+		case "dev": 
+			cohortSocketURL = 'ws://jakemoves-old.local:3000/sockets'
+			break
+		case "prod":
+			cohortSocketURL = 'wss://new.cohort.rocks/sockets'
+			break
+		default:
+			throw new Error("invalid 'environment' value")
+	}
+
+	let itineraryEvent = {
+		eventId: 10,
+		episodes: [{
+			label: "default",
+			description: "",
+			number: 1,
+			cues: []
+		}]
   }
+  
+	let cohortOccasion = 14
+	let connectedToCohortServer = false
+	let episodeNumberToPlay = 1 // used to trigger episode playback remotely (from cohort server)
+	$: latestTextCueContent = ""
+	$: splitTextCueContent = latestTextCueContent.split("|")
 
-  let exerciseEndograph = endograph()
-  exerciseEndograph.nextNode()
-  exerciseEndograph.nextNode()
+	let optionButtonLabels
+	$: if(splitTextCueContent[0] != ""){
+		optionButtonLabels = splitTextCueContent
+	} else {
+		optionButtonLabels = []
+	}
+
+	// set grouping info (tags)
+	// this is used to target cues to specific groupings
+	let cohortTags = [ "stage_manager" ]
+	let cohortSession = new CohortClientSession(cohortSocketURL, cohortOccasion, cohortTags)
+
+	cohortSession.on('connected', () => {
+		connectedToCohortServer = true
+		console.log('connected to cohort server')
+	})
+	cohortSession.on('disconnected', (message) => {
+		connectedToCohortServer = false
+		console.log(connectedToCohortServer)
+	})
+	cohortSession.on('cueReceived', (cue) => {
+		console.log('cue received:')
+		console.log(cue)
+
+		let cueMatchesTarget = false
+		
+		console.log(cohortTags)
+		for(var i = 0; i < cue.targetTags.length; i++){
+			console.log(cue.targetTags[i])
+			if(cohortTags.includes(cue.targetTags[i])){
+				cueMatchesTarget = true
+				break
+			}
+		}
+
+		if(cueMatchesTarget){
+      if(cue.targetTags.includes("stage_manager")){
+        console.log("!")
+        if(cue.mediaDomain == 3 && cue.cueContent !== undefined){
+          const chosenOption = cue.cueContent
+
+          if(reachableNodeIds.includes(chosenOption)){
+            selectedOption = chosenOption
+            onOptionBtn(selectedOption)
+          } else {
+            throw new Error("Audience choice (" + chosenOption + ") is not valid...")
+          }
+        }
+      }
+		}
+	})
+
+	cohortSession.init()
+
+  /*
+   *   End Cohort
+   */
 
   let nodes = [{
     id: "Start"
@@ -46,8 +142,7 @@
     id: "Meditate",
     connectOnTurn: 1
   },{
-    id: "exercise",
-    endograph: exerciseEndograph,
+    id: "Exercise",
     connectOnTurn: 1
   }
   // turn 3
@@ -64,6 +159,43 @@
     id: "Make fire",
     connectOnTurn: 3
   }
+  // turn 5
+  ,{
+    id: "Dance",
+    connectOnTurn: 5
+  },{
+    id: "Do Yoga",
+    connectOnTurn: 5
+  },{
+    id: "Look at family photos",
+    connectOnTurn: 5
+  },{
+    id: "Read",
+    connectOnTurn: 5
+  },{
+    id: "Write song",
+    connectOnTurn: 5
+  }
+  // turn 6
+  ,{
+    id: "Tell",
+    connectOnTurn: 6
+  }
+  // turn 7
+  ,{
+    id: "Eat lunch",
+    connectOnTurn: 7
+  }
+  // turn 12
+  ,{
+    id: "Eat dinner",
+    connectOnTurn: 12
+  }
+  // turn 14
+  ,{
+    id: "Get ready for bed",
+    connectOnTurn: 14
+  }
   ]
   
   let graph = Graph()
@@ -76,7 +208,17 @@
 
   let currentNode = nodes.find(node => node.id == "Start")
   let turn = 0
+  let countdown = 60
+  let countdownInterval
+  let selectedOption = "" // audience member selects an option every turn
   let visitedNodeIds = []
+
+  const startCountdown = function(){
+    countdown = 60
+    countdownInterval = setInterval(function(){
+      countdown--
+    }, 1000)
+  }
 
   $: currentNode 
   $: adjacentNodeIds = graph.adjacent(currentNode.id)
@@ -91,6 +233,9 @@
     console.log("turn: " + turn)
     console.log("current node: " + currentNode.id)
     console.log("visited nodes: " + visitedNodeIds.join(", "))
+    // selectedOption = "..."
+    clearInterval(countdownInterval)
+    startCountdown()
 
     const nodesToConnect = nodes.filter( node => {
       if(node.connectOnTurn !== undefined && node.connectOnTurn == turn){
@@ -126,16 +271,15 @@
     // console.log("reachable nodes: " + reachableNodeIds.join(", "))
   }
 
-  const onOptionBtn = function(event){
+  const onOptionBtn = function(nodeId){
     visitedNodeIds.push(currentNode.id)
     visitedNodeIds = visitedNodeIds
 
-    const nodeId = event.target.innerHTML
     currentNode = nodes.find(node => node.id == nodeId)
     
-    if(currentNode.endograph !== undefined){
-      currentNode = currentNode.endograph.currentEndonode
-    }
+    // if(currentNode.endograph !== undefined){
+    //   currentNode = currentNode.endograph.currentEndonode
+    // }
 
     turn++
     setupNextTurn()
@@ -276,27 +420,48 @@
   
 </script>
 
-<div class="interface">
-  {#each reachableNodeIds as option}
-    <button type="button">{option}</button>
-  {/each}
+<div class="show-info">
+  <p>Turn: { turn }</p>
+  <p>Time remaining in turn: { countdown }</p>
+  <p>Audience choice: { selectedOption }</p>
 </div>
 
-<div class="diagram">
-  {#each nodes as node, index}
-    <div class="node" 
-      class:current={currentNode.id == node.id} 
-      class:visited={visitedNodeIds.includes(node.id)} 
-      class:reachable={ reachableNodeIds.includes(node.id)}
-    >
-      {#if reachableNodeIds.includes(node.id)}
-        <button type="button" class="btn-link" on:click={onOptionBtn}>{node.id}</button> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
-      {:else}
-        <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
-      {/if}
-    </div>
-  {/each}
+<div class="show-controls">
+  <span>Show players options for next turn</span>
+  <Slider broadcastStatus="unsent" sliderCue={ {
+    mediaDomain: 3,
+    cueNumber: 1,
+    cueAction: 0,
+    targetTags: ["all"],
+    cueContent: reachableNodeIds.join("|")
+  }}></Slider>
 </div>
+
+<details>
+<summary>Probably useless extra info</summary>
+  <div class="interface">
+    {#each reachableNodeIds as option}
+      <button type="button">{option}</button>
+    {/each}
+  </div>
+
+  <div class="diagram">
+    {#each nodes as node, index}
+      <div class="node" 
+        class:current={currentNode.id == node.id} 
+        class:visited={visitedNodeIds.includes(node.id)} 
+        class:reachable={ reachableNodeIds.includes(node.id)}
+      >
+        {#if reachableNodeIds.includes(node.id)}
+          <button type="button" class="btn-link" on:click={e => onOptionBtn(e.target.details)}>{node.id}</button> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
+        {:else}
+          <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
+        {/if}
+      </div>
+    {/each}
+  </div>
+</details>
+
 <!-- <svg class="diagram" width="480" height="480" viewBox="0 0 480 480">
   {#each nodes as node, index}
       <circle cx="{index * 50}" cy="{index * 50}" r="5" stroke="black" fill="black"></circle>

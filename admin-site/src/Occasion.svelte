@@ -15,6 +15,7 @@
   import Slider from './Slider.svelte';
   import Modal from './Modal.svelte';
   import OTMItinerary from './OTMItinerary.svelte'
+  import Ludograph from './Ludograph.svelte'
  
   export let broadcastStatus;
 
@@ -296,8 +297,8 @@
       buttonText="Show QR Code" 
       dataTarget="#QRcodeModal"/>
    
-      {#if focusedEvent.label == "The Itinerary"}
-        <OTMItinerary></OTMItinerary>
+      {#if focusedEvent.label == "The Itinerary Kick and Push"}
+        <Ludograph></Ludograph>
       {:else}
         {#if focusedEvent.episodes[0].cues.length == 0}
           <div class="row">

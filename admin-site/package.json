@@ -8,6 +8,7 @@
     "rollup": "^1.12.0",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-livereload": "^1.0.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-svelte": "^5.0.3",
     "rollup-plugin-terser": "^4.0.4",
@@ -22,7 +23,9 @@
     "js-cookie": "^2.2.0",
     "moment": "^2.24.0",
     "popper.js": "^1.14.7",
-    "sirv-cli": "^0.4.4"
+    "query-string": "^6.13.1",
+    "sirv-cli": "^0.4.4",
+    "uuid": "^8.3.0"
   },
   "scripts": {
     "build": "rollup -c && cp -rf public/* ../public/admin",

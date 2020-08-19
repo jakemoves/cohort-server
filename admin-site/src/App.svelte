@@ -15,10 +15,6 @@
   import EventCreationFrom from './EventCreationForm.svelte';
   import OccasionCreationForm from './OccasionCreationForm.svelte';
 
-
-  import Ludograph from './Ludograph.svelte'
-  
-
   let sliderCue;
   let broadcastStatus = "unsent";
   // let broadcastResults;
@@ -73,7 +69,6 @@
 </style>
 
 {#if pageState == 0}
-  <Ludograph></Ludograph>
   <Login/>
   <hr>
   <!-- dev tools are currently commented out but could allow manual choosing of serverURL -->
