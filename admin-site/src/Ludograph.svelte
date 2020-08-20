@@ -233,8 +233,8 @@
   $: thisDevice = deviceStates.find( device => {
     console.log(0)
     console.log(device.guid)
-    console.log(CohortClientSession.guid)
-    return device.guid == CohortClientSession.guid
+    console.log(cohortSession.guid)
+    return device.guid == cohortSession.guid
   })
 
   let connectionState = "unknown"
