@@ -90,7 +90,7 @@ class CHOccasion extends machina.Fsm {
   }
 
   deviceStates(){
-    this.handle('deviceStates')
+    return this.handle('deviceStates')
   }
 }
 
