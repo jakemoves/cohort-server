@@ -66,6 +66,7 @@ module.exports = (options) => {
           return
         }
 
+        // hacky endpoint for status updates for admin site
         console.log(msg)
         if(msg.action == 'request_device_states'){
           let occasion = options.app.get('cohortSession').openOccasions
@@ -73,12 +74,11 @@ module.exports = (options) => {
           if(occasion === undefined){
             return
           }
-          let devices = occasion.devices
-          console.log(devices)
-          
+          const deviceStates = occasion.deviceStates()
+
           const payload = {
             dataIdentifier: "device_states",
-            data: occasion.deviceStates()
+            data: deviceStates
           } 
           socket.send(JSON.stringify(payload))
         }
