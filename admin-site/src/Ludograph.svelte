@@ -230,9 +230,9 @@
   let selectedOption = "" // audience member selects an option every turn
   let visitedNodeIds = []
   let deviceStates = []
-  $: thisDevice = deviceStates.find( deviceState => guid == CohortClientSession.guid
+  $: thisDevice = deviceStates.find( device => device.guid == CohortClientSession.guid
   )
-  
+
   let connectionState
   $: {
     thisDevice
