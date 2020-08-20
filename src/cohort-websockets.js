@@ -73,6 +73,9 @@ module.exports = (options) => {
           if(occasion === undefined){
             return
           }
+          let devices = occasion.devices
+          console.log(devices)
+          
           const payload = {
             dataIdentifier: "device_states",
             data: occasion.deviceStates()
