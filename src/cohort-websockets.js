@@ -4,6 +4,7 @@
 const webSocket = require('ws')
 
 const CHDevice = require('./models/CHDevice.js')
+const { upperFirst } = require('lodash')
 
 module.exports = (options) => {
 
@@ -69,6 +70,9 @@ module.exports = (options) => {
         if(msg.action == 'request_device_states'){
           let occasion = options.app.get('cohortSession').openOccasions
             .find( occasion => occasion.id == msg.occasionId)
+          if(occasion === undefined){
+            return
+          }
           const payload = {
             dataIdentifier: "device_states",
             data: occasion.deviceStates

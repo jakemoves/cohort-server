@@ -87,7 +87,8 @@
     connectedToCohortServer = true
     requestUpdatedDeviceStatesInterval = setInterval(() => {
       const payload = {
-        action: 'request_device_states'
+        action: 'request_device_states',
+        occasionId: cohortOccasion
       }
       cohortSession.send(payload)
     }, 5000)
