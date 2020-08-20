@@ -3,11 +3,11 @@ import EventEmitter from 'events'
 
 class CohortClientSession extends EventEmitter {
 
-  constructor(socketURL, occasionId, tags = [ "all" ]){
+  constructor(socketURL, occasionId, tags = [ "all" ], playerLabel = ""){
     super()
     this.socketURL = socketURL
     this.occasionId = occasionId
-    this.guid = uuid()
+    this.guid = playerLabel + uuid() 
     this.tags = tags
     this.connected = false
     this.socket

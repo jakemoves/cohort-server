@@ -85,6 +85,18 @@ module.exports = (options) => {
           return
         }
 
+        // hacky endpoint for status updates for clients
+        if(msg.action == "client_ping"){
+          if(msg.clientGuid === undefined){
+            return
+          }
+          const payload = {
+            dataIdentifier: "client_pong",
+            clientGuid: msg.clientGuid
+          }
+          socket.send(jsonPayload)
+        }
+
         // handle initial handshake with device
         if(socket.cohortDeviceGUID === undefined || 
            socket.cohortDeviceGUID == null){
