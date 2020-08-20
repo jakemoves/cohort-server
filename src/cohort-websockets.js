@@ -65,6 +65,16 @@ module.exports = (options) => {
           return
         }
 
+        if(msg.action == 'request_device_states'){
+          let occasion = options.app.get('cohortSession').openOccasions
+            .find( occasion => occasion.id == msg.occasionId)
+          const payload = {
+            dataIdentifier: "device_states",
+            data: occasion.deviceStates
+          } 
+          socket.send(JSON.stringify(payload))
+        }
+
         // handle initial handshake with device
         if(socket.cohortDeviceGUID === undefined || 
            socket.cohortDeviceGUID == null){

@@ -66,7 +66,7 @@
 	let cohortOccasion = 14
   let connectedToCohortServer = false
   
-  let sliderBroadcastStatus = "unsent"
+  $: sliderBroadcastStatus = "unsent"
   
 	$: latestTextCueContent = ""
 	$: splitTextCueContent = latestTextCueContent.split("|")
@@ -90,7 +90,14 @@
 	cohortSession.on('disconnected', (message) => {
 		connectedToCohortServer = false
 		console.log(connectedToCohortServer)
-	})
+  })
+  cohortSession.on('dataReceived', msg => {
+    if(msg.dataIdentifier == 'device_states'){
+      deviceStates = msg.data
+      console.log(deviceStates)
+    }
+  })
+
 	cohortSession.on('cueReceived', (cue) => {
 		console.log('cue received:')
 		console.log(cue)
@@ -214,6 +221,7 @@
   let countdownInterval
   let selectedOption = "" // audience member selects an option every turn
   let visitedNodeIds = []
+  let deviceStates
 
   const startCountdown = function(){
     countdown = 60
@@ -430,23 +438,32 @@
   
 </script>
 
-<div class="show-info">
-  <p>Connection: <WebsocketConnectionIndicator status="unknown"/></p>
-  <p>Turn: { turn }</p>
-  <p>Time remaining in turn: { countdown }</p>
-  <p>Audience choice: { selectedOption }</p>
+<div class="row">
+  <div class="container">
+    <div class="show-info">
+      <p>Connection: <WebsocketConnectionIndicator status="unknown"/></p>
+      <p>Turn: { turn }</p>
+      <p>Time remaining in turn: { countdown }</p>
+      <p>Audience choice: { selectedOption }</p>
+    </div>
+  </div>
 </div>
 
-<div class="show-controls">
-  <button type="button" class="btn btn-block btn-outline-primary" on:click={setupNextTurn} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
-  <span>Send Options to Current Player</span>
-  <Slider broadcastStatus={sliderBroadcastStatus} sliderCue={ {
-    mediaDomain: 3,
-    cueNumber: 1,
-    cueAction: 0,
-    targetTags: ["all"],
-    cueContent: reachableNodeIds.join("|")
-  }}></Slider>
+
+<div class="row">
+  <div class="container">
+    <div class="show-controls">
+      <button type="button" class="btn btn-block btn-outline-primary" on:click={setupNextTurn} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
+      <span>Send Options to Current Player</span>
+      <Slider broadcastStatus={sliderBroadcastStatus} sliderCue={ {
+        mediaDomain: 3,
+        cueNumber: 1,
+        cueAction: 0,
+        targetTags: ["all"],
+        cueContent: reachableNodeIds.join("|")
+      }}></Slider>
+    </div>
+  </div>
 </div>
 
 <details>

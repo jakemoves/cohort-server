@@ -70,6 +70,11 @@ class CohortClientSession extends EventEmitter {
         } else if(this.connected == false){
           return reject(msg)
         }
+        
+        if(msg.dataIdentifier !== undefined){
+          this.emit('dataReceived', msg)
+          return
+        }
 
         let cohortCue
         try {

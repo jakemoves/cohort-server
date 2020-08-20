@@ -85,6 +85,10 @@ class CHOccasion extends machina.Fsm {
     this.handle('addDevice', device)
     console.log("" + this.devices.length + " devices connected to occasion:" + this.id)
   }
+
+  deviceStates(){
+    return this.devices()
+  }
 }
 
 
