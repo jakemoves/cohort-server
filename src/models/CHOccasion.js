@@ -91,14 +91,12 @@ class CHOccasion extends machina.Fsm {
 
   deviceStates(){
     const devices = this.handle('deviceStates')
-    console.log(devices)
     const deviceStates = devices.map( device => {
       return {
         connected: device.socket.isAlive,
         guid: device.guid
       }
     })
-    console.log(deviceStates)
     return deviceStates
   }
 }

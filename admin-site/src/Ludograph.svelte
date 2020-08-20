@@ -85,6 +85,7 @@
   let requestUpdatedDeviceStatesInterval
 	cohortSession.on('connected', () => {
     connectedToCohortServer = true
+    
     requestUpdatedDeviceStatesInterval = setInterval(() => {
       const payload = {
         action: 'request_device_states',
@@ -92,6 +93,7 @@
       }
       cohortSession.send(payload)
     }, 5000)
+
 		console.log('connected to cohort server')
 	})
 	cohortSession.on('disconnected', (message) => {
@@ -101,7 +103,6 @@
   cohortSession.on('dataReceived', msg => {
     if(msg.dataIdentifier == 'device_states'){
       deviceStates = msg.data
-      console.log(deviceStates)
     }
   })
 
@@ -228,7 +229,10 @@
   let countdownInterval
   let selectedOption = "" // audience member selects an option every turn
   let visitedNodeIds = []
-  let deviceStates
+  let deviceStates = []
+  $: thisDevice = deviceStates.find( deviceState => guid == CohortClientSession.guid
+  )
+  $: connectionState = (thisDevice.connected ? "active" : "inactive") || "unknown"
 
   const startCountdown = function(){
     countdown = 60
@@ -448,7 +452,7 @@
 <div class="row">
   <div class="container">
     <div class="show-info">
-      <p>Connection: <WebsocketConnectionIndicator status="unknown"/></p>
+      <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
       <p>Turn: { turn }</p>
       <p>Time remaining in turn: { countdown }</p>
       <p>Audience choice: { selectedOption }</p>
