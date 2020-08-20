@@ -65,6 +65,7 @@ module.exports = (options) => {
           return
         }
 
+        console.log(msg)
         if(msg.action == 'request_device_states'){
           let occasion = options.app.get('cohortSession').openOccasions
             .find( occasion => occasion.id == msg.occasionId)
