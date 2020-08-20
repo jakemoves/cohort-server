@@ -121,7 +121,7 @@ class CohortClientSession extends EventEmitter {
   }
 
   send(object){
-    socket.send(JSON.stringify(object))
+    this.socket.send(JSON.stringify(object))
   }
 }
 
