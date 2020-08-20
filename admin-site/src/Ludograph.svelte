@@ -230,11 +230,14 @@
   let selectedOption = "" // audience member selects an option every turn
   let visitedNodeIds = []
   let deviceStates = []
-  $: thisDevice = deviceStates.find( device => device.guid == CohortClientSession.guid
-  )
+  $: thisDevice = deviceStates.find( device => {
+    console.log(0)
+    return device.guid == CohortClientSession.guid
+  })
 
-  let connectionState
+  let connectionState = "unknown"
   $: {
+    console.log(1)
     thisDevice
     if(thisDevice === undefined){ connectionState = "unknown" }
     else if(thisDevice.connected === undefined){connectionState = "unknown"}
