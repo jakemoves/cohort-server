@@ -79,8 +79,12 @@ module.exports = (options) => {
           const payload = {
             dataIdentifier: "device_states",
             data: deviceStates
-          } 
-          socket.send(JSON.stringify(payload))
+          }
+
+          const jsonPayload = JSON.stringify(payload)
+          console.log(jsonPayload)
+          socket.send(jsonPayload)
+          return
         }
 
         // handle initial handshake with device
