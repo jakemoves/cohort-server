@@ -231,7 +231,7 @@
     return graph.adjacent(nodeId)
   }
 
-  const setupNextTurn = function(selectedOption){
+  const setupNextTurn = function(){
     visitedNodeIds.push(currentNode.id)
     visitedNodeIds = visitedNodeIds
 
@@ -240,7 +240,10 @@
       throw new Error('selected option (' + selectedOption + ') is not valid')
       return
     }
+
+    // reset options and cue status
     selectedOption = ""
+    sliderBroadcastStatus = "unsent"
 
     // if(currentNode.endograph !== undefined){
     //   currentNode = currentNode.endograph.currentEndonode
@@ -435,7 +438,7 @@
 </div>
 
 <div class="show-controls">
-  <button type="button" class="btn btn-block btn-outline-primary" on:click={ e => setupNextTurn(selectedOption)} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
+  <button type="button" class="btn btn-block btn-outline-primary" on:click={setupNextTurn} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
   <span>Send Options to Current Player</span>
   <Slider broadcastStatus={sliderBroadcastStatus} sliderCue={ {
     mediaDomain: 3,
