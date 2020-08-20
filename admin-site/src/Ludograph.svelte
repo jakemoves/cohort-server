@@ -1,6 +1,7 @@
 <script>
   import Graph from 'graph-data-structure'
   import Slider from './Slider.svelte'
+  import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
 
   // let endograph = function(){
   //   let id = "exercise"
@@ -46,7 +47,7 @@
 			cohortSocketURL = 'ws://jakemoves-old.local:3000/sockets'
 			break
 		case "prod":
-			cohortSocketURL = 'wss://new.cohort.rocks/sockets'
+			cohortSocketURL = 'wss://otm.cohort.rocks/sockets'
 			break
 		default:
 			throw new Error("invalid 'environment' value")
@@ -63,8 +64,10 @@
   }
   
 	let cohortOccasion = 14
-	let connectedToCohortServer = false
-	let episodeNumberToPlay = 1 // used to trigger episode playback remotely (from cohort server)
+  let connectedToCohortServer = false
+  
+  let sliderBroadcastStatus = "unsent"
+  
 	$: latestTextCueContent = ""
 	$: splitTextCueContent = latestTextCueContent.split("|")
 
@@ -111,7 +114,6 @@
 
           if(reachableNodeIds.includes(chosenOption)){
             selectedOption = chosenOption
-            onOptionBtn(selectedOption)
           } else {
             throw new Error("Audience choice (" + chosenOption + ") is not valid...")
           }
@@ -229,11 +231,26 @@
     return graph.adjacent(nodeId)
   }
 
-  const setupNextTurn = function(){
+  const setupNextTurn = function(selectedOption){
+    visitedNodeIds.push(currentNode.id)
+    visitedNodeIds = visitedNodeIds
+
+    currentNode = nodes.find(node => node.id == selectedOption)
+    if(currentNode === undefined){
+      throw new Error('selected option (' + selectedOption + ') is not valid')
+      return
+    }
+    selectedOption = ""
+
+    // if(currentNode.endograph !== undefined){
+    //   currentNode = currentNode.endograph.currentEndonode
+    // }
+
+    turn++
+
     console.log("turn: " + turn)
     console.log("current node: " + currentNode.id)
     console.log("visited nodes: " + visitedNodeIds.join(", "))
-    // selectedOption = "..."
     clearInterval(countdownInterval)
     startCountdown()
 
@@ -272,17 +289,7 @@
   }
 
   const onOptionBtn = function(nodeId){
-    visitedNodeIds.push(currentNode.id)
-    visitedNodeIds = visitedNodeIds
-
-    currentNode = nodes.find(node => node.id == nodeId)
-    
-    // if(currentNode.endograph !== undefined){
-    //   currentNode = currentNode.endograph.currentEndonode
-    // }
-
-    turn++
-    setupNextTurn()
+    selectedOption = nodeId
   }
 
 
@@ -421,14 +428,16 @@
 </script>
 
 <div class="show-info">
+  <p>Connection: <WebsocketConnectionIndicator status="unknown"/></p>
   <p>Turn: { turn }</p>
   <p>Time remaining in turn: { countdown }</p>
   <p>Audience choice: { selectedOption }</p>
 </div>
 
 <div class="show-controls">
-  <span>Show players options for next turn</span>
-  <Slider broadcastStatus="unsent" sliderCue={ {
+  <button type="button" class="btn btn-block btn-outline-primary" on:click={ e => setupNextTurn(selectedOption)} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
+  <span>Send Options to Current Player</span>
+  <Slider broadcastStatus={sliderBroadcastStatus} sliderCue={ {
     mediaDomain: 3,
     cueNumber: 1,
     cueAction: 0,
@@ -441,7 +450,7 @@
 <summary>Probably useless extra info</summary>
   <div class="interface">
     {#each reachableNodeIds as option}
-      <button type="button">{option}</button>
+      <button type="button" disabled>{option}</button>
     {/each}
   </div>
 
@@ -453,7 +462,8 @@
         class:reachable={ reachableNodeIds.includes(node.id)}
       >
         {#if reachableNodeIds.includes(node.id)}
-          <button type="button" class="btn-link" on:click={e => onOptionBtn(e.target.details)}>{node.id}</button> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
+          <!-- <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span> -->
+          <button type="button" class="btn-link" on:click={e => onOptionBtn(node.id)}>{node.id}</button> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
         {:else}
           <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
         {/if}
