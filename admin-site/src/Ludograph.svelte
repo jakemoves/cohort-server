@@ -232,7 +232,15 @@
   let deviceStates = []
   $: thisDevice = deviceStates.find( deviceState => guid == CohortClientSession.guid
   )
-  $: connectionState = (thisDevice.connected ? "active" : "inactive") || "unknown"
+  
+  let connectionState
+  $: {
+    thisDevice
+    if(thisDevice === undefined){ connectionState = "unknown" }
+    else if(thisDevice.connected === undefined){connectionState = "unknown"}
+    else if(thisDevice.connected == true){ connectionState = "active" }
+    else if(thisDevice.connected == false){ connectionState = "inactive"}
+  }
 
   const startCountdown = function(){
     countdown = 60
