@@ -24,4 +24,4 @@ export let label = ""
 }
 
 </style>
-<div><span>class={"indicator connection-" + status}></span><span>{label}</span></div>
+<div><span class={"indicator connection-" + status}></span><span>{label}</span></div>
