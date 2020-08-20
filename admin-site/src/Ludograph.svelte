@@ -231,9 +231,9 @@
   let visitedNodeIds = []
   let deviceStates = []
   $: deviceConnectionStates = deviceStates.map( device => {
-    if(thisDevice.connected == true){ return "active" }
-    else if(thisDevice.connected == false){ return "inactive"}
-    else { return "unknown"}
+    if(thisDevice.connected == true){ return {guid: device.guid, state: "active" } }
+    else if(thisDevice.connected == false){ return {guid: device.guid, state: "inactive"}}
+    else { return {guid: device.guid, state: "unknown"}}
   })
 
   $: thisDevice = deviceStates.find( device => {
@@ -471,7 +471,7 @@
       <p>Players: 
         {#each deviceConnectionStates as playerConnectionState}
           <!-- {#if !playerConnectionState.guid == cohortSession.guid} -->
-            <WebsocketConnectionIndicator status={playerConnectionState}/>
+            <WebsocketConnectionIndicator status={playerConnectionState.state} label={playerConnectionState.guid.split("|")[0]}/>
           <!-- {/if} -->
         {/each}
       </p>
