@@ -1,5 +1,6 @@
 <script>
 export let status = "unknown"
+export let label = ""
 </script>
 
 <style>
@@ -23,4 +24,4 @@ export let status = "unknown"
 }
 
 </style>
-<div class={"indicator connection-" + status}></div>
+<div><span>class={"indicator connection-" + status}></span><span>{label}</span></div>
