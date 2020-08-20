@@ -16,12 +16,13 @@ export let events;
 export let storedEvents = writable(0);
 
 export let getEventsAndStore = async () => {
-
+  console.log("serverURL: " + serverURL)
   let response = await fetch(serverURL + "/events", {
     method: 'GET'
   })
 
   grabbedFromServerEvents = await response.json();
+  console.log(grabbedFromServerEvents)
   storedEvents.update(value => 
       value = grabbedFromServerEvents
   );
