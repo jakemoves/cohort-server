@@ -75,7 +75,7 @@ module.exports = (options) => {
           }
           const payload = {
             dataIdentifier: "device_states",
-            data: occasion.deviceStates
+            data: occasion.deviceStates()
           } 
           socket.send(JSON.stringify(payload))
         }
