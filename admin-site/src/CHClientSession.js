@@ -60,7 +60,7 @@ class CohortClientSession extends EventEmitter {
 
       socket.addEventListener('message', (message) => {
         const msg = JSON.parse(message.data)
-        // console.log(msg)
+        console.log(msg)
         
         // finish handshake
         if(this.connected == false && msg.response == "success"){
@@ -118,6 +118,10 @@ class CohortClientSession extends EventEmitter {
     }
 
     return msg
+  }
+
+  send(object){
+    socket.send(JSON.stringify(object))
   }
 }
 

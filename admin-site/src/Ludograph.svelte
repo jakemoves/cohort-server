@@ -82,9 +82,15 @@
 	// this is used to target cues to specific groupings
 	let cohortTags = [ "stage_manager" ]
 	let cohortSession = new CohortClientSession(cohortSocketURL, cohortOccasion, cohortTags)
-
+  let requestUpdatedDeviceStatesInterval
 	cohortSession.on('connected', () => {
-		connectedToCohortServer = true
+    connectedToCohortServer = true
+    requestUpdatedDeviceStatesInterval = setInterval(() => {
+      const payload = {
+        action: 'request_device_states'
+      }
+      cohortSession.send(payload)
+    }, 5000)
 		console.log('connected to cohort server')
 	})
 	cohortSession.on('disconnected', (message) => {
