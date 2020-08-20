@@ -46,6 +46,7 @@ class CHOccasion extends machina.Fsm {
             this.devices.push(device)
           },
           deviceStates: function(){
+            console.log(this.devices)
             return this.devices
           },
           closeOccasion: 'closed'
@@ -90,7 +91,9 @@ class CHOccasion extends machina.Fsm {
   }
 
   deviceStates(){
-    return this.handle('deviceStates')
+    const devices = this.handle('deviceStates')
+    console.log(devices)
+    return devices
   }
 }
 
