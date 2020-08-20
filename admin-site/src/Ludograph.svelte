@@ -236,7 +236,7 @@
     else { return "unknown"}
   })
 
-  $: thisDevice = deviceStates.find( device => {]\
+  $: thisDevice = deviceStates.find( device => {
     return device.guid == cohortSession.guid
   })
 
