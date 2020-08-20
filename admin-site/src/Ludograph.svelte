@@ -230,16 +230,18 @@
   let selectedOption = "" // audience member selects an option every turn
   let visitedNodeIds = []
   let deviceStates = []
-  $: thisDevice = deviceStates.find( device => {
-    console.log(0)
-    console.log(device.guid)
-    console.log(cohortSession.guid)
+  $: deviceConnectionStates = deviceStates.map( device => {
+    if(thisDevice.connected == true){ return "active" }
+    else if(thisDevice.connected == false){ return "inactive"}
+    else { return "unknown"}
+  })
+
+  $: thisDevice = deviceStates.find( device => {]\
     return device.guid == cohortSession.guid
   })
 
   let connectionState = "unknown"
   $: {
-    console.log(1)
     thisDevice
     if(thisDevice === undefined){ connectionState = "unknown" }
     else if(thisDevice.connected === undefined){connectionState = "unknown"}
@@ -466,6 +468,11 @@
   <div class="container">
     <div class="show-info">
       <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
+      <p>Players: 
+        {#each deviceConnectionStates as playerConnectionState}
+          <WebsocketConnectionIndicator status={playerConnectionState}></WebsocketConnectionIndicator>
+        {/each}
+      </p>
       <p>Turn: { turn }</p>
       <p>Time remaining in turn: { countdown }</p>
       <p>Audience choice: { selectedOption }</p>
