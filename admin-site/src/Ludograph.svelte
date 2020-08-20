@@ -470,9 +470,9 @@
       <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
       <p>Players: 
         {#each deviceConnectionStates as playerConnectionState}
-          {#if !playerConnectionState.guid == cohortSession.guid}
+          <!-- {#if !playerConnectionState.guid == cohortSession.guid} -->
             <WebsocketConnectionIndicator status={playerConnectionState}/>
-          {/if}
+          <!-- {/if} -->
         {/each}
       </p>
       <p>Turn: { turn }</p>
