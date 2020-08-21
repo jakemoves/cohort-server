@@ -1,4 +1,5 @@
 <script>
+  import {Howl, Howler} from 'howler'
   import Graph from 'graph-data-structure'
   import Slider from './Slider.svelte'
   import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
@@ -129,6 +130,7 @@
 
           if(reachableNodeIds.includes(chosenOption)){
             selectedOption = chosenOption
+            alertSound.play()
           } else {
             throw new Error("Audience choice (" + chosenOption + ") is not valid...")
           }
@@ -142,6 +144,10 @@
   /*
    *   End Cohort
    */
+
+  let alertSound = new Howl({
+    src: './sounds/Wild-Eep.mp3'
+  })
 
   let nodes = [{
     id: "Start"
@@ -225,15 +231,24 @@
 
   let currentNode = nodes.find(node => node.id == "Start")
   let turn = 0
+  $: currentInWorldTime = ((turn + 5) + "00").padStart(4, '0')
+
   let countdown = 60
   let countdownInterval
   let selectedOption = "" // audience member selects an option every turn
   let visitedNodeIds = []
   let deviceStates = []
-  $: deviceConnectionStates = deviceStates.map( device => {
-    if(thisDevice.connected == true){ return {guid: device.guid, state: "active" } }
-    else if(thisDevice.connected == false){ return {guid: device.guid, state: "inactive"}}
+  $: playerConnectionStates = deviceStates.map( device => {
+    if(device.connected == true){ return {guid: device.guid, state: "active" } }
+    else if(device.connected == false){ return {guid: device.guid, state: "inactive"}}
     else { return {guid: device.guid, state: "unknown"}}
+  }).filter( device => {
+    // don't include this device
+    if(device.guid != cohortSession.guid){
+      return true
+    } else {
+      return false
+    }
   })
 
   $: thisDevice = deviceStates.find( device => {
@@ -266,6 +281,8 @@
   }
 
   const setupNextTurn = function(){
+    if(turn == 0){alertSound.play()}
+
     visitedNodeIds.push(currentNode.id)
     visitedNodeIds = visitedNodeIds
 
@@ -469,13 +486,15 @@
     <div class="show-info">
       <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
       <p>Players: 
-        {#each deviceConnectionStates as playerConnectionState}
+        {#each playerConnectionStates as playerConnectionState}
+          {(console.log(playerConnectionState), '')}
+          {(console.log(cohortSession), '')}
           <!-- {#if !playerConnectionState.guid == cohortSession.guid} -->
             <WebsocketConnectionIndicator status={playerConnectionState.state} label={playerConnectionState.guid.split("|")[0]}/>
           <!-- {/if} -->
         {/each}
       </p>
-      <p>Turn: { turn }</p>
+      <p>Turn: { turn }, Time: { currentInWorldTime }</p>
       <p>Time remaining in turn: { countdown }</p>
       <p>Audience choice: { selectedOption }</p>
     </div>
@@ -487,7 +506,7 @@
   <div class="container">
     <div class="show-controls">
       <button type="button" class="btn btn-block btn-outline-primary" on:click={setupNextTurn} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
-      <span>Send Options to Current Player</span>
+      <span>Send Options to Players</span>
       <Slider broadcastStatus={sliderBroadcastStatus} sliderCue={ {
         mediaDomain: 3,
         cueNumber: 1,
