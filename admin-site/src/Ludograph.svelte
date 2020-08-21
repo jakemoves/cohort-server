@@ -314,6 +314,13 @@
   $: adjacentNodeIds = graph.adjacent(currentNode.id)
   $: reachableNodeIds = adjacentNodeIds.filter( adjacentId => !visitedNodeIds.includes(adjacentId))
   let showButtons = true // false = hide buttons
+  
+  let sliderMessage
+  $: if(showButtons == true){
+    sliderMessage = "Show options to players"
+  } else {
+    sliderMessage = "Hide all options for players"
+  }
 
   $: connectedNodes = function(nodeId){
     console.log(graph.adjacent(nodeId))
@@ -556,7 +563,7 @@
   <div class="container">
     <div class="show-controls">
       <button type="button" class="btn btn-block btn-outline-primary" on:click={setupNextTurn} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
-      <span>Send Options to Players</span>
+      <span>{sliderMessage}</span>
       <Slider broadcastStatus={sliderBroadcastStatus} sliderCue={{
         mediaDomain: 3,
         cueNumber: 1,
