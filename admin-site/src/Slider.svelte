@@ -14,14 +14,8 @@ export let sliderCue;
 
 let broadcastResults;
 
-// cue broadcast
- window.onCueSliderInput = (event) => {
-  
-  const SliderValue = event.target.value
-  if( SliderValue == 100){  
-    event.target.disabled == true
-
-    broadcastStatus = "pending"
+const broadcast = function(sliderElement){
+  broadcastStatus = "pending"
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID + "/broadcast", {
         method: 'POST',
@@ -33,8 +27,8 @@ let broadcastResults;
         if(response.status == 200){
           response.json().then( results => {
             
-            event.target.disabled = false
-            event.target.value = 0
+            sliderElement.disabled = false
+            sliderElement.value = 0
 
             const flatResults = results.map( result => result.success)
 
@@ -53,8 +47,8 @@ let broadcastResults;
         } else {
           response.text().then( errorMessage => {
             
-            event.target.disabled = false
-            event.target.value = 0
+            sliderElement.disabled = false
+            sliderElement.value = 0
             
             broadcastResults = errorMessage
             broadcastStatus = "error"
@@ -62,20 +56,29 @@ let broadcastResults;
           })
         }
       }).catch( error => {
-        event.target.disabled = false
-        event.target.value = 0
+        sliderElement.disabled = false
+        sliderElement.value = 0
         broadcastResults = errorMessage
         broadcastStatus = "error"
         
       })
     } catch (e) {
-      event.target.disabled = false
-      event.target.value = 0
+      sliderElement.disabled = false
+      sliderElement.value = 0
 
       broadcastResults = errorMessage
       broadcastStatus = "error"
       console.log(e.message)
     } 
+}
+
+// cue broadcast
+ window.onCueSliderInput = (event) => {
+  
+  const SliderValue = event.target.value
+  if( SliderValue == 100){  
+    event.target.disabled == true
+    broadcast(event.target)
   }
 };
 
