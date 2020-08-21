@@ -231,7 +231,12 @@
 
   let currentNode = nodes.find(node => node.id == "Start")
   let turn = 0
-  $: currentInWorldTime = ((turn + 5) + "00").padStart(4, '0')
+
+  $: currentInWorldTime = formatAs24HourTime(turn + 5)
+  $: nextTurnInWorldTime = formatAs24HourTime(turn + 6)
+  const formatAs24HourTime = (someInteger) => {
+    return (someInteger + "00").padStart(4, '0')
+  }
 
   let countdown = 60
   let countdownInterval
@@ -496,7 +501,7 @@
       </p>
       <p>Turn: { turn }, Time: { currentInWorldTime }</p>
       <p>Time remaining in turn: { countdown }</p>
-      <p>Audience choice: { selectedOption }</p>
+      <p>Audience choice: <strong>{ selectedOption } for time {nextTurnInWorldTime}</strong></p>
     </div>
   </div>
 </div>
