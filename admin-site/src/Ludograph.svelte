@@ -556,12 +556,12 @@
     <div class="show-controls">
       <button type="button" class="btn btn-block btn-outline-primary" on:click={setupNextTurn} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
       <span>Send Options to Players</span>
-      <Slider broadcastStatus={sliderBroadcastStatus} sliderCue={ {
+      <Slider broadcastStatus={sliderBroadcastStatus} sliderCue={{
         mediaDomain: 3,
         cueNumber: 1,
         cueAction: 0,
         targetTags: ["all"],
-        cueContent: show ? reachableNodeIds.join("|") | ""
+        cueContent: showButtons ? reachableNodeIds.join("|") : ""
       }}></Slider>
     </div>
   </div>
