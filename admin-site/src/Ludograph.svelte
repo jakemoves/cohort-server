@@ -203,6 +203,30 @@
   ,{
     id: "Tell",
     connectOnTurn: 6
+  },{
+    id: "Promise organs",
+    connectOnNodeVisit: "Tell"
+  },{
+    id: "Request final meal",
+    connectOnNodeVisit: "Tell"
+  },{
+    id: "Hatch escape plan",
+    connectOnNodeVisit: "Tell"
+  },{
+    id: "Psych yourself up",
+    connectOnNodeVisit: "Tell"
+  },{
+    id: "Send for help",
+    connectOnNodeVisit: "Tell"
+  },{
+    id: "Rage",
+    connectOnNodeVisit: "Tell"
+  },{
+    id: "Write letter",
+    connectOnNodeVisit: "Tell"
+  },{
+    id: "Send letter",
+    connectOnNodeVisit: "Write letter"
   }
   // turn 7
   ,{
@@ -313,15 +337,19 @@
     clearInterval(countdownInterval)
     startCountdown()
 
-    const nodesToConnect = nodes.filter( node => {
+    const nodesToConnectThisTurn = nodes.filter( node => {
+      let includeNode = false
       if(node.connectOnTurn !== undefined && node.connectOnTurn == turn){
-        return node
+        includeNode = true
+      } else if(node.connectOnNodeVisit == currentNode.id){
+        includeNode = true
       }
+      return includeNode
     })
 
     const currentReachableNodes = reachableNodeIds
 
-    nodesToConnect.forEach( node => {
+    nodesToConnectThisTurn.forEach( node => {
       console.log("connecting " + node.id)
       // connect it to the current node
       // graph.addEdge(currentNode.id, node.id)
