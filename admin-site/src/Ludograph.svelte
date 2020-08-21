@@ -501,7 +501,11 @@
       </p>
       <p>Turn: { turn }, Time: { currentInWorldTime }</p>
       <p>Time remaining in turn: { countdown }</p>
-      <p>Audience choice: <strong>{ selectedOption } for time {nextTurnInWorldTime}</strong></p>
+      <p>Audience choice: 
+        {#if selectedOption != ""}
+          <strong>{ selectedOption }</strong> for time <strong>{nextTurnInWorldTime}</strong>
+        {/if}  
+      </p>
     </div>
   </div>
 </div>
