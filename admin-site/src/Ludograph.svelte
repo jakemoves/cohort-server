@@ -134,6 +134,7 @@
           } else {
             throw new Error("Audience choice (" + chosenOption + ") is not valid...")
           }
+          showButtons = true
         }
       }
 		}
