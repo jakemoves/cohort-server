@@ -242,6 +242,15 @@
   ,{
     id: "Get ready for bed",
     connectOnTurn: 14
+  },{
+    id: "Sleep",
+    connectOnNodeVisit: "Get ready for bed"
+  },{
+    id: "No options",
+    connectOnNodeVisit: "Sleep"
+  },{
+    id: "Dream",
+    connectOnNodeVisit: "No options"
   }
   ]
   
@@ -355,7 +364,7 @@
       // graph.addEdge(currentNode.id, node.id)
 
       // connect it to other nodes being connected this turn
-      const otherNodes = nodesToConnect.filter( recursiveNode => recursiveNode.id != node.id)  
+      const otherNodes = nodesToConnectThisTurn.filter( recursiveNode => recursiveNode.id != node.id)  
       console.log("  sibling nodes: " + otherNodes.map(node => node.id).join(", "))
       otherNodes.forEach( otherNode => {
         graph.addEdge(node.id, otherNode.id)
