@@ -312,6 +312,7 @@
   $: currentNode 
   $: adjacentNodeIds = graph.adjacent(currentNode.id)
   $: reachableNodeIds = adjacentNodeIds.filter( adjacentId => !visitedNodeIds.includes(adjacentId))
+  let showButtons = true // false = hide buttons
 
   $: connectedNodes = function(nodeId){
     console.log(graph.adjacent(nodeId))
@@ -319,6 +320,7 @@
   }
 
   const setupNextTurn = function(){
+    showButtons = false
     if(turn == 0){alertSound.play()}
 
     visitedNodeIds.push(currentNode.id)
@@ -385,6 +387,7 @@
   }
 
   const onOptionBtn = function(nodeId){
+    showButtons = true
     selectedOption = nodeId
   }
 
@@ -558,7 +561,7 @@
         cueNumber: 1,
         cueAction: 0,
         targetTags: ["all"],
-        cueContent: reachableNodeIds.join("|")
+        cueContent: show ? reachableNodeIds.join("|") | ""
       }}></Slider>
     </div>
   </div>
