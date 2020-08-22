@@ -285,6 +285,7 @@
   let countdown = 60
   let countdownInterval
   let selectedOption = "" // audience member selects an option every turn
+  let blankOptionPlaceholder = ""
   let visitedNodeIds = []
   let deviceStates = []
   $: playerConnectionStates = deviceStates.map( device => {
@@ -339,6 +340,7 @@
 
   const setupNextTurn = function(){
     showButtons = false
+    blankOptionPlaceholder = ""
     if(autoBroadcast){
       triggerBroadcast = true
     }
@@ -420,7 +422,7 @@
     const msg = event.detail
     if(msg.broadcastStatus !== undefined && (msg.broadcastStatus == "full-success" || msg.broadcastStatus == "partial-success")){
       if(showButtons == true){
-        selectedOption = "waiting..."
+        blankOptionPlaceholder = "..."
       }
       showButtons = !showButtons
       console.log("show buttons: " + showButtons)
@@ -580,6 +582,8 @@
       <p>Audience choice: 
         {#if selectedOption != ""}
           <strong>{ selectedOption }</strong> for time <strong>{nextTurnInWorldTime}</strong>
+        {:else}
+          <strong>{blankOptionPlaceholder}</strong> for time <strong>{nextTurnInWorldTime}</strong>
         {/if}  
       </p>
     </div>
