@@ -332,10 +332,18 @@
   let blankOptionPlaceholder = ""
   let visitedNodeIds = []
   let deviceStates = []
-  $: playerConnectionStates = deviceStates.map( device => {
+  $: playerConnectionStates = deviceStates.filter( device => {
+    // don't include this (stage mangager's) device
+    if(device.guid != cohortSession.guid){
+      return true
+    } else {
+      return false
+    }
+  })
+  .map( device => {
     const playerHoursOfSleep = parseInt(device.guid.split("|")[1])
     console.log(playerHoursOfSleep)
-    if(!playerHoursOfSleep.isInteger()){
+    if(!Number.isInteger(playerHoursOfSleep)){
       playerHoursOfSleep = 0
     }
 
@@ -349,14 +357,8 @@
     else { result.state = "unknown" }
 
     return result
-  }).filter( device => {
-    // don't include this device
-    if(device.guid != cohortSession.guid){
-      return true
-    } else {
-      return false
-    }
-  }).sort(((a, b) => a.playerHoursOfSleep - b.playerHoursOfSleep))
+  })
+  .sort(((a, b) => a.playerHoursOfSleep - b.playerHoursOfSleep))
 
   $: playerHoursOfSleep = deviceStates.map( device => {
     return 
