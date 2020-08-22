@@ -398,6 +398,14 @@
     showButtons = true
     selectedOption = nodeId
   }
+  
+  const handleSliderMessage = function(event){
+    const msg = event.detail
+    if(msg.broadcastStatus !== undefined && (msg.broadcastStatus == "full-success" || msg.broadcastStatus == "partial-success")){
+      showButtons = !showButtons
+      console.log("show buttons: " + showButtons)
+    }
+  }
 
 
   // import * as d3 from 'd3'
@@ -569,8 +577,8 @@
         cueNumber: 1,
         cueAction: 0,
         targetTags: ["all"],
-        cueContent: reachableNodeIds.join("|") //showButtons ? reachableNodeIds.join("|") : ""
-      }}></Slider>
+        cueContent: showButtons ? reachableNodeIds.join("|") : ""
+      }} on:message={handleSliderMessage}></Slider>
     </div>
   </div>
 </div>
