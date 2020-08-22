@@ -333,11 +333,11 @@
   let visitedNodeIds = []
   let deviceStates = []
   $: playerConnectionStates = deviceStates.filter( device => {
-    // don't include this (stage mangager's) device
-    if(device.guid != cohortSession.guid){
-      return true
-    } else {
+    // don't include this (stage mangager's) device or another client on the same occasion's admin page
+    if(device.guid == cohortSession.guid || !device.guid.includes("|")){
       return false
+    } else {
+      return true
     }
   })
   .map( device => {
