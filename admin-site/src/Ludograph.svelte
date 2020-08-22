@@ -168,15 +168,26 @@
   // turn 1
   {
     id: "Brush teeth",
-    connectOnTurn: 1
+    connectOnTurn: 1,
+    disconnectOnTurn: 3
   },{
     id: "Eat breakfast",
-    connectOnTurn: 1
+    connectOnTurn: 1,
+    disconnectOnTurn: 4
   },{
     id: "Meditate",
     connectOnTurn: 1
   },{
     id: "Exercise",
+    connectOnTurn: 1
+  },{
+    id: "Exercise 2",
+    connectOnNodeVisit: "Exercise"
+  },{
+    id: "Take bird bath",
+    connectOnNodeVisit: "Exercise 2"
+  },{
+    id: "Drink hooch",
     connectOnTurn: 1
   }
   // turn 3
@@ -184,14 +195,33 @@
     id: "Pray",
     connectOnTurn: 3
   },{
-    id: "Play pebbles",
+    id: "Pray aloud",
+    connectOnNodeVisit: "Pray"
+  }
+  ,{
+    id: "Play trashketball",
     connectOnTurn: 3
-  },{
+  }
+  ,{
+    id: "Retrieve paper",
+    connectOnNodeVisit: "Play trashketball"
+  }
+  ,{
     id: "Stack stones",
     connectOnTurn: 3
   },{
+    id: "Stack stones 2",
+    connectOnNodeVisit: "Stack stones"
+  },{
+    id: "Knock down stones",
+    connectOnNodeVisit: "Stack stones 2"
+  }
+  ,{
     id: "Make fire",
     connectOnTurn: 3
+  } ,{
+    id: "Put out fire",
+    connectOnNodeVisit: "Make fire"
   }
   // turn 5
   ,{
@@ -207,61 +237,75 @@
     id: "Read",
     connectOnTurn: 5
   },{
-    id: "Write song",
+    id: "Write line of song",
     connectOnTurn: 5
+  },{
+    id: "Write line of song 2",
+    connectOnNodeVisit: "Write line of song"
+  },{
+    id: "Write line of song 3",
+    connectOnNodeVisit: "Write line of song 2"
+  },{
+    id: "Write line of song 4",
+    connectOnNodeVisit: "Write line of song 3"
+  },{
+    id: "Sing verse of song",
+    connectOnNodeVisit: "Write line of song 4"
   }
   // turn 6
   ,{
     id: "Tell",
     connectOnTurn: 6
   },{
-    id: "Promise organs",
+    id: "Donate organs",
     connectOnNodeVisit: "Tell"
   },{
     id: "Request final meal",
-    connectOnNodeVisit: "Tell"
+    connectOnNodeVisit: "Tell",
+    disconnectOnTurn: 10
   },{
+    id: "Eat final meal",
+    connectOnNodeVisit: "Request final meal"
+  }
+  ,{
     id: "Hatch escape plan",
     connectOnNodeVisit: "Tell"
   },{
     id: "Psych yourself up",
     connectOnNodeVisit: "Tell"
   },{
-    id: "Send for help",
-    connectOnNodeVisit: "Tell"
-  },{
-    id: "Rage",
+    id: "Make phone call",
     connectOnNodeVisit: "Tell"
   },{
     id: "Write letter",
     connectOnNodeVisit: "Tell"
   },{
-    id: "Send letter",
+    id: "Cast letter into sea",
     connectOnNodeVisit: "Write letter"
   }
   // turn 7
   ,{
     id: "Eat lunch",
-    connectOnTurn: 7
+    connectOnTurn: 7,
+    disconnectOnTurn: 9
   }
   // turn 12
   ,{
     id: "Eat dinner",
-    connectOnTurn: 12
+    connectOnTurn: 12,
+    disconnectOnTurn: 14
   }
   // turn 14
   ,{
     id: "Get ready for bed",
-    connectOnTurn: 14
+    connectOnTurn: 14,
+    disconnectOnTurn: 21
   },{
     id: "Sleep",
     connectOnNodeVisit: "Get ready for bed"
   },{
-    id: "No options",
-    connectOnNodeVisit: "Sleep"
-  },{
     id: "Dream",
-    connectOnNodeVisit: "No options"
+    connectOnNodeVisit: "Sleep"
   }
   ]
   
@@ -289,9 +333,22 @@
   let visitedNodeIds = []
   let deviceStates = []
   $: playerConnectionStates = deviceStates.map( device => {
-    if(device.connected == true){ return {guid: device.guid, state: "active" } }
-    else if(device.connected == false){ return {guid: device.guid, state: "inactive"}}
-    else { return {guid: device.guid, state: "unknown"}}
+    const playerHoursOfSleep = parseInt(device.guid.split("|")[1])
+    console.log(playerHoursOfSleep)
+    if(playerHoursOfSleep !== int){
+      playerHoursOfSleep = 0
+    }
+
+    let result = {
+      guid: device.guid,
+      playerHoursOfSleep: playerHoursOfSleep
+    }
+
+    if(device.connected == true){ result.state = "active" }
+    else if(device.connected == false){ result.state = "inactive" }
+    else { result.state = "unknown" }
+
+    return result
   }).filter( device => {
     // don't include this device
     if(device.guid != cohortSession.guid){
@@ -299,6 +356,10 @@
     } else {
       return false
     }
+  }).sort(((a, b) => a.playerHoursOfSleep - b.playerHoursOfSleep))
+
+  $: playerHoursOfSleep = deviceStates.map( device => {
+    return 
   })
 
   $: thisDevice = deviceStates.find( device => {
@@ -339,6 +400,7 @@
   }
 
   const setupNextTurn = function(){
+    // finish previous turn & reset
     showButtons = false
     blankOptionPlaceholder = ""
     if(autoBroadcast == true){
@@ -364,6 +426,7 @@
     //   currentNode = currentNode.endograph.currentEndonode
     // }
 
+    // setup for next turn
     turn++
 
     console.log("turn: " + turn)
@@ -377,6 +440,18 @@
         triggerBroadcast = true 
       }, 30000)
     }
+
+    const nodesToDisconnectThisTurn = nodes.filter( node => {
+      return (node.disconnectOnTurn !== undefined && node.disconnectOnTurn == turn)
+    })
+
+    nodesToDisconnectThisTurn.forEach( node => {
+      console.log("disconnecting option " + node.id + ", which has " + graph.indegree(node.id) + " incoming edges")
+
+      graph.removeNode(node.id) 
+
+      console.log("disconnected option " + node.id)
+    })
 
     const nodesToConnectThisTurn = nodes.filter( node => {
       let includeNode = false
@@ -573,8 +648,8 @@
       <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
       <p>Players: 
         {#each playerConnectionStates as playerConnectionState}
-          {(console.log(playerConnectionState), '')}
-          {(console.log(cohortSession), '')}
+          <!-- {(console.log(playerConnectionState), '')}
+          {(console.log(cohortSession), '')} -->
           <!-- {#if !playerConnectionState.guid == cohortSession.guid} -->
             <WebsocketConnectionIndicator status={playerConnectionState.state} label={playerConnectionState.guid.split("|")[0]}/>
           <!-- {/if} -->
