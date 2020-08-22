@@ -653,7 +653,7 @@
           <!-- {(console.log(playerConnectionState), '')}
           {(console.log(cohortSession), '')} -->
           <!-- {#if !playerConnectionState.guid == cohortSession.guid} -->
-            <WebsocketConnectionIndicator status={playerConnectionState.state} label={playerConnectionState.guid.split("|")[0]}/>
+            <WebsocketConnectionIndicator status={playerConnectionState.state} label={playerConnectionState.guid.split("|")[0] + "(" + playerConnectionState.guid.split("|")[1] + "hrs sleep)"}/>
           <!-- {/if} -->
         {/each}
       </p>
