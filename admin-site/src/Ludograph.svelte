@@ -140,8 +140,10 @@
 		}
 	})
 
-	cohortSession.init()
+  cohortSession.init()
 
+  let triggerBroadcast = false
+  let autoBroadcast = false
   /*
    *   End Cohort
    */
@@ -315,12 +317,12 @@
   $: reachableNodeIds = adjacentNodeIds.filter( adjacentId => !visitedNodeIds.includes(adjacentId))
   let showButtons = true // false = hide buttons
   
-  let sliderMessage = "Show options to players"
-  // $: if(showButtons == true){
-  //   sliderMessage = "Show options to players"
-  // } else {
-  //   sliderMessage = "Hide all options for players"
-  // }
+  let sliderLabel = "Show options to players"
+  $: if(showButtons == true){
+    sliderLabel = "Show options to players"
+  } else {
+    sliderLabel = "Hide all options for players"
+  }
 
   $: connectedNodes = function(nodeId){
     console.log(graph.adjacent(nodeId))
@@ -570,15 +572,25 @@
 <div class="row">
   <div class="container">
     <div class="show-controls">
-      <button type="button" class="btn btn-block btn-outline-primary" on:click={setupNextTurn} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
-      <p><strong>{sliderMessage}</strong></p>
-      <Slider broadcastStatus={sliderBroadcastStatus} sliderCue={{
-        mediaDomain: 3,
-        cueNumber: 1,
-        cueAction: 0,
-        targetTags: ["all"],
-        cueContent: showButtons ? reachableNodeIds.join("|") : ""
-      }} on:message={handleSliderMessage}></Slider>
+      <form>
+        <div class="form-group">
+          <button type="button" class="btn btn-block btn-outline-primary" on:click={setupNextTurn} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
+        </div>
+        <div class="form-group">
+          <p><strong>{sliderLabel}</strong></p>
+          <input bind:checked={autoBroadcast} class="form-check-input" type="checkbox" value="" id="auto_broadcast">
+          <label class="form-check-label" for="auto_broadcast">
+            Auto-broadcast
+          </label>
+          <Slider broadcastStatus={sliderBroadcastStatus} broadcastNow={triggerBroadcast} sliderCue={{
+            mediaDomain: 3,
+            cueNumber: 1,
+            cueAction: 0,
+            targetTags: ["all"],
+            cueContent: showButtons ? reachableNodeIds.join("|") : ""
+          }} on:message={handleSliderMessage}></Slider>
+        </div>
+      </form>      
     </div>
   </div>
 </div>
