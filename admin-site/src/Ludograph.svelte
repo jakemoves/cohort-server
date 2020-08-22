@@ -144,6 +144,14 @@
 
   let triggerBroadcast = false
   let autoBroadcast = false
+  let autoBroadcastTimeout
+
+  $: if(autoBroadcast = false){
+    if(autoBroadcastTimeout !== undefined){
+      clearTimeout(autoBroadcastTimeout)
+    }
+  }
+
   /*
    *   End Cohort
    */
@@ -331,6 +339,10 @@
 
   const setupNextTurn = function(){
     showButtons = false
+    if(autoBroadcast){
+      triggerBroadcast = true
+    }
+
     if(turn == 0){alertSound.play()}
 
     visitedNodeIds.push(currentNode.id)
@@ -357,6 +369,9 @@
     console.log("visited nodes: " + visitedNodeIds.join(", "))
     clearInterval(countdownInterval)
     startCountdown()
+    if(autoBroadcast == true){
+      autoBroadcastTimeout = setTimeout( function(){ triggerBroadcast = true }, 30000)
+    }
 
     const nodesToConnectThisTurn = nodes.filter( node => {
       let includeNode = false
@@ -404,6 +419,9 @@
   const handleSliderMessage = function(event){
     const msg = event.detail
     if(msg.broadcastStatus !== undefined && (msg.broadcastStatus == "full-success" || msg.broadcastStatus == "partial-success")){
+      if(showButtons == true){
+        selectedOption = "waiting..."
+      }
       showButtons = !showButtons
       console.log("show buttons: " + showButtons)
     }
@@ -582,7 +600,7 @@
           <label class="form-check-label" for="auto_broadcast">
             Auto-broadcast
           </label>
-          <Slider broadcastStatus={sliderBroadcastStatus} broadcastNow={triggerBroadcast} sliderCue={{
+          <Slider broadcastStatus={sliderBroadcastStatus} disabled={autoBroadcast} broadcastNow={triggerBroadcast} sliderCue={{
             mediaDomain: 3,
             cueNumber: 1,
             cueAction: 0,

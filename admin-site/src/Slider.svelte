@@ -14,6 +14,7 @@ import { focusedOccasionID } from './UpdateUIstore.js';
 
 export let broadcastStatus;
 export let sliderCue;
+export let disabled = false
 
 let broadcastResults;
 let sliderEl;
@@ -159,6 +160,13 @@ label{
   display: block;
 }
 
+.slider-container.disabled #cue-control-go::-webkit-slider-runnable-track {
+  background: #6C8CA8; 
+}
+
+.slider-container.disabled label {
+  color: darkgray;
+}
 /* #cue-control-go .cue-sent-response-pending::-webkit-slider-runnable-track {
   background: #5fa36f; }
 
@@ -245,9 +253,9 @@ label{
 
 <div class="row mt-3">
   <div class="col-md-12">
-    <div class="slider-container status-{broadcastStatus} text-center">
+    <div class="slider-container status-{broadcastStatus} text-center" class:disabled={disabled}>
       <label for="cue-control-go">Drag slider to the right to fire cue</label>
-      <input bind:this={sliderEl} type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event)>
+      <input disabled={disabled} bind:this={sliderEl} type="range" min="0" max="100" value="0" id="cue-control-go" onchange=onCueSliderInput(event)>
       <div class="alert alert-success text-center">
         {broadcastResults}
       </div>
