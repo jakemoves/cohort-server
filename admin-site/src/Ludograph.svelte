@@ -146,7 +146,7 @@
   let autoBroadcast = false
   let autoBroadcastTimeout
 
-  $: if(autoBroadcast = false){
+  $: if(autoBroadcast == false){
     if(autoBroadcastTimeout !== undefined){
       clearTimeout(autoBroadcastTimeout)
     }
@@ -341,7 +341,7 @@
   const setupNextTurn = function(){
     showButtons = false
     blankOptionPlaceholder = ""
-    if(autoBroadcast){
+    if(autoBroadcast == true){
       triggerBroadcast = true
     }
 
@@ -372,7 +372,10 @@
     clearInterval(countdownInterval)
     startCountdown()
     if(autoBroadcast == true){
-      autoBroadcastTimeout = setTimeout( function(){ triggerBroadcast = true }, 30000)
+      autoBroadcastTimeout = setTimeout( function(){ 
+        console.log("showButtons: " + showButtons)
+        triggerBroadcast = true 
+      }, 30000)
     }
 
     const nodesToConnectThisTurn = nodes.filter( node => {
