@@ -335,7 +335,7 @@
   $: playerConnectionStates = deviceStates.map( device => {
     const playerHoursOfSleep = parseInt(device.guid.split("|")[1])
     console.log(playerHoursOfSleep)
-    if(playerHoursOfSleep !== int){
+    if(!playerHoursOfSleep.isInteger()){
       playerHoursOfSleep = 0
     }
 
@@ -395,7 +395,7 @@
   }
 
   $: connectedNodes = function(nodeId){
-    console.log(graph.adjacent(nodeId))
+    // console.log(graph.adjacent(nodeId))
     return graph.adjacent(nodeId)
   }
 
