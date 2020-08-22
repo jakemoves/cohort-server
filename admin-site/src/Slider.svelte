@@ -21,6 +21,7 @@ let sliderEl;
 
 export let broadcastNow = false
 $: if(broadcastNow == true){
+  console.log("autobroadcasting")
   broadcastNow = false
   broadcast(sliderEl)
 }
