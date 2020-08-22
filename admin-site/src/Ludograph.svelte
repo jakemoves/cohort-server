@@ -424,11 +424,11 @@
   const handleSliderMessage = function(event){
     const msg = event.detail
     if(msg.broadcastStatus !== undefined && (msg.broadcastStatus == "full-success" || msg.broadcastStatus == "partial-success")){
+      triggerBroadcast = false
       if(showButtons == true){
         blankOptionPlaceholder = "..."
       }
       showButtons = !showButtons
-      console.log("show buttons: " + showButtons)
     }
   }
 
