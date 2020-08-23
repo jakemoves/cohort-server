@@ -7,6 +7,7 @@ module.exports = {
   "Exercise": "EX 1",
   "Exercise 2": "EX 2 ",
   "Take bird bath": "EX 3",
+  "Drink hooch": "Hooch",
   "Pray": "Pray",
   "Pray aloud": "Pray",
   "Play trashketball": "Pebbles 1",
