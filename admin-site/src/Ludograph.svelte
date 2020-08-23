@@ -519,19 +519,21 @@
     }
   }
 
+  let showReportSentSuccessfully = false
   const onSendShowReport = function(){
     let today = DateTime.local()
 
-    // const emailRecipient = 'aliceferreyra@yahoo.com'
-    const emailRecipient = 'luckyjakemoves@gmail.com'
+    const emailRecipient = 'aliceferreyra@yahoo.com'
+    // const emailRecipient = 'luckyjakemoves@gmail.com'
     const emailSubject = 'Show report: the Itinerary - ' + today.toLocaleString('dd-MM-yyyy')
     
-    let emailBody = `This is a Cohort show report for The Itinerary on ${today.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}.
+    let emailBody = 
+`This is a Cohort show report for The Itinerary on ${today.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}.
 
-    Sequence of player choices:
-    ${visitedNodeIds.join(', ')}
+Sequence of player choices:
+${visitedNodeIds.join(', ')}
 
-    Let your Cohort operator (who am I kidding, it's Jake here) know if there's other information that would be useful to include in this report.`
+Let your Cohort operator (who am I kidding, it's Jake here) know if there's other information that would be useful to include in this report.`
 
     fetch(serverURL + "/services/mail", {
       method: 'POST',
@@ -539,6 +541,7 @@
       body: JSON.stringify({emailBody: emailBody, emailSubject: emailSubject, emailRecipient: emailRecipient})
     }).then( response => {
       console.log(response)
+      showReportSentSuccessfully = true
     }).catch( error => {
       console.log(error)
     })
@@ -767,6 +770,9 @@
 <div class="row">
   <div class="col">
     <button class="btn btn-outline-primary mt-4" on:click={onSendShowReport}>Send show report</button>
+    {#if showReportSentSuccessfully}
+      &nbsp;Done!
+    {/if}
   </div>
 </div>
 
