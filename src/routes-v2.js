@@ -91,7 +91,7 @@ if(process.env.NODE_ENV != 'localoffline'){
  *   one-offs
  */
 
-// router.post('/services/mail', servicesController.send_email)
+routerWithAuth.post('/services/mail', servicesController.send_email)
 
 /*
  *   demo stuff

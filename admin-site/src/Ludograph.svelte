@@ -1,8 +1,11 @@
 <script>
   import {Howl, Howler} from 'howler'
-  import Graph from 'graph-data-structure'
+  import { DateTime } from 'luxon'
+  import Graph from './graph-data-structure.js'
   import Slider from './Slider.svelte'
   import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
+  import { serverURL } from './ServerURLstore.js';
+  import shortNames from './optionShortNames.js'
 
   // let endograph = function(){
   //   let id = "exercise"
@@ -452,9 +455,13 @@
     nodesToDisconnectThisTurn.forEach( node => {
       console.log("disconnecting option " + node.id + ", which has " + graph.indegree(node.id) + " incoming edges")
 
-      graph.removeNode(node.id) 
+      const ancestors = graph.ancestors(node.id)
 
-      console.log("disconnected option " + node.id)
+      ancestors.forEach( ancestorNode => {
+        graph.removeEdge(ancestorNode, node.id)
+      })
+
+      console.log("disconnected option " + node.id + ", it now has " + graph.indegree(node.id))
     })
 
     const nodesToConnectThisTurn = nodes.filter( node => {
@@ -493,6 +500,7 @@
 
     // console.log(adjacentNodeIds.join(", "))
     // console.log("reachable nodes: " + reachableNodeIds.join(", "))
+    console.log(graph.ancestors(currentNode.id))
   }
 
   const onOptionBtn = function(nodeId){
@@ -511,6 +519,30 @@
     }
   }
 
+  const onSendShowReport = function(){
+    let today = DateTime.local()
+
+    // const emailRecipient = 'aliceferreyra@yahoo.com'
+    const emailRecipient = 'luckyjakemoves@gmail.com'
+    const emailSubject = 'Show report: the Itinerary - ' + today.toLocaleString('dd-MM-yyyy')
+    
+    let emailBody = `This is a Cohort show report for The Itinerary on ${today.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}.
+
+    Sequence of player choices:
+    ${visitedNodeIds.join(', ')}
+
+    Let your Cohort operator (who am I kidding, it's Jake here) know if there's other information that would be useful to include in this report.`
+
+    fetch(serverURL + "/services/mail", {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({emailBody: emailBody, emailSubject: emailSubject, emailRecipient: emailRecipient})
+    }).then( response => {
+      console.log(response)
+    }).catch( error => {
+      console.log(error)
+    })
+  }
 
   // import * as d3 from 'd3'
 
@@ -646,35 +678,38 @@
   
 </script>
 
-<div class="row">
-  <div class="container">
-    <div class="show-info">
-      <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
-      <p>Players: 
-        {#each playerConnectionStates as playerConnectionState}
-          <!-- {(console.log(playerConnectionState), '')}
-          {(console.log(cohortSession), '')} -->
-          <!-- {#if !playerConnectionState.guid == cohortSession.guid} -->
-            <WebsocketConnectionIndicator status={playerConnectionState.state} label={playerConnectionState.guid.split("|")[0] + "(" + playerConnectionState.guid.split("|")[1] + "hrs sleep)"}/>
-          <!-- {/if} -->
-        {/each}
-      </p>
-      <p>Turn: { turn }, Time: { currentInWorldTime }</p>
-      <p>Time remaining in turn: { countdown }</p>
-      <p>Audience choice: 
-        {#if selectedOption != ""}
-          <strong>{ selectedOption }</strong> for time <strong>{nextTurnInWorldTime}</strong>
-        {:else}
-          <strong>{blankOptionPlaceholder}</strong> for time <strong>{nextTurnInWorldTime}</strong>
-        {/if}  
-      </p>
+<div class="container">
+  
+  <div class="row">
+    <div class="col">
+      <div class="show-info">
+        <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
+        <p>Players: 
+          {#each playerConnectionStates as playerConnectionState}
+            <!-- {(console.log(playerConnectionState), '')}
+            {(console.log(cohortSession), '')} -->
+            <!-- {#if !playerConnectionState.guid == cohortSession.guid} -->
+              <WebsocketConnectionIndicator status={playerConnectionState.state} label={playerConnectionState.guid.split("|")[0] + "(" + playerConnectionState.guid.split("|")[1] + "hrs sleep)"}/>
+            <!-- {/if} -->
+          {/each}
+        </p>
+        <p>Turn: { turn }, Time: { currentInWorldTime }</p>
+        <p>Time remaining in turn: { countdown }</p>
+        <p>Audience choice: 
+          {#if selectedOption != ""}
+            {selectedOption} (<strong>{ shortNames[selectedOption] }</strong>) for time <strong>{nextTurnInWorldTime}</strong>
+          {:else}
+            <strong>{blankOptionPlaceholder}</strong> for time <strong>{nextTurnInWorldTime}</strong>
+          {/if}  
+        </p>
+      </div>
     </div>
   </div>
 </div>
 
 
 <div class="row">
-  <div class="container">
+  <div class="col">
     <div class="show-controls">
       <form>
         <div class="form-group">
@@ -699,31 +734,41 @@
   </div>
 </div>
 
-<details>
-<summary>Probably useless extra info</summary>
-  <div class="interface">
-    {#each reachableNodeIds as option}
-      <button type="button" disabled>{option}</button>
-    {/each}
-  </div>
-
-  <div class="diagram">
-    {#each nodes as node, index}
-      <div class="node" 
-        class:current={currentNode.id == node.id} 
-        class:visited={visitedNodeIds.includes(node.id)} 
-        class:reachable={ reachableNodeIds.includes(node.id)}
-      >
-        {#if reachableNodeIds.includes(node.id)}
-          <!-- <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span> -->
-          <button type="button" class="btn-link" on:click={e => onOptionBtn(node.id)}>{node.id}</button> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
-        {:else}
-          <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
-        {/if}
+<div class="row">
+  <div class="col">
+    <details>
+      <summary>Probably useless extra info</summary>
+      <div class="interface">
+        {#each reachableNodeIds as option}
+          <button type="button" disabled>{option}</button>
+        {/each}
       </div>
-    {/each}
+
+      <div class="diagram">
+        {#each nodes as node, index}
+          <div class="node" 
+            class:current={currentNode.id == node.id} 
+            class:visited={visitedNodeIds.includes(node.id)} 
+            class:reachable={ reachableNodeIds.includes(node.id)}
+          >
+            {#if reachableNodeIds.includes(node.id)}
+              <!-- <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span> -->
+              <button type="button" class="btn-link" on:click={e => onOptionBtn(node.id)}>{node.id}</button> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
+            {:else}
+              <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
+            {/if}
+          </div>
+        {/each}
+      </div>
+    </details>   
   </div>
-</details>
+</div>
+
+<div class="row">
+  <div class="col">
+    <button class="btn btn-outline-primary mt-4" on:click={onSendShowReport}>Send show report</button>
+  </div>
+</div>
 
 <!-- <svg class="diagram" width="480" height="480" viewBox="0 0 480 480">
   {#each nodes as node, index}
