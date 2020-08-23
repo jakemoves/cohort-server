@@ -15,7 +15,7 @@ const eventsController = require('./controllers/eventsController')
 const occasionsController = require('./controllers/occasionsController')
 const usersController = require('./controllers/usersController')
 // const demoController = require('./controllers/demoController')
-// const servicesController = require('./controllers/servicesController')
+const servicesController = require('./controllers/servicesController')
 
 router.get('', (req, res) => {
   res.send('Cohort rocks')
