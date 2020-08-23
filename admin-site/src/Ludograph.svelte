@@ -1,6 +1,6 @@
 <script>
   import {Howl, Howler} from 'howler'
-  import { DateTime } from './luxon'
+  import { DateTime } from 'luxon'
   import Graph from './graph-data-structure.js'
   import Slider from './Slider.svelte'
   import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
