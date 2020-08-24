@@ -559,6 +559,7 @@
         graph.addEdge('Dream', activity)
       })
 
+      nodes.push({id: 'Leave'})
       graph.addNode('Leave')
       approvedPlayerActivities.forEach( activity => {
         graph.addEdge(activity, 'Leave')
