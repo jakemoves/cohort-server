@@ -708,96 +708,104 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
 <div class="container">
   
   <div class="row">
+    <div class="col-4">
+      <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
+    </div>
+    <div class="col-8">
+      <p>Turn: { turn }, Time: { currentInWorldTime }, Time remaining in turn: <strong>{ countdown }</strong></p>
+    </div>
+  </div>
+  <div class="row">
     <div class="col">
-      <div class="show-info">
-        <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
-        <p>Players:</p>
-        <ul id="player_list" class="list-group">
-          {#each playerConnectionStates as playerConnectionState}
-            <li class="list-group-item" class:active={activePlayerConnectionState.guid == playerConnectionState.guid}>
-              <WebsocketConnectionIndicator status={playerConnectionState.state} label={playerConnectionState.guid.split("|")[0] + "(" + playerConnectionState.guid.split("|")[1] + "hrs sleep)"}/>
-              <!-- {/if} -->
-            </li>
-          {/each}
-        </ul>
-        <p>Turn: { turn }, Time: { currentInWorldTime }</p>
-        <p>Time remaining in turn: { countdown }</p>
-        <p>Audience choice: 
-          {#if selectedOption != ""}
-            {selectedOption} (<strong>{ shortNames[selectedOption] }</strong>) for time <strong>{nextTurnInWorldTime}</strong>
-          {:else}
-            <strong>{blankOptionPlaceholder}</strong> for time <strong>{nextTurnInWorldTime}</strong>
-          {/if}  
-        </p>
-      </div>
+      <p class="large">Chosen activity: 
+        {#if selectedOption != ""}
+          {selectedOption} (<strong>{ shortNames[selectedOption] }</strong>) for time <strong>{nextTurnInWorldTime}</strong>
+        {:else}
+          <strong>{blankOptionPlaceholder}</strong> for time <strong>{nextTurnInWorldTime}</strong>
+        {/if}  
+      </p>
     </div>
   </div>
-</div>
 
-
-<div class="row">
-  <div class="col">
-    <div class="show-controls">
-      <form>
-        <div class="form-group">
-          <button type="button" class="btn btn-block btn-outline-primary" on:click={setupNextTurn} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
-        </div>
-        <div class="form-group">
-          <p><strong>{sliderLabel}</strong></p>
-          <input bind:checked={autoBroadcast} class="form-check-input" type="checkbox" value="" id="auto_broadcast">
-          <label class="form-check-label" for="auto_broadcast">
-            Auto-broadcast
-          </label>
-          <Slider broadcastStatus={sliderBroadcastStatus} disabled={autoBroadcast} broadcastNow={triggerBroadcast} sliderCue={{
-            mediaDomain: 3,
-            cueNumber: 1,
-            cueAction: 0,
-            targetTags: ["all"],
-            cueContent: showButtons ? reachableNodeIds.join("|") : ""
-          }} on:message={handleSliderMessage}></Slider>
-        </div>
-      </form>      
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col">
-    <details>
-      <summary>Probably useless extra info</summary>
-      <div class="interface">
-        {#each reachableNodeIds as option}
-          <button type="button" disabled>{option}</button>
+  <div class="row">
+    <div class="col">
+      <p>Players:</p>
+      <ul id="player_list" class="list-group mb-4">
+        {#each playerConnectionStates as playerConnectionState}
+          <li class="list-group-item" class:active={activePlayerConnectionState.guid == playerConnectionState.guid}>
+            <WebsocketConnectionIndicator status={playerConnectionState.state} label={playerConnectionState.guid.split("|")[0] + "(" + playerConnectionState.guid.split("|")[1] + "hrs sleep)"}/>
+            <!-- {/if} -->
+          </li>
         {/each}
-      </div>
+      </ul>
+    </div>
+  </div>
 
-      <div class="diagram">
-        {#each nodes as node, index}
-          <div class="node" 
-            class:current={currentNode.id == node.id} 
-            class:visited={visitedNodeIds.includes(node.id)} 
-            class:reachable={ reachableNodeIds.includes(node.id)}
-          >
-            {#if reachableNodeIds.includes(node.id)}
-              <!-- <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span> -->
-              <button type="button" class="btn-link" on:click={e => onOptionBtn(node.id)}>{node.id}</button> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
-            {:else}
-              <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
-            {/if}
+  <div class="row">
+    <div class="col">
+      <div class="show-controls">
+        <form>
+          <div class="form-group">
+            <button type="button" class="btn btn-block btn-outline-primary" on:click={setupNextTurn} disabled={selectedOption == null || selectedOption === undefined || selectedOption == ""}>Start Next Turn</button>
           </div>
-        {/each}
+          <div class="form-group">
+            <p><strong>{sliderLabel}</strong></p>
+            <input bind:checked={autoBroadcast} class="form-check-input" type="checkbox" value="" id="auto_broadcast">
+            <label class="form-check-label" for="auto_broadcast">
+              Auto-broadcast
+            </label>
+            <Slider broadcastStatus={sliderBroadcastStatus} disabled={autoBroadcast} broadcastNow={triggerBroadcast} sliderCue={{
+              mediaDomain: 3,
+              cueNumber: 1,
+              cueAction: 0,
+              targetTags: ["all"],
+              cueContent: showButtons ? reachableNodeIds.join("|") : ""
+            }} on:message={handleSliderMessage}></Slider>
+          </div>
+        </form>      
       </div>
-    </details>   
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col">
-    <button class="btn btn-outline-primary mt-4" on:click={onSendShowReport}>Send show report</button>
-    {#if showReportSentSuccessfully}
-      &nbsp;Done!
-    {/if}
+  <div class="row">
+    <div class="col">
+      <details>
+        <summary>Probably useless extra info</summary>
+        <div class="interface">
+          {#each reachableNodeIds as option}
+            <button type="button" disabled>{option}</button>
+          {/each}
+        </div>
+
+        <div class="diagram">
+          {#each nodes as node, index}
+            <div class="node" 
+              class:current={currentNode.id == node.id} 
+              class:visited={visitedNodeIds.includes(node.id)} 
+              class:reachable={ reachableNodeIds.includes(node.id)}
+            >
+              {#if reachableNodeIds.includes(node.id)}
+                <!-- <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span> -->
+                <button type="button" class="btn-link" on:click={e => onOptionBtn(node.id)}>{node.id}</button> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
+              {:else}
+                <span>{node.id}</span> <span class="small gray"> [→ {connectedNodes(node.id)}]</span>
+              {/if}
+            </div>
+          {/each}
+        </div>
+      </details>   
+    </div>
   </div>
+
+  <div class="row">
+    <div class="col">
+      <button class="btn btn-outline-primary mt-4" on:click={onSendShowReport}>Send show report</button>
+      {#if showReportSentSuccessfully}
+        &nbsp;Done!
+      {/if}
+    </div>
+  </div>
+
 </div>
 
 <!-- <svg class="diagram" width="480" height="480" viewBox="0 0 480 480">
@@ -840,6 +848,10 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
 
   .small {
     font-size: 0.6rem;
+  }
+
+  .large {
+    font-size: 1.6rem;
   }
 
   .gray {
