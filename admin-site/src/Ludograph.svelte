@@ -376,7 +376,7 @@
 
     return result
   })
-  .sort(((a, b) => a.playerHoursOfSleep - b.playerHoursOfSleep))
+  .sort(((a, b) => b.playerHoursOfSleep - a.playerHoursOfSleep))
 
   $: playerHoursOfSleep = deviceStates.map( device => {
     return 
