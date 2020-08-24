@@ -360,6 +360,7 @@
     console.log(device.guid)
     console.log(device.guid.split("|"))
     const playerHoursOfSleep = parseInt(device.guid.split("|")[1])
+    const playerProposedActivity = device.guid.split("|")[2]
     console.log(playerHoursOfSleep)
     if(!Number.isInteger(playerHoursOfSleep)){
       playerHoursOfSleep = 0
@@ -367,7 +368,8 @@
 
     let result = {
       guid: device.guid,
-      playerHoursOfSleep: playerHoursOfSleep
+      playerHoursOfSleep: playerHoursOfSleep,
+      proposedActivity: playerProposedActivity
     }
 
     if(device.connected == true){ result.state = "active" }
@@ -384,6 +386,20 @@
 
   $: thisDevice = deviceStates.find( device => {
     return device.guid == cohortSession.guid
+  })
+
+  let playerActivities
+  $: playerActivities = playerConnectionStates.map( playerConnectionState => {
+    return playerConnectionState.proposedActivity
+  })
+  let suppressedActivities = []
+  $: approvedPlayerActivities = playerActivities.filter( activity => {
+    for(var i = 0; i < suppressedActivities.length; i++){
+      if(activity == suppressedActivities[i]){
+        return false
+      } 
+    }
+    return true
   })
 
   let connectionState = "unknown"
@@ -738,6 +754,19 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
           </li>
         {/each}
       </ul>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <p class="mb-4">Player-submitted activities: 
+        {#each approvedPlayerActivities as activity}
+          <span>{activity} <button class="btn btn-link btn-link-inline" on:click={ e => {
+            suppressedActivities.push(activity)
+            suppressedActivities = suppressedActivities // for svelte
+          }}>[X]</button></span>
+        {/each}
+      </p>
     </div>
   </div>
 
