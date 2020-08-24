@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte'
   import {Howl, Howler} from 'howler'
   import { DateTime } from 'luxon'
   import Graph from './graph-data-structure.js'
@@ -69,6 +70,7 @@
   
 	let cohortOccasion = 14
   let connectedToCohortServer = false
+  let onMountTime, showReportSendTime // proxies for start and end times...
   
   $: sliderBroadcastStatus = "unsent"
   
@@ -154,6 +156,10 @@
       clearTimeout(autoBroadcastTimeout)
     }
   }
+
+  onMount(() => { 
+    onMountTime = DateTime.local()
+  })
 
   /*
    *   End Cohort
@@ -335,6 +341,13 @@
   let blankOptionPlaceholder = ""
   let visitedNodeIds = []
   let deviceStates = []
+
+  let activePlayerIndex
+  let activePlayerConnectionState = { guid: ""}
+  $: if(activePlayerIndex !== undefined && playerConnectionStates.length > 0){
+    activePlayerConnectionState = playerConnectionStates[activePlayerIndex]
+  }
+
   $: playerConnectionStates = deviceStates.filter( device => {
     // don't include this (stage mangager's) device or another client on the same occasion's admin page
     if(device.guid == cohortSession.guid || !device.guid.includes("|")){
@@ -435,6 +448,13 @@
 
     // setup for next turn
     turn++
+    if(playerConnectionStates.length > 1){
+      if(activePlayerIndex === undefined){
+        activePlayerIndex = 1 // starting on "second turn"
+      } else {
+        activePlayerIndex = (activePlayerIndex + 1) % playerConnectionStates.length
+      }
+    }
 
     console.log("turn: " + turn)
     console.log("current node: " + currentNode.id)
@@ -522,6 +542,7 @@
   let showReportSentSuccessfully = false
   const onSendShowReport = function(){
     let today = DateTime.local()
+    showReportSendTime = today
 
     const emailRecipient = 'aliceferreyra@yahoo.com'
     // const emailRecipient = 'luckyjakemoves@gmail.com'
@@ -529,6 +550,9 @@
     
     let emailBody = 
 `This is a Cohort show report for The Itinerary on ${today.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}.
+
+The Cohort Control Panel was opened at ${onMountTime.toLocaleString(DateTime.TIME_SIMPLE)}.
+This report is being sent at ${showReportSendTime.toLocaleString(DateTime.TIME_SIMPLE)}.
 
 Sequence of player choices:
 ${visitedNodeIds.join(', ')}
@@ -687,15 +711,15 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
     <div class="col">
       <div class="show-info">
         <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
-        <p>Players: 
+        <p>Players:</p>
+        <ul id="player_list" class="list-group">
           {#each playerConnectionStates as playerConnectionState}
-            <!-- {(console.log(playerConnectionState), '')}
-            {(console.log(cohortSession), '')} -->
-            <!-- {#if !playerConnectionState.guid == cohortSession.guid} -->
+            <li class="list-group-item" class:active={activePlayerConnectionState.guid == playerConnectionState.guid}>
               <WebsocketConnectionIndicator status={playerConnectionState.state} label={playerConnectionState.guid.split("|")[0] + "(" + playerConnectionState.guid.split("|")[1] + "hrs sleep)"}/>
-            <!-- {/if} -->
+              <!-- {/if} -->
+            </li>
           {/each}
-        </p>
+        </ul>
         <p>Turn: { turn }, Time: { currentInWorldTime }</p>
         <p>Time remaining in turn: { countdown }</p>
         <p>Audience choice: 
@@ -820,5 +844,10 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
 
   .gray {
     color: gray;
+  }
+
+  #player_list {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 </style>
