@@ -332,7 +332,7 @@
   $: currentInWorldTime = formatAs24HourTime(turn + 5)
   $: nextTurnInWorldTime = formatAs24HourTime(turn + 6)
   const formatAs24HourTime = (someInteger) => {
-    return (someInteger + "00").padStart(4, '0')
+    return ((someInteger % 24) + "00").padStart(4, '0')
   }
 
   let countdown = 60
@@ -536,7 +536,47 @@
 
     // console.log(adjacentNodeIds.join(", "))
     // console.log("reachable nodes: " + reachableNodeIds.join(", "))
-    console.log(graph.ancestors(currentNode.id))
+    // console.log(graph.ancestors(currentNode.id))
+
+    // HAAAAAAAACK
+    if(currentNode.id == "Get ready for bed"){
+      console.log("removing all options from 'Get ready for bed' except for 'Sleep', there are " + graph.outdegree(currentNode.id) + " outgoing edges total")
+
+      const adjacent = graph.adjacent(currentNode.id)
+
+      adjacent.forEach( adjacentNode => {
+        if(adjacentNode != "Sleep"){
+          graph.removeEdge(currentNode.id, adjacentNode)
+        }
+      })
+
+      console.log("disconnected option " + currentNode.id + ", it now has " + graph.outdegree(currentNode.id) + " outgoing edges")
+
+      // connect player activities
+      approvedPlayerActivities.forEach( activity => {
+        nodes.push({id: activity})
+        graph.addNode(activity)
+        graph.addEdge('Dream', activity)
+      })
+
+      graph.addNode('Leave')
+      approvedPlayerActivities.forEach( activity => {
+        graph.addEdge(activity, 'Leave')
+      })
+
+    } else if(currentNode.id == "Sleep"){
+      console.log("removing all options for 'Sleep' except for 'Dream', there are " + graph.outdegree(currentNode.id) + " outgoing edges total")
+
+      const adjacent = graph.adjacent(currentNode.id)
+
+      adjacent.forEach( adjacentNode => {
+        if(adjacentNode != "Dream"){
+          graph.removeEdge(currentNode.id, adjacentNode)
+        }
+      })
+
+      console.log("disconnected option " + currentNode.id + ", it now has " + graph.outdegree(currentNode.id) + " outgoing edges")
+    }
   }
 
   const onOptionBtn = function(nodeId){
@@ -733,7 +773,7 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
   </div>
   <div class="row">
     <div class="col">
-      <p class="large">Chosen activity: 
+      <p>Chosen activity: 
         {#if selectedOption != ""}
           {selectedOption} (<strong>{ shortNames[selectedOption] }</strong>) for time <strong>{nextTurnInWorldTime}</strong>
         {:else}
@@ -764,7 +804,7 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
           <span>{activity} <button class="btn btn-link btn-link-inline" on:click={ e => {
             suppressedActivities.push(activity)
             suppressedActivities = suppressedActivities // for svelte
-          }}>[X]</button></span>
+          }}>[X]</button>,&nbsp;</span>
         {/each}
       </p>
     </div>
