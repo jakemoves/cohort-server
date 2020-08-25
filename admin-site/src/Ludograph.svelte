@@ -351,7 +351,6 @@
   $: if(playerConnectionStates.length > 0 && activePlayerIndex >= playerConnectionStates.length){
     console.log("Warning: activePlayerIndex may refer to nonexistent player, fixing inline")
     activePlayerIndex = playerConnectionStates.length - 1
-    // console.log(activePlayerIndex)
   } 
 
   let activePlayerGuid
@@ -361,12 +360,12 @@
     } else if(playerConnectionStates.length > 0){
       const activePlayer = playerConnectionStates[activePlayerIndex]
       if(activePlayer !== undefined){
-        activePlayerGuid == activePlayer.guid
+        activePlayerGuid = activePlayer.guid
       } else {
         activePlayerGuid = ""
       }
     }
-    // console.log(activePlayerGuid)
+    console.log("active player guid: " + activePlayerGuid)
   }
 
   $: playerConnectionStates = deviceStates.filter( device => {
