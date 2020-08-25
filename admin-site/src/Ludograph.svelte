@@ -521,18 +521,18 @@
     const currentReachableNodes = reachableNodeIds
 
     nodesToConnectThisTurn.forEach( node => {
-      console.log("connecting " + node.id)
+      // console.log("connecting " + node.id)
       // connect it to the current node
       // graph.addEdge(currentNode.id, node.id)
 
       // connect it to other nodes being connected this turn
       const otherNodes = nodesToConnectThisTurn.filter( recursiveNode => recursiveNode.id != node.id)  
-      console.log("  sibling nodes: " + otherNodes.map(node => node.id).join(", "))
+      // console.log("  sibling nodes: " + otherNodes.map(node => node.id).join(", "))
       otherNodes.forEach( otherNode => {
         graph.addEdge(node.id, otherNode.id)
       })
 
-      console.log("  existing nodes: ")
+      // console.log("  existing nodes: ")
       currentReachableNodes.forEach( reachableId => {
         console.log("    " + reachableId)
         // connect currently reachable nodes to it
@@ -590,6 +590,9 @@
 
   const onOptionBtn = function(nodeId){
     selectedOption = nodeId
+    if(playerConnectionStates.length > 0){
+      // trigger a broadcast, needed to clear buttons
+    }
   }
   
   const handleSliderMessage = function(event){
