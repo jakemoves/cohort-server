@@ -775,7 +775,7 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
   
   <div class="row">
     <div class="col-4">
-      <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
+      <p>Connection: <WebsocketConnectionIndicator status={connectedToCohortServer}/></p>
     </div>
     <div class="col-8">
       <p>Turn: { turn }, Time: { currentInWorldTime }, Time remaining in turn: <strong>{ countdown }</strong></p>
