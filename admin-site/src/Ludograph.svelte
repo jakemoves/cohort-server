@@ -365,7 +365,7 @@
         activePlayerGuid = ""
       }
     }
-    console.log("active player guid: " + activePlayerGuid)
+    // console.log("active player guid: " + activePlayerGuid)
   }
 
   $: playerConnectionStates = deviceStates.filter( device => {
@@ -451,9 +451,6 @@
   const setupNextTurn = function(){
     // finish previous turn & reset
     blankOptionPlaceholder = ""
-    if(autoBroadcast == true){
-      triggerBroadcast = true
-    }
 
     if(turn == 0){alertSound.play()}
 
@@ -570,14 +567,14 @@
         graph.addEdge('Dream', activity)
       })
 
-      nodes.push({id: 'Leave'})
-      graph.addNode('Leave')
+      nodes.push({id: 'Go'})
+      graph.addNode('Go')
       approvedPlayerActivities.forEach( activity => {
-        graph.addEdge(activity, 'Leave')
+        graph.addEdge(activity, 'Go')
       })
 
     } else if(currentNode.id == "Sleep"){
-      console.log("removing all options for 'Sleep' except for 'Dream', there are " + graph.outdegree(currentNode.id) + " outgoing edges total")
+      console.log("removing all options from 'Sleep' except for 'Dream', there are " + graph.outdegree(currentNode.id) + " outgoing edges total")
 
       const adjacent = graph.adjacent(currentNode.id)
 

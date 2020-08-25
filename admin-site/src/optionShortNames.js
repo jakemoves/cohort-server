@@ -39,5 +39,6 @@ module.exports = {
   "Eat dinner": "no Isadora cue",
   "Get ready for bed": "Go to Bed",
   "Sleep": "Sleep LX",
-  "Dream": "Dream LX"
+  "Dream": "Dream LX",
+  "Go": "Go"
 }
