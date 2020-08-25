@@ -119,9 +119,9 @@
 
 		let cueMatchesTarget = false
 		
-		console.log(cohortTags)
+		// console.log(cohortTags)
 		for(var i = 0; i < cue.targetTags.length; i++){
-			console.log(cue.targetTags[i])
+			// console.log(cue.targetTags[i])
 			if(cohortTags.includes(cue.targetTags[i])){
 				cueMatchesTarget = true
 				break
@@ -129,9 +129,10 @@
 		}
 
 		if(cueMatchesTarget){
-      if(cue.targetTags.includes("stage_manager")){
-        console.log("!")
-        if(cue.mediaDomain == 3 && cue.cueContent !== undefined){
+      if(cue.mediaDomain == 3 && cue.cueContent !== undefined){
+        if(cue.cueNumber == 1){
+
+        } else if(cue.cueNumber == 2){
           const chosenOption = cue.cueContent
 
           if(reachableNodeIds.includes(chosenOption)){
@@ -143,7 +144,7 @@
           showButtons = true
         }
       }
-		}
+    }
 	})
 
   cohortSession.init()
