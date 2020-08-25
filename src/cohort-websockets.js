@@ -54,7 +54,7 @@ module.exports = (options) => {
         }
       }, 1000)
 
-      socket.on('message', (message) => {
+      socket.on('message', async (message) => {
         let msg
 
         // validate JSON
@@ -122,12 +122,14 @@ module.exports = (options) => {
 
           let device = occasion.devices.find( device => device.guid == msg.guid)
           
+          
+
           if(device !== undefined){
             console.log("device " + device.guid + " is opening a new socket connection")
             device.socket.close(4000, "Switching device to new socket")
             // console.log("Error: could not open WebSocket, device guid:" + msg.guid + " is already connected over WebSockets")
             // socket.close(4000, "Error: The device with guid:" + msg.guid + " is already connected over WebSockets")
-            delay(250) // for socket close & teardown, might not be enough
+            await delay(250) // for socket close & teardown, might not be enough
             device.socket = null
           } else {
             device = new CHDevice(msg.guid, false)
@@ -197,6 +199,10 @@ module.exports = (options) => {
     function keepalive() {
       console.log('keepalive called from pong for socket ' + this.cohortDeviceGUID)
       this.isAlive = true
+    }
+
+    const delay = function(time){ // time in ms
+      return new Promise( resolve => setTimeout(resolve, time))
     }
 
     // this is here because when running tests, webSocketServer.on('listening') doesn't fire
