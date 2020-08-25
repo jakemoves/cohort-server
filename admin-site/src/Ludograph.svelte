@@ -348,13 +348,16 @@
   // $: if(activePlayerIndex !== undefined && playerConnectionStates.length > 0){
   //   activePlayerConnectionState = playerConnectionStates[activePlayerIndex]
   // }
-  let activePlayerConnectionState
-  $: if(activePlayerIndex < playerConnectionStates.length){
-    activePlayerConnectionState = playerConnectionStates[activePlayerIndex]
-  } else {
-    console.log("Warning: activePlayerIndex may refer to nonexistent player")
-    activePlayerConnectionState = playerConnectionStates[playerConnectionStates.length-1]
-    activePlayerIndex = playerConnectionStates.length-1
+  $: if(activePlayerIndex >= playerConnectionStates.length){
+    console.log("Warning: activePlayerIndex may refer to nonexistent player, fixing inline")
+    activePlayerIndex = playerConnectionStates.length - 1
+  } 
+
+  let activePlayerGuid
+  $: if(playerConnectionStates.length == 0){
+    activePlayerGuid = ""
+  } else if(playerConnectionStates.length > 0){
+    activePlayerGuid = playerConnectionStates[activePlayerIndex]
   }
 
   $: playerConnectionStates = deviceStates.filter( device => {
@@ -785,7 +788,7 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
       <p>Players:</p>
       <ul id="player_list" class="list-group mb-4">
         {#each playerConnectionStates as playerConnectionState}
-          <li class="list-group-item" class:active={activePlayerConnectionState.guid == playerConnectionState.guid}>
+          <li class="list-group-item" class:active={activePlayerGuid == playerConnectionState.guid}>
             <WebsocketConnectionIndicator status={playerConnectionState.state} label={playerConnectionState.guid.split("|")[0] + "(" + playerConnectionState.guid.split("|")[1] + "hrs sleep)"}/>
             <!-- {/if} -->
           </li>
