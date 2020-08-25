@@ -343,10 +343,17 @@
   let visitedNodeIds = []
   let deviceStates = []
 
-  let activePlayerIndex
-  let activePlayerConnectionState = { guid: ""}
-  $: if(activePlayerIndex !== undefined && playerConnectionStates.length > 0){
+  let activePlayerIndex = 0
+  // let activePlayerConnectionState = { guid: ""}
+  // $: if(activePlayerIndex !== undefined && playerConnectionStates.length > 0){
+  //   activePlayerConnectionState = playerConnectionStates[activePlayerIndex]
+  // }
+  let activePlayerConnectionState
+  $: if(activePlayerIndex < playerConnectionStates.length){
     activePlayerConnectionState = playerConnectionStates[activePlayerIndex]
+  } else {
+    console.log("Warning: activePlayerIndex may refer to nonexistent player")
+    activePlayerConnectionState = playerConnectionStates[playerConnectionStates.length-1]
   }
 
   $: playerConnectionStates = deviceStates.filter( device => {
