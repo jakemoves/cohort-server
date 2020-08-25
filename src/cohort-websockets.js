@@ -21,7 +21,7 @@ module.exports = (options) => {
     }
 
     const keepaliveInterval = setInterval(function ping(){
-      // console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
+      console.log('keepaliveInterval(), ' + webSocketServer.clients.size + ' clients attached')
 
       webSocketServer.clients.forEach( (socket) => {
         if(socket.isAlive === false){
@@ -195,7 +195,7 @@ module.exports = (options) => {
     function noop() {}
     
     function keepalive() {
-      // console.log('keepalive called from pong for socket ' + this.cohortDeviceGUID)
+      console.log('keepalive called from pong for socket ' + this.cohortDeviceGUID)
       this.isAlive = true
     }
 

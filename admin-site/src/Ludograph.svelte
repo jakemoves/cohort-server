@@ -141,7 +141,6 @@
           } else {
             throw new Error("Audience choice (" + chosenOption + ") is not valid...")
           }
-          showButtons = true
         }
       }
     }
@@ -422,14 +421,8 @@
   $: currentNode 
   $: adjacentNodeIds = graph.adjacent(currentNode.id)
   $: reachableNodeIds = adjacentNodeIds.filter( adjacentId => !visitedNodeIds.includes(adjacentId))
-  let showButtons = true // false = hide buttons
   
   let sliderLabel = "Show options to players"
-  $: if(showButtons == true){
-    sliderLabel = "Show options to players"
-  } else {
-    sliderLabel = "Hide all options for players"
-  }
 
   $: connectedNodes = function(nodeId){
     // console.log(graph.adjacent(nodeId))
@@ -438,7 +431,6 @@
 
   const setupNextTurn = function(){
     // finish previous turn & reset
-    showButtons = false
     blankOptionPlaceholder = ""
     if(autoBroadcast == true){
       triggerBroadcast = true
@@ -480,7 +472,6 @@
     startCountdown()
     if(autoBroadcast == true){
       autoBroadcastTimeout = setTimeout( function(){ 
-        console.log("showButtons: " + showButtons)
         triggerBroadcast = true 
       }, 30000)
     }
@@ -582,7 +573,6 @@
   }
 
   const onOptionBtn = function(nodeId){
-    showButtons = true
     selectedOption = nodeId
   }
   
@@ -590,10 +580,7 @@
     const msg = event.detail
     if(msg.broadcastStatus !== undefined && (msg.broadcastStatus == "full-success" || msg.broadcastStatus == "partial-success")){
       triggerBroadcast = false
-      if(showButtons == true){
-        blankOptionPlaceholder = "..."
-      }
-      showButtons = !showButtons
+      blankOptionPlaceholder = "..."
     }
   }
 
@@ -830,7 +817,7 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
               cueNumber: 1,
               cueAction: 0,
               targetTags: ["all"],
-              cueContent: showButtons ? reachableNodeIds.join("|") : ""
+              cueContent: reachableNodeIds.join("|")
             }} on:message={handleSliderMessage}></Slider>
           </div>
         </form>      
