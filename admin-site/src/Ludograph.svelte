@@ -354,6 +354,7 @@
   } else {
     console.log("Warning: activePlayerIndex may refer to nonexistent player")
     activePlayerConnectionState = playerConnectionStates[playerConnectionStates.length-1]
+    activePlayerIndex = playerConnectionStates.length-1
   }
 
   $: playerConnectionStates = deviceStates.filter( device => {
