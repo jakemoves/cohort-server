@@ -348,16 +348,25 @@
   // $: if(activePlayerIndex !== undefined && playerConnectionStates.length > 0){
   //   activePlayerConnectionState = playerConnectionStates[activePlayerIndex]
   // }
-  $: if(activePlayerIndex >= playerConnectionStates.length){
+  $: if(playerConnectionStates.length > 0 && activePlayerIndex >= playerConnectionStates.length){
     console.log("Warning: activePlayerIndex may refer to nonexistent player, fixing inline")
     activePlayerIndex = playerConnectionStates.length - 1
+    // console.log(activePlayerIndex)
   } 
 
   let activePlayerGuid
-  $: if(playerConnectionStates.length == 0){
-    activePlayerGuid = ""
-  } else if(playerConnectionStates.length > 0){
-    activePlayerGuid = playerConnectionStates[activePlayerIndex]
+  $: {
+    if(playerConnectionStates.length == 0){
+      activePlayerGuid = ""
+    } else if(playerConnectionStates.length > 0){
+      const activePlayer = playerConnectionStates[activePlayerIndex]
+      if(activePlayer !== undefined){
+        activePlayerGuid == activePlayer.guid
+      } else {
+        activePlayerGuid = ""
+      }
+    }
+    // console.log(activePlayerGuid)
   }
 
   $: playerConnectionStates = deviceStates.filter( device => {
