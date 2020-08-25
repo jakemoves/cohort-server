@@ -424,10 +424,9 @@
 
   let connectionState = "unknown"
   $: {
-    if(thisDevice === undefined){ connectionState = "unknown" }
-    else if(thisDevice.connected === undefined){connectionState = "unknown"}
-    else if(thisDevice.connected == true){ connectionState = "active" }
-    else if(thisDevice.connected == false){ connectionState = "inactive"}
+    if(connectedToCohortServer === undefined){ connectionState = "unknown" }
+    else if(connectedToCohortServer == true){ connectionState = "active" }
+    else if(connectedToCohortServer == false){ connectionState = "inactive"}
   }
 
   const startCountdown = function(){
@@ -775,7 +774,7 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
   
   <div class="row">
     <div class="col-4">
-      <p>Connection: <WebsocketConnectionIndicator status={connectedToCohortServer}/></p>
+      <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
     </div>
     <div class="col-8">
       <p>Turn: { turn }, Time: { currentInWorldTime }, Time remaining in turn: <strong>{ countdown }</strong></p>
