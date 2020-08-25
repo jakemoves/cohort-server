@@ -357,11 +357,11 @@
     }
   })
   .map( device => {
-    console.log(device.guid)
-    console.log(device.guid.split("|"))
+    // console.log(device.guid)
+    // console.log(device.guid.split("|"))
     const playerHoursOfSleep = parseInt(device.guid.split("|")[1])
     const playerProposedActivity = device.guid.split("|")[2]
-    console.log(playerHoursOfSleep)
+    // console.log(playerHoursOfSleep)
     if(!Number.isInteger(playerHoursOfSleep)){
       playerHoursOfSleep = 0
     }

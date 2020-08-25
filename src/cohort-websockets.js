@@ -4,7 +4,7 @@
 const webSocket = require('ws')
 
 const CHDevice = require('./models/CHDevice.js')
-const { upperFirst } = require('lodash')
+const { upperFirst, delay } = require('lodash')
 
 module.exports = (options) => {
 
@@ -95,9 +95,7 @@ module.exports = (options) => {
             dataIdentifier: "client_pong",
             clientGuid: msg.clientGuid
           }
-          console.log(payload)
           const jsonPayload = JSON.stringify(payload)
-          socket.send(jsonPayload)
         }
 
         // handle initial handshake with device
@@ -121,18 +119,22 @@ module.exports = (options) => {
             return
           }
 
-          // let device = occasion.devices.find( device => device.guid == msg.guid)
-
-          // if(device !== undefined){
-          //   console.log("Error: could not open WebSocket, device guid:" + msg.guid + " is already connected over WebSockets")
-          //   socket.close(4000, "Error: The device with guid:" + msg.guid + " is already connected over WebSockets")
-          //   return 
-          // }
+          let device = occasion.devices.find( device => device.guid == msg.guid)
+          
+          if(device !== undefined){
+            console.log("device " + device.guid + " is opening a new socket connection")
+            device.socket.close(4000, "Switching device to new socket")
+            // console.log("Error: could not open WebSocket, device guid:" + msg.guid + " is already connected over WebSockets")
+            // socket.close(4000, "Error: The device with guid:" + msg.guid + " is already connected over WebSockets")
+            delay(250) // for socket close & teardown, might not be enough
+            device.socket = null
+          } else {
+            device = new CHDevice(msg.guid, false)
+          }
 
           // happy path
           console.log("completing initial handshake with device guid:" + msg.guid)
 
-          let device = new CHDevice(msg.guid, false)
           socket.cohortDeviceGUID = device.guid
 
           device.addSocket(socket)
