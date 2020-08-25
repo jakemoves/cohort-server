@@ -50,6 +50,7 @@ class CohortClientSession extends EventEmitter {
 
       socket.addEventListener('close', (msg) => {
         console.log('connection closed with error ' + msg.code + ': ' + msg.reason)
+        this.connected = false
         this.emit('disconnected', { code: msg.code, reason: msg.reason })
       })
       
