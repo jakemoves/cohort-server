@@ -527,12 +527,12 @@
 
       // connect it to other nodes being connected this turn
       const otherNodes = nodesToConnectThisTurn.filter( recursiveNode => recursiveNode.id != node.id)  
-      // console.log("  sibling nodes: " + otherNodes.map(node => node.id).join(", "))
+      console.log("  sibling nodes: " + otherNodes.map(node => node.id).join(", "))
       otherNodes.forEach( otherNode => {
         graph.addEdge(node.id, otherNode.id)
       })
 
-      // console.log("  existing nodes: ")
+      console.log("  existing nodes: ")
       currentReachableNodes.forEach( reachableId => {
         console.log("    " + reachableId)
         // connect currently reachable nodes to it
