@@ -34,7 +34,7 @@ start = async () => {
 		app: app,
 		server: server,
 		path: '/sockets',
-		keepaliveIntervalDuration: 25000
+		keepaliveIntervalDuration: 10000
 	})
 
 	/*

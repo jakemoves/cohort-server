@@ -17,7 +17,7 @@ module.exports = (options) => {
     
     // this adjustability is here for testing only. using short (5000 ms) values in production can cause problems with clients on cellular connections.
     if(options.keepaliveIntervalDuration === undefined) {
-      options.keepaliveIntervalDuration = 10000
+      options.keepaliveIntervalDuration = 25000
     }
 
     const keepaliveInterval = setInterval(function ping(){
