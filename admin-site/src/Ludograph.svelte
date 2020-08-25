@@ -518,7 +518,7 @@
       return includeNode
     })
 
-    const currentReachableNodes = reachableNodeIds
+    const currentReachableNodes = reachableNodeIds // I'm not really sure why I'm caching this... it doesn't exclude nodes disconnected above, which is wrong
 
     nodesToConnectThisTurn.forEach( node => {
       console.log("connecting " + node.id)
@@ -535,10 +535,12 @@
       console.log("  existing nodes: ")
       currentReachableNodes.forEach( reachableId => {
         console.log("    " + reachableId)
-        // connect currently reachable nodes to it
-        graph.addEdge(reachableId, node.id)
-        // connect it to currently reachable nodes
-        graph.addEdge(node.id, reachableId)
+        if(!nodesToDisconnectThisTurn.filter( node => node.id == reachableId).length > 0){ // workaround, for some reason nodes disconnected this turn are still present in reachable node list
+          // connect currently reachable nodes to it
+          graph.addEdge(reachableId, node.id)
+          // connect it to currently reachable nodes
+          graph.addEdge(node.id, reachableId)
+        }
       })
     })
 
