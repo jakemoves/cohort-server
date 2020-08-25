@@ -108,6 +108,7 @@
   })
   cohortSession.on('dataReceived', msg => {
     if(msg.dataIdentifier == 'device_states'){
+      console.log(msg.data)
       deviceStates = msg.data
     }
   })
@@ -404,7 +405,6 @@
 
   let connectionState = "unknown"
   $: {
-    thisDevice
     if(thisDevice === undefined){ connectionState = "unknown" }
     else if(thisDevice.connected === undefined){connectionState = "unknown"}
     else if(thisDevice.connected == true){ connectionState = "active" }

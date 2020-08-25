@@ -87,7 +87,6 @@ module.exports = (options) => {
 
         // hacky endpoint for status updates for clients
         if(msg.action == "client_ping"){
-          console.log(msg)
           if(msg.clientGuid === undefined){
             return
           }
@@ -96,6 +95,8 @@ module.exports = (options) => {
             clientGuid: msg.clientGuid
           }
           const jsonPayload = JSON.stringify(payload)
+          socket.send(jsonPayload)
+          return
         }
 
         // handle initial handshake with device
