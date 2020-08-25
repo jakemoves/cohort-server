@@ -425,10 +425,11 @@
   })
 
   let connectionState = "unknown"
-  $: {
-    if(connectedToCohortServer === undefined){ connectionState = "unknown" }
-    else if(connectedToCohortServer == true){ connectionState = "active" }
-    else if(connectedToCohortServer == false){ connectionState = "inactive"}
+  $: if(connectedToCohortServer === undefined){ 
+    connectionState = "unknown" 
+  } else if(connectedToCohortServer == true){ 
+    connectionState = "active" 
+  } else if(connectedToCohortServer == false){ connectionState = "inactive"
   }
 
   const startCountdown = function(){
@@ -647,7 +648,9 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
 			} else {
 				showReconnectButton = false
 			}
-		}
+		} else {
+      showReconnectButton = false
+    }
   })()
   
   const onReconnect = async function(){
