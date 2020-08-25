@@ -105,7 +105,8 @@
 		console.log('connected to cohort server')
 	})
 	cohortSession.on('disconnected', (message) => {
-		connectedToCohortServer = false
+    connectedToCohortServer = false
+    clearInterval(requestUpdatedDeviceStatesInterval)
 		console.log(connectedToCohortServer)
   })
   cohortSession.on('dataReceived', msg => {
