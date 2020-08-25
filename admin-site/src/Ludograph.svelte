@@ -521,7 +521,7 @@
     const currentReachableNodes = reachableNodeIds
 
     nodesToConnectThisTurn.forEach( node => {
-      // console.log("connecting " + node.id)
+      console.log("connecting " + node.id)
       // connect it to the current node
       // graph.addEdge(currentNode.id, node.id)
 
