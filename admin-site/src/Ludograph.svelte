@@ -89,8 +89,10 @@
 	let cohortTags = [ "stage_manager" ]
 	let cohortSession = new CohortClientSession(cohortSocketURL, cohortOccasion, cohortTags)
   let requestUpdatedDeviceStatesInterval
+  let connectedOnce = false
 	cohortSession.on('connected', () => {
     connectedToCohortServer = true
+    connectedOnce = true
     
     requestUpdatedDeviceStatesInterval = setInterval(() => {
       const payload = {
@@ -636,6 +638,31 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
     })
   }
 
+  let showReconnectButton = false
+	$: (async () => {
+		if(connectedOnce && connectionState == "inactive"){
+			await delay(1000)
+			if(connectionState == "inactive"){
+				showReconnectButton = true
+			} else {
+				showReconnectButton = false
+			}
+		}
+  })()
+  
+  const onReconnect = async function(){
+		try {
+      cohortSession.socket = await cohortSession.connect()
+    }
+    catch( error ) {
+			return reject(error) 
+    }
+  }
+
+  const delay = function(time){ // time in ms
+		return new Promise( resolve => setTimeout(resolve, time))
+	}
+
   // import * as d3 from 'd3'
 
   // $: d3nodes = graph.serialize().nodes
@@ -774,7 +801,11 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
   
   <div class="row">
     <div class="col-4">
-      <p>Connection: <WebsocketConnectionIndicator status={connectionState}/></p>
+      <p>Connection: <WebsocketConnectionIndicator status={connectionState}/>
+        {#if showReconnectButton}
+          <button class={"btn btn-link btn-reconnect-" + connectionState} on:click={onReconnect}>Reconnect</button>
+        {/if}
+      </p>
     </div>
     <div class="col-8">
       <p>Turn: { turn }, Time: { currentInWorldTime }, Time remaining in turn: <strong>{ countdown }</strong></p>
