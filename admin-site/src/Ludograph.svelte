@@ -148,10 +148,11 @@
           }
         }
       } else if(cue.mediaDomain == 0 && cue.cueNumber ==1){
-        alertSound.play()
         if(cue.cueAction == 0){
+          radioOnSound.play()
           radioShouldBeOff = false
         } else if(cue.cueAction == 3){
+          radioOffSound.play()
           radioShouldBeOff = true
         }
       }
@@ -180,6 +181,12 @@
 
   let alertSound = new Howl({
     src: './sounds/Wild-Eep.mp3'
+  })
+  let radioOnSound = new Howl({
+    src: './sounds/radio-on.mp3'
+  })
+  let radioOffSound = new Howl({
+    src: './sounds/radio-off.mp3'
   })
 
   let nodes = [{
