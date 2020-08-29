@@ -148,10 +148,10 @@
           }
         }
       } else if(cue.mediaDomain == 0 && cue.cueNumber ==1){
-        if(cue.cueAction == 0){
+        if(cue.cueAction == 0 && radioShouldBeOff == true){
           radioOnSound.play()
           radioShouldBeOff = false
-        } else if(cue.cueAction == 3){
+        } else if(cue.cueAction == 3 && radioShouldBeOff == false){
           radioOffSound.play()
           radioShouldBeOff = true
         }
