@@ -147,13 +147,17 @@
             throw new Error("Audience choice (" + chosenOption + ") is not valid...")
           }
         }
-      } else if(cue.mediaDomain == 0 && cue.cueNumber ==1){
-        if(cue.cueAction == 0 && radioShouldBeOff == true){
-          radioOnSound.play()
-          radioShouldBeOff = false
-        } else if(cue.cueAction == 3 && radioShouldBeOff == false){
-          radioOffSound.play()
-          radioShouldBeOff = true
+      } else if(cue.mediaDomain == 0){
+        if(cue.cueNumber ==1){
+          if(cue.cueAction == 0 && radioShouldBeOff == true){
+            radioOnSound.play()
+            radioShouldBeOff = false
+          } else if(cue.cueAction == 3 && radioShouldBeOff == false){
+            radioOffSound.play()
+            radioShouldBeOff = true
+          }
+        } else if(cue.cueNumber == 2){
+          changeRadioStationSound.play()
         }
       }
     }
@@ -187,6 +191,9 @@
   })
   let radioOffSound = new Howl({
     src: './sounds/radio-off.mp3'
+  })
+  let changeRadioStationSound = new Howl({
+    src: './sounds/change-radio-station.mp3'
   })
 
   let nodes = [{
