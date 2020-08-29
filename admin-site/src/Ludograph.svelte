@@ -633,8 +633,8 @@
     let today = DateTime.local()
     showReportSendTime = today
 
-    // const emailRecipient = 'aliceferreyra@yahoo.com'
-    const emailRecipient = 'luckyjakemoves@gmail.com'
+    const emailRecipient = 'aliceferreyra@yahoo.com'
+    // const emailRecipient = 'luckyjakemoves@gmail.com'
     const emailSubject = 'Show report: the Itinerary - ' + today.toLocaleString('dd-MM-yyyy')
     
     let emailBody = 
