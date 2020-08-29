@@ -103,8 +103,8 @@ class CohortClientSession extends EventEmitter {
       throw new Error("Cohort for web browsers only supports audio cues (mediaDomain: 0) and text cues (mediaDomain: 3)")
     }
 
-    if(msg.cueAction != 0){
-      throw new Error("Cohort for web browsers only supports playing (no pause, restart, stop) -- cueAction: 0")
+    if(msg.cueAction != 0 && msg.cueAction != 3){
+      throw new Error("Cohort for web browsers only supports playing and stopping (no pause, restart) -- cueAction: 0")
     }
 
     let tagMatched = false
