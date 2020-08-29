@@ -82,7 +82,9 @@
 		optionButtonLabels = splitTextCueContent
 	} else {
 		optionButtonLabels = []
-	}
+  }
+  
+  let radioShouldBeOff = true
 
 	// set grouping info (tags)
 	// this is used to target cues to specific groupings
@@ -144,6 +146,13 @@
           } else {
             throw new Error("Audience choice (" + chosenOption + ") is not valid...")
           }
+        }
+      } else if(cue.mediaDomain == 0 && cue.cueNumber ==1){
+        alertSound.play()
+        if(cue.cueAction == 0){
+          radioShouldBeOff = false
+        } else if(cue.cueAction == 3){
+          radioShouldBeOff = true
         }
       }
     }
@@ -824,6 +833,15 @@ Let your Cohort operator (who am I kidding, it's Jake here) know if there's othe
           <strong>{blankOptionPlaceholder}</strong> for time <strong>{nextTurnInWorldTime}</strong>
         {/if}  
       </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      {#if radioShouldBeOff}
+        <p>Radio: OFF</p>
+      {:else}
+        <p>Radio: ON</p>
+      {/if}
     </div>
   </div>
 
