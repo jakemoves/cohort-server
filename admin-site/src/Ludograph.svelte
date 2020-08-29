@@ -616,11 +616,15 @@
     }
   }
   
+  let cachedPlayerActivities
   const handleSliderMessage = function(event){
     const msg = event.detail
     if(msg.broadcastStatus !== undefined && (msg.broadcastStatus == "full-success" || msg.broadcastStatus == "partial-success")){
       triggerBroadcast = false
       blankOptionPlaceholder = "..."
+    }
+    if(cachedPlayerActivities === undefined){
+      cachedPlayerActivities = playerActivities
     }
   }
 
@@ -629,8 +633,8 @@
     let today = DateTime.local()
     showReportSendTime = today
 
-    const emailRecipient = 'aliceferreyra@yahoo.com'
-    // const emailRecipient = 'luckyjakemoves@gmail.com'
+    // const emailRecipient = 'aliceferreyra@yahoo.com'
+    const emailRecipient = 'luckyjakemoves@gmail.com'
     const emailSubject = 'Show report: the Itinerary - ' + today.toLocaleString('dd-MM-yyyy')
     
     let emailBody = 
@@ -641,6 +645,9 @@ This report is being sent at ${showReportSendTime.toLocaleString(DateTime.TIME_S
 
 Sequence of player choices:
 ${visitedNodeIds.join(', ')}
+
+Activities submitted by players:
+${cachedPlayerActivities.join(', ')}
 
 Let your Cohort operator (who am I kidding, it's Jake here) know if there's other information that would be useful to include in this report.`
 
