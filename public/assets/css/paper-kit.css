@@ -3794,9 +3794,9 @@ fieldset[disabled] .btn-warning.active {
 .btn-danger:not(:disabled):not(.disabled).active,
 .btn-danger:not(:disabled):not(.disabled).active:focus,
 .show>.btn-danger.dropdown-toggle {
-  background-color: #f33816;
+  background-color: #da2b0b;
   color: #FFFFFF;
-  border-color: #f33816;
+  border-color: #da2b0b;
   box-shadow: none;
 }
 
@@ -3828,8 +3828,8 @@ fieldset[disabled] .btn-danger:focus,
 fieldset[disabled] .btn-danger.focus,
 fieldset[disabled] .btn-danger:active,
 fieldset[disabled] .btn-danger.active {
-  background-color: #f33816;
-  border-color: #f33816;
+  background-color: #da2b0b;
+  border-color: #da2b0b;
 }
 
 .btn-danger.btn-link {
@@ -3843,19 +3843,19 @@ fieldset[disabled] .btn-danger.active {
 .btn-danger.btn-link:focus:active,
 .open>.btn-danger.btn-link.dropdown-toggle {
   background-color: transparent !important;
-  color: #f33816 !important;
+  color: #da2b0b !important;
 }
 
 .btn-danger.btn-link .caret {
-  border-top-color: #f5593d;
+  border-top-color: #da2b0b;
 }
 
 .btn-danger .caret {
   border-top-color: #FFFFFF;
 }
-.btn-danger{
+/* .btn-outline-danger{
   color:#da2b0b;
-}
+} */
 
 .btn-neutral {
   background-color: #FFFFFF;
@@ -9173,6 +9173,9 @@ video {
   
 }
 
+
+
+
 .card .author {
   display: inline-block;
 }
@@ -9226,6 +9229,9 @@ video {
 .card .card-category {
   /* color: #9A9A9A; */
   color:  #265c00;
+}
+li{
+  font-weight: 400; 
 }
 
 .card .category-social .fa {
@@ -12992,12 +12998,6 @@ body {
   text-align: center;
 }
 
-.section {
-  padding: 70px 0;
-  position: relative;
-  background-color: #FFFFFF;
-}
-
 .section .card-profile {
   margin-top: 100px;
 }
@@ -13130,6 +13130,7 @@ body {
 
 .section {
   padding: 70px 0;
+  padding-top: 1%;
   position: relative;
   background-color: #FFFFFF;
 }
@@ -15573,7 +15574,33 @@ License - nucleoapp.com/license/
    font-size: 1.45em;
 }
 
+.custom-dark-bg{
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
 .custom-slightly-bigger-fontSize{
   font-size: 1.2em;
 
+}
+.custom-really-big-fontSize{
+  font-size: 2.5em;
+
+}
+#contactUsForm{
+  background-color: rgba(0,0, 0, 0.85);
+
+}
+
+#contactFormSendSuccess, #contactFormSendFailure {
+  display: none;
+}
+.btn-success, .alert-success, .btn-outline-success {
+  background-color: rgba(134, 217, 171, 0.4);
+  border: 2px solid rgb(134, 217, 171);
+  border-radius: 2px;
+}
+.alert-danger {
+  background-color: rgba(218, 43, 11, 0.4);
+  border: 2px solid #da2b0b;
+  border-radius: 2px;
 }
