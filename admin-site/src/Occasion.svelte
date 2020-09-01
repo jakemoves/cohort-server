@@ -103,7 +103,7 @@
   function updateOccasionStateOnServer(state){
     try {
       fetch(serverURL + "/occasions/" + focusedOccasionID, {
-        method: 'PATCH',
+        method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"state": state}) 
       }).then( response => { 
