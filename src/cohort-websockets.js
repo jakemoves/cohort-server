@@ -50,6 +50,7 @@ module.exports = (options) => {
       closeSocket = setTimeout(() => {
         if(socket.cohortDeviceGUID == null || socket.cohortDeviceGUID === undefined ){
           socket.close(4004, "Error: cohort handshake not completed within time limit")
+          console.log("Error: cohort handshake not completed within time limit")
         }
       }, 1000)
 
