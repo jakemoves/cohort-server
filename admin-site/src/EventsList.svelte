@@ -63,14 +63,14 @@
 
 <Array
   arrayName = {events} 
-  emptyArrayMessage = "This happens on occasion. No occasions for this event yet.">
+  emptyArrayMessage = "No events created yet. How... uneventful.">
     {#each events as item (item.id)}
       <div class="row mt-2">
         <div class="col-6 text-right eventLabel">
             <h3>{item.label}:</h3>
         </div>
         <Button on:click={eventButton}
-          buttonHtml='<p class="mb-0">Occasions&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>'
+          buttonHtml='<p class="mb-0">Details&nbsp;<span style="font-size: 1.1rem; vertical-align: middle" class="fas fa-angle-right" /></p>'
           value = {item.label}
           gridStyle ="col-6" />
       </div>

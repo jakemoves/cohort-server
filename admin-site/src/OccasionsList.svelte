@@ -89,24 +89,29 @@
 
 </script>
 
+<style>
+  h4 { text-align: center }
+</style>
+
+<h4>Occasions</h4> 
+<p>In Cohort terms, an Occasion is a specific instance of an Event, analogous to an individual performance. You need at least one Occasion for an Event, but you can create more.</p>
 <Array
   arrayName = {dateSortedOccasions} 
-  emptyArrayMessage = "This happens on occasion. No occasions for this event yet.">
+  emptyArrayMessage = "No occasions for this event yet.">
 
   {#each  dateSortedOccasions as item (item.id)}
     {#if item.locationCity == null}
       <Button on:click={occasionButton}
-        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5> id:{item.id}</h5>'
+        buttonHtml = '<h3 class="m-0">{item.label}</h3> <h5> Occasion id: {item.id}</h5>'
         value = {item.id}/>
     {:else}
       <Button on:click={occasionButton}
-        buttonHtml = '<h3 class="m-0">{item.label} - {item.label}</h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - id:{item.id}</h5>'
+        buttonHtml = '<h3 class="m-0">{item.label}</h3> <h5>{item.locationCity} - {moment(item.startDateTime).format("LL")} - Occasion id: {item.id}</h5>'
         value = {item.id}/> 
     {/if} 
   {/each}
   
 </Array>
-<hr>
 <!-- Block button, more consistent with other button UI -->
 <Button on:click={openForm}
     buttonText = "Create a new occasion"
@@ -116,6 +121,8 @@
   <!-- <Button on:click={openForm}
     buttonHtml = '<h3 class="m-0">Occasion Creation Form</h3> <h5> </h5>'
     buttonStyle = "btn-outline-success btn-block"/> -->
+
+<hr>
 
 <Button
   buttonStyle="btn-outline-danger btn-block"
