@@ -78,7 +78,7 @@ function cancel(){
 <form>
   <div class="form-group">
     <label for="occasionLabel">Occasion Name</label>
-    <input class="form-control" id="occasionLabel" aria-describedby="occasionCreation" placeholder="Enter occasion name." bind:value = {newOccasionLabel}>
+    <input class="form-control" id="occasionLabel" aria-describedby="occasionCreation" placeholder="i.e. 'Rehearsal' or 'June 25 matinee'" bind:value = {newOccasionLabel}>
   </div>
 
   <Button on:click={createOccasion}
