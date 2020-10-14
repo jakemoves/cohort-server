@@ -74,7 +74,7 @@ To me that makes this the perfect form to respond to our world [and it’s alrea
 P.S. Any chance we could un-discontinue the iPod shuffle?
 
 
-![headshot Torien Cafferata](Torien_Cafferata.jpg)
+![headshot of Torien Cafferata](Torien_Cafferata.jpg)
 
 **Torien Cafferata** *is an immersive theatre producer, actor, playwright, and dramaturge based in Saskatoon, SK. He co-founded the award-winning company It's Not A Box Theatre alongside designer-dancer Amberlin Hsu, with whom he experiments at the intersections of interactive play, mixed-reality, and justice.*
 

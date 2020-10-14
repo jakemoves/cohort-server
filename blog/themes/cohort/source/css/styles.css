@@ -5,3 +5,15 @@ nav ul.nav > li:first-child {
 img {
   width: 100%;
 }
+
+.container {
+  max-width: 65ch;
+}
+
+.article-type-post img[alt^="headshot"], 
+.article-type-post img[alt^="Headshot"]{
+  float: left;
+  width: 50%;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+}

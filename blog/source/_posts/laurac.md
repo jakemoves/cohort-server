@@ -47,7 +47,7 @@ There is a lot of work to be done. My role hinges on facilitating a safe environ
  
 This may be a boring answer, but my Bluetooth headphones. It has upped my multi-tasking game exponentially. And if you have never met a stage manager, their ability to multi-task is as important as their ability to breathe. 
  
-![Image of Laura Cournoyea](LauraHeadshot2013.jpg)
+![Headshot of Laura Cournoyea](LauraHeadshot2013.jpg)
  
 **Laura Cournoyea** *is a Toronto-based arts manager and administrator. She has recently worked with the adelheid, Tribal Crackling Wind, Fujiwara Dance Inventions, Dreamwalker Dance Company, Shannon Litzenberger, Toronto Dance Theatre, Dusk Dances, Ontario Dances, inDance, blue ceiling dance, and the CanAsian Dance Festival. Laura is the Arts Education Manager for tiger princess dance projects and the Company Manager and Community Activator for the dance:made in canada/fait au canada Festival. She was trained at York University’s Theatre Department, earning a Specialized B.F.A. in Theatre Design and Production.*
 
