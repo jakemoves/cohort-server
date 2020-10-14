@@ -1,12 +1,12 @@
 ---
 title: "Plays You Play: No Time Like the Future"
-date: 2020/10/13 
+date: 2020/10/13
 tags:
 - Torien Cafferata
 - Overhear
 - site-specific
 ---
-![image from Overhear](../images/Overhear.jpg)
+![image from Overhear](Overhear.jpg)
 
 *Immersive theatre artist **Torien Cafferata** of It’s Not A Box Theatre offers up five things about plays that he wishes he had known five years ago.*
 
@@ -74,7 +74,7 @@ To me that makes this the perfect form to respond to our world [and it’s alrea
 P.S. Any chance we could un-discontinue the iPod shuffle?
 
 
-![headshot Torien Cafferata](../images/Torien_Cafferata.jpg)
+![headshot Torien Cafferata](Torien_Cafferata.jpg)
 
 **Torien Cafferata** *is an immersive theatre producer, actor, playwright, and dramaturge based in Saskatoon, SK. He co-founded the award-winning company It's Not A Box Theatre alongside designer-dancer Amberlin Hsu, with whom he experiments at the intersections of interactive play, mixed-reality, and justice.*
 
