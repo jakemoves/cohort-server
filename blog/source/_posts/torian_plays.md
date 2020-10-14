@@ -1,8 +1,8 @@
 ---
-title: Plays You Play: No Time Like the Future
+title: "Plays You Play: No Time Like the Future"
 date: 2020/10/13 
 tags:
-- Torian Cafferata
+- Torien Cafferata
 - Overhear
 - site-specific
 ---
