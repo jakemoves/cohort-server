@@ -47,7 +47,7 @@
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.0",
-    "hexo": "^4.2.0"
+    "hexo": "^5.2.0"
   },
   "scripts": {
     "test": "jest",
@@ -57,6 +57,6 @@
     "build-all": "npm run build && npm run build-admin-site && npm run build-blog"
   },
   "engines": {
-    "node": "8.16.0"
+    "node": "12.19.0"
   }
 }
