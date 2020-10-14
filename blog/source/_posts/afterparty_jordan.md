@@ -8,7 +8,7 @@ tags:
 ---
 ![poster for Afterparty](../images/afterparty_test.jpg)
 
-*The Afterparty was presented at the Bricks and Glitter Festival in Toronto from September 16 to 26, 2020. Creator/performer Jordan Campbell recovers and reminisces.*
+*The Afterparty was presented at the Bricks and Glitter Festival in Toronto from September 16 to 26, 2020. Creator/performer **Jordan Campbell** recovers and reminisces.*
 
 Creating and performing [*The Afterparty*](https://bricks-glitter.com/event/the-afterparty/) taught me a lot about Time — slowing down, catching up, playing with time, taking my time, syncing up and disconnecting. 
 
@@ -26,7 +26,7 @@ As we got closer to syncing up our tracks, I started to play with time even more
 
 I loved performing this piece. I could feel all the joy and pain of the audience. It was deeply cathartic. We found our own timeline together for each performance. As we develop new technologies for live performance, we can’t forget that live art isn’t technical and precise; it’s subjective and abstract. For technologies to be truly creative, they have to be malleable. They have to have their own Time. It wasn’t about syncing up our tracks, it was about syncing up our human energies. 
 
-We did eight shows at the Bricks and Glitter Festival, which means eight audience members experienced *The Afterparty*. People kept asking me; “isn’t it disappointing to do all this work, only to have it seen by a small handful of people?” That wasn’t the purpose of this. We really invested deeply in those eight people and gave them each a really special evening. I could not have gone as deep as I went if there had been more people. I didn’t have Time. 
+We did eight shows at the Bricks and Glitter Festival, which means eight audience members experienced *The Afterparty*. People kept asking me, “isn’t it disappointing to do all this work, only to have it seen by a small handful of people?” That wasn’t the purpose of this. We really invested deeply in those eight people and gave them each a really special evening. I could not have gone as deep as I went if there had been more people. I didn’t have Time. 
 
 Now I am resting. After all of that vulnerability in public, I need a week alone in my bedroom. I am so grateful to have gotten to create this show in these tumultuous times. I’m deeply thankful to my generous collaborator Liz, to Cohort for the technical support, to the legendary Bricks and Glitter Festival for the production support, and to all the people who walked through the Brandon Avenue Parkette and held the space for us. It was the Time of my life.
 
