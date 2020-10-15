@@ -1,18 +1,14 @@
 ---
-title: Calling the Shows 
-date: 2020/10/14 
+title: Calling the Shows
+date: 2020/10/14
 tags:
 - Laura Cournoyea
 - LOT X
 - site-specific dance
---- 
-
-
-![still from LOT X](../images/_L9A1293.jpg)
+---
+![still from LOT X](L9A1293.jpg)
 
 <font size="2"> *Image by Jeremy Mimnagh* </font>
-
-Title: Calling the Shows
 
 **Laura Cournoyea** *is a very busy arts and stage manager who has worked on a wide variety of performance projects, large and small.  Cohort asked her a bunch of questions about her work, about using technology on site-specific dance projects like [Jacqueries](https://jqrs.org/) and adelheid’s [LOT X](https://adelheid.ca/lotx), as well as what she likes to do for fun.*
 
@@ -51,7 +47,7 @@ There is a lot of work to be done. My role hinges on facilitating a safe environ
  
 This may be a boring answer, but my Bluetooth headphones. It has upped my multi-tasking game exponentially. And if you have never met a stage manager, their ability to multi-task is as important as their ability to breathe. 
  
-![Image of Laura Cournoyea](../images/Laura Headshot 2013.jpg)
+![Headshot of Laura Cournoyea](LauraHeadshot2013.jpg)
  
 **Laura Cournoyea** *is a Toronto-based arts manager and administrator. She has recently worked with the adelheid, Tribal Crackling Wind, Fujiwara Dance Inventions, Dreamwalker Dance Company, Shannon Litzenberger, Toronto Dance Theatre, Dusk Dances, Ontario Dances, inDance, blue ceiling dance, and the CanAsian Dance Festival. Laura is the Arts Education Manager for tiger princess dance projects and the Company Manager and Community Activator for the dance:made in canada/fait au canada Festival. She was trained at York University’s Theatre Department, earning a Specialized B.F.A. in Theatre Design and Production.*
 

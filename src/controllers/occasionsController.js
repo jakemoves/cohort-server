@@ -199,11 +199,15 @@ exports.occasions_qrcode = async (req, res) => {
     protocol = "https"
   }
 
-  const qrcodeURL = protocol + '://' + baseURL + '/join/occasions/' + occasionId
+  const proxyHost = req.headers["x-forwarded-host"]
+  const host = proxyHost ? proxyHost : req.headers.host
+  const port = host.includes(':') ? ':' + host.split(':')[1] : ''
+
+  const qrcodeURL = protocol + '://' + baseURL + port + '/join/occasions/' + occasionId
 
   try {
     const qrcode = await qrcodeService.getQRCode(qrcodeURL)
-    res.status(200).send(qrcode)
+    res.status(200).send(JSON.stringify({ url: qrcodeURL, qrcode: qrcode}))
   } catch(error){
     handleError(500, error, res)
     return

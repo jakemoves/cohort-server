@@ -163,14 +163,17 @@
       let response = await fetch(serverURL + "/occasions/" + focusedOccasionID + "/qrcode", {
       method: 'GET'
       });
-      let qrCode = await response.text().then( x => {
-        let qrContainer = document.getElementsByClassName("QRcodeContainer");
+      let responseBody = await response.json()
+
+      let qrLinks = document.getElementsByClassName('qr-code-link')
+      for(let i = 0; i < qrLinks.length; i++){
+        qrLinks[i].innerHTML = responseBody.url
+      }
       
-        for (let i = 0; i < qrContainer.length; i++){
-          qrContainer[i].innerHTML = x;
-        }
-      });
-      
+      let qrContainer = document.getElementsByClassName("QRcodeContainer")
+      for (let i = 0; i < qrContainer.length; i++){
+        qrContainer[i].innerHTML = responseBody.qrcode
+      }
     }
     
     QrResponse();
@@ -240,9 +243,11 @@
     headingText={focusedOccasion.label}
     includeBackButton=true>
 
-      <Button on:click={showQR}
-        buttonText="Get QR Code" 
-        dataTarget="#QRcodeModalClosed"/>
+    
+    <Button on:click={showQR}
+      buttonText="Get QR Code" 
+      dataTarget="#QRcodeModalClosed"/>
+    <p class="small">Your users (audience, performers, crew, etc.) can scan this QR code to join this occasion.</p>
    
     <div class="row">
       <div class="col-md-12">
@@ -269,6 +274,7 @@
           <Button on:click={openOccasionButton}
             buttonStyle="btn-outline-success btn-block"
             buttonText="Open Occasion"/>
+          <p class="small">This is like opening the doors to your venue. When an occasion is open, users can join it on their devices.</p>
         
           <Button
             buttonStyle="btn-outline-danger btn-block"
@@ -290,6 +296,7 @@
       buttonStyle='btn-outline-danger btn-block' 
       buttonText="Close Occasion" 
       dataTarget="#closeOccassionModal"/>
+    <p class="small">This is like closing the doors to your venue. Any users still connected to the occasion will be disconnected.</p>
   
     <Button on:click={showQR} 
       buttonText="Show QR Code" 
@@ -298,7 +305,7 @@
       {#if focusedEvent.episodes[0].cues.length == 0}
         <div class="row">
           <div class="col-md-12">
-            <p>Sorry, no cues for this event can be found. We're cue-less.  </p>
+            <p>No cues for this event exist yet. We're cue-less.</p>
           </div>
         </div>
       {:else}
@@ -414,6 +421,7 @@
         <!-- QR code populated here --->
       </div>
       <p class="text-center">{focusedEvent.label} - {focusedOccasion.label}</p>
+      <p class="text-center">QR code link: <span class="qr-code-link"></span></p>
       {#if formattedStartTimeFull !== "Invalid date"}
         <p class="text-center">{formattedStartTimeFull}</p>
       {/if}
@@ -437,5 +445,6 @@
         <!-- QR code populated here -->
       </div>
        <p class="text-center">{focusedEvent.label} - {focusedOccasion.label}</p>
+       <p class="text-center">QR code link: <span class="qr-code-link"></span></p>
     </div>
 </Modal>

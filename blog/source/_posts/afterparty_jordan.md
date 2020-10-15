@@ -6,7 +6,7 @@ tags:
 - The Afterparty
 - site-specific
 ---
-![poster for Afterparty](../images/afterparty_test.jpg)
+![poster for Afterparty](afterparty_test.jpg)
 
 *The Afterparty was presented at the Bricks and Glitter Festival in Toronto from September 16 to 26, 2020. Creator/performer **Jordan Campbell** recovers and reminisces.*
 
@@ -32,7 +32,7 @@ Now I am resting. After all of that vulnerability in public, I need a week alone
 
 
 
-![headshot of Jordan Campbell](../images/JORDAN+CAMPBELL+Headshot_opt.jpg)
+![headshot of Jordan Campbell](JORDAN+CAMPBELL+Headshot_opt.jpg)
 
 **Jord Camp** *is a queer performance artist working in dance, drag and theatre. He is half of the POP ART performance duo [xLq](https://www.instagram.com/xLqpopart/) with Maddie Bautista — together they create interactive theatrical playgrounds with a queer pop aesthetic. Jordan also teaches inclusive drama classes with Purple Carrots Studio, specializing in neurodiverse programming.*
 

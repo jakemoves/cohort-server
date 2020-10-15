@@ -81,8 +81,12 @@
     pageID="eventsList"
     headingText="Events">
     
+    <p>In Cohort terms, an Event is a repeatable audience experience, analogous to a theatre production. An Event holds sound and video files, and cues to control them.</p>
+    <hr/>
+
     {#if !openEventCreation}
 <!-- #eventsList allows a list of events to be built and shown based on "events" from store-->
+
       <EventsList on:message = {messageFromArrayList}/>
     {:else}
       <EventCreationFrom on:message = {messageToCloseEventForm}/>
@@ -97,6 +101,7 @@
     subHeadingText = "Event id: {focusedEvent.id}"
     includeBackButton = true
     occasionCreationFormIsOpen = {occasionCreationFormIsOpen}>
+
     <!-- open and close occasion creation form -->
     {#if !occasionCreationFormIsOpen}
     <!-- //occasions list populated by looping through events of "focused" event ID -->
