@@ -10,7 +10,7 @@ tags:
 
 ![still from LOT X](../images/_L9A1293.jpg)
 
-Image by Jeremy Mimnagh
+<font size="2"> *Image by Jeremy Mimnagh* </font>
 
 Title: Calling the Shows
 
