@@ -6298,7 +6298,7 @@ textarea.form-control {
   background-color: transparent;
 }
 
-.navbar {
+/* .navbar {
   border: 0;
   font-size: 14px;
   transition: all 0.4s;
@@ -6306,7 +6306,7 @@ textarea.form-control {
   padding: 0;
   background: #FFFFFF;
   box-shadow: 0 6px 10px -4px rgba(0, 0, 0, 0.15);
-}
+} */
 
 .navbar .navbar-brand {
   font-weight: 600;
@@ -6349,7 +6349,7 @@ textarea.form-control {
   color: #FFFFFF;
 }
 
-.navbar .navbar-collapse .nav-item .nav-link p {
+/* .navbar .navbar-collapse .nav-item .nav-link p {
   display: inline;
 }
 
@@ -6363,7 +6363,7 @@ textarea.form-control {
 
 .navbar .navbar-collapse.show .navbar-nav .nav-item {
   padding-right: 10px;
-}
+} */
 
 .navbar #navbarSupportedContent .nav-item {
   position: relative;
@@ -6499,7 +6499,7 @@ textarea.form-control {
   color: #FFFFFF;
 }
 
-.navbar .navbar-collapse .nav-item .nav-link p {
+/* .navbar .navbar-collapse .nav-item .nav-link p {
   display: inline;
 }
 
@@ -6513,7 +6513,7 @@ textarea.form-control {
 
 .navbar .navbar-collapse.show .navbar-nav .nav-item {
   padding-right: 10px;
-}
+} */
 
 .navbar #navbarSupportedContent .nav-item {
   position: relative;
@@ -6820,9 +6820,9 @@ textarea.form-control {
   color: #5e5e5e;
 }
 
-.navbar-collapse.show .navbar-nav .nav-item {
+/* .navbar-collapse.show .navbar-nav .nav-item {
   padding-right: 100px;
-}
+} */
 
 .nav-tabs-navigation:last-child {
   border-bottom: 0 none;
@@ -7257,9 +7257,9 @@ textarea.form-control {
   .footer:not(.footer-big) nav ul li:first-child {
     margin-left: 0;
   }
-  body>.navbar-collapse.collapse {
+  /* body>.navbar-collapse.collapse {
     display: none !important;
-  }
+  } */
 }
 
 .dropdown-sharing .dropup-item {
@@ -14184,8 +14184,9 @@ body {
       opacity: 1;
     }
   }
+  /* EDIT */
   .navbar-nav {
-    margin: 1px -15px;
+    /* margin: 1px -15px; */
   }
   .navbar-nav .open .dropdown-menu>li>a {
     padding: 15px 15px 5px 50px;
@@ -14449,9 +14450,10 @@ body {
 }
 
 @media screen and (max-width: 991px) {
-  .navbar-collapse {
-    position: fixed;
-    display: block !important;
+  /* .navbar-collapse {
+    
+   
+   
     top: 0;
     height: 100%;
     width: 230px;
@@ -14476,8 +14478,8 @@ body {
     -o-transition: all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1);
     -ms-transition: all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1);
     transition: all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1);
-  }
-  .navbar-collapse ul {
+  } */
+   /* .navbar-collapse ul {
     position: relative;
     z-index: 3;
     height: 95%;
@@ -14497,8 +14499,8 @@ body {
   .navbar-collapse .navbar-nav>.nav-item>.nav-link:hover,
   .navbar-collapse .navbar-nav>.nav-item>.nav-link:active {
     color: #403D39 !important;
-  }
-  .navbar-collapse::after {
+  } 
+   .navbar-collapse::after {
     top: 0;
     left: 0;
     height: 100%;
@@ -14520,15 +14522,15 @@ body {
     display: block;
     content: "";
     z-index: 1;
-  }
-  .nav-open .navbar-collapse {
+  }*/
+  /* .nav-open .navbar-collapse {
     -webkit-transform: translateX(0px);
     -moz-transform: translateX(0px);
     -o-transform: translateX(0px);
     -ms-transform: translateX(0px);
     transform: translateX(0px);
-  }
-  .nav-open .wrapper {
+  } 
+   .nav-open .wrapper {
     left: 0;
     -webkit-transform: translateX(-230px);
     -moz-transform: translateX(-230px);
@@ -14542,10 +14544,10 @@ body {
     -o-transform: translateX(-230px);
     -ms-transform: translateX(-230px);
     transform: translateX(-230px);
-  }
-  .wrapper .navbar-collapse {
+  } 
+   .wrapper .navbar-collapse {
     display: none;
-  }
+  } 
   .login-page.full-screen .page-header .container {
     margin-top: 30%;
   }
@@ -14585,8 +14587,8 @@ body {
     position: static;
     float: none;
     background: transparent !important;
-  }
-  .navbar-translate {
+  } */
+  /* .navbar-translate {
     width: 100%;
     position: relative;
     display: flex;
@@ -14604,7 +14606,7 @@ body {
     -o-transition: all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1);
     -ms-transition: all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1);
     transition: all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1);
-  }
+  }  */
   #bodyClick {
     height: 100%;
     width: 100%;
@@ -15611,4 +15613,8 @@ License - nucleoapp.com/license/
 
 .navbar-dark .navbar-nav .active>.nav-link, .navbar-dark .navbar-nav .nav-link.active, .navbar-dark .navbar-nav .nav-link.show, .navbar-dark .navbar-nav .show>.nav-link {
   color: #F5593D;
+}
+.navbar-nav .nav-link{
+  padding-right: 1%;
+  padding-left: 6%;
 }
