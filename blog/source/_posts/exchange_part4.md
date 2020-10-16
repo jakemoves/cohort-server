@@ -1,6 +1,5 @@
 ---
-title: The Rough and Tumble of Tech
-Part 4
+title: The Rough and Tumble of Tech Part 4
 date: 2020/10/15 
 tags:
 - Torien Cafferata
