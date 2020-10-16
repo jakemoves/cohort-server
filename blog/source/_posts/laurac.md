@@ -8,7 +8,7 @@ tags:
 ---
 ![still from LOT X](L9A1293.jpg)
 
-<font size="2"> *Image by Jeremy Mimnagh* </font>
+<span class="caption"> *Image by Jeremy Mimnagh* </span>
 
 **Laura Cournoyea** *is a very busy arts and stage manager who has worked on a wide variety of performance projects, large and small.  Cohort asked her a bunch of questions about her work, about using technology on site-specific dance projects like [Jacqueries](https://jqrs.org/) and adelheid’s [LOT X](https://adelheid.ca/lotx), as well as what she likes to do for fun.*
 
@@ -31,16 +31,19 @@ Yes and no. When it comes to immersive, traveling works, the stage manager ends 
 **Q.** But you’ve worked with Cohort over several productions. What are your thoughts on how it has evolved?
 
 My first time using Cohort was in 2014 with Jacob Niedzwiecki’s *Jacqueries* in Miami, Florida. As the software has streamlined, I have watched its uses expand and its usability improve. I am also constantly impressed with how the AR aspects of Cohort have grown and simplified over the years. I am excited to see where we will be in a few years’ time. 
-My interaction with the software is that it has been incredibly easy to use. This is certainly thanks to the amount of back-end [chk]work done to make it user friendly when I am trying to do 10 other things. Over the course of a show, as the stage manager, my duties fall within every working department. Cohort is simply another layer of design and execution, adding to the richness of the narrative. 
+
+My interaction with the software is that it has been incredibly easy to use. This is certainly thanks to the amount of back-end work done to make it user friendly when I am trying to do 10 other things. Over the course of a show, as the stage manager, my duties fall within every working department. Cohort is simply another layer of design and execution, adding to the richness of the narrative. 
 
 **Q.** What do you feel is the impact of these kinds of technologies on audiences?
 
 It opens the walls (both metaphorical and literal) for how and why and when we can engage with our audiences. One of my favourite elements is being able to engage before and after the show, strengthening the connection and bond between audience and artistic work. 
 
 **Q.** What advice might you have for artists who are attracted to using new technologies and how do you manage the complexity these can bring to a project?
+
 Trust your instincts. If you feel that there are ways to simplify the process, it is better to address those as early as possible. Make it work with you, work for you. Don’t be afraid to stretch the limits and boundaries of the four walls of the performance space.  
 
 **Q.** How do you think about safety in your job? Especially now in the COVID era when already established work rules only get you so far?
+
 There is a lot of work to be done. My role hinges on facilitating a safe environment for all collaborators, patrons, staff, really anyone who interacts with the performance space. We have a lot to learn in regards to safe boundaries, consent, and accessibility when we are coming into vulnerable spaces where art can emerge. In order to address these concerns we need to get creative, be clear, and really listen to each other. It is hard work ahead, but it is very important work.
 
 **Q.** What’s your fave piece of technology, on or off the job, and why?

@@ -17,3 +17,11 @@ img {
   margin-right: 1rem;
   margin-bottom: 0.5rem;
 }
+
+.caption{
+    text-align: right;
+    font-size: 0.8rem;
+    display: block;
+
+    
+}
