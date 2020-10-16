@@ -74,7 +74,7 @@ function cancel(){
 <form>
   <div class="form-group">
     <label for="eventLabel">Event Name</label>
-    <input class="form-control" id="eventLabel" aria-describedby="eventLabelCreation" placeholder="Enter event name." bind:value = {newEventLabel}>
+    <input class="form-control" id="eventLabel" aria-describedby="eventLabelCreation" placeholder="i.e. the title of your project" bind:value = {newEventLabel}>
   </div>
 
   <Button on:click={createEvent}
