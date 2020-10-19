@@ -29,33 +29,49 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="../assets/css/paper-kit.css?v=2.2.2" />
-
-   
   </head>
 
-  <body class="landing-page sidebar-collapse" >
+  <body class="landing-page sidebar-collapse">
+    <nav
+      class="navbar sticky-top navbar-expand-sm navbar-dark"
+      style="background-color: #000000;"
+    >
+      <a class="navbar-brand" href="#"></a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-bar bar1"></span>
+        <span class="navbar-toggler-bar bar2"></span>
+        <span class="navbar-toggler-bar bar3"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link" href="../">Home</a>
+          <a class="nav-item nav-link " href="../get-started/"
+            ><strong>Get Started</strong></a
+          >
+          <a
+            class="nav-item nav-link "
+            href="https://www.staging.cohort.rocks/blog"
+            >Blog</a
+          >
+          <a class="nav-item nav-link " href="../documentation/"
+            >Documentation</a
+          >
+          <a class="nav-item nav-link active" href="">Downloads</a>
+        </div>
+      </div>
+    </nav>
 
-      <nav class="navbar sticky-top navbar-expand-sm navbar-dark" style="background-color: #000000;">
-          <a class="navbar-brand" href="#"></a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-bar bar1"></span>
-            <span class="navbar-toggler-bar bar2"></span>
-            <span class="navbar-toggler-bar bar3"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-              <a class="nav-item nav-link" href="../">Home</a>
-              <a class="nav-item nav-link " href="../get-started/"><strong>Get Started</strong></a>
-              <a class="nav-item nav-link " href="https://www.staging.cohort.rocks/blog">Blog</a>
-              <a class="nav-item nav-link " href="../documentation/">Documentation</a>
-              <a class="nav-item nav-link active" href="">Downloads</a>
-            </div>
-          </div>
-        </nav>
-        
     <!-- end of nav  -->
-    
-<!-- end of nav  -->
+
+    <!-- end of nav  -->
     <div
       class="page-header"
       data-parallax="true"
@@ -72,198 +88,215 @@
           <div class="motto">
             <h1 class="title">Downloads</h1>
             <p style="font-size: 1.45em" class="description">
-             Find the resources you need to create with Cohort below.
+              Find the resources you need to create with Cohort below.
             </p>
             <br />
           </div>
         </div>
       </div>
     </div>
-    
-    
-       <div class="wrapper">
-        <div class="section text-center landing-section">
-          <div class="container">
-             <div class="row">
 
-              <div class="col-12">
-                <p class="custom-bigger-fontSize title">Web Client</p>
-              </div>
-              <div class="col-12">
-                  <p class="description">Web client description here</p>
-                </div>
+    <div class="wrapper">
+      <div class="section text-center landing-section">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <p class="custom-bigger-fontSize title">Web Client</p>
+            </div>
+            <div class="col-12">
+              <p class="description">
+                The Web Client is Cohort's solution for experiences that don't
+                require app creation or download and can simply live in a
+                browser.
+              </p>
+            </div>
 
-              <div class="col-xs-12 col-md-8 ml-auto mr-auto">
-                <a
-                  class="btn btn-block btn-outline-primary"
-                  role="button"
-                  alt="link to web client handbook"
-                  href="#">
-                    Link to web client handbook.
-                </a>
-              </div>
-              <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
-                  <a
-                    class="btn btn-block btn-outline-primary"
-                    role="button"
-                    alt="link to web client source files repo"
-                    href="#">
-                      Link to web client source files.
-                  </a>
-                </div>
-                <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
-                    <a
-                      class="btn btn-block btn-outline-primary"
-                      role="button"
-                      alt="link to demo event page"
-                      href="#">
-                        Link to demo event page.
-                    </a>
-                  </div>
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="link to web client handbook"
+                href="#"
+              >
+                Link to web client handbook.
+              </a>
+            </div>
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="link to web client source files repo"
+                href="https://github.com/jakemoves/cohort-web-client"
+              >
+                Link to web client source files.
+              </a>
+            </div>
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="link to demo event page"
+                href="#"
+              >
+                Link to demo event page.
+              </a>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="section text-center section-dark landing-section">
-            <div class="container">
+      <div class="section text-center section-dark landing-section">
+        <div class="container"></div>
+      </div>
+
+      <div class="section text-center  landing-section">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <p class="custom-bigger-fontSize title">OSC Bridge</p>
             </div>
-        </div>
-
-        <div class="section text-center  landing-section">
-            <div class="container">
-              <div class="row">
-
-                    <div class="col-12">
-                      <p class="custom-bigger-fontSize title">Bridge</p>
-                    </div>
-                    <div class="col-12">
-                        <p class="description">Bridge description here</p>
-                      </div>
-              <div class="col-xs-12 col-md-8 ml-auto mr-auto">
-                <a
-                  class="btn btn-block btn-outline-primary"
-                  role="button"
-                  alt="Link to bridge handbook."
-                  href="">
-                    Link to bridge handbook.
-                </a>
-              </div>
-              <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
-                  <a
-                    class="btn btn-block btn-outline-primary"
-                    role="button"
-                    alt="Link to bridge source files"
-                    href="">
-                      Link to bridge source files.
-                  </a>
-                </div>
-                <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
-                    <a
-                      class="btn btn-block btn-outline-primary"
-                      role="button"
-                      alt="Packaged binaries (ie downloadable app)."
-                      href="">
-                        Packaged binaries (ie downloadable app).
-                    </a>
-                  </div>
-              </div>
+            <div class="col-12">
+              <p class="description">
+                Cohort's OSC bridge allows for communication between a Cohort
+                application and another piece of software such as QLab and
+                Isadora.
+              </p>
             </div>
-        </div>
-
-        <div class="section text-center section-dark landing-section">
-            <div class="container">
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="Link to bridge handbook."
+                href=" https://github.com/jakemoves/cohort-osc-bridge/blob/main/README.md"
+              >
+                Link to OSC bridge handbook.
+              </a>
             </div>
-        </div>
-
-        <div class="section text-center  landing-section">
-            <div class="container">
-              <div class="row">
-
-                    <div class="col-12">
-                      <p class="custom-bigger-fontSize title">Unity Client</p>
-                    </div>
-                    <div class="col-12">
-                        <p class="description">Unity client description here</p>
-                      </div>
-              <div class="col-xs-12 col-md-8 ml-auto mr-auto">
-                <a
-                  class="btn btn-block btn-outline-primary"
-                  role="button"
-                  alt="Link to unity client handbook."
-                  href="">
-                    Link to unity client handbook.
-                </a>
-              </div>
-              <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
-                  <a
-                    class="btn btn-block btn-outline-primary"
-                    role="button"
-                    alt="Link to unity client source files."
-                    href="">
-                      Link to unity client source files.
-                  </a>
-                </div>
-                <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
-                    <a
-                      class="btn btn-block btn-outline-primary"
-                      role="button"
-                      alt="Testflight link to get demo client for iOS."
-                      href="">
-                        Testflight link to get "demo" client for iOS.
-                    </a>
-                  </div>
-              </div>
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="Link to bridge source files"
+                href="https://github.com/jakemoves/cohort-osc-bridge"
+              >
+                Link to bridge source files.
+              </a>
             </div>
-        </div>
-
-        <div class="section text-center section-dark landing-section">
-            <div class="container">
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="Packaged binaries (ie downloadable app)."
+                href=""
+              >
+                Packaged binaries (ie downloadable app).
+              </a>
             </div>
+          </div>
         </div>
+      </div>
 
-        <div class="section text-center  landing-section">
-            <div class="container">
-              <div class="row">
+      <div class="section text-center section-dark landing-section">
+        <div class="container"></div>
+      </div>
 
-                    <div class="col-12">
-                      <p class="custom-bigger-fontSize title">Cohort Server</p>
-                    </div>
-                    <div class="col-12">
-                        <p class="description">Cohort server description here</p>
-                      </div>
-              <div class="col-xs-12 col-md-8 ml-auto mr-auto">
-                <a
-                  class="btn btn-block btn-outline-primary"
-                  role="button"
-                  alt="Link to server handbook."
-                  href="">
-                    Link to server handbook.
-                </a>
-              </div>
-              <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
-                  <a
-                    class="btn btn-block btn-outline-primary"
-                    role="button"
-                    alt="Link to server client source files."
-                    href=" ">
-                      Link to server source files.
-                  </a>
-                </div>
-                <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
-                    <a
-                      class="btn btn-block btn-outline-primary"
-                      role="button"
-                      alt="Packaged binaries."
-                      href="">
-                        Packaged binaries.
-                    </a>
-                  </div>
-              </div>
+      <div class="section text-center  landing-section">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <p class="custom-bigger-fontSize title">Unity Client</p>
             </div>
+            <div class="col-12">
+              <p class="description">
+                The Unity Client allows you to integrate Cohort within your
+                Unity project to create cross platform apps.
+              </p>
+            </div>
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="Link to unity client handbook."
+                href="https://github.com/jakemoves/cohort-unity-client/blob/main/README.md"
+              >
+                Link to unity client handbook.
+              </a>
+            </div>
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="Link to unity client source files."
+                href="https://github.com/jakemoves/cohort-unity-client"
+              >
+                Link to unity client source files.
+              </a>
+            </div>
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="Testflight link to get demo client for iOS."
+                href=""
+              >
+                Testflight link to get "demo" client for iOS.
+              </a>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div class="section text-center section-dark landing-section">
+        <div class="container"></div>
+      </div>
+
+      <div class="section text-center  landing-section">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <p class="custom-bigger-fontSize title">Cohort Server</p>
+            </div>
+            <div class="col-12">
+              <p class="description">
+                The Cohort Server acts as the guts of our operations. Take a
+                look at what's happening under the hood.
+              </p>
+            </div>
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="Link to server handbook."
+                href="https://github.com/jakemoves/cohort-server/blob/main/README.md"
+              >
+                Link to server handbook.
+              </a>
+            </div>
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="Link to server client source files."
+                href="https://github.com/jakemoves/cohort-server"
+              >
+                Link to server source files.
+              </a>
+            </div>
+            <div class="col-xs-12 col-md-8 ml-auto mr-auto mt-2">
+              <a
+                class="btn btn-block btn-outline-primary"
+                role="button"
+                alt="Packaged binaries."
+                href=""
+              >
+                Packaged binaries.
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    
     <div class="wrapper">
       <div class="section text-center landing-section m-1">
         <div class="container">
@@ -305,6 +338,5 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
- 
   </body>
 </html>
