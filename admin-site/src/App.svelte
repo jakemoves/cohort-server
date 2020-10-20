@@ -27,15 +27,15 @@
   let occasionCreationFormIsOpen = false;
   let pageState;
   //
-  function checkForEventsLandingURL(urlPathname){
-    const pattern = /join/;
-
-    if (pattern.test(urlPathname)){
+  function checkForEventsLandingURL(urlQueryname){
+    const pattern = /join/i;
+    
+    if (pattern.test(urlQueryname)){
       pageStateInStore.set(4);
     }
 
   }
-  checkForEventsLandingURL(window.location.pathname);
+  checkForEventsLandingURL(window.location.search);
   
   //grab pageState from store
   pageStateInStore.subscribe(value => {
