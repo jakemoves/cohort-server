@@ -23,7 +23,7 @@
     "sirv-cli": "^0.4.4"
   },
   "scripts": {
-    "build": "rollup -c && cp -rf public/* ../public/admin",
+    "build": "rollup -c && rm -rf ../public/admin && mkdir ../public/admin && cp -rf public/* ../public/admin",
     "autobuild": "rollup -c -w",
     "dev": "run-p start:dev autobuild",
     "start": "sirv public --single",
