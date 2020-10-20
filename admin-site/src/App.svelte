@@ -14,6 +14,9 @@
   import DevTools from './DevTools.svelte';
   import EventCreationFrom from './EventCreationForm.svelte';
   import OccasionCreationForm from './OccasionCreationForm.svelte';
+
+  import EventLandingPage from './EventLandingPage.svelte';
+  
   
 
   let sliderCue;
@@ -23,6 +26,17 @@
   let openEventCreation = false;
   let occasionCreationFormIsOpen = false;
   let pageState;
+  //
+  function checkForEventsLandingURL(urlPathname){
+    const pattern = /join/;
+
+    if (pattern.test(urlPathname)){
+      pageStateInStore.set(4);
+    }
+
+  }
+  checkForEventsLandingURL(window.location.pathname);
+  
   //grab pageState from store
   pageStateInStore.subscribe(value => {
     pageState = value;
@@ -117,6 +131,8 @@
   <Occasion
     broadcastStatus ={broadcastStatus}/>
 
+{:else if pageState == 4}
+  <EventLandingPage></EventLandingPage>
 {/if}
 
 
