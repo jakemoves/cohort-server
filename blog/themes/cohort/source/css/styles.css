@@ -11,17 +11,15 @@ img {
 }
 
 .article-type-post img[alt^="headshot"], 
-.article-type-post img[alt^="Headshot"]{
+.article-type-post img[alt^="Headshot"] {
   float: left;
   width: 50%;
   margin-right: 1rem;
   margin-bottom: 0.5rem;
 }
 
-.caption{
+.caption {
     text-align: right;
     font-size: 0.8rem;
     display: block;
-
-    
 }
