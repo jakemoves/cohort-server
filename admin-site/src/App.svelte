@@ -27,10 +27,10 @@
   let occasionCreationFormIsOpen = false;
   let pageState;
   //
-  function checkForEventsLandingURL(urlQueryname){
-    const pattern = /join/i;
+  function checkForEventsLandingURL(urlQueryProperties){
+    const pattern = /join/;
     
-    if (pattern.test(urlQueryname)){
+    if (pattern.test(urlQueryProperties)){
       pageStateInStore.set(4);
     }
 
