@@ -28,6 +28,7 @@
   let pageState;
   //
   function checkForEventsLandingURL(urlQueryProperties){
+    //look at querystring to replace this
     const pattern = /join/;
     
     if (pattern.test(urlQueryProperties)){

@@ -4259,6 +4259,10 @@ fieldset[disabled] .btn-outline-warning.active {
   filter: alpha(opacity=100);
 }
 
+
+
+.btn-outline
+
 .btn-outline-danger:hover,
 .btn-outline-danger:focus,
 .btn-outline-danger:active,
@@ -15601,6 +15605,7 @@ License - nucleoapp.com/license/
   border: 2px solid rgb(134, 217, 171);
   border-radius: 2px;
 }
+
 .alert-danger {
   background-color: rgba(218, 43, 11, 0.4);
   border: 2px solid #da2b0b;
@@ -15612,7 +15617,12 @@ License - nucleoapp.com/license/
 }
 
 .navbar-dark .navbar-nav .active>.nav-link, .navbar-dark .navbar-nav .nav-link.active, .navbar-dark .navbar-nav .nav-link.show, .navbar-dark .navbar-nav .show>.nav-link {
-  color: #F5593D;
+  
+  border-bottom: 0.25em solid #F5593D;
+}
+
+.show > .navbar-nav, .collapsing > .navbar-nav {
+  background-color: #303030;
 }
 .navbar-nav .nav-link{
   padding-right: 1%;
