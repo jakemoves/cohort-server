@@ -32,7 +32,8 @@ export default {
 		// consult the documentation for details:
 		// https://github.com/rollup/rollup-plugin-commonjs
 		resolve({
-			browser: true
+			browser: true,
+			preferBuiltins: true
 			// , dedupe: importee => importee === 'svelte' || importee.startsWith('svelte/')
 		}),
 		commonjs(),
