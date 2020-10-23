@@ -3,7 +3,7 @@
 
 This repository contains two major components in that toolkit: a server, and an admin site. The server (aka Cohort Server) holds information about productions, performances, and connected mobile devices. The admin site allows users to create and modify productions and performances (we call them events and occasions), and to trigger audio, video, and other cues on connected devices.
 
-You can try out Cohort without reading further here, by going to our (Getting Started)[https://cohort.rocks/getting-started] page.
+You can try out Cohort without reading further here, by going to our [Getting Started](https://cohort.rocks/getting-started) page.
 
 The rest of this README is aimed at people who want to run their own Cohort server. 
 
