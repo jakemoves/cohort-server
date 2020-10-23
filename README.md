@@ -1,4 +1,11 @@
 # Cohort Server
+[Cohort](https://cohort.rocks) is a code toolkit that makes it easier for performing artists and producers to integrate smartphones and tablets in their works.
+
+This repository contains two major components in that toolkit: a server, and an admin site. The server (aka Cohort Server) holds information about productions, performances, and connected mobile devices. The admin site allows users to create and modify productions and performances (we call them events and occasions), and to trigger audio, video, and other cues on connected devices.
+
+You can try out Cohort without reading further here, by going to our (Getting Started)[https://cohort.rocks/getting-started] page.
+
+The rest of this README is aimed at people who want to run their own Cohort server. 
 
 ## Getting started
 ### environment setup
@@ -34,18 +41,18 @@ Building for production:
 - `npm install -g jest`
 - `jest app && jest websocket` (the '&&' forces these to run one after the other, they fail if run in parallel which is what happen if you just run `jest`)
 
+### obtaining secret key files
+- ask project lead for the dot-env file, or generate a JWT key and add it to a .env file with the entry name 'JWT_SECRET' (e.g. `JWT_SECRET=[your generated key]`)
+- put this .env file in the root folder
+
 ### building the server
 - `npm install`
-- `npm build`
+- `npm run build`
 
-### building all the things
-This script builds all components (server, admin site, blog) and copies the built admin site and blog to the correct folders under /public.
-- `npm install` (if you're doing this immediately after pulling changes)
-- `npm run build-all`
-
-### obtaining secret key files
-- ask project lead for the dot-env file
-- put this in the root folder
+### building the admin site
+- if you haven't already: `cd admin-site && yarn install && cd ..`
+- `npm run build-admin-site` will build the admin site and copy it to /public/admin
+- the admin site is served at /admin
 
 ### starting the server
 - `node lib/cohort-server.js`
