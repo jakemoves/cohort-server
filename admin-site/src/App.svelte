@@ -17,7 +17,12 @@
 
   import EventLandingPage from './EventLandingPage.svelte';
   
+  import CHClientSession from './CHClientSession.js';
   
+  let session = new CHClientSession('ws://localhost:3000/sockets',3)
+
+  session.init()
+  session.connect()
 
   let sliderCue;
   let broadcastStatus = "unsent";
