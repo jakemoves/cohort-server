@@ -2,7 +2,7 @@
 import Page from './ParentPage.svelte';
 // import {Howl, Howler} from 'howler';
 import Button from './Button.svelte';
-import AudioPlayer from './AudioPlayer.svelte';
+import AudioPlayer, {onBtnPlay} from './AudioPlayer.svelte';
 import queryString from 'query-string'
 
 import { onMount } from 'svelte'
@@ -74,8 +74,9 @@ import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
 		cohortSession.on('cueReceived', async (cue) => {
 			console.log('cue received:')
 			console.log(cue)
-
+			
 			// do stuff based on the cue (eventually this can be automated based on a cuelist, like in Unity)
+			onBtnPlay();
 		})
 
 		cohortSession.init()
@@ -103,6 +104,8 @@ import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
 	/*
 	 *    End Cohort
 	 */
+
+		
 </script>
 
 <!-- var norteAudioTrack = new Howl({
@@ -131,15 +134,15 @@ import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
       buttonText= "Stop Sound"
     /> -->
     <div class="container">
-	<div class="row">
-		<div class="col">
-			<WebsocketConnectionIndicator status={ connectionState }/>
-			{#if showReconnectButton}
-				<button class="btn btn-sm btn-warning" on:click={onReconnect}>Reconnect</button>
-			{/if}	
+			<div class="row">
+				<div class="col">
+					<WebsocketConnectionIndicator status={ connectionState }/>
+					{#if showReconnectButton}
+						<button class="btn btn-sm btn-warning" on:click={onReconnect}>Reconnect</button>
+					{/if}	
+				</div>
+			</div>
 		</div>
-	</div>
-</div>
     <AudioPlayer
       audioUrl = './audio/ReiswerkZonaNorte.mp3'/>
   </Page>

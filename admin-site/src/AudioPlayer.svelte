@@ -1,28 +1,48 @@
-<script>
-import Cookies from 'js-cookie'
-import { onMount } from 'svelte'
-
-export let audioUrl
-let isPaused = true
-let isLoaded
+<script context="module">
+	let isPaused = true;
+	let isLoaded
 let audioPlayer
 let audioPreloadSetting = "auto"
 let audioDuration, audioCurrentTime
 let cookieInterval
 let canResume = false, didResume = false, lastPosition
-
-$: state = isPaused ? "paused" : "playing"
-$: isLoaded = (audioDuration !== undefined && !isNaN(audioDuration)) ? true : false
-$: showResumeControls = canResume && !didResume
-
-
-const onBtnPlay = function() {
+	export const onBtnPlay = function() {
 	isPaused = false
 	cookieInterval = setInterval(function(){
 		// console.log('currentTime: ' + audioCurrentTime)
 		Cookies.set('cohortAudioPosition', audioCurrentTime)
 	}, 5000)
 }
+
+</script>
+
+
+<script>
+
+import Cookies from 'js-cookie'
+import { onMount } from 'svelte'
+
+export let audioUrl
+//let isPaused = true
+// let isLoaded
+// let audioPlayer
+// let audioPreloadSetting = "auto"
+// let audioDuration, audioCurrentTime
+// let cookieInterval
+// let canResume = false, didResume = false, lastPosition
+
+$: state = isPaused ? "paused" : "playing"
+$: isLoaded = (audioDuration !== undefined && !isNaN(audioDuration)) ? true : false
+$: showResumeControls = canResume && !didResume
+
+
+// const onBtnPlay = function() {
+// 	isPaused = false
+// 	cookieInterval = setInterval(function(){
+// 		// console.log('currentTime: ' + audioCurrentTime)
+// 		Cookies.set('cohortAudioPosition', audioCurrentTime)
+// 	}, 5000)
+// }
 
 const onBtnPause = function() {
 	isPaused = true
