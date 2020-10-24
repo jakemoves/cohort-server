@@ -1,4 +1,5 @@
 <script context="module">
+//trying to access the onBtnPlay from ELP 
 	export let audioUrl = '';
 	let isPlaying
 	let isPaused = true;
