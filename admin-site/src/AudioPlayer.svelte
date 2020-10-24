@@ -1,59 +1,46 @@
 <script context="module">
+	export let audioUrl = '';
+	let isPlaying
 	let isPaused = true;
 	let isLoaded
-let audioPlayer
-let audioPreloadSetting = "auto"
-let audioDuration, audioCurrentTime
-let cookieInterval
-let canResume = false, didResume = false, lastPosition
+	let audioPlayer
+	let audioPreloadSetting = "auto"
+	let audioDuration, audioCurrentTime
+	let cookieInterval
+	let canResume = false, didResume = false, lastPosition
+
 	export const onBtnPlay = function() {
-	isPaused = false
-	cookieInterval = setInterval(function(){
+		isPaused = false
+		cookieInterval = setInterval(function(){
 		// console.log('currentTime: ' + audioCurrentTime)
-		Cookies.set('cohortAudioPosition', audioCurrentTime)
-	}, 5000)
-}
+			Cookies.set('cohortAudioPosition', audioCurrentTime)
+		}, 5000)
+	}
+
+	export const onBtnPause = function() {
+		isPaused = true
+		clearInterval(cookieInterval)
+	}
+
+	const onBtnResume = function(){
+		didResume = true
+		audioCurrentTime = lastPosition
+		onBtnPlay()
+	}
 
 </script>
-
-
 <script>
 
 import Cookies from 'js-cookie'
 import { onMount } from 'svelte'
 
-export let audioUrl
-//let isPaused = true
-// let isLoaded
-// let audioPlayer
-// let audioPreloadSetting = "auto"
-// let audioDuration, audioCurrentTime
-// let cookieInterval
-// let canResume = false, didResume = false, lastPosition
 
 $: state = isPaused ? "paused" : "playing"
 $: isLoaded = (audioDuration !== undefined && !isNaN(audioDuration)) ? true : false
 $: showResumeControls = canResume && !didResume
 
 
-// const onBtnPlay = function() {
-// 	isPaused = false
-// 	cookieInterval = setInterval(function(){
-// 		// console.log('currentTime: ' + audioCurrentTime)
-// 		Cookies.set('cohortAudioPosition', audioCurrentTime)
-// 	}, 5000)
-// }
 
-const onBtnPause = function() {
-	isPaused = true
-	clearInterval(cookieInterval)
-}
-
-const onBtnResume = function(){
-	didResume = true
-	audioCurrentTime = lastPosition
-	onBtnPlay()
-}
 
 onMount( () => {
 	lastPosition = Cookies.get('cohortAudioPosition')
@@ -65,7 +52,9 @@ onMount( () => {
 	}
 })
 
+
 </script>
+
 
 {#if isPaused}
 	{#if showResumeControls}

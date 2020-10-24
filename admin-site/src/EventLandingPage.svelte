@@ -1,14 +1,13 @@
 <script>
 import Page from './ParentPage.svelte';
-// import {Howl, Howler} from 'howler';
+import {Howl, Howler} from 'howler';
 import Button from './Button.svelte';
-import AudioPlayer, {onBtnPlay} from './AudioPlayer.svelte';
+import AudioPlayer, {onBtnPlay, onBtnPause} from './AudioPlayer.svelte';
 import queryString from 'query-string'
 
 import { onMount } from 'svelte'
 import CohortClientSession from './CHClientSession.js'
 import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
-
 /*
 	 *    Prepare Cohort functionality (for live cues)
 	 */	
@@ -35,7 +34,7 @@ import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
 			throw new Error("invalid 'environment' value")
   }
 
-  let cohortOccasion = 3
+  let cohortOccasion = 6
 	let connectedToCohortServer
   let connectionState = "unknown"
   
@@ -46,6 +45,31 @@ import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
 	}
 	
 	let cohortTags, cohortSession
+
+	
+ 	let pageState = 0;
+	let playState = false;
+	
+	 $: state = playState ? "Playing!" : "Waiting to receive cue."
+	 
+
+ const norteAudioTrack = new Howl({
+   src: ['./audio/ReiswerkZonaNorte.mp3']
+	 });
+	 
+ const playSound = function() {
+	 norteAudioTrack.play();
+	 
+ }
+ const stopSound = () => (norteAudioTrack.stop());
+ const loadAudio = function(){ 
+	 norteAudioTrack.play();
+	 norteAudioTrack.stop();
+		// onBtnPlay();
+		// onBtnPause();
+	 pageState = 1;
+ }
+
 
 	onMount(() => {
 		startCohort()
@@ -76,7 +100,14 @@ import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
 			console.log(cue)
 			
 			// do stuff based on the cue (eventually this can be automated based on a cuelist, like in Unity)
-			onBtnPlay();
+			// onBtnPlay();
+
+			//this isn't pretty
+			if(cue.mediaDomain == 0 && cue.cueNumber == 1 && cue.cueAction == 0){
+				playSound();
+				playState = true;
+			} 
+
 		})
 
 		cohortSession.init()
@@ -108,31 +139,21 @@ import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
 		
 </script>
 
-<!-- var norteAudioTrack = new Howl({
-   src: ['./audio/ReiswerkZonaNorte.mp3']
-   });
- var speckAudioTrack = new Howl({
-  src: ['./audio/speck_-_It_Takes_Perspective_1.mp3']
-   });
 
- const playSound = () => (norteAudioTrack.play());
 
- const stopSound = () => (norteAudioTrack.stop());
-
-</script> -->
 
   <Page
     pageID="eventLandingPage"
     headingText="Event Landing Page"
   >
-    <!-- <Button 
-      on:click={playSound}
-      buttonText= "Play Sound"
-    />
-     <Button 
-      on:click={stopSound}
-      buttonText= "Stop Sound"
-    /> -->
+		{#if pageState === 0}
+			<h4>Do you have your volume unmuted and your sound at a comfortable level?</h4>
+			<Button 
+				on:click={loadAudio}
+				buttonText= "Yes!"
+			/>
+		{:else}
+    
     <div class="container">
 			<div class="row">
 				<div class="col">
@@ -143,8 +164,11 @@ import WebsocketConnectionIndicator from './WebsocketConnectionIndicator.svelte'
 				</div>
 			</div>
 		</div>
-    <AudioPlayer
-      audioUrl = './audio/ReiswerkZonaNorte.mp3'/>
+		<h4 class="text-center">{state}</h4>
+    <!-- <AudioPlayer
+      audioUrl = './audio/ReiswerkZonaNorte.mp3'
+			/> -->
+		{/if}
   </Page>
 
 
