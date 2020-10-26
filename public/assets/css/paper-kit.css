@@ -15637,3 +15637,18 @@ License - nucleoapp.com/license/
   border-left: 1px solid black;
   border-right: 1px solid black;
 }
+
+.btn-link{
+  text-decoration: underline;
+  font-weight: bold;
+  color: #0503FF;
+}
+
+.btn-outline-primary{
+   color: #0054AC;
+   border-color: #0054AC;
+}
+
+
+
+
