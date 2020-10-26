@@ -22,11 +22,6 @@ router.get('', (req, res) => {
   res.send('Cohort Rocks')
 })
 
-// For web client to open up in browser "audience" device on the admin site
-router.get('/join/occasions/:occasionId',(req, res) => {
-  res.redirect(302,`/admin?join&occasions=${req.params.occasionId}`);
-})
-
 /*
  *   project site routes
  */
