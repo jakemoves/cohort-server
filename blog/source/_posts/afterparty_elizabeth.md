@@ -28,7 +28,7 @@ With the many questions raised, some definite answers were also starting to emer
 
 *The Afterparty* was imbued with fate and possibility for connection. It found a home in the incredible Bricks and Glitter festival, a BIPOC-led activist and arts festival that supported our eight-show run in September. A random draw decided our audience members and each performance was influenced by our feelings and the goings on of the park. As Queer people, it’s not only imperative that we see one another, but that we are seen as exactly who we are. That validation can be lifesaving. Watching each audience member dance with abandon when invited to, or reflect on their relationship to nature and others, was a gift. I was grateful to be grounded in a supported artistic process in such untethered times. It reminded me that community is energy that transcends physical space. And that we all need a little magic in our lives; or at least the possibility. 
 
-![headshot of Elizabeth Staples](ElizabethStaples-Headshot.jpg)
+![headshot of Elizabeth Staples](ElizabethStaples-Headshot_crop.jpg)
 
 **Elizabeth Staples** *is a Bi/Queer multidisciplinary theatre creator and arts administrator who was born and raised in Tkarón:to (Toronto). Recent credits include:* The Afterparty *(Bricks and Glitter Festival),* Private Eyes *(lemonTree creations),* White Girls in Moccasins *(manidoons collective). Elizabeth is interested in devised, physical theatre that has a social conscience and is covered in glitter.*
 
