@@ -31,8 +31,9 @@
     // regex method
     // const pattern = /join&occasions/g;
     const urlParams = queryString.parse(url.search);
-    //check if occasions parameter is present in url
-    if ('occasions' in urlParams){
+    //check if occasions parameter is present in url and targeting the web client
+    console.log(urlParams);
+    if ('occasions' in urlParams && urlParams.web === "true"){
       pageStateInStore.set(4);
       occasionId = urlParams.occasions;
     }

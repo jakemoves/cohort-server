@@ -44,7 +44,7 @@ if(process.env.NODE_ENV != 'localoffline'){
 
 const v1routes = require('./routes-v1.js')
 const v2routes = require('./routes-v2.js')
-const adminRoute = require('./route-admin.js')
+const adminRoute = require('./route-eventLandingPage.js')
 app.use(bodyParser.json())
 
 app.use( (req, res, next) => {

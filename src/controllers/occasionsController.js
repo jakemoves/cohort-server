@@ -203,7 +203,7 @@ exports.occasions_qrcode = async (req, res) => {
   const host = proxyHost ? proxyHost : req.headers.host
   const port = host.includes(':') ? ':' + host.split(':')[1] : ''
 
-  const qrcodeURL = protocol + '://' + baseURL + port + '/join/occasions/' + occasionId
+  const qrcodeURL = protocol + '://' + baseURL + port + '/join/occasions/' + occasionId + '/web/true'
 
   try {
     const qrcode = await qrcodeService.getQRCode(qrcodeURL)
