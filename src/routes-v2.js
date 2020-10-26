@@ -19,7 +19,12 @@ const projectSiteController = require('./controllers/projectSiteController')
 // const servicesController = require('./controllers/servicesController')
 
 router.get('', (req, res) => {
-  res.send('Cohort rocks')
+  res.send('Cohort Rocks')
+})
+
+// For web client to open up in browser "audience" device on the admin site
+router.get('/join/occasions/:occasionId',(req, res) => {
+  res.redirect(302,`/admin?join&occasions=${req.params.occasionId}`);
 })
 
 /*
@@ -63,6 +68,7 @@ if(process.env.NODE_ENV != 'localoffline'){
 } else {
   localOfflineRouter.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
 }
+
 
 // router.post('/events/:id/occasions', occasionsController.occasions_create)
 // router.get('/occasions', occasionsController.occasions)

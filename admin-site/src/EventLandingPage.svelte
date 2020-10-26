@@ -35,7 +35,7 @@
       throw new Error("invalid 'environment' value");
   }
 
-  let cohortOccasion = 6;
+  export let cohortOccasion;
   let connectedToCohortServer;
   let connectionState = "unknown";
 
@@ -67,7 +67,7 @@
 	};
 	
 	let playState = norteAudioTrack.playing()
-	$: state = playState ? "Playing!" : "Waiting to receive cue.";
+	$: text = playState ? "Playing!" : "Waiting to receive cue.";
 	//for some reason below isn't working, will need to review
 	// $: state = norteAudioTrack.playing() ? "Playing!" : "Waiting to receive cue.";
 
@@ -141,7 +141,7 @@
    */
 </script>
 
-<Page pageID="eventLandingPage" headingText="Event Landing Page">
+<Page pageID="eventLandingPage" headingText="Event Landing Page" subHeadingText="Occasion Id: {cohortOccasion}">
   {#if pageState === 0}
     <h4 class ="text-center">
       Do you have your volume unmuted and your sound at a comfortable level?
@@ -160,7 +160,7 @@
         </div>
       </div>
     </div>
-    <h4 class="text-center">{state}</h4>
+    <h4 class="text-center">{text}</h4>
     <!-- <AudioPlayer
       audioUrl = './audio/ReiswerkZonaNorte.mp3'
 			/> -->

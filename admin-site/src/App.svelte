@@ -16,6 +16,7 @@
   import OccasionCreationForm from './OccasionCreationForm.svelte';
 
   import EventLandingPage from './EventLandingPage.svelte';
+  import queryString from "query-string";
 
   let sliderCue;
   let broadcastStatus = "unsent";
@@ -24,17 +25,19 @@
   let openEventCreation = false;
   let occasionCreationFormIsOpen = false;
   let pageState;
-  //
-  function checkForEventsLandingURL(urlQueryProperties){
-    //look at querystring to replace this
-    const pattern = /join/;
-    
-    if (pattern.test(urlQueryProperties)){
+  let occasionId;
+  
+  function checkForEventsLandingURL(url){
+    // regex method
+    // const pattern = /join&occasions/g;
+    const urlParams = queryString.parse(url.search);
+    //check if occasions parameter is present in url
+    if ('occasions' in urlParams){
       pageStateInStore.set(4);
+      occasionId = urlParams.occasions;
     }
-
   }
-  checkForEventsLandingURL(window.location.search);
+  checkForEventsLandingURL(window.location);
   
   //grab pageState from store
   pageStateInStore.subscribe(value => {
@@ -131,7 +134,7 @@
     broadcastStatus ={broadcastStatus}/>
 
 {:else if pageState == 4}
-  <EventLandingPage></EventLandingPage>
+  <EventLandingPage cohortOccasion = {occasionId}></EventLandingPage>
 {/if}
 
 
