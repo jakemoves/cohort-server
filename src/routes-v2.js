@@ -19,7 +19,7 @@ const projectSiteController = require('./controllers/projectSiteController')
 // const servicesController = require('./controllers/servicesController')
 
 router.get('', (req, res) => {
-  res.send('Cohort rocks')
+  res.send('Cohort Rocks')
 })
 
 /*
@@ -63,6 +63,7 @@ if(process.env.NODE_ENV != 'localoffline'){
 } else {
   localOfflineRouter.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
 }
+
 
 // router.post('/events/:id/occasions', occasionsController.occasions_create)
 // router.get('/occasions', occasionsController.occasions)

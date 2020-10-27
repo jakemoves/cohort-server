@@ -12,7 +12,7 @@ exports.seed = function(knex) {
       // Inserts events entries
       defaultEpisodeAsJSON = (eventLabel, defaultCues) => {
         let cues
-        if(defaultCues){
+        if(defaultCues === "defaultCues"){
           cues = [{ 
             "mediaDomain": 0,
             "cueNumber": 1,
@@ -49,6 +49,15 @@ exports.seed = function(knex) {
             "cueAction": 3,
             "targetTags": ["all"]          
           }]
+        } else if (defaultCues === "soundDemo"){
+          cues = [{ 
+            "mediaDomain": 0,
+            "cueNumber": 1,
+            "cueAction": 0,
+            "targetTags": ["all"]          
+          },
+         ]
+
         } else {
           cues = []
         }
@@ -66,10 +75,11 @@ exports.seed = function(knex) {
 
       return knex('events').insert([
         {label: 'pimohtēwak', owner_id: 3, episodes: defaultEpisodeAsJSON('pimohtēwak', false)},
-        {label: 'demo event', owner_id: 3, episodes: defaultEpisodeAsJSON('demo event', true)},
+        {label: 'demo event', owner_id: 3, episodes: defaultEpisodeAsJSON('demo event', "defaultCues")},
         {label: 'midway', owner_id: 3, episodes: defaultEpisodeAsJSON('midway', false)},
         {label: 'fluxdelux', owner_id: 3, episodes: defaultEpisodeAsJSON('fluxdelux', false)},
-        {label: 'café sarajevo', owner_id: 3, episodes: defaultEpisodeAsJSON('café sarajevo', false)}
+        {label: 'café sarajevo', owner_id: 3, episodes: defaultEpisodeAsJSON('café sarajevo', false)},
+        {label: 'Demo Sound Event', owner_id: 5, episodes: defaultEpisodeAsJSON('Demo Sound Event', "soundDemo")}
       ])
       .then( () => {
         // add occasions to events
@@ -132,6 +142,18 @@ exports.seed = function(knex) {
               locationAddress: '235 Queens Quay W',
               locationCity: 'Toronto'
             },
+            { 
+              event_id: 6,
+              owner_id: 5,
+              label: 'Cohort Rehearsal',
+              state: 'closed',
+              doorsOpenDateTime: '2020-11-01 13:30:00+05:00',
+              startDateTime: '2020-11-01 14:00:00+05:00',
+              endDateTime: '2020-11-01 15:30:00+05:00',
+              locationLabel: "The Demo Theatre",
+              locationAddress: '125 Demo Ave.',
+              locationCity: 'ToronDemo'
+            }
           ])
         });
       })
