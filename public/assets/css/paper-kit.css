@@ -3042,8 +3042,13 @@ body {
     font-weight: bold;
 }
 
-a {
+/* a {
   color: #51bcda;
+} */
+
+/* Edit */
+a{
+  color: #0503FF;
 }
 
 a:hover,
