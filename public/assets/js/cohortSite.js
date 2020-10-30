@@ -24,3 +24,10 @@ document.getElementById("contact-form").addEventListener("submit", async () => {
 
 
 })
+
+
+
+//step 6 dynamic url
+const URL = new URL(window.location);
+const insertDynamicLink = () => {document.getElementById('step6').innerHTML += `<p class = "small sideBorders">Alternatively, you can <a href="${URL.hostname}/admin?join"> click this link </a> to open a recipient browser tab on your current device.</p>`;}
+insertDynamicLink();

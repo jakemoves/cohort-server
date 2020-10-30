@@ -27,8 +27,8 @@ Getting started:
 - `yarn run dev` starts up the site locally at [localhost:5000](http://localhost:5000) using a hot-refresh dev server
 
 Building for production:
-- from `/admin-site` : `yarn run build && cp public/* ../public/admin-v2` 
-- if you have a cohort server running locally, the admin site is served at [localhost:3000/admin-v2](http://localhost:3000/admin-v2/)
+- from `/admin-site` : `yarn run build && cp public/* ../public/admin` 
+- if you have a cohort server running locally, the admin site is served at [localhost:3000/admin](http://localhost:3000/admin/)
 
 ### tests setup
 - `npm install -g jest`
