@@ -1,4 +1,4 @@
-//step 6 dynamic url
+//get-started dynamic urls
 
 const insertDynamicLink = () => {
   const currentUrlHostname = window.location.hostname;
