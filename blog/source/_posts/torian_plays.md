@@ -15,7 +15,7 @@ It’s a hot August night in 2015 and I am holding my breath in a mess of three 
 
 I still don’t know. 
 
-That was Project O, our first immersive theatre show as [It’s Not A Box Theatre](http://facebook.com/itsnotaboxtheatre). It’s surreal to think about now that just seeing characters on TV shake hands or hug makes me cringe with a mix of anxiety and longing. But this might just be the best time to get into *digital immersive theatre*. If that sounds intimidating, you’re in good company; the more I do it, the less I know. So time to open the door a crack and let out Five Things I Wish I’d Known Five Years Ago (And Still Might Not) about plays you play. 
+That was *Project O*, our first immersive theatre show as [It’s Not A Box Theatre](http://facebook.com/itsnotaboxtheatre). It’s surreal to think about now that just seeing characters on TV shake hands or hug makes me cringe with a mix of anxiety and longing. But this might just be the best time to get into *digital immersive theatre*. If that sounds intimidating, you’re in good company; the more I do it, the less I know. So time to open the door a crack and let out Five Things I Wish I’d Known Five Years Ago (And Still Might Not) about plays you play. 
 
 
 **1. Play it Safe**
@@ -29,7 +29,6 @@ During our first run of [*Overhear*](https://vimeo.com/273055640), our app-guide
 Needless to say we changed a few things about staging, ushers, etc. for the future, but nothing will change the fact that this lesson was learned through the suffering of someone working for us. That is a risk you and everyone on your team must understand and mitigate. Give your actors and audiences the tools to protect themselves and others: codewords, consent gestures, panic buttons on apps, clear expectations in the prep, reminders throughout, etc. I promise you can do all these things and still “serve the story” (see #4). Besides, if your audience cannot safely access or exit a story, who is the story for? 
 
 ![image from Overhear](Overhear.jpg)
-<span class="caption"> *Image by tk* </span>
 
 **2. Less is More**
 
@@ -89,7 +88,7 @@ P.S. Any chance we could un-discontinue the iPod shuffle?
 **Torien Cafferata** *is an immersive theatre producer, actor, playwright, and dramaturge based in Saskatoon, SK. He co-founded the award-winning company It's Not A Box Theatre alongside designer-dancer Amberlin Hsu, with whom he experiments at the intersections of interactive play, mixed-reality, and justice.*
 
 
-Also on the Cohort blog: Torien's 4-part email exchange with Sébastien Heins, Associate Artistic Director of Outside the March. Read Part 1 here[link].
+Also coming up on the Cohort blog: Torien's 4-part email exchange with Sébastien Heins, Associate Artistic Director of Outside the March. *The Rough and Tumble of Tech - Part 1* drops next week.
 
 
 
