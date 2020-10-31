@@ -1,6 +1,6 @@
 ---
 title: An Introduction 
-date: 2020/10/20 
+date: 2020/10/29
 tags:
 - Cohort
 - blog
@@ -14,7 +14,7 @@ Thirty years ago I stepped into a dance studio for the first time. Twenty-eight 
 
 When the Digital Strategy Fund was announced by the Canada Council, it seemed like a good idea to assemble a network of the performing-arts companies I’d worked with, so we could improve and formalize the shared technical infrastructure we’d built, and share it with the wider community of artists and producers experimenting with new modes of presentation. In COVID times, that community has gotten much bigger, as every performing artist has been forced to explore new ways to create and share their work.
 
-I’m very excited to announce the launch of [The Cohort Blog]( https://cohort.rocks/blog), which will feature accounts from and conversations between artists making adventurous works involving mobile devices. Our first post (add link) is from producer/performer Torien Cafferata of It’s Not A Box Theatre in Saskatoon, discussing work on immersive projects like *Overhear* and *Play Fail Win*.
+I’m very excited to announce the launch of the [Cohort Blog](https://cohort.rocks/blog), which will feature accounts from and conversations between artists making adventurous works involving mobile devices. Our [first post](/blog/2020/10/30/plays_you_play) is from producer/performer Torien Cafferata of It’s Not A Box Theatre in Saskatoon, discussing work on immersive projects like *Overhear* and *Play Fail Win*.
 
 We've spent several months working with our partner companies to develop and prepare the software components that powered their shows for public sharing and use. We're currently engaged in the first closed beta test of our code toolkit, which makes it easier for performing artists to integrate smartphones and mobile technology in their works. Our partners have used these tools to many ends —including :
 
