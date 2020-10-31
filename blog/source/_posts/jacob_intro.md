@@ -6,7 +6,7 @@ tags:
 - blog
 - mobile
 ---
-![photo_iphones_laptop](IMG_2793.HEIC)
+![photo_iphones_laptop](IMG_2793.jpg)
 
 Thirty years ago I stepped into a dance studio for the first time. Twenty-eight years ago, I wrote my first line of code. And ten years ago, I had an idea for a dance/theatre work that would need a specific technical capability: cueing portable, synchronized, multi-track headphone audio. Working with an awesome creative and production team, we realized that technical capability (and a few others), and created the show *Jacqueries* around it.
 
@@ -29,4 +29,4 @@ And finally, we're gearing up for our first public event, **Cohort Confab**, whi
 
 I’m proud of the work that our team and partners have created, and I’m looking forward to sharing it with you over the next few months and onwards.
 
-Jacob Niedzwiecki, Cohort
+Jacob Niedzwiecki, Project Lead – Cohort
