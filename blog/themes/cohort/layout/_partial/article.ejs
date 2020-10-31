@@ -11,6 +11,7 @@
       </header>
     <% } %>
     <div class="article-entry" itemprop="articleBody">
+      <%- post.content %>
       <!-- with the below uncommented, articles on the main page show only their excerpts if they have one. we want them to have excerpts for social media, but for now we want full posts to display on the main page (index) -->
       <!-- <% if (post.excerpt && index){ %>
         <%- post.excerpt %>
@@ -19,9 +20,9 @@
             <a href="<%- url_for(post.path) %>#more"><%= theme.excerpt_link %></a>
           </p>
         <% } %>
-      <% } else { %> -->
+      <% } else { %> 
         <%- post.content %>
-      <!-- <% } %> -->
+      <% } %> -->
     </div>
     <footer class="article-footer">
       <p><a href="<%- post.permalink %>"><%= __('permalink') %></a></p>
