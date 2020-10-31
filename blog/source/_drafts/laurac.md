@@ -5,6 +5,7 @@ tags:
 - Laura Cournoyea
 - LOT X
 - site-specific dance
+excerpt: "One of my favourite elements is being able to engage before and after the show, strengthening the connection and bond between audience and artistic work."
 ---
 ![still from LOT X](L9A1293.jpg)
 

@@ -11,24 +11,32 @@
       </header>
     <% } %>
     <div class="article-entry" itemprop="articleBody">
-      <% if (post.excerpt && index){ %>
+      <%- post.content %>
+      <!-- with the below uncommented, articles on the main page show only their excerpts if they have one. we want them to have excerpts for social media, but for now we want full posts to display on the main page (index) -->
+      <!-- <% if (post.excerpt && index){ %>
         <%- post.excerpt %>
         <% if (theme.excerpt_link){ %>
           <p class="article-more-link">
             <a href="<%- url_for(post.path) %>#more"><%= theme.excerpt_link %></a>
           </p>
         <% } %>
-      <% } else { %>
+      <% } else { %> 
         <%- post.content %>
-      <% } %>
+      <% } %> -->
     </div>
     <footer class="article-footer">
       <p><a href="<%- post.permalink %>"><%= __('permalink') %></a></p>
       <!-- <a data-url="<%- post.permalink %>" data-id="<%= post._id %>" class="article-share-link"><%= __('share') %></a> -->
+      
       <% if (post.comments && config.disqus_shortname){ %>
-        <a href="<%- post.permalink %>#disqus_thread" class="article-comment-link"><%= __('comment') %></a>
+        
+          <a href="<%- post.permalink %>#disqus_thread" class="article-comment-link"><%= __('comment') %></a>
+        
       <% } %>
+      <div id="keywordsList">
+      <p>Tags:</p>
       <%- partial('post/tag') %>
+    </div>
     </footer>
   </div>
   <% if (!index){ %>

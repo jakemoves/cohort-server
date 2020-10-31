@@ -20,6 +20,9 @@
    
       
   async function login(){
+    // check if credentials are demo account credentials
+    // call the same setupDemoAccountWithCues function as in the ELP
+    
     const payload = { username: usernameFieldValue, password: passwordFieldValue }
 
     let response = await fetch(serverURL + '/login', {

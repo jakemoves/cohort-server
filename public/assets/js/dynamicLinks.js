@@ -1,4 +1,4 @@
-//get-started dynamic urls
+//get-started insert dynamic links
 
 const insertDynamicLink = () => {
   const currentUrlHostname = window.location.hostname;
