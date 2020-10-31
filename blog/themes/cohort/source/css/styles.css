@@ -53,6 +53,3 @@ footer{
   display:inline-flex;
 }
 
-.article-nav > .nav {
-  flex-wrap: nowrap;
-}
