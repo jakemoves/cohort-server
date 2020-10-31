@@ -131,7 +131,7 @@ Sébastien
 ![headshot-sebastienheins](headshot_sebastienheins.jpg)
 Sébastien Heins is a Canadian-born, Jamaican-German actor, writer, producer, and emerging director. He is the Associate Artistic Director of Outside the March. His credits include 3 seasons at the Stratford Festival, 10 years of immersive theatre with OtM, and international tours of his award-winning solo show, Brotherhood: The Hip Hopera.
 
-![Headshot_TorienCafferata](Headshot_TorienCafferata.jpg)
+![Headshot_TorienCafferata](headshot_TorienCafferata.jpg)
 Torien Cafferata is an immersive theatre producer, actor, playwright, and dramaturge based in Saskatoon, SK. He co-founded the award-winning company It's Not A Box Theatre alongside designer-dancer Amberlin Hsu, with whom he experiments at the intersections of interactive play, mixed-reality, and justice.
 
 Read The Rough and Tumble of Tech - Part 1 here.

@@ -1,12 +1,13 @@
 <script>
+  import CohortClientSession from "./CHClientSession.js";
+  import DemoLogin from './demoLogin.js'
+  
   import Page from "./ParentPage.svelte";
   import { Howl, Howler } from "howler";
   import Button from "./Button.svelte";
   import AudioPlayer, {onBtnPause, onBtnPlay} from "./AudioPlayer.svelte";
   import queryString from "query-string";
-
   import { onMount } from "svelte";
-  import CohortClientSession from "./CHClientSession.js";
   import WebsocketConnectionIndicator from "./WebsocketConnectionIndicator.svelte";
   /*
    *    Prepare Cohort functionality (for live cues)
@@ -72,6 +73,10 @@
 	// $: state = norteAudioTrack.playing() ? "Playing!" : "Waiting to receive cue.";
 
   onMount(() => {
+    console.log(DemoLogin())
+    
+    
+    // then startCohort but modify to pass occasion id?
     startCohort();
   });
 
