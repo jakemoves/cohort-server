@@ -7,11 +7,14 @@ import { storedEvents } from './EventsStore.js';
 let events;
 let indexInEvents;
 let focusedEvent;
+let demoEventName = "Demo Sound Event"
+
+
   storedEvents.subscribe(value => {
     events = value;
     console.log(events);
     if(events != 0){
-      indexInEvents = events.findIndex(event => event.label === "Demo Sound Event");
+      indexInEvents = events.findIndex(event => event.label === demoEventName);
       focusedEvent = events[indexInEvents];
     }
   })
@@ -33,72 +36,8 @@ const init = function(){
       }
       //successful login now try to get events for that demouser, if not create them
        try{
-          await eventsCheck();
-          // try{
-           
-          // } catch {
-          //   return reject(new Error(`Error trying to add occasion`))
-          // }
-        // let eventsResults = await getEventsAndStore().then( async () => {
-        //   console.log(events);
-        //   if (events[0] === undefined){
-        //     //create an event
-        //       await fetch(serverURL + "/events", {
-        //         method: 'POST',
-        //         headers: {'Content-Type': 'application/json'},
-        //         body: JSON.stringify(demoEventPackage) 
-        //       }).then( response => { 
-        //         if(response.status == 201){
-        //           response.json().then( details => {
-        //             // make sure store updates from server
-        //             getEventsAndStore();
-        //             let indexInEvents = events.findIndex(event => event.label === "Demo Sound Event");
-        //             let focusedEvent = events[indexInEvents];
-                  
-        //           })
-        //         } else {
-        //           response.text().then( errorMessage => {
-        //             console.log(`Demo event creation error: ${errorMessage}`)
-                    
-        //           })
-        //         }
-        //       }).catch( error => {
-        //         console.log("Error on demo event creation")
-        //       })
-        //     }
-        //   })
+          await eventsCheck();  
 
-        //   try {
-            
-        //     fetch(serverURL + "/occasions/", {
-        //       method: 'POST',
-        //       headers: {'Content-Type': 'application/json'},
-        //       body: JSON.stringify({ "label": "Cohort Rehearsal",
-        //                               "eventId": focusedEvent.id }) 
-        //     }).then( response => { 
-        //       if(response.status == 201){
-        //         response.json().then( details => {
-                  
-        //           // make sure store updates from server
-        //           getEventsAndStore();
-        //         })
-        //       } else {
-        //         response.text().then( errorMessage => {
-        //           console.log(`Occasion creation error: ${errorMessage}`)
-        //         })
-        //       }
-        //     }).catch( error => {
-        //       console.log("Error on occasion creation")
-        //     })
-        //   } catch (e) {
-        //     console.log(e.message)
-        // }
-
-
-
-
-
-         
        } catch {
         return reject(new Error(`Error trying to add demo event`))
        }
@@ -143,8 +82,17 @@ const init = function(){
       // }]
   })
 }
+
   let eventsCheck = async() => {
-    if (events[0] === undefined){
+    //check for existing "Demo Sound Event"
+    let demoEventExists = false;
+    for (let i=0; i<events.length; i++){
+      if (events[i].label === demoEventName){
+        demoEventExists = true;
+      }
+    }
+    
+    if (!demoEventExists){
       let response = await fetch(serverURL + "/events", {
         method: 'POST',
         headers: { 'Content-Type':  'application/json' },
