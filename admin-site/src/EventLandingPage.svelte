@@ -1,42 +1,36 @@
 <script>
   import CohortClientSession from "./CHClientSession.js";
-  import DemoLogin from './demoLogin.js'
+  import DemoLogin from './demoLogin.js';
+  import {currentUrlProtocol, currentUrlHostname} from './ServerURLstore.js';
+
+  import { onMount } from "svelte";
+  import { Howl, Howler } from "howler";
+  import queryString from "query-string";
   
   import Page from "./ParentPage.svelte";
-  import { Howl, Howler } from "howler";
   import Button from "./Button.svelte";
   import AudioPlayer, {onBtnPause, onBtnPlay} from "./AudioPlayer.svelte";
-  import queryString from "query-string";
-  import { onMount } from "svelte";
   import WebsocketConnectionIndicator from "./WebsocketConnectionIndicator.svelte";
   /*
    *    Prepare Cohort functionality (for live cues)
    */
 
-  //
-  //This is here because you can't connect locally to secure sites, or vice versa. A local server is required for testing locally.
-  //ws = http, wss = https
-  let environment = "local"; // can be local, dev, prod
-  let cohortSocketURL;
-
-  switch (environment) {
-    case "local":
-      cohortSocketURL = "ws://localhost:3000/sockets";
-      break;
-    case "dev":
-      cohortSocketURL = "ws://[INSERT LOCAL IP ADDRESS]:3000/sockets";
-      break;
-    case "staging":
-      cohortSocketURL = "wss://staging.cohort.rocks/sockets";
-      break;
-    case "prod":
-      cohortSocketURL = "wss://cohort.rocks/sockets";
-      break;
-    default:
-      throw new Error("invalid 'environment' value");
+  function createSocketUrl(protocol, hostname){
+    let validProtocols = {
+      "https:":"wss:",
+      "http:":"ws:"
+    };
+    if(protocol in validProtocols){
+      return `${validProtocols[protocol]}//${hostname}/sockets`
+    } else {
+      throw new Error("Invalid url protocol.");
+    }
   }
 
-  export let cohortOccasion;
+  let cohortSocketURL = createSocketUrl(currentUrlProtocol,currentUrlHostname); 
+
+
+  export let cohortOccasionID;
   let connectedToCohortServer;
   let connectionState = "unknown";
 
@@ -73,9 +67,6 @@
 	// $: state = norteAudioTrack.playing() ? "Playing!" : "Waiting to receive cue.";
 
   onMount(() => {
-    console.log(DemoLogin())
-    
-    
     // then startCohort but modify to pass occasion id?
     startCohort();
   });
@@ -92,7 +83,7 @@
 
     cohortSession = new CohortClientSession(
       cohortSocketURL,
-      cohortOccasion,
+      cohortOccasionID,
       cohortTags
     );
 
@@ -146,7 +137,7 @@
    */
 </script>
 
-<Page pageID="eventLandingPage" headingText="Event Landing Page" subHeadingText="Occasion Id: {cohortOccasion}">
+<Page pageID="eventLandingPage" headingText="Event Landing Page" subHeadingText="Occasion Id: {cohortOccasionID}">
   {#if pageState === 0}
     <h4 class ="text-center">
       Do you have your volume unmuted and your sound at a comfortable level?

@@ -134,7 +134,7 @@
     broadcastStatus ={broadcastStatus}/>
 
 {:else if pageState == 4}
-  <EventLandingPage cohortOccasion = {occasionId}></EventLandingPage>
+  <EventLandingPage cohortOccasionID = {occasionId}></EventLandingPage>
 {/if}
 
 

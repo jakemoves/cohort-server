@@ -20,7 +20,7 @@
   focusedOccasionStore.subscribe(value => {
     focusedOccasion = value
   });
- 
+  console.log(focusedEvent);
   let sliderCue = focusedEvent.episodes[0].cues[0];
   export let broadcastStatus;
 

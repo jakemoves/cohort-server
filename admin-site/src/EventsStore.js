@@ -44,7 +44,7 @@ export let getEventsAndStore = async () => {
 
       focusedOccasionStore.set(focusedOccasion);
     }
-     
+   
    
   });
   
