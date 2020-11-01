@@ -12,7 +12,6 @@ let demoEventName = "Demo Sound Event"
 
   storedEvents.subscribe(value => {
     events = value;
-    console.log(events);
     if(events != 0){
       indexInEvents = events.findIndex(event => event.label === demoEventName);
       focusedEvent = events[indexInEvents];
@@ -36,10 +35,10 @@ const init = function(){
       }
       //successful login now try to get events for that demouser, if not create them
        try{
-          await eventsCheck();  
+          await eventsCheckAndCreation();  
 
        } catch {
-        return reject(new Error(`Error trying to add demo event`))
+        return reject(new Error(`Error populating demo event`))
        }
         
     } catch(error) {
@@ -83,7 +82,7 @@ const init = function(){
   })
 }
 
-  let eventsCheck = async() => {
+  let eventsCheckAndCreation = async() => {
     //check for existing "Demo Sound Event"
     let demoEventExists = false;
     for (let i=0; i<events.length; i++){
@@ -111,7 +110,6 @@ const init = function(){
   }
 
   let addOccasion = async() => {
-
     let response = await fetch(serverURL + "/occasions/", {
       method: 'POST',
       headers: { 'Content-Type':  'application/json' },
@@ -125,14 +123,12 @@ const init = function(){
                                       "locationAddress": '125 Demo Ave.',
                                       "locationCity": 'ToronDemo'})  
     })
-    console.log(response.status);
     if(response.status == 201){
       getEventsAndStore();
     } else {
       let errorMessage = await response.text()
       throw new Error(errorMessage)
     }
-
   }     
   
 
