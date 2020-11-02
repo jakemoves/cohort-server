@@ -33,12 +33,13 @@ const init = function(){
         let errorMessage = await response.text()
         throw new Error(errorMessage)
       }
-      //successful login now try to get events for that demouser, if not create them
+  
        try{
+         //now try to get events for that demouser, if not create the event (that contains an occasion and cues).
           await eventsCheckAndCreation();  
 
-       } catch {
-        return reject(new Error(`Error populating demo event`))
+       } catch (error) {
+        return reject(new Error(`Error populating demo event. ${error}`))
        }
         
     } catch(error) {
@@ -92,44 +93,53 @@ const init = function(){
     }
     
     if (!demoEventExists){
-      let response = await fetch(serverURL + "/events", {
+      fetch(serverURL + "/events", {
         method: 'POST',
         headers: { 'Content-Type':  'application/json' },
         body: JSON.stringify(demoEventPackage) 
+      }).then( response => { 
+        if(response.status == 201){
+            // make sure store updates from server
+            getEventsAndStore().then(() => { addOccasion() });
+        } else {
+          response.text().then( errorMessage => {
+            console.log(`Error on ${state} request: ${errorMessage}`)
+          })
+        }
+      }).catch( error => {
+        console.log(`Catch error on ${state} request`)
       })
-
-      if(response.status == 201){
-        getEventsAndStore().then(() =>{
-          addOccasion()
-        });
-      } else {
-        let errorMessage = await response.text()
-        throw new Error(errorMessage)
-      }
     }
   }
 
-  let addOccasion = async() => {
-    let response = await fetch(serverURL + "/occasions/", {
+  const addOccasion = () => {
+    fetch(serverURL + "/occasions/", {
       method: 'POST',
       headers: { 'Content-Type':  'application/json' },
-      body: JSON.stringify({ "label": "Cohort Rehearsal",
-                                      "eventId": focusedEvent.id,
-                                      "state": 'closed',
-                                      "doorsOpenDateTime": '2020-11-01 13:30:00+05:00',
-                                      "startDateTime": '2020-11-01 14:00:00+05:00',
-                                      "endDateTime": '2020-11-01 15:30:00+05:00',
-                                      "locationLabel": "The Demo Theatre",
-                                      "locationAddress": '125 Demo Ave.',
-                                      "locationCity": 'ToronDemo'})  
-    })
-    if(response.status == 201){
-      getEventsAndStore();
-    } else {
-      let errorMessage = await response.text()
-      throw new Error(errorMessage)
-    }
-  }     
+      body: JSON.stringify({
+                            "label": "Cohort Rehearsal",
+                            "eventId": focusedEvent.id,
+                            "state": 'closed',
+                            "doorsOpenDateTime": '2020-11-01 13:30:00+05:00',
+                            "startDateTime": '2020-11-01 14:00:00+05:00',
+                            "endDateTime": '2020-11-01 15:30:00+05:00',
+                            "locationLabel": "The Demo Theatre",
+                            "locationAddress": '125 Demo Ave.',
+                            "locationCity": 'ToronDemo'
+                          })  
+      }).then (response => { 
+        if(response.status == 201){
+          getEventsAndStore();
+        } else {
+          response.text().then( errorMessage => {
+            console.log(`Error on ${state} request: ${errorMessage}`)
+          })
+        }
+      }).catch( error => {
+        console.log(`Catch error on ${state} request`)
+      })
+  }
+
   
 
 export default init

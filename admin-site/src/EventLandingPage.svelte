@@ -2,6 +2,7 @@
   import CohortClientSession from "./CHClientSession.js";
   import DemoLogin from './demoLogin.js';
   import {currentUrlProtocol, currentUrlHostname} from './ServerURLstore.js';
+ 
 
   import { onMount } from "svelte";
   import { Howl, Howler } from "howler";
@@ -11,9 +12,12 @@
   import Button from "./Button.svelte";
   import AudioPlayer, {onBtnPause, onBtnPlay} from "./AudioPlayer.svelte";
   import WebsocketConnectionIndicator from "./WebsocketConnectionIndicator.svelte";
+  
   /*
    *    Prepare Cohort functionality (for live cues)
    */
+
+  
 
   function createSocketUrl(protocol, hostname){
     let validProtocols = {
@@ -40,19 +44,22 @@
     } else if (connectedToCohortServer == true) {
       connectionState = "active";
     } else if (connectedToCohortServer == false) {
-      connectionState = "inactive";
+      connectionState = "inactive"; 
     }
   }
 
   let cohortTags, cohortSession;
-
+  let statusText;
   let pageState = 0;
  
   const norteAudioTrack = new Howl({
     src: ["./audio/ReiswerkZonaNorte.mp3"]
 	});
 	
-  const playSound = () => norteAudioTrack.play();
+  const playSound = () => {
+      norteAudioTrack.play();
+      playState = norteAudioTrack.playing();
+    }
 	const stopSound = () => norteAudioTrack.stop();
 	//hacky way of having a user initiated event
   const loadAudio = function() {
@@ -61,10 +68,14 @@
     pageState = 1;
 	};
 	
-	let playState = norteAudioTrack.playing()
-	$: text = playState ? "Playing!" : "Waiting to receive cue.";
-	//for some reason below isn't working, will need to review
-	// $: state = norteAudioTrack.playing() ? "Playing!" : "Waiting to receive cue.";
+ 
+
+  let audioText;
+  let playState = norteAudioTrack.playing();
+  //update text in UI based on connection and audio play status.
+  $: audioText = playState ? "Playing!" : "Waiting for cue."
+  $: statusText = connectedToCohortServer ? `Connected to occasion: ${cohortOccasionID}` : "The occasion is currently closed."
+
 
   onMount(() => {
     // then startCohort but modify to pass occasion id?
@@ -89,10 +100,12 @@
 
     cohortSession.on("connected", () => {
       connectedToCohortServer = true;
+
     });
 
     cohortSession.on("disconnected", message => {
       connectedToCohortServer = false;
+
     });
 
     cohortSession.on("cueReceived", async cue => {
@@ -100,12 +113,10 @@
       console.log(cue);
 
       // do stuff based on the cue (eventually this can be automated based on a cuelist, like in Unity)
-      // onBtnPlay();
 
       //this isn't pretty
       if (cue.mediaDomain == 0 && cue.cueNumber == 1 && cue.cueAction == 0) {
 				playSound();
-				playState = norteAudioTrack.playing();
       }
     });
 
@@ -137,28 +148,39 @@
    */
 </script>
 
-<Page pageID="eventLandingPage" headingText="Event Landing Page" subHeadingText="Occasion Id: {cohortOccasionID}">
-  {#if pageState === 0}
-    <h4 class ="text-center">
-      Do you have your volume unmuted and your sound at a comfortable level?
-    </h4>
-    <Button on:click={loadAudio} buttonText="Yes!" />
-  {:else}
-    <div class="container">
-      <div class="row">
-        <div class="col">
-          <WebsocketConnectionIndicator status={connectionState} />
-          {#if showReconnectButton}
-            <button class="btn btn-sm btn-warning" on:click={onReconnect}>
-              Reconnect
-            </button>
-          {/if}
+<Page pageID="eventLandingPage" headingText="Event Landing Page" subHeadingText="Occasion ID: {cohortOccasionID}">
+  <div class="container">
+    <div class="row">
+      <div class="col-2">
+        <WebsocketConnectionIndicator status={connectionState} />
+      </div>
+      <div class="col-4">
+        {#if showReconnectButton}
+          <button class="btn btn-sm btn-warning" on:click={onReconnect}>
+            Reconnect
+          </button>
+        {/if}
         </div>
+        <div class="col-6">
+        <h6 class="text-center">{statusText}</h6>
       </div>
     </div>
-    <h4 class="text-center">{text}</h4>
-    <!-- <AudioPlayer
-      audioUrl = './audio/ReiswerkZonaNorte.mp3'
-			/> -->
+  </div>
+      <hr>
+  {#if connectedToCohortServer}
+    {#if pageState === 0}
+      <h4 class ="text-center">
+        Do you have your volume unmuted and your sound at a comfortable level?
+      </h4>
+      <Button on:click={loadAudio} buttonText="Yes!" />
+    {:else}
+      <h4 class="text-center">{audioText}</h4>
+      <!-- <AudioPlayer
+        audioUrl = './audio/ReiswerkZonaNorte.mp3'
+        /> -->
+    {/if}
   {/if}
+
+  
+  
 </Page>
