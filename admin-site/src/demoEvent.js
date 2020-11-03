@@ -1,10 +1,3 @@
-let defaultEpisode = (label, cues) => {
-  return {
-    episodeNumber: 0,
-    label: label,
-    cues: cues
-  }
-}
 
 export const demoEventPackage = {
   label: 'Demo Sound Event', 

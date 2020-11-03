@@ -24,10 +24,6 @@ exports.seed = function(knex) {
         username: 'test_user_2',
         password: process.env.TEST_USER_2_PASSWORD_HASH,
         is_admin: false
-      }, {
-        username: 'demouser',
-        password: process.env.DEMO_USER_PASSWORD_HASH,
-        is_admin: false
       }])
     });
   }
