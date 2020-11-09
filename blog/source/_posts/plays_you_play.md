@@ -1,6 +1,6 @@
 ---
 title: "Plays You Play: No Time Like the Future"
-date: 2020/10/30
+date: 2020/10/13
 tags:
 - Torien Cafferata
 - Overhear
@@ -29,6 +29,7 @@ During our first run of [*Overhear*](https://vimeo.com/273055640), our app-guide
 Needless to say we changed a few things about staging, ushers, etc. for the future, but nothing will change the fact that this lesson was learned through the suffering of someone working for us. That is a risk you and everyone on your team must understand and mitigate. Give your actors and audiences the tools to protect themselves and others: codewords, consent gestures, panic buttons on apps, clear expectations in the prep, reminders throughout, etc. I promise you can do all these things and still “serve the story” (see #4). Besides, if your audience cannot safely access or exit a story, who is the story for? 
 
 ![image from Overhear](Overhear.jpg)
+<span class="caption"> *Photo by S.E. Grummett*</span>
 
 **2. Less is More**
 
@@ -51,7 +52,7 @@ Theatre and game design are secret long lost cousins. How secret? I was a gamer 
 
 For digital immersive friends, read: “how do I tell the audience to do the Thing but make it ~~fashion~~ theatre?” The good news is that you are all experts at this already; our audiences are always in the same world as the actors, and boy do we love narrators!
 
-Where it gets tricky is if the Thing requires digital technology and your story is *not* The Story of an Audience Member Who Used Their Phone. You could try lo-fi trickery like [“antique” radios](http://raucous.org.uk/ice-road), or you can hide phones in pockets and set audio cues via Bluetooth or GPS. In *Overhear* we went the opposite direction: we personified the tech, the audio narrator acknowledging that he existed inside a recording inside a phone, so “please be careful don’t drop me.” I recently saw a horror Zoom play that was a “live unboxing gone wrong,” and a horror podplay of our own is a guided “creepypasta” ritual (coming soon!).
+Where it gets tricky is if the Thing requires digital technology and your story is *not* The Story of an Audience Member Who Used Their Phone. You could try lo-fi trickery like [“antique” radios](http://raucous.org.uk/ice-road), or you can hide phones in pockets and set audio cues via Bluetooth or GPS. In *Overhear* we went the opposite direction: we personified the tech, the audio narrator acknowledging that he existed inside a recording inside a phone, so “please be careful don’t drop me.” I recently saw a horror Zoom play that was a “live unboxing gone wrong,” and a horror podplay of our own is a guided [“creepypasta” ritual](https://isolata.netlify.app/).
 
 If the tech is on your stage, you might as well cast it as a character. Speaking of which...
 
@@ -78,7 +79,7 @@ I wish I’d known that the pinnacle of immersive theatre didn’t have to be en
 My first immersive experience was wandering alone in a new city with nothing but a hand-drawn map, an iPod shuffle, and the phone number of a single stranger going through the same show at the same time over 5,000km away. [*LANDLINE*](https://neworldtheatre.com/portfolio-item/landline/) is still the one of the most intimate experiences I’ve ever had — and it literally could not be more socially distanced.
 Digital immersive is massive. Digital immersive is micro. It is personal, precarious, and pretty easy to screw up all the time. Immersive is also a spectrum, not a genre, which is why the term only feels useful in marketing and kinda nowhere else. This is a time to embrace the kinder uncertainties of our field and find new forms that feel like *you*. At first it might not be, and that’s okay — let’s imitate and innovate on each other! Our [most recent work](https://www.facebook.com/watch/live/?v=1196734170710024&ref=watch_permalink) was a mash-up of our frustration with Zoom plays and our love of RPGs, inviting audiences to give voice-commands to a performer in a livestreamed outdoor adventure. It was the most fun I’ve had in a while because it *felt like us*. 
 
-To me that makes this the perfect form to respond to our world [and it’s already happening](https://springboardexchange.org/immersive-theatre-in-the-time-of-coronavirus/), from the [Very Cool](https://tenderclaws.com/theunderpresents) to the [Very Absurd](https://www.washingtonpost.com/entertainment/theater_dance/no-one-will-ever-see-this-play-and-no-actors-are-coming-either-but-the-show-will-go-on/2020/04/24/fcc8a09c-8577-11ea-878a-86477a724bdb_story.html). Not how I thought our revolution would go, but I am grateful; for the new friends coming to play, for the mentors, for the quiet panic that I’m already behind the curve, and for watching a burgeoning political art form learn itself, like a ship being built as we sail it (maybe we’ll even [save its soul](https://www.theguardian.com/stage/2020/feb/02/high-art-tipsy-night-out-immersive-theatre-lost-its-soul). There was a lot I didn't know five years ago (and still don’t). Today I am grateful to know even less. 
+To me that makes this the perfect form to respond to our world [and it’s already happening](https://springboardexchange.org/immersive-theatre-in-the-time-of-coronavirus/), from the [Very Cool](https://tenderclaws.com/theunderpresents) to the [Very Absurd](https://www.washingtonpost.com/entertainment/theater_dance/no-one-will-ever-see-this-play-and-no-actors-are-coming-either-but-the-show-will-go-on/2020/04/24/fcc8a09c-8577-11ea-878a-86477a724bdb_story.html). Not how I thought our revolution would go, but I am grateful; for the new friends coming to play, for the mentors, for the quiet panic that I’m already behind the curve, and for watching a burgeoning political art form learn itself, like a ship being built as we sail it (maybe we’ll even [save its soul](https://www.theguardian.com/stage/2020/feb/02/high-art-tipsy-night-out-immersive-theatre-lost-its-soul)). There was a lot I didn't know five years ago (and still don’t). Today I am grateful to know even less. 
 
 P.S. Any chance we could un-discontinue the iPod shuffle?
 
@@ -89,6 +90,3 @@ P.S. Any chance we could un-discontinue the iPod shuffle?
 
 
 Also coming up on the Cohort blog: Torien's 4-part email exchange with Sébastien Heins, Associate Artistic Director of Outside the March. *The Rough and Tumble of Tech - Part 1* drops next week.
-
-
-
