@@ -20,8 +20,14 @@ export let getEventsAndStore = async () => {
   let response = await fetch(serverURL + "/events", {
     method: 'GET'
   })
+  
+  try {
+    grabbedFromServerEvents = await response.json();
+  } catch(error){
+    console.log(error)
+    return
+  }
 
-  grabbedFromServerEvents = await response.json();
   storedEvents.update(value => 
       value = grabbedFromServerEvents
   );
@@ -44,9 +50,10 @@ export let getEventsAndStore = async () => {
 
       focusedOccasionStore.set(focusedOccasion);
     }
-     
-   
+  
+  
   });
+
   
 }
 

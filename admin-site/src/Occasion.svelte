@@ -231,6 +231,9 @@
   ul{
     list-style: none;
   }
+    .qr-code-link{
+    overflow-wrap: break-word;
+  }
   
 </style>
 

@@ -49,7 +49,7 @@ exports.seed = function(knex) {
             "cueAction": 3,
             "targetTags": ["all"]          
           }]
-        } else {
+        }  else {
           cues = []
         }
 
@@ -66,10 +66,10 @@ exports.seed = function(knex) {
 
       return knex('events').insert([
         {label: 'pimohtēwak', owner_id: 3, episodes: defaultEpisodeAsJSON('pimohtēwak', false)},
-        {label: 'demo event', owner_id: 3, episodes: defaultEpisodeAsJSON('demo event', true)},
+        {label: 'demo event', owner_id: 3, episodes: defaultEpisodeAsJSON('demo event', "defaultCues")},
         {label: 'midway', owner_id: 3, episodes: defaultEpisodeAsJSON('midway', false)},
         {label: 'fluxdelux', owner_id: 3, episodes: defaultEpisodeAsJSON('fluxdelux', false)},
-        {label: 'café sarajevo', owner_id: 3, episodes: defaultEpisodeAsJSON('café sarajevo', false)}
+        {label: 'café sarajevo', owner_id: 3, episodes: defaultEpisodeAsJSON('café sarajevo', false)},
       ])
       .then( () => {
         // add occasions to events
