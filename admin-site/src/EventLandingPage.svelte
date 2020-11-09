@@ -53,7 +53,7 @@
   let pageState = 0;
  
   const norteAudioTrack = new Howl({
-    src: ["./audio/ReiswerkZonaNorte.mp3"]
+    src: ["./audio/meow.mp3"]
 	});
 	
   const playSound = () => {
@@ -64,7 +64,7 @@
 	//hacky way of having a user initiated event
   const loadAudio = function() {
     norteAudioTrack.play();
-    norteAudioTrack.stop();
+    norteAudioTrack.pause();
     pageState = 1;
 	};
 	
@@ -116,6 +116,7 @@
 
       //this isn't pretty
       if (cue.mediaDomain == 0 && cue.cueNumber == 1 && cue.cueAction == 0) {
+        console.log('playing cue')
 				playSound();
       }
     });
