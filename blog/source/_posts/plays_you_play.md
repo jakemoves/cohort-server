@@ -90,3 +90,5 @@ P.S. Any chance we could un-discontinue the iPod shuffle?
 
 
 Also coming up on the Cohort blog: Torien's 4-part email exchange with Sébastien Heins, Associate Artistic Director of Outside the March. *The Rough and Tumble of Tech - Part 1* drops next week.
+
+

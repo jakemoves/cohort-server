@@ -5,10 +5,13 @@
 // Store holds state of server address
 
 import {writable} from 'svelte/store';
-
-export let urlStore = writable(window.location.protocol + '//' + window.location.host + '/api/v2');
+//server url is current url with /admin removed
+export const currentUrlHostname = window.location.host; 
+export const currentUrlProtocol = window.location.protocol;
+export let urlStore = writable(`${currentUrlProtocol}//${currentUrlHostname}/api/v2`);
 export let serverURL;
 
 urlStore.subscribe(value => {
   serverURL = value;
 })
+

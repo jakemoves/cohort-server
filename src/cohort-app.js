@@ -44,6 +44,7 @@ if(process.env.NODE_ENV != 'localoffline'){
 
 const v1routes = require('./routes-v1.js')
 const v2routes = require('./routes-v2.js')
+const adminRoute = require('./route-eventLandingPage.js')
 app.use(bodyParser.json())
 
 app.use( (req, res, next) => {
@@ -55,6 +56,7 @@ app.use( (req, res, next) => {
 
 app.use('/api/v1', v1routes)
 app.use('/api/v2', v2routes.router)
+app.use('/', adminRoute);
 
 if(process.env.NODE_ENV != 'localoffline'){
   app.use('/api/v2', passport.authenticate('jwt', { session: false }), v2routes.routerWithAuth)

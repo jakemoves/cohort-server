@@ -11,6 +11,7 @@
   import { urlStore, serverURL } from './ServerURLstore.js';
   import { pageStateInStore } from './UpdateUIstore.js';
   import { getEventsAndStore } from './EventsStore.js';
+  import DemoLogin from './demoLogin.js';
 
    
   let selectedURL;
@@ -20,17 +21,24 @@
    
       
   async function login(){
-    const payload = { username: usernameFieldValue, password: passwordFieldValue }
+    // check if credentials are demo account credentials
+    // call the same setupDemoAccountWithCues function as in the ELP
+    if(usernameFieldValue === "demouser"){
+      return DemoLogin();
+    } else {
+    
+      const payload = { username: usernameFieldValue, password: passwordFieldValue }
 
-    let response = await fetch(serverURL + '/login', {
-      method: 'POST',
-      headers: { 'Content-Type':  'application/json' },
-      body: JSON.stringify(payload) 
-    })
+      let response = await fetch(serverURL + '/login', {
+        method: 'POST',
+        headers: { 'Content-Type':  'application/json' },
+        body: JSON.stringify(payload) 
+      })
 
-    if(response.status != 200){
-      let errorMessage = await response.text()
-      throw new Error(errorMessage)
+      if(response.status != 200){
+        let errorMessage = await response.text()
+        throw new Error(errorMessage)
+      }
     }
   }
 
