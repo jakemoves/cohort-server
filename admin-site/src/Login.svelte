@@ -24,7 +24,7 @@
     // check if credentials are demo account credentials
     // call the same setupDemoAccountWithCues function as in the ELP
     if(usernameFieldValue === "demouser"){
-      DemoLogin();
+      return DemoLogin();
     } else {
     
       const payload = { username: usernameFieldValue, password: passwordFieldValue }

@@ -10,36 +10,36 @@ let focusedEvent;
 let demoEventName = "Demo Sound Event";
 const payload = { username: "demouser", password: "demodemo" };
 
-
-
-  storedEvents.subscribe(value => {
-    events = value;
-    if(events != 0){
-      indexInEvents = events.findIndex(event => event.label === demoEventName);
-      focusedEvent = events[indexInEvents];
-    }
-  })
+storedEvents.subscribe(value => {
+  events = value;
+  if(events != 0){
+    indexInEvents = events.findIndex(event => event.label === demoEventName);
+    focusedEvent = events[indexInEvents];
+  }
+})
 
 const init = function(){
   return new Promise( async (resolve, reject) => {
     try {
       // try to login in using demo credentials
-       await loginDemoUser();
-
-      try {
-        //now try to get events for that demouser, if not create the event (that contains an occasion and cues).
-         await eventsCheckAndCreation();  
-
-      } catch (error) {
-       return reject(new Error(`Error populating demo event. ${error}`))
-      }
+      await loginDemoUser();
         
     } catch(error) {
+      if(error != 'Error: Username not found: "demouser"'){
+        reject(error)
+      } else {
       //if demo user doesn't exist, register it and loop back through init
         registerDemoUser()
-        return reject(new Error(`Error trying to verify demouser because of ${error}`))
+      }
     }
-       
+    try {
+      //now try to get events for that demouser, if not create the event (that contains an occasion and cues).
+      await eventsCheckAndCreation();  
+    } catch (error) {
+      return reject(new Error(`Error populating demo event. ${error}`))
+    }
+
+    return resolve()
   })
 }
 
@@ -78,7 +78,12 @@ async function registerDemoUser(){
 let eventsCheckAndCreation = async() => {
   //check for existing "Demo Sound Event"
   let demoEventExists = false;
-  await getEventsAndStore();
+  try {
+    await getEventsAndStore();
+  } catch(error){
+    console.log(error)
+    return
+  }
 
   for (let i=0; i<events.length; i++){
     if (events[i].label === demoEventName){
