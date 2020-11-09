@@ -1,6 +1,6 @@
 ---
 title: Time and The Afterparty 
-date: 2020/10/01 
+date: 2020/11/09 
 tags:
 - Jordan Campbell
 - The Afterparty
