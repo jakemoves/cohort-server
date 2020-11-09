@@ -58,7 +58,7 @@
 	
   const playSound = () => {
       norteAudioTrack.play();
-      playState = norteAudioTrack.playing();
+      playState = "playing";
     }
 	const stopSound = () => norteAudioTrack.stop();
 	//hacky way of having a user initiated event
@@ -71,7 +71,7 @@
  
 
   let audioText;
-  let playState = norteAudioTrack.playing();
+  let playState;
   //update text in UI based on connection and audio play status.
   $: audioText = playState ? "Playing!" : "Waiting for cue."
   $: statusText = connectedToCohortServer ? `Connected to occasion: ${cohortOccasionID}` : "The occasion is currently closed."
