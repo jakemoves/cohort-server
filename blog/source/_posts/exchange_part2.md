@@ -1,6 +1,6 @@
 ---
 title: The Rough and Tumble of Tech Part 2 
-date: 2020/10/15 
+date: 2020/11/15
 tags:
 - Torien Cafferata
 - Sébastien Heins

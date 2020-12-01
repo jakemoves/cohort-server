@@ -1,6 +1,6 @@
 ---
 title: Magic and The Afterparty 
-date: 2020/10/13 
+date: 2020/11/16
 tags:
 - Elizabeth Staples
 - The Afterparty
