@@ -67,7 +67,6 @@ if(process.env.NODE_ENV != 'localoffline'){
 let staticPath = path.join(__dirname, '../public') // because we run the app from /lib
 app.use(express.static(staticPath))
 
-console.log(staticPath)
 /*
  *   Cohort
  */
