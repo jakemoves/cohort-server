@@ -1,6 +1,6 @@
 ---
 title: The Rough and Tumble of Tech Part 4
-date: 2020/10/15 
+date: 2021/04/12 
 tags:
 - Torien Cafferata
 - Sébastien Heins
@@ -106,7 +106,7 @@ Hi Torien,
  
 I loved reading your answers. I’ll hit you with mine:
  
-1)Best worst video game: Gameboy games with no save points.
+1) Best worst video game: Gameboy games with no save points.
 
 2) Best worst play: *Guys and Dolls*.
 
@@ -133,10 +133,10 @@ Sébastien
 ![headshot-sebastienheins](headshot_sebastienheins.jpg)
 Sébastien Heins is a Canadian-born, Jamaican-German actor, writer, producer, and emerging director. He is the Associate Artistic Director of Outside the March. His credits include 3 seasons at the Stratford Festival, 10 years of immersive theatre with OtM, and international tours of his award-winning solo show, Brotherhood: The Hip Hopera.
 
-![Headshot_Torien Cafferata](Headshot_Torien Cafferata.jpg)
+![headshot_TorienCafferata](headshot_TorienCafferata.jpg)
 Torien Cafferata is an immersive theatre producer, actor, playwright, and dramaturge based in Saskatoon, SK. He co-founded the award-winning company It's Not A Box Theatre alongside designer-dancer Amberlin Hsu, with whom he experiments at the intersections of interactive play, mixed-reality, and justice.
 
-Read The Rough and Tumble of Tech - Part 1 here.
-Read The Rough and Tumble of Tech - Part 2 here.
-Read The Rough and Tumble of Tech - Part 3 here.
+Read The Rough and Tumble of Tech - Part 1 <a href="/blog/2020/11/08/exchange_part1/">here</a>.
+Read The Rough and Tumble of Tech - Part 2 <a href="/blog/2020/11/15/exchange_part2/">here</a>.
+Read The Rough and Tumble of Tech - Part 3 <a href="/blog/2021/04/11/exchange_part3/">here</a>.
 

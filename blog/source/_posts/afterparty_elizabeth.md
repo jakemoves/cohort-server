@@ -33,4 +33,4 @@ With the many questions raised, some definite answers were also starting to emer
 **Elizabeth Staples** *is a Bi/Queer multidisciplinary theatre creator and arts administrator who was born and raised in Tkarón:to (Toronto). Recent credits include:* The Afterparty *(Bricks and Glitter Festival),* Private Eyes *(lemonTree creations),* White Girls in Moccasins *(manidoons collective). Elizabeth is interested in devised, physical theatre that has a social conscience and is covered in glitter.*
 
 
-Creator/performer Jordan Campbell also wrote about *The Afterparty* experience. Read his Cohort blog post here.
+Creator/performer Jordan Campbell also wrote about *The Afterparty* experience. Read his Cohort blog post <a href="/blog/2020/11/09/afterparty_jordan">here</a>.

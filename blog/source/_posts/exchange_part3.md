@@ -1,6 +1,6 @@
 ---
-title: The Rough and Tumble of Tech Part3
-date: 2020/10/15 
+title: The Rough and Tumble of Tech Part 3
+date: 2021/04/11
 tags:
 - Torien Cafferata
 - Sébastien Heins
@@ -30,7 +30,7 @@ It's a tumultuous cocktail and all my friends are drowning in it, especially in 
 
 Are any of these super fun and pleasant thoughts resonating? This is obviously too long to respond to with expedience. Maybe that was no accident. I'm fine if it gets cut, there's no need to answer. I'm just having early career complex feelings about what the "next step" should be – in a time when the whole industry is asking the same question. 
 
- * pshew * g r a p p l i n g   h o o k
+*pshew* g r a p p l i n g   h o o k
 
 1) **Exciting AR things!** I used to feel anxious that most of our AR has largely been sound based (audio stories draped over found spaces), but now I'm enjoying diving deeper into the form. I’m looking at player-operated sound in pod plays (on-screen buttons, dials, recording, sampling, playback, etc.). I'm also definitely pumped to someday use AR target markers in Play Fail Win for cued textboxes, sound and dialogue – like a real RPG! Speaking of...
 
@@ -46,8 +46,8 @@ Feel free to just pick the question(s) you enjoy. I appreciate your wisdom. Than
 
 T
 
-*Torien and Sébastien’s exchange concludes in **The Rough and Tumble of Tech - Part 4**.* 
+*Torien and Sébastien’s exchange concludes in **<a href="/blog/2021/04/12/exchange_part4/">The Rough and Tumble of Tech - Part 4**</a>.* 
 
-*Read The Rough and Tumble of Tech - Part 1 here* 
+*Read The Rough and Tumble of Tech - Part 1 <a href="/blog/2020/11/08/exchange_part1/">here</a>* 
 
-and *The Rough and Tumble of Tech - Part 2 here*
+and *The Rough and Tumble of Tech - Part 2 <a href="/blog/2020/11/15/exchange_part2/">here</a>*

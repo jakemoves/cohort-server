@@ -55,4 +55,4 @@ Looking forward to learning more about your creative endeavours!
 
 Sébastien
  
-*Torien and Sébastien’s exchange continues in **The Rough and Tumble of Tech - Part 3**.* 
+*Torien and Sébastien’s exchange continues in **<a href="/blog/2021/04/11/exchange_part3/">The Rough and Tumble of Tech - Part 3</a>**.* 
