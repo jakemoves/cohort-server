@@ -4,7 +4,8 @@ date: 2021/04/11
 tags:
 - Torien Cafferata
 - Sébastien Heins
-- site-specific-immersive theatre
+- site-specific
+- immersive theatre
 ---
 
 *In this third part of an ongoing email exchange between artists **Sébastien Heins** and **Torien Cafferata**, Torien pulls back more curtains and muses on what is “enough”.*
@@ -34,7 +35,7 @@ Are any of these super fun and pleasant thoughts resonating? This is obviously t
 
 1) **Exciting AR things!** I used to feel anxious that most of our AR has largely been sound based (audio stories draped over found spaces), but now I'm enjoying diving deeper into the form. I’m looking at player-operated sound in pod plays (on-screen buttons, dials, recording, sampling, playback, etc.). I'm also definitely pumped to someday use AR target markers in Play Fail Win for cued textboxes, sound and dialogue – like a real RPG! Speaking of...
 
-2) **The HUD in PFW** is purposefully generic, aesthetically drawn from 90’s and 00's dungeon-crawlers with an ethos inspired by *Portal*, *Dear Esther*, and *The Stanley Parable*. Oh, and this weird part-live-action, [*Myst*-esque adventure game from 1997](https://en.wikipedia.org/wiki/Obsidian_(1997_video_game) that scarred me as a child. You can see the HUD for yourself too; our [last stream](https://www.facebook.com/itsnotaboxtheatre/videos/1196734170710024/) was one of the more interesting ones I think. Have you used a HUD in any of your shows? 
+2) **The HUD in PFW** is purposefully generic, aesthetically drawn from 90’s and 00's dungeon-crawlers with an ethos inspired by *Portal*, *Dear Esther*, and *The Stanley Parable*. Oh, and this weird part-live-action, [*Myst*-esque adventure game from 1997](https://en.wikipedia.org/wiki/Obsidian_(1997_video_game)) that scarred me as a child. You can see the HUD for yourself too; our [last stream](https://www.facebook.com/itsnotaboxtheatre/videos/1196734170710024/) was one of the more interesting ones I think. Have you used a HUD in any of your shows? 
 
 3) We haven’t actually played with any **haptics** yet at It’s Not A Box Theatre, but I’m looking at these [gloves](https://www.themagos.com/#scene) and this [vest](https://www.bhaptics.com/tactsuit/) for haptic-based player input to a performer. Keeping tabs on sensory-substitution tech like [this thing](https://www.smithsonianmag.com/innovation/could-this-futuristic-vest-give-us-sixth-sense-180968852/) –  think sound-to-movement! What kinds of player-control of performers have you found success with, other than voice commands? 
 

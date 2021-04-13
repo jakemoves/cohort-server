@@ -5,6 +5,7 @@ tags:
 - Torien Cafferata
 - Sébastien Heins
 - site-specific
+- immersive theatre
 ---
 
 
@@ -31,7 +32,7 @@ T
 On Sat, Sep 12 at 3:32 PM Sébastien Heins wrote:
 
 Dear Torien,
-Thank you very much for the trip through your journey thus far making immersive, auditory, tech-powered experiences! I really enjoyed your videos and project breakdowns — your [*Overhear*]([https://vimeo.com/273055640]) looked beautiful and was so life changing for its audiences. Congratulations on all of the well-deserved success, and for completing your fest run of *Play Fail Win*. It sounds like we share a lot of interests and curiosities with our projects. 
+Thank you very much for the trip through your journey thus far making immersive, auditory, tech-powered experiences! I really enjoyed your videos and project breakdowns — your [*Overhear*](https://vimeo.com/273055640) looked beautiful and was so life changing for its audiences. Congratulations on all of the well-deserved success, and for completing your fest run of *Play Fail Win*. It sounds like we share a lot of interests and curiosities with our projects. 
  
 Our project, *The Itinerary* is a live action video game that lets you control a stranger's actions on a very important day of their life. Using your smartphone, you help them explore exciting memories, their imagination, and an emerging harsh reality sitting just below the surface. Groups of six players at a time jump into a story about the Caribbean Windrush generation, living the dream of "young, gifted and Black," and a lifetime of joy and tragedy a hundred years in the making. 
 
@@ -63,5 +64,5 @@ Right now, we’re having a great time working with Cohort to develop free tools
 
 Sébastien
  
-*Torien & Sébastien’s exchange continues in **The Rough and Tumble of Tech - Part 2**.*
+*Torien & Sébastien’s exchange continues in **<a href="/blog/2020/11/15/exchange_part2/">The Rough and Tumble of Tech - Part 2</a>**.*
  
