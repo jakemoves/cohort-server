@@ -47,8 +47,4 @@ Feel free to just pick the question(s) you enjoy. I appreciate your wisdom. Than
 
 T
 
-*Torien and Sébastien’s exchange concludes in **<a href="/blog/2021/04/12/exchange_part4/">The Rough and Tumble of Tech - Part 4**</a>.* 
-
-*Read The Rough and Tumble of Tech - Part 1 <a href="/blog/2020/11/08/exchange_part1/">here</a>* 
-
-and *The Rough and Tumble of Tech - Part 2 <a href="/blog/2020/11/15/exchange_part2/">here</a>*
+*Torien and Sébastien’s exchange concludes in **<a href="/blog/2021/04/12/exchange_part4/">The Rough and Tumble of Tech - Part 4</a>**.* 
