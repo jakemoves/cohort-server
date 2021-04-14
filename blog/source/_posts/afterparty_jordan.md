@@ -36,4 +36,4 @@ Now I am resting. After all of that vulnerability in public, I need a week alone
 
 **Jord Camp** *is a queer performance artist working in dance, drag and theatre. He is half of the POP ART performance duo [xLq](https://www.instagram.com/xLqpopart/) with Maddie Bautista — together they create interactive theatrical playgrounds with a queer pop aesthetic. Jordan also teaches inclusive drama classes with Purple Carrots Studio, specializing in neurodiverse programming.*
 
-Director Elizabeth Staples writes about her Afterparty experience **here**.
+Director Elizabeth Staples writes about her Afterparty experience **<a href="/blog/2020/11/16/afterparty_elizabeth/">here</a>**.

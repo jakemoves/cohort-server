@@ -8,7 +8,7 @@ tags:
 ---
 ![poster for Afterparty](afterparty_test.jpg)
 
-The Afterparty *was presented at the Bricks and Glitter Festival in Toronto from September 16 to 26, 2020. Director **Elizabeth Staples** writes about magic in a time of pandemic.* 
+The Afterparty *was presented at the [Bricks and Glitter Festival](https://bricks-glitter.com/event/the-afterparty/) in Toronto from September 16 to 26, 2020. Director **Elizabeth Staples** writes about magic in a time of pandemic.* 
 
 When Jordan and I left that studio on an early March weekday, I remember feeling warm. He had just shown me the first performance draft for a new solo show. My brain was humming with ideas and my body was tingling in the crisp almost spring sunshine. We walked and dreamed; a party, the summer, sequins, our friends, strobe lights, sweat, cheap booze, Lady Gaga. I was full of possibilities. This was the genesis of *The Afterparty*.
 
