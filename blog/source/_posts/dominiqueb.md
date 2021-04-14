@@ -3,7 +3,6 @@ title: Kill Your Darlings
 date: 2021/04/10
 tags:
 - Dominique Banoun
-- BUS 1.2.3.
 - non-linear
 ---
 

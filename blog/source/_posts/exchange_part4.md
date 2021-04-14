@@ -6,6 +6,7 @@ tags:
 - Sébastien Heins
 - site-specific
 - immersive theatre
+- correspondence
 ---
 
 *This concludes an email exchange between **Sébastien Heins** and **Torien Cafferata**. In this final edition Torien and Sébastien analyze the industry and trade rapid fire top 8s.*

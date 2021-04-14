@@ -6,6 +6,7 @@ tags:
 - Sébastien Heins
 - site-specific
 - immersive theatre
+- correspondence
 ---
 
 *In this third part of an ongoing email exchange between artists **Sébastien Heins** and **Torien Cafferata**, Torien pulls back more curtains and muses on what is “enough”.*
