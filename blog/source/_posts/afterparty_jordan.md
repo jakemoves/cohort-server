@@ -1,10 +1,12 @@
 ---
 title: Time and The Afterparty 
 date: 2020/11/09 
+author: Jordan Campbell
 tags:
 - Jordan Campbell
 - The Afterparty
 - site-specific
+excerpt: "\"This piece was inspired by the COVID restrictions. It was designed for a single audience member, standing in a two-metre radius chalk circle in a public park. The audience member is listening to a track through their earphones, which is synced up with the track playing in my earphones. It’s a solo performance, but also a one-on-one interactive journey of dance, drag, outfits, reveals and surprises all around the parkette. The piece is about two queers meeting each other in a park. It’s 30 minutes long and it’s very intimate.\""
 ---
 ![poster for Afterparty](afterparty_test.jpg)
 

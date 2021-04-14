@@ -1,9 +1,11 @@
 ---
 title: Kill Your Darlings 
 date: 2021/04/10
+author: Dominique Banoun
 tags:
 - Dominique Banoun
 - non-linear
+excerpt: "\"The artists became autonomous, creators and carriers of the video projections. To that end, we experimented with iPhones and pico projectors. We also used very small pocket amplifiers and transducers for sound. The iPhones were bought at small repair stores and iFix it franchises. The pico projectors were bought from a private vendor in Mississauga. These allowed us to project video that was already captured and edited as well as capture and project live video, stills, keynote presentations, etc. It was like having a portable mini-computer at each artist’s fingertips.\""
 ---
 
 ![screens from BabelODrome](dominique1.jpg)

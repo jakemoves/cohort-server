@@ -1,10 +1,12 @@
 ---
 title: Magic and The Afterparty 
 date: 2020/11/16
+author: Elizabeth Staples
 tags:
 - Elizabeth Staples
 - The Afterparty
 - site-specific
+excerpt: "\"The creation of The Afterparty took us on a journey this summer. Pride returned to its revolutionary roots, a spotlight was held to the racial inequalities in our society, a call was made to restructure theatre institutions, and personal pressures were mounting so the piece needed to pause and respond accordingly. The world and the show had a parallel feeling of changing so rapidly daily yet feeling like nothing had changed at all.\""
 ---
 ![poster for Afterparty](afterparty_test.jpg)
 

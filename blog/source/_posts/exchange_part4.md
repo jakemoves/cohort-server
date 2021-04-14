@@ -1,12 +1,14 @@
 ---
 title: The Rough and Tumble of Tech Part 4
 date: 2021/04/12 
+author: Torien Cafferata and Sebastien Heins
 tags:
 - Torien Cafferata
 - Sébastien Heins
 - site-specific
 - immersive theatre
 - correspondence
+excerpt: "This concludes an email exchange between theatre artists Sébastien Heins and Torien Cafferata. In this final edition Torien and Sébastien analyze the industry and trade rapid fire Top Eights."
 ---
 
 *This concludes an email exchange between **Sébastien Heins** and **Torien Cafferata**. In this final edition Torien and Sébastien analyze the industry and trade rapid fire top 8s.*

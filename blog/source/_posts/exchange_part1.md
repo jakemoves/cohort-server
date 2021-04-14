@@ -1,12 +1,14 @@
 ---
 title: The Rough and Tumble of Tech 
 date: 2020/11/08 
+author: Torien Cafferata and Sebastien Heins
 tags:
 - Torien Cafferata
 - Sébastien Heins
 - site-specific
 - immersive theatre
 - correspondence
+excerpt: "Instigated by Cohort, theatre artists Sébastien Heins (Outside the March, Stratford) and Torien Cafferata (It's Not a Box Theatre) undertook an email exchange about immersive theatre, technology and the cultural sector.  We edited, but not much. This is the first of four parts of their extended conversation."
 ---
 
 

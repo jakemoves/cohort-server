@@ -1,12 +1,13 @@
 ---
 title: Calling the Shows
 date: 2021/04/09
+author: Laura Cournoyea
 tags:
 - Laura Cournoyea
 - LOT X
 - site-specific 
 - dance
-excerpt: "One of my favourite elements is being able to engage before and after the show, strengthening the connection and bond between audience and artistic work... When it comes to immersive, traveling works, the stage manager ends up taking on the task of audience management way more than is usual. With [the production] LOT X, it felt as though Cohort was akin to an Assistant Stage Manager, doing the work of managing the patrons without direct interaction."
+excerpt: "\"One of my favourite elements is being able to engage before and after the show, strengthening the connection and bond between audience and artistic work... When it comes to immersive, traveling works, the stage manager ends up taking on the task of audience management way more than is usual. With [the production] LOT X, it felt as though Cohort was akin to an Assistant Stage Manager, doing the work of managing the patrons without direct interaction.\""
 ---
 ![still from LOT X](L9A1293.jpg)
 

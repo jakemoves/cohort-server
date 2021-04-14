@@ -1,16 +1,18 @@
 ---
 title: An Introduction 
 date: 2020/10/29
+author: Jacob Niedzwiecki
 tags:
 - Cohort
 - blog
 - mobile
+excerpt: "\"Thirty years ago I stepped into a dance studio for the first time. Twenty-eight years ago, I wrote my first line of code. And ten years ago, I had an idea for a dance/theatre work that would need a specific technical capability: cueing portable, synchronized, multi-track headphone audio. Working with an awesome creative and production team, we realized that technical capability (and a few others), and created the show Jacqueries around it... When the Digital Strategy Fund was announced by the Canada Council, it seemed like a good idea to assemble a network of the performing-arts companies I’d worked with, so we could improve and formalize the shared technical infrastructure we’d built, and share it with the wider community of artists and producers experimenting with new modes of presentation.\""
 ---
 ![photo_iphones_laptop](IMG_2793.jpg)
 
 Thirty years ago I stepped into a dance studio for the first time. Twenty-eight years ago, I wrote my first line of code. And ten years ago, I had an idea for a dance/theatre work that would need a specific technical capability: cueing portable, synchronized, multi-track headphone audio. Working with an awesome creative and production team, we realized that technical capability (and a few others), and created the show *Jacqueries* around it.
 
- After all that trial and error (and error and error!), I wanted to make those capabilities available to other creators, and did that in a designer role on several productions. Though all the projects were quite different, I started to see common needs, and found a way to reuse and build on my own work from project to project. 
+After all that trial and error (and error and error!), I wanted to make those capabilities available to other creators, and did that in a designer role on several productions. Though all the projects were quite different, I started to see common needs, and found a way to reuse and build on my own work from project to project. 
 
 When the Digital Strategy Fund was announced by the Canada Council, it seemed like a good idea to assemble a network of the performing-arts companies I’d worked with, so we could improve and formalize the shared technical infrastructure we’d built, and share it with the wider community of artists and producers experimenting with new modes of presentation. In COVID times, that community has gotten much bigger, as every performing artist has been forced to explore new ways to create and share their work.
 
