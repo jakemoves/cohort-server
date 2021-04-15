@@ -1,7 +1,7 @@
 ---
 title: The Rough and Tumble of Tech 
 date: 2020/11/08 
-author: Torien Cafferata and Sebastien Heins
+author: Torien Cafferata and Sébastien Heins
 tags:
 - Torien Cafferata
 - Sébastien Heins
