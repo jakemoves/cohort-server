@@ -733,7 +733,7 @@ describe('Occasion routes', () => {
     let qrcode = res.body.qrcode
 
     expect(qrcode).toBeDefined()
-    expect(qrcode).toContain('<svg') // the qrcode library is not deterministic, points may be reordered resulting in a failed test.
+    expect(qrcode).toContain('<svg') // the qrcode library is not deterministic, points may be reordered resulting in a failed test, so this test is intentionally simplistic
   })
 
   test('GET /occasions/:id/state', async () => {
