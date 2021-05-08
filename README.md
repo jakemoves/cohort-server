@@ -38,8 +38,8 @@ Building for production:
 - if you have a cohort server running locally, the admin site is served at [localhost:3000/admin](http://localhost:3000/admin/)
 
 ### tests setup
-- `npm install -g jest`
-- `jest app && jest websocket` (the '&&' forces these to run one after the other, they fail if run in parallel which is what happen if you just run `jest`)
+- `npx jest app && npx jest websocket` (the '&&' forces these to run one after the other, they fail if run in parallel which is what happen if you just run `jest`)
+- the websocket tests will fail if you have the server running locally
 
 ### obtaining secret key files
 - ask project lead for the dot-env file, or generate a JWT key and add it to a .env file with the entry name 'JWT_SECRET' (e.g. `JWT_SECRET=[your generated key]`)

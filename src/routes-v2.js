@@ -19,7 +19,7 @@ const projectSiteController = require('./controllers/projectSiteController')
 // const servicesController = require('./controllers/servicesController')
 
 router.get('', (req, res) => {
-  res.send('Cohort Rocks')
+  res.send('Cohort rocks')
 })
 
 /*

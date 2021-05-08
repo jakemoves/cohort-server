@@ -207,7 +207,9 @@ exports.occasions_qrcode = async (req, res) => {
 
   try {
     const qrcode = await qrcodeService.getQRCode(qrcodeURL)
-    res.status(200).send(JSON.stringify({ url: qrcodeURL, qrcode: qrcode}))
+    console.log(qrcode)
+    const payload = { url: qrcodeURL, qrcode: qrcode}
+    res.status(200).json(payload)
   } catch(error){
     handleError(500, error, res)
     return
