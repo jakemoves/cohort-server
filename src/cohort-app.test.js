@@ -736,6 +736,14 @@ describe('Occasion routes', () => {
     expect(qrcode).toContain('<svg') // the qrcode library is not deterministic, points may be reordered resulting in a failed test.
   })
 
+  test('GET /occasions/:id/state', async () => {
+    const res = await request(app)
+    .get('/api/v2/occasions/3/state')
+
+    expect(res.status).toEqual(200)
+    expect(res.body.state).toEqual('opened')
+  })
+
   /*
    *    Broadcast routes (/occasions/:id/broadcast) are tested in 
    *    cohort-websocket.test.js

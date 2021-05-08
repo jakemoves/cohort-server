@@ -216,6 +216,17 @@ exports.occasions_qrcode = async (req, res) => {
   }
 }
 
+exports.occasions_state = async (req, res) => {
+  const occasionId = req.params.id
+  let occasion = await occasionsTable.getOneByID(occasionId)
+
+  if(occasion == null || occasion === undefined){
+    handleError(404, "Error: occasion with id:" + occasionId + " not found", res)
+    return
+  }
+
+  res.status(200).json({state: occasion.state})
+}
 
 // exports.occasionsForEvent = ( req, res ) => {
 //   let eventId = req.params.id

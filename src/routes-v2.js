@@ -60,6 +60,7 @@ if(process.env.NODE_ENV != 'localoffline'){
   routerWithAuth.post('/occasions/:id', occasionsController.occasions_update)
   routerWithAuth.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
   routerWithAuth.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
+  router.get('/occasions/:id/state', occasionsController.occasions_state)
 } else {
   localOfflineRouter.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
 }
