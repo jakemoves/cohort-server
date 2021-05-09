@@ -4,10 +4,11 @@
 const moment = require('moment')
 const passport = require('passport')
 
-let eventsTable, occasionsTable
+let eventsTable, occasionsTable, clientActivitiesTable
 if(process.env.NODE_ENV != 'localoffline'){
   occasionsTable = require('../knex/queries/occasion-queries')
   eventsTable = require('../knex/queries/event-queries')
+  clientActivitiesTable = require('../knex/queries/client-activity-queries')
 }
 
 const CHOccasion = require('../models/CHOccasion')
@@ -229,11 +230,24 @@ exports.occasions_state = async (req, res) => {
 }
 
 exports.occasions_clientActivity = async (req, res) => {
+  const occasionId = req.params.id
+  // does occasion exist?
+
+  // does req contain episode ID? (or should this be episodeNumber?)
+
+  // does req contain activityName?
+
+  // does the posted episode ID or episodeNumber exist on this occasion's event? (if not... do we fail or store with a shrug? probabaly the latter...)
+
+  // happy path
+  // store activity in DB
+  
   res.sendStatus(200)
 }
 
 exports.occasions_clientActivities = async (req, res) => {
   res.sendStatus(200)
+  // send back activities for this occasion
 }
 
 // exports.occasionsForEvent = ( req, res ) => {

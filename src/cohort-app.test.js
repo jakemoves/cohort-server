@@ -752,15 +752,17 @@ describe('Occasion routes', () => {
       .post('/api/v2/occasions/3/clientActivity')
       .send({ activityName: "episodeStarted" })
   
-    expect(res.status).toEqual(200)
+    expect(res.status).toEqual(201)
+    expect(res.body.id).toEqual(1)
+    expect(res.body.activityName).toEqual("episodeStarted")
 
-    const token = await login('test_user_1', app)
-    expect(token).toBeDefined()
-    const res2 = await request(app)
-      .get('/api/v2/occasions/3/clientActivities')
-      .set('Authorization', 'JWT ' + token)
+    // const token = await login('test_user_1', app)
+    // expect(token).toBeDefined()
+    // const res2 = await request(app)
+    //   .get('/api/v2/occasions/3/clientActivities')
+    //   .set('Authorization', 'JWT ' + token)
   
-    expect(res2.status).toEqual(200)
+    // expect(res2.status).toEqual(200)
   })
   // happy path: sending client activity to closed occasion does not persist it in DB
   // happy path: closing occasion clears all its client_activities and sends them to a requested-on-the-spot email address
