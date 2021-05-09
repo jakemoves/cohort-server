@@ -269,8 +269,16 @@ exports.occasions_clientActivity = async (req, res) => {
 }
 
 exports.occasions_clientActivities = async (req, res) => {
-  res.sendStatus(200)
-  // send back activities for this occasion
+  const occasionId = req.params.id
+
+  clientActivitiesTable.getAllForOccasion(occasionId)
+  .then( activities => {
+    res.status(200)
+    res.json(activities)
+  })
+  .catch( error => {
+    handleError(500, error, res)
+  })
 }
 
 // exports.occasionsForEvent = ( req, res ) => {

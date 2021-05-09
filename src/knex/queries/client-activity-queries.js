@@ -24,6 +24,12 @@ addOne = (clientActivity) => {
     })
 }
 
+getAllForOccasion = (occasionId) => {
+  return ClientActivities()
+    .where('occasion_id', occasionId)
+}
+
 module.exports = {
-  addOne: addOne
+  addOne: addOne,
+  getAllForOccasion: getAllForOccasion
 }
