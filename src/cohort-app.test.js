@@ -750,7 +750,11 @@ describe('Occasion routes', () => {
   test('POST /occasions/:id/clientActivity and GET /occasions/:id/clientActivities', async () => {
     const res = await request(app)
       .post('/api/v2/occasions/3/clientActivity')
-      .send({ activityName: "episodeStarted" })
+      .send({ 
+        occasionId: 3, 
+        episodeId: 1,
+        activityName: "episodeStarted" 
+      })
   
     expect(res.status).toEqual(201)
     expect(res.body.id).toEqual(1)

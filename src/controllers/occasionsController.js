@@ -253,8 +253,8 @@ exports.occasions_clientActivity = async (req, res) => {
 
   // happy path  
   const clientActivity = { 
-    occasionId: occasionId,
-    episodeId: req.body.episodeId,
+    occasion_id: occasionId,
+    episode_id: req.body.episodeId,
     activityName: req.body.activityName
   }
 
@@ -266,8 +266,6 @@ exports.occasions_clientActivity = async (req, res) => {
   .catch( error => {
     handleError(500, error, res)
   })
-
-  res.sendStatus(200)
 }
 
 exports.occasions_clientActivities = async (req, res) => {

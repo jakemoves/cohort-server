@@ -23,3 +23,7 @@ addOne = (clientActivity) => {
       }
     })
 }
+
+module.exports = {
+  addOne: addOne
+}
