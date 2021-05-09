@@ -231,17 +231,42 @@ exports.occasions_state = async (req, res) => {
 
 exports.occasions_clientActivity = async (req, res) => {
   const occasionId = req.params.id
-  // does occasion exist?
 
-  // does req contain episode ID? (or should this be episodeNumber?)
+  let occasion = await occasionsTable.getOneByID(occasionId)
 
-  // does req contain activityName?
+  if(occasion == null || occasion === undefined){
+    handleError(404, "Error: occasion with id:" + occasionId + " not found", res)
+    return
+  }
 
-  // does the posted episode ID or episodeNumber exist on this occasion's event? (if not... do we fail or store with a shrug? probabaly the latter...)
+  if(req.body.episodeId == null || req.body.episodeId == undefined){
+    handleError(400, "Error: request must include an 'episodeId' field", res)
+    return
+  }
 
-  // happy path
-  // store activity in DB
-  
+  if(req.body.activityName == null || req.body.activityName == undefined){
+    handleError(400, "Error: request must include an 'activityName' field", res)
+    return
+  }
+
+  // NB we don't check if the episode exists on this occasion's event because episodes aren't fully integrated in the modeling yet
+
+  // happy path  
+  const clientActivity = { 
+    occasionId: occasionId,
+    episodeId: req.body.episodeId,
+    activityName: req.body.activityName
+  }
+
+  clientActivitiesTable.addOne(clientActivity).then( activity => {
+    res.status(201)
+    res.location('/api/v2/occasions/' + occasionId + '/clientActivities/' + activity.id)
+    res.json(activity)
+  })
+  .catch( error => {
+    handleError(500, error, res)
+  })
+
   res.sendStatus(200)
 }
 

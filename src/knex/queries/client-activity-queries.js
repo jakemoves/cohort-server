@@ -9,9 +9,9 @@ ClientActivities = () => {
 
 // queries
 
-addOne = (occasionID, episodeID, activityName) => {
+addOne = (clientActivity) => {
   return ClientActivities()
-    .insert({occasion_id: occasionID, episode_id: episodeID, activityName: activityName})
+    .insert(clientActivity)
     .returning('id')
     .then(clientActivityIDs => {
       if(clientActivityIDs.length == 1){
