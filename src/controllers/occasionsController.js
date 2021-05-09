@@ -228,6 +228,14 @@ exports.occasions_state = async (req, res) => {
   res.status(200).json({state: occasion.state})
 }
 
+exports.occasions_clientActivity = async (req, res) => {
+  res.sendStatus(200)
+}
+
+exports.occasions_clientActivities = async (req, res) => {
+  res.sendStatus(200)
+}
+
 // exports.occasionsForEvent = ( req, res ) => {
 //   let eventId = req.params.id
 

@@ -60,7 +60,11 @@ if(process.env.NODE_ENV != 'localoffline'){
   routerWithAuth.post('/occasions/:id', occasionsController.occasions_update)
   routerWithAuth.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
   routerWithAuth.get('/occasions/:id/qrcode', occasionsController.occasions_qrcode)
+  routerWithAuth.get('/occasions/:id/clientActivities', occasionsController.occasions_clientActivities)
+
+  // these are nondestructive requests useful in non-websocket-connected clients, so not adding auth yet
   router.get('/occasions/:id/state', occasionsController.occasions_state)
+  router.post('/occasions/:id/clientActivity', occasionsController.occasions_clientActivity)
 } else {
   localOfflineRouter.post('/occasions/:id/broadcast', occasionsController.occasions_broadcast)
 }

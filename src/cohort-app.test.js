@@ -738,11 +738,35 @@ describe('Occasion routes', () => {
 
   test('GET /occasions/:id/state', async () => {
     const res = await request(app)
-    .get('/api/v2/occasions/3/state')
+      .get('/api/v2/occasions/3/state')
 
     expect(res.status).toEqual(200)
     expect(res.body.state).toEqual('opened')
   })
+
+  // tests for episode aggregate metrics (show report)
+
+  // happy path: sending client activity to open occasion persists it in DB
+  test('POST /occasions/:id/clientActivity and GET /occasions/:id/clientActivities', async () => {
+    const res = await request(app)
+      .post('/api/v2/occasions/3/clientActivity')
+      .send({ activityName: "episodeStarted" })
+  
+    expect(res.status).toEqual(200)
+
+    const token = await login('test_user_1', app)
+    expect(token).toBeDefined()
+    const res2 = await request(app)
+      .get('/api/v2/occasions/3/clientActivities')
+      .set('Authorization', 'JWT ' + token)
+  
+    expect(res2.status).toEqual(200)
+  })
+  // happy path: sending client activity to closed occasion does not persist it in DB
+  // happy path: closing occasion clears all its client_activities and sends them to a requested-on-the-spot email address
+
+  // test('deleting an occasion deletes any client_activities for that occasion and prompts user for email to send them to', async () => {
+  // })
 
   /*
    *    Broadcast routes (/occasions/:id/broadcast) are tested in 
