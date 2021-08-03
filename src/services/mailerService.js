@@ -20,12 +20,11 @@ exports.initService = async function(){
   transporter.verify( (error, success) => {
     if(error){
       // no internet connection?
-      if(error.errno == "ECONNREFUSED" &&
-        error.code == 'EDNS' &&
-        error.command == 'CONN' &&
-        error.hostname == 'smtp.gmail.com'){
+      if((error.errno == "ECONNREFUSED" || error.errno == 'ETIMEDOUT') &&
+        (error.code == 'EDNS' || error.code == 'ESOCKET') &&
+        error.command == 'CONN'){
 
-        console.log("  warning: cannot connect to Gmail, emails may not send successfully")
+        console.log("   warning: cannot connect to mail server, emails may not send successfully")
       } else {
         console.log(error)
       }
