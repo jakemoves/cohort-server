@@ -49,7 +49,9 @@ start = async () => {
 	// await broadcastService.initService(app.get('cohortSession'), webSocketServer)
 
 	/* mail service init */
-	mailerService.initService()
+	if(process.env.NODE_ENV != 'localoffline'){
+		mailerService.initService()
+	}
 }
 
 start()
