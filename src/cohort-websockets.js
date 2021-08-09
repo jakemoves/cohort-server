@@ -52,7 +52,7 @@ module.exports = (options) => {
           socket.close(4004, "Error: cohort handshake not completed within time limit")
           console.log("Error: cohort handshake not completed within time limit")
         }
-      }, 1000)
+      }, 5000)
 
       socket.on('message', (message) => {
         let msg
