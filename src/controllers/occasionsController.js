@@ -167,7 +167,12 @@ exports.occasions_broadcast = async (req, res, next) => {
   const cue = req.body
   
   try {
-    const results = await broadcastService.broadcast(occasion, cue)
+    let results = await broadcastService.broadcast(occasion, cue)
+    
+    if(process.env.NODE_ENV == 'localoffline'){
+      results = { broadcastSummary: "Broadcast to " + results.length + " devices", broadcastDetails: results }
+    }
+    
     res.status(200).json(results)
   } catch(error) {
     handleError(409, error, res)

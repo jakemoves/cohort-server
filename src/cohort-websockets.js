@@ -46,7 +46,7 @@ module.exports = (options) => {
 
       console.log('websocket server: new connection')
 
-      // if the socket hasn't completed a handshake within one second, we should close it
+      // if the socket hasn't completed a handshake within five seconds, we should close it
       closeSocket = setTimeout(() => {
         if(socket.cohortDeviceGUID == null || socket.cohortDeviceGUID === undefined ){
           socket.close(4004, "Error: cohort handshake not completed within time limit")
